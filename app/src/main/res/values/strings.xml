@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">Help A Paw</string>
+
+    <string name="txt_invalid_email">Invalid email.</string>
+    <string name="txt_invalid_password">The password is too short.</string>
+    <string name="txt_email_hint">Email</string>
+    <string name="txt_password_hint">Password</string>
+    <string name="txt_login">Login</string>
+    <string name="txt_no_account_yet_create_one">No account yet? Create one</string>
+    <string name="txt_create_account">Create Account</string>
+    <string name="txt_already_a_member">Already a member? Login</string>
+    <string name="txt_phone_number">Phone Number</string>
+    <string name="txt_name">Name</string>
+</resources>
