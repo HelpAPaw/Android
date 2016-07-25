@@ -1,0 +1,13 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="single">
+        <item
+            android:icon="@android:drawable/ic_menu_camera"
+            android:title="One" />
+        <item
+            android:icon="@android:drawable/ic_dialog_email"
+            android:title="Two" />
+        <item
+            android:icon="@android:drawable/ic_dialog_map"
+            android:title="Three" />
+    </group>
+</menu>
