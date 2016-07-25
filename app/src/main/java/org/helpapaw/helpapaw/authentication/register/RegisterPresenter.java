@@ -6,6 +6,7 @@ import android.util.Patterns;
 import org.helpapaw.helpapaw.base.Presenter;
 import org.helpapaw.helpapaw.data.user.UserManager;
 import org.helpapaw.helpapaw.utils.Injection;
+import org.helpapaw.helpapaw.utils.NetworkUtils;
 
 /**
  * Created by iliyan on 7/25/16
@@ -35,28 +36,38 @@ public class RegisterPresenter extends Presenter<RegisterContract.View> implemen
             return;
         }
 
+        if (TextUtils.isEmpty(name)) {
+            getView().showNameErrorMessage();
+            return;
+        }
+
         getView().hideKeyboard();
         getView().setProgressIndicator(true);
         attemptToRegister(email, password, name, phoneNumber);
     }
 
     private void attemptToRegister(String email, String password, String name, String phoneNumber) {
-        userManager.register(email, password, name, phoneNumber, new UserManager.RegistrationCallback() {
-            @Override
-            public void onRegistrationSuccess() {
-                getView().openLoginScreen();
-            }
+        if (NetworkUtils.getInstance().hasNetworkConnection()) {
+            userManager.register(email, password, name, phoneNumber, new UserManager.RegistrationCallback() {
+                @Override
+                public void onRegistrationSuccess() {
+                    getView().closeRegistrationScreen();
+                }
 
-            @Override
-            public void onRegistrationFailure(String message) {
-                getView().setProgressIndicator(false);
-                getView().showErrorMessage(message);
-            }
-        });
+                @Override
+                public void onRegistrationFailure(String message) {
+                    getView().setProgressIndicator(false);
+                    getView().showMessage(message);
+                }
+            });
+        } else {
+            getView().showMessage("No Internet connection!");
+            getView().setProgressIndicator(false);
+        }
     }
 
     @Override
     public void onLoginButtonClicked() {
-        getView().openLoginScreen();
+        getView().closeRegistrationScreen();
     }
 }

@@ -7,7 +7,7 @@ public interface LoginContract {
 
     interface View {
 
-        void showErrorMessage(String message);
+        void showMessage(String message);
 
         void showEmailErrorMessage();
 

@@ -51,7 +51,7 @@ public class RegisterFragment extends BaseFragment implements RegisterContract.V
     }
 
     @Override
-    public void showErrorMessage(String message) {
+    public void showMessage(String message) {
         Snackbar.make(binding.getRoot(), message, Snackbar.LENGTH_LONG).show();
     }
 
@@ -66,13 +66,18 @@ public class RegisterFragment extends BaseFragment implements RegisterContract.V
     }
 
     @Override
+    public void showNameErrorMessage() {
+        binding.editName.setError(getString(R.string.txt_name_required));
+    }
+
+    @Override
     public void clearErrorMessages() {
         binding.editEmail.setError(null);
         binding.editPassword.setError(null);
     }
 
     @Override
-    public void openLoginScreen() {
+    public void closeRegistrationScreen() {
         if (getActivity() != null) {
             getActivity().getSupportFragmentManager().popBackStack();
         }
