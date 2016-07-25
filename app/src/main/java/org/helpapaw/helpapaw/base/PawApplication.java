@@ -12,10 +12,17 @@ public class PawApplication extends Application {
     private static final String YOUR_SECRET_KEY = "***REMOVED***";
     private static final String YOUR_APP_VERSION = "v1";
 
+    private static PawApplication pawApplication;
+
     @Override
     public void onCreate() {
         super.onCreate();
 
+        pawApplication = this;
         Backendless.initApp(this, YOUR_APP_ID, YOUR_SECRET_KEY, YOUR_APP_VERSION);
+    }
+
+    public static PawApplication getContext(){
+        return pawApplication;
     }
 }

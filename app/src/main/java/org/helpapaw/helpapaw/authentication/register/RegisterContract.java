@@ -7,11 +7,13 @@ public interface RegisterContract {
 
     interface View {
 
-        void showErrorMessage(String message);
+        void showMessage(String message);
 
         void showEmailErrorMessage();
 
         void showPasswordErrorMessage();
+
+        void showNameErrorMessage();
 
         void clearErrorMessages();
 
@@ -19,7 +21,7 @@ public interface RegisterContract {
 
         void setProgressIndicator(boolean active);
 
-        void openLoginScreen();
+        void closeRegistrationScreen();
 
     }
 

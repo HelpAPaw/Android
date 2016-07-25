@@ -6,6 +6,7 @@ import android.util.Patterns;
 import org.helpapaw.helpapaw.base.Presenter;
 import org.helpapaw.helpapaw.data.user.UserManager;
 import org.helpapaw.helpapaw.utils.Injection;
+import org.helpapaw.helpapaw.utils.NetworkUtils;
 
 /**
  * Created by iliyan on 7/25/16
@@ -40,18 +41,23 @@ public class LoginPresenter extends Presenter<LoginContract.View> implements Log
     }
 
     private void attemptToLogin(String email, String password) {
-        userManager.login(email, password, new UserManager.LoginCallback() {
-            @Override
-            public void onLoginSuccess() {
-                getView().openSignalsMapScreen();
-            }
+        if(NetworkUtils.getInstance().hasNetworkConnection()) {
+            userManager.login(email, password, new UserManager.LoginCallback() {
+                @Override
+                public void onLoginSuccess() {
+                    getView().openSignalsMapScreen();
+                }
 
-            @Override
-            public void onLoginFailure(String message) {
-                getView().setProgressIndicator(false);
-                getView().showErrorMessage(message);
-            }
-        });
+                @Override
+                public void onLoginFailure(String message) {
+                    getView().setProgressIndicator(false);
+                    getView().showMessage(message);
+                }
+            });
+        } else {
+            getView().showMessage("No Internet connection!");
+            getView().setProgressIndicator(false);
+        }
     }
 
     @Override

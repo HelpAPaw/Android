@@ -11,4 +11,5 @@
     <string name="txt_already_a_member">Already a member? Login</string>
     <string name="txt_phone_number">Phone Number</string>
     <string name="txt_name">Name</string>
+    <string name="txt_name_required">The name is required!</string>
 </resources>
