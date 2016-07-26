@@ -14,11 +14,19 @@ import org.helpapaw.helpapaw.utils.NetworkUtils;
 public class LoginPresenter extends Presenter<LoginContract.View> implements LoginContract.UserActionsListener {
     private static final int MIN_PASS_LENGTH = 6;
 
-    UserManager userManager;
+    private UserManager userManager;
+
+    private boolean showProgressBar;
 
     public LoginPresenter(LoginContract.View view) {
         super(view);
         userManager = Injection.getUserManagerInstance();
+        showProgressBar = false;
+    }
+
+    @Override
+    public void onInitLoginScreen() {
+        setProgressIndicator(showProgressBar);
     }
 
     @Override
@@ -36,12 +44,12 @@ public class LoginPresenter extends Presenter<LoginContract.View> implements Log
         }
 
         getView().hideKeyboard();
-        getView().setProgressIndicator(true);
+        setProgressIndicator(true);
         attemptToLogin(email, password);
     }
 
     private void attemptToLogin(String email, String password) {
-        if(NetworkUtils.getInstance().hasNetworkConnection()) {
+        if (NetworkUtils.getInstance().hasNetworkConnection()) {
             userManager.login(email, password, new UserManager.LoginCallback() {
                 @Override
                 public void onLoginSuccess() {
@@ -50,14 +58,19 @@ public class LoginPresenter extends Presenter<LoginContract.View> implements Log
 
                 @Override
                 public void onLoginFailure(String message) {
-                    getView().setProgressIndicator(false);
+                    setProgressIndicator(false);
                     getView().showMessage(message);
                 }
             });
         } else {
             getView().showMessage("No Internet connection!");
-            getView().setProgressIndicator(false);
+            setProgressIndicator(false);
         }
+    }
+
+    private void setProgressIndicator(boolean active){
+        getView().setProgressIndicator(active);
+        this.showProgressBar = active;
     }
 
     @Override

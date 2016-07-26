@@ -50,6 +50,8 @@ public class LoginFragment extends BaseFragment implements LoginContract.View {
         binding.btnLogin.setOnClickListener(getBtnLoginClickListener());
         binding.txtSignup.setOnClickListener(getTxtSignUpClickListener());
 
+        actionsListener.onInitLoginScreen();
+
         return binding.getRoot();
     }
 

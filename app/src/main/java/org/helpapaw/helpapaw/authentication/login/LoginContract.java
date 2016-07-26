@@ -27,6 +27,8 @@ public interface LoginContract {
 
     interface UserActionsListener {
 
+        void onInitLoginScreen();
+
         void onLoginButtonClicked(String email, String password);
 
         void onRegisterButtonClicked();

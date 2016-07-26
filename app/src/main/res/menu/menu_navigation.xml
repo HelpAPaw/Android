@@ -10,4 +10,9 @@
             android:icon="@android:drawable/ic_dialog_map"
             android:title="Three" />
     </group>
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_item_sign_out"
+            android:title="@string/txt_sign_out" />
+    </group>
 </menu>
