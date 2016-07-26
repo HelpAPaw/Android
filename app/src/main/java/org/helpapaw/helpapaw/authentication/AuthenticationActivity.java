@@ -25,7 +25,6 @@ public class AuthenticationActivity extends AppCompatActivity {
     }
 
     private void initFragment(Fragment loginFragment) {
-        // Add the Conference fragment to the layout
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.add(R.id.grp_content_frame, loginFragment);

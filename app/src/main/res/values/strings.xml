@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Help A Paw</string>
 
+    <!-- Strings related to Login and Register screens -->
     <string name="txt_invalid_email">Invalid email.</string>
     <string name="txt_invalid_password">The password is too short.</string>
     <string name="txt_email_hint">Email</string>
@@ -12,4 +13,9 @@
     <string name="txt_phone_number">Phone Number</string>
     <string name="txt_name">Name</string>
     <string name="txt_name_required">The name is required!</string>
+
+    <!-- Strings related to Navigation Drawer -->
+    <string name="drawer_open">Open navigation drawer</string>
+    <string name="drawer_close">Close navigation drawer</string>
+    <string name="txt_sign_out">Sign Out</string>
 </resources>

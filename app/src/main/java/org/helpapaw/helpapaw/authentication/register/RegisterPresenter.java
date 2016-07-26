@@ -15,11 +15,19 @@ public class RegisterPresenter extends Presenter<RegisterContract.View> implemen
 
     private static final int MIN_PASS_LENGTH = 6;
 
-    UserManager userManager;
+    private UserManager userManager;
+
+    private boolean showProgressBar;
 
     public RegisterPresenter(RegisterContract.View view) {
         super(view);
+        showProgressBar = false;
         userManager = Injection.getUserManagerInstance();
+    }
+
+    @Override
+    public void onInitRegisterScreen() {
+        setProgressIndicator(showProgressBar);
     }
 
     @Override
@@ -42,7 +50,7 @@ public class RegisterPresenter extends Presenter<RegisterContract.View> implemen
         }
 
         getView().hideKeyboard();
-        getView().setProgressIndicator(true);
+        setProgressIndicator(true);
         attemptToRegister(email, password, name, phoneNumber);
     }
 
@@ -56,14 +64,19 @@ public class RegisterPresenter extends Presenter<RegisterContract.View> implemen
 
                 @Override
                 public void onRegistrationFailure(String message) {
-                    getView().setProgressIndicator(false);
+                    setProgressIndicator(false);
                     getView().showMessage(message);
                 }
             });
         } else {
             getView().showMessage("No Internet connection!");
-            getView().setProgressIndicator(false);
+            setProgressIndicator(false);
         }
+    }
+
+    private void setProgressIndicator(boolean active){
+        getView().setProgressIndicator(active);
+        this.showProgressBar = active;
     }
 
     @Override

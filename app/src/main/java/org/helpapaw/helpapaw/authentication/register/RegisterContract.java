@@ -27,6 +27,8 @@ public interface RegisterContract {
 
     interface UserActionsListener {
 
+        void onInitRegisterScreen();
+
         void onRegisterButtonClicked(String email, String password, String name, String phoneNumber);
 
         void onLoginButtonClicked();

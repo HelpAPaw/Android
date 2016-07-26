@@ -47,6 +47,8 @@ public class RegisterFragment extends BaseFragment implements RegisterContract.V
         binding.btnSignup.setOnClickListener(getBtnSignUpListener());
         binding.txtLogin.setOnClickListener(getTxtLoginClickListener());
 
+        actionsListener.onInitRegisterScreen();
+
         return binding.getRoot();
     }
 
