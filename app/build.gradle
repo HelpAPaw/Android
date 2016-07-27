@@ -31,5 +31,5 @@ dependencies {
     compile 'com.android.support:design:23.4.0'
     compile 'com.backendless:backendless:3.0.20.1'
     compile 'com.github.bumptech.glide:glide:3.7.0'
-
+    compile 'com.google.android.gms:play-services-maps:9.2.1'
 }

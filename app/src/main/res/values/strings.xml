@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">Help A Paw</string>
+    <string name="google_android_map_api_key">***REMOVED***</string>
 
     <!-- Strings related to Login and Register screens -->
     <string name="txt_invalid_email">Invalid email.</string>
@@ -8,14 +9,22 @@
     <string name="txt_password_hint">Password</string>
     <string name="txt_login">Login</string>
     <string name="txt_no_account_yet_create_one">No account yet? Create one</string>
-    <string name="txt_create_account">Create Account</string>
+    <string name="txt_register">Register</string>
     <string name="txt_already_a_member">Already a member? Login</string>
     <string name="txt_phone_number">Phone Number</string>
     <string name="txt_name">Name</string>
     <string name="txt_name_required">The name is required!</string>
+    <string name="txt_why">Why?</string>
 
     <!-- Strings related to Navigation Drawer -->
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>
     <string name="txt_sign_out">Sign Out</string>
+
+    <!-- Strings related to Signals Map screen -->
+    <string name="txt_no_internet">No Internet connection!</string>
+    <string name="txt_signals_map">Signals Map</string>
+    <string name="txt_why_want_phone">Why do you want my phone number?</string>
+    <string name="txt_why_phone_description">Entering your phone number is not required for registration. However, we strongly encourage you to fill it so you can be quickly reached if a volunteer needs information about a signal that you submitted.</string>
+    <string name="txt_i_see">I see</string>
 </resources>

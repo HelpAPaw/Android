@@ -1,6 +1,7 @@
 package org.helpapaw.helpapaw.authentication.register;
 
 
+import android.app.DialogFragment;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
@@ -46,6 +47,7 @@ public class RegisterFragment extends BaseFragment implements RegisterContract.V
 
         binding.btnSignup.setOnClickListener(getBtnSignUpListener());
         binding.txtLogin.setOnClickListener(getTxtLoginClickListener());
+        binding.txtWhyPhone.setOnClickListener(getTxtWhyPhoneClickListener());
 
         actionsListener.onInitRegisterScreen();
 
@@ -70,6 +72,12 @@ public class RegisterFragment extends BaseFragment implements RegisterContract.V
     @Override
     public void showNameErrorMessage() {
         binding.editName.setError(getString(R.string.txt_name_required));
+    }
+
+    @Override
+    public void showWhyPhoneDialog() {
+        DialogFragment whyPhoneDialogFragment = WhyPhoneDialogFragment.newInstance();
+        whyPhoneDialogFragment.show(getActivity().getFragmentManager(), whyPhoneDialogFragment.getTag());
     }
 
     @Override
@@ -122,6 +130,15 @@ public class RegisterFragment extends BaseFragment implements RegisterContract.V
                 String phoneNumber = binding.editPhone.getText().toString();
 
                 actionsListener.onRegisterButtonClicked(email, password, name, phoneNumber);
+            }
+        };
+    }
+
+    public View.OnClickListener getTxtWhyPhoneClickListener() {
+        return new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                actionsListener.onWhyPhoneButtonClicked();
             }
         };
     }

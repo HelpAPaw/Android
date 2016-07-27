@@ -11,8 +11,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:paddingLeft="24dp"
-            android:paddingRight="24dp"
-            android:paddingTop="56dp">
+            android:paddingRight="24dp">
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
@@ -44,11 +43,12 @@
 
             <android.support.v7.widget.AppCompatButton
                 android:id="@+id/btn_login"
+                style="@style/Widget.AppCompat.Button.Colored"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="24dp"
                 android:layout_marginTop="24dp"
-                android:padding="12dp"
+                android:padding="18dp"
                 android:text="@string/txt_login" />
 
             <TextView
@@ -65,10 +65,10 @@
         <ProgressBar
             android:id="@+id/progress_login"
             style="?android:attr/progressBarStyleLargeInverse"
-            android:layout_marginTop="200dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
+            android:layout_marginTop="20dp"
             android:visibility="gone" />
     </FrameLayout>
 </layout>
