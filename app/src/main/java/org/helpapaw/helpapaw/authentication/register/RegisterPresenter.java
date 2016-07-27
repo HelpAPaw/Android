@@ -83,4 +83,9 @@ public class RegisterPresenter extends Presenter<RegisterContract.View> implemen
     public void onLoginButtonClicked() {
         getView().closeRegistrationScreen();
     }
+
+    @Override
+    public void onWhyPhoneButtonClicked() {
+        getView().showWhyPhoneDialog();
+    }
 }

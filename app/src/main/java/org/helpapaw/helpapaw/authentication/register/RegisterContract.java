@@ -15,6 +15,8 @@ public interface RegisterContract {
 
         void showNameErrorMessage();
 
+        void showWhyPhoneDialog();
+
         void clearErrorMessages();
 
         void hideKeyboard();
@@ -32,6 +34,8 @@ public interface RegisterContract {
         void onRegisterButtonClicked(String email, String password, String name, String phoneNumber);
 
         void onLoginButtonClicked();
+
+        void onWhyPhoneButtonClicked();
 
     }
 }

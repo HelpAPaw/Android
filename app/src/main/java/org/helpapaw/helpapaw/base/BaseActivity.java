@@ -6,6 +6,7 @@ import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.graphics.drawable.VectorDrawableCompat;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.view.GravityCompat;
@@ -19,6 +20,7 @@ import org.helpapaw.helpapaw.authentication.AuthenticationActivity;
 import org.helpapaw.helpapaw.data.user.UserManager;
 import org.helpapaw.helpapaw.databinding.ActivityBaseBinding;
 import org.helpapaw.helpapaw.utils.Injection;
+import org.helpapaw.helpapaw.utils.NetworkUtils;
 
 /**
  * Created by iliyan on 6/22/16
@@ -45,6 +47,8 @@ public abstract class BaseActivity extends AppCompatActivity {
             }
             supportActionBar.setHomeAsUpIndicator(indicator);
             supportActionBar.setDisplayHomeAsUpEnabled(true);
+            supportActionBar.setDisplayShowTitleEnabled(false);
+            binding.toolbarTitle.setText(getToolbarTitle());
         }
 
         drawerToggle = setupDrawerToggle();
@@ -64,21 +68,8 @@ public abstract class BaseActivity extends AppCompatActivity {
                 // TODO: handle navigation
                 switch (menuItem.getItemId()) {
                     case R.id.nav_item_sign_out:
-                        userManager.logout(new UserManager.LogoutCallback() {
-                            @Override
-                            public void onLogoutSuccess() {
-                                Intent intent = new Intent(BaseActivity.this, AuthenticationActivity.class);
-                                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                startActivity(intent);
-                            }
-
-                            @Override
-                            public void onLogoutFailure(String message) {
-                                //TODO: show some error message
-                            }
-                        });
+                        signOut();
                         break;
-
                 }
 
                 // Closing drawer on item click
@@ -86,6 +77,25 @@ public abstract class BaseActivity extends AppCompatActivity {
                 return true;
             }
         };
+    }
+
+    private void signOut() {
+        if (NetworkUtils.getInstance().hasNetworkConnection()) {
+            userManager.logout(new UserManager.LogoutCallback() {
+                @Override
+                public void onLogoutSuccess() {
+                    Intent intent = new Intent(BaseActivity.this, AuthenticationActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
+                }
+
+                @Override
+                public void onLogoutFailure(String message) {
+                }
+            });
+        } else {
+            Snackbar.make(binding.getRoot().findViewById(R.id.fab_add_signal), R.string.txt_no_internet, Snackbar.LENGTH_LONG).show();
+        }
     }
 
     private ActionBarDrawerToggle setupDrawerToggle() {
@@ -126,6 +136,8 @@ public abstract class BaseActivity extends AppCompatActivity {
             super.onBackPressed();
         }
     }
+
+    protected abstract String getToolbarTitle();
 
     protected abstract int getLayoutId();
 
