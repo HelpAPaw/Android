@@ -1,7 +1,7 @@
 package org.helpapaw.helpapaw.signalsmap;
 
 import org.helpapaw.helpapaw.base.Presenter;
-import org.helpapaw.helpapaw.data.models.SignalPoint;
+import org.helpapaw.helpapaw.data.models.Signal;
 import org.helpapaw.helpapaw.data.repositories.SignalRepository;
 import org.helpapaw.helpapaw.utils.Injection;
 
@@ -12,6 +12,9 @@ import java.util.List;
  */
 public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> implements SignalsMapContract.UserActionsListener {
 
+    private static final int DEFAULT_MAP_ZOOM = 13;
+    private static final int DEFAULT_SEARCH_RADIUS = 50;
+
     private SignalRepository signalRepository;
 
     public SignalsMapPresenter(SignalsMapContract.View view) {
@@ -21,19 +24,20 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
 
     @Override
     public void onLocationChanged(double latitude, double longitude) {
-        getView().updateMapCameraPosition(latitude, longitude, 13);
+        getView().updateMapCameraPosition(latitude, longitude, DEFAULT_MAP_ZOOM);
 
-        signalRepository.getAllSignals(latitude, longitude, 50, new SignalRepository.LoadSignalsCallback() {
-            @Override
-            public void onSignalsLoaded(List<SignalPoint> signalPoints) {
-                getView().displaySignalPoints(signalPoints);
-            }
+        signalRepository.getAllSignals(latitude, longitude, DEFAULT_SEARCH_RADIUS,
+                new SignalRepository.LoadSignalsCallback() {
+                    @Override
+                    public void onSignalsLoaded(List<Signal> signals) {
+                        getView().displaySignals(signals);
+                    }
 
-            @Override
-            public void onSignalsFailure(String message) {
-                getView().showMessage(message);
-            }
-        });
+                    @Override
+                    public void onSignalsFailure(String message) {
+                        getView().showMessage(message);
+                    }
+                });
     }
 
     @Override

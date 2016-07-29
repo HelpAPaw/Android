@@ -1,6 +1,6 @@
 package org.helpapaw.helpapaw.signalsmap;
 
-import org.helpapaw.helpapaw.data.models.SignalPoint;
+import org.helpapaw.helpapaw.data.models.Signal;
 
 import java.util.List;
 
@@ -13,7 +13,7 @@ public interface SignalsMapContract {
 
         void showMessage(String message);
 
-        void displaySignalPoints(List<SignalPoint> signalPoints);
+        void displaySignals(List<Signal> signals);
 
         void updateMapCameraPosition(double latitude, double longitude, int zoom);
 
