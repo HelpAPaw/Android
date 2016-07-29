@@ -27,4 +27,5 @@
     <string name="txt_why_want_phone">Why do you want my phone number?</string>
     <string name="txt_why_phone_description">Entering your phone number is not required for registration. However, we strongly encourage you to fill it so you can be quickly reached if a volunteer needs information about a signal that you submitted.</string>
     <string name="txt_i_see">I see</string>
+    <string name="txt_location_permission_not_granted">Location permissions not granted!</string>
 </resources>

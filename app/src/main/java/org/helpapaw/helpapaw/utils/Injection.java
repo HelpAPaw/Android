@@ -1,5 +1,7 @@
 package org.helpapaw.helpapaw.utils;
 
+import org.helpapaw.helpapaw.data.repositories.BackendlessSignalRepository;
+import org.helpapaw.helpapaw.data.repositories.SignalRepository;
 import org.helpapaw.helpapaw.data.user.BackendlessUserManager;
 import org.helpapaw.helpapaw.data.user.UserManager;
 
@@ -8,6 +10,7 @@ import org.helpapaw.helpapaw.data.user.UserManager;
  */
 public class Injection {
     private static UserManager userManagerInstance;
+    private static SignalRepository signalRepositoryInstance;
 
     public synchronized static UserManager getUserManagerInstance() {
         if (userManagerInstance == null) {
@@ -16,4 +19,10 @@ public class Injection {
         return userManagerInstance;
     }
 
+    public synchronized static SignalRepository getSignalRepositoryInstance() {
+        if (signalRepositoryInstance == null) {
+            signalRepositoryInstance = new BackendlessSignalRepository();
+        }
+        return signalRepositoryInstance;
+    }
 }
