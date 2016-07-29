@@ -34,7 +34,7 @@ import org.helpapaw.helpapaw.R;
 import org.helpapaw.helpapaw.base.BaseFragment;
 import org.helpapaw.helpapaw.base.Presenter;
 import org.helpapaw.helpapaw.base.PresenterManager;
-import org.helpapaw.helpapaw.data.models.SignalPoint;
+import org.helpapaw.helpapaw.data.models.Signal;
 import org.helpapaw.helpapaw.databinding.FragmentSignalsMapBinding;
 
 import java.util.List;
@@ -111,8 +111,8 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
         // Create the LocationRequest object
         locationRequest = LocationRequest.create()
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-                .setInterval(10 * 1000)        // 10 seconds, in milliseconds
-                .setFastestInterval(1000); // 1 second, in milliseconds
+                .setInterval(30 * 1000)        // 30 seconds, in milliseconds
+                .setFastestInterval(10 * 1000); // 10 seconds, in milliseconds
     }
 
     @Override
@@ -157,15 +157,15 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
     }
 
     @Override
-    public void displaySignalPoints(List<SignalPoint> signalPoints) {
-        SignalPoint signalPoint;
-        for (int i = 0; i < signalPoints.size(); i++) {
-            signalPoint = signalPoints.get(i);
+    public void displaySignals(List<Signal> signals) {
+        Signal signal;
+        for (int i = 0; i < signals.size(); i++) {
+            signal = signals.get(i);
             MarkerOptions markerOptions = new MarkerOptions()
-                    .position(new LatLng(signalPoint.getLatitude(), signalPoint.getLongitude()))
-                    .title(signalPoint.getTitle());
+                    .position(new LatLng(signal.getLatitude(), signal.getLongitude()))
+                    .title(signal.getTitle());
 
-            markerOptions.icon(BitmapDescriptorFactory.fromResource(getDrawableFromStatus(signalPoint.getStatus())));
+            markerOptions.icon(BitmapDescriptorFactory.fromResource(getDrawableFromStatus(signal.getStatus())));
 
             signalsGoogleMap.addMarker(markerOptions);
         }
@@ -246,11 +246,6 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
         actionsListener.onLocationChanged(currentLatitude, currentLongitude);
     }
 
-    @Override
-    protected Presenter getPresenter() {
-        return signalsMapPresenter;
-    }
-
     public View.OnClickListener getFabAddSignalClickListener() {
         return new View.OnClickListener() {
             @Override
@@ -264,5 +259,10 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
     public void showAddSignalView() {
         //TODO:
         Toast.makeText(getContext(), "Fab clicked", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    protected Presenter getPresenter() {
+        return signalsMapPresenter;
     }
 }
