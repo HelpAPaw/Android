@@ -1,6 +1,7 @@
 package org.helpapaw.helpapaw.sendsignal;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.support.v7.widget.CardView;
 import android.util.AttributeSet;
@@ -60,6 +61,14 @@ public class SendSignalView extends CardView {
 
     public void setSignalPhoto(Drawable drawable){
         imgSignalPhoto.setImageDrawable(drawable);
+    }
+
+    public void setSignalPhoto(Bitmap bitmap){
+        imgSignalPhoto.setImageBitmap(bitmap);
+    }
+
+    public ImageView getSignalImageView(){
+        return imgSignalPhoto;
     }
 
     public String getSignalDescription(){

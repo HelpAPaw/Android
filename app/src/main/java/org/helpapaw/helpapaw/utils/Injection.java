@@ -1,6 +1,8 @@
 package org.helpapaw.helpapaw.utils;
 
+import org.helpapaw.helpapaw.data.repositories.BackendlessPhotoRepository;
 import org.helpapaw.helpapaw.data.repositories.BackendlessSignalRepository;
+import org.helpapaw.helpapaw.data.repositories.PhotoRepository;
 import org.helpapaw.helpapaw.data.repositories.SignalRepository;
 import org.helpapaw.helpapaw.data.user.BackendlessUserManager;
 import org.helpapaw.helpapaw.data.user.UserManager;
@@ -12,6 +14,7 @@ public class Injection {
     private static ImageLoader imageLoader;
     private static UserManager userManagerInstance;
     private static SignalRepository signalRepositoryInstance;
+    private static PhotoRepository photoRepository;
 
     public synchronized static ImageLoader getImageLoader() {
         if (imageLoader == null) {
@@ -32,5 +35,12 @@ public class Injection {
             signalRepositoryInstance = new BackendlessSignalRepository();
         }
         return signalRepositoryInstance;
+    }
+
+    public synchronized static PhotoRepository getPhotoRepositoryInstance() {
+        if (photoRepository == null) {
+            photoRepository = new BackendlessPhotoRepository();
+        }
+        return photoRepository;
     }
 }
