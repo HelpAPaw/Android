@@ -40,12 +40,12 @@ public class LoginFragment extends BaseFragment implements LoginContract.View {
 
         if (savedInstanceState == null || PresenterManager.getInstance().getPresenter(getScreenId()) == null) {
             loginPresenter = new LoginPresenter(this);
-            actionsListener = loginPresenter;
         } else {
             loginPresenter = PresenterManager.getInstance().getPresenter(getScreenId());
             loginPresenter.setView(this);
-            actionsListener = loginPresenter;
         }
+
+        actionsListener = loginPresenter;
 
         binding.btnLogin.setOnClickListener(getBtnLoginClickListener());
         binding.txtSignup.setOnClickListener(getTxtSignUpClickListener());

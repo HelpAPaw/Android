@@ -2,6 +2,7 @@ package org.helpapaw.helpapaw.signalsmap;
 
 import org.helpapaw.helpapaw.data.models.Signal;
 
+import java.io.File;
 import java.util.List;
 
 /**
@@ -15,9 +16,19 @@ public interface SignalsMapContract {
 
         void displaySignals(List<Signal> signals);
 
-        void updateMapCameraPosition(double latitude, double longitude, int zoom);
+        void updateMapCameraPosition(double latitude, double longitude, float zoom);
 
-        void showAddSignalView();
+        void toggleAddSignalView();
+
+        void hideKeyboard();
+
+        void showSendPhotoBottomSheet();
+
+        void openCamera();
+
+        void openGallery();
+
+        void openLoginScreen();
     }
 
     interface UserActionsListener {
@@ -26,5 +37,12 @@ public interface SignalsMapContract {
 
         void onAddSignalClicked();
 
+        void onSendSignalClicked(String description, File photo);
+
+        void onSignalPhotoClicked();
+
+        void onCameraOptionSelected();
+
+        void onGalleryOptionSelected();
     }
 }

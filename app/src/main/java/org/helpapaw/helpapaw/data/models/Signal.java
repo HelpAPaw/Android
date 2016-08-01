@@ -4,6 +4,7 @@ package org.helpapaw.helpapaw.data.models;
  * Created by iliyan on 7/28/16
  */
 public class Signal {
+
     private String id;
     private String title;
     private String dateSubmitted;
