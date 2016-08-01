@@ -2,7 +2,6 @@ package org.helpapaw.helpapaw.signalsmap;
 
 import org.helpapaw.helpapaw.data.models.Signal;
 
-import java.io.File;
 import java.util.List;
 
 /**
@@ -37,12 +36,14 @@ public interface SignalsMapContract {
 
         void onAddSignalClicked();
 
-        void onSendSignalClicked(String description, File photo);
+        void onSendSignalClicked(String description);
 
         void onSignalPhotoClicked();
 
         void onCameraOptionSelected();
 
         void onGalleryOptionSelected();
+
+        void onSignalPhotoSelected(String photoUri);
     }
 }

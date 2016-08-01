@@ -6,8 +6,11 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.databinding.DataBindingUtil;
+import android.graphics.Bitmap;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -43,7 +46,11 @@ import org.helpapaw.helpapaw.databinding.FragmentSignalsMapBinding;
 import org.helpapaw.helpapaw.sendsignal.SendPhotoBottomSheet;
 
 import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class SignalsMapFragment extends BaseFragment implements SignalsMapContract.View, GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener, LocationListener {
@@ -323,10 +330,43 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
         sendPhotoBottomSheet.show(getFragmentManager(), SendPhotoBottomSheet.TAG);
     }
 
+    String imageFileName;
+
     @Override
     public void openCamera() {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        startActivityForResult(intent, REQUEST_CAMERA);
+        if (intent.resolveActivity(getContext().getPackageManager()) != null) {
+            String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
+            imageFileName = "JPEG_" + timeStamp + ".jpg";
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, getPhotoFileUri(imageFileName));
+            startActivityForResult(intent, REQUEST_CAMERA);
+        }
+    }
+
+    public Uri getPhotoFileUri(String fileName) {
+        // Only continue if the SD Card is mounted
+        if (isExternalStorageAvailable()) {
+            // Get safe storage directory for photos
+            // Use `getExternalFilesDir` on Context to access package-specific directories.
+            // This way, we don't need to request external read/write runtime permissions.
+            File mediaStorageDir = new File(
+                    getContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES), TAG);
+
+            // Create the storage directory if it does not exist
+            if (!mediaStorageDir.exists() && !mediaStorageDir.mkdirs()) {
+                Log.d(TAG, "failed to create directory");
+            }
+
+            // Return the file target for the photo based on filename
+            return Uri.fromFile(new File(mediaStorageDir.getPath() + File.separator + fileName));
+        }
+        return null;
+    }
+
+    // Returns true if external storage for photos is available
+    private boolean isExternalStorageAvailable() {
+        String state = Environment.getExternalStorageState();
+        return state.equals(Environment.MEDIA_MOUNTED);
     }
 
     @Override
@@ -334,7 +374,9 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
         Intent intent = new Intent(
                 Intent.ACTION_PICK,
                 MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        startActivityForResult(intent, REQUEST_GALLERY);
+        if (intent.resolveActivity(getContext().getPackageManager()) != null) {
+            startActivityForResult(intent, REQUEST_GALLERY);
+        }
     }
 
     @Override
@@ -360,6 +402,34 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
         }
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CAMERA) {
+            if (resultCode == Activity.RESULT_OK) {
+                Uri takenPhotoUri = getPhotoFileUri(imageFileName);
+                loadImageByUri(takenPhotoUri);
+                actionsListener.onSignalPhotoSelected(takenPhotoUri.toString());
+            }
+        }
+
+        if (requestCode == REQUEST_GALLERY && resultCode == Activity.RESULT_OK && data != null && data.getData() != null) {
+            Uri photoUri = data.getData();
+            loadImageByUri(photoUri);
+            actionsListener.onSignalPhotoSelected(photoUri.toString());
+        }
+    }
+
+    private void loadImageByUri(Uri photoUri) {
+        Bitmap selectedImage = null;
+        try {
+            selectedImage = MediaStore.Images.Media.getBitmap(getContext().getContentResolver(), photoUri);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        binding.viewSendSignal.setSignalPhoto(Bitmap.createScaledBitmap(selectedImage, 120, 120, false));
+    }
+
     /* OnClick Listeners */
 
     public View.OnClickListener getOnSignalSendClickListener() {
@@ -367,8 +437,7 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
             @Override
             public void onClick(View v) {
                 String description = binding.viewSendSignal.getSignalDescription();
-                File photo = null;
-                actionsListener.onSendSignalClicked(description, photo);
+                actionsListener.onSendSignalClicked(description);
             }
         };
     }

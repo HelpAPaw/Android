@@ -20,7 +20,7 @@
         android:layout_weight="1"
         android:background="@drawable/rounded_border"
         android:hint="@string/txt_signal_description"
-        android:maxLines="1"
+        android:singleLine="true"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
         android:textColorHint="@color/gray" />
