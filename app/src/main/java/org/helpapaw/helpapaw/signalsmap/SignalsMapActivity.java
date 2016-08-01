@@ -21,7 +21,7 @@ public class SignalsMapActivity extends BaseActivity {
 
     @Override
     protected String getToolbarTitle() {
-        return getString(R.string.txt_signals_map);
+        return getString(R.string.app_name);
     }
 
     private void initFragment(Fragment signalsMapFragment) {

@@ -3,10 +3,12 @@ package org.helpapaw.helpapaw.signalsmap;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.databinding.DataBindingUtil;
 import android.location.Location;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
@@ -15,6 +17,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -31,24 +34,28 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import org.helpapaw.helpapaw.R;
+import org.helpapaw.helpapaw.authentication.AuthenticationActivity;
 import org.helpapaw.helpapaw.base.BaseFragment;
 import org.helpapaw.helpapaw.base.Presenter;
 import org.helpapaw.helpapaw.base.PresenterManager;
 import org.helpapaw.helpapaw.data.models.Signal;
 import org.helpapaw.helpapaw.databinding.FragmentSignalsMapBinding;
+import org.helpapaw.helpapaw.sendsignal.SendPhotoBottomSheet;
 
+import java.io.File;
 import java.util.List;
 
 public class SignalsMapFragment extends BaseFragment implements SignalsMapContract.View, GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener,
-        LocationListener {
+        GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
     public static final String TAG = SignalsMapFragment.class.getSimpleName();
+
     private static final int LOCATION_PERMISSIONS_REQUEST = 1;
+    private static final int REQUEST_CAMERA = 2;
+    private static final int REQUEST_GALLERY = 3;
 
     private GoogleApiClient googleApiClient;
     private LocationRequest locationRequest;
-
     private GoogleMap signalsGoogleMap;
 
     private SignalsMapPresenter signalsMapPresenter;
@@ -78,41 +85,18 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
 
         if (savedInstanceState == null || PresenterManager.getInstance().getPresenter(getScreenId()) == null) {
             signalsMapPresenter = new SignalsMapPresenter(this);
-            actionsListener = signalsMapPresenter;
         } else {
             signalsMapPresenter = PresenterManager.getInstance().getPresenter(getScreenId());
             signalsMapPresenter.setView(this);
-            actionsListener = signalsMapPresenter;
         }
+        actionsListener = signalsMapPresenter;
 
         initLocationApi();
 
         binding.fabAddSignal.setOnClickListener(getFabAddSignalClickListener());
-
+        binding.viewSendSignal.setOnSignalSendClickListener(getOnSignalSendClickListener());
+        binding.viewSendSignal.setOnSignalPhotoClickListener(getOnSignalPhotoClickListener());
         return binding.getRoot();
-    }
-
-    private OnMapReadyCallback getMapReadyCallback() {
-        return new OnMapReadyCallback() {
-            @Override
-            public void onMapReady(GoogleMap googleMap) {
-                signalsGoogleMap = googleMap;
-            }
-        };
-    }
-
-    private void initLocationApi() {
-        googleApiClient = new GoogleApiClient.Builder(getContext())
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(LocationServices.API)
-                .build();
-
-        // Create the LocationRequest object
-        locationRequest = LocationRequest.create()
-                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-                .setInterval(30 * 1000)        // 30 seconds, in milliseconds
-                .setFastestInterval(10 * 1000); // 10 seconds, in milliseconds
     }
 
     @Override
@@ -151,9 +135,25 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
         binding.mapSignals.onLowMemory();
     }
 
+    /* Google Maps */
+
+    private OnMapReadyCallback getMapReadyCallback() {
+        return new OnMapReadyCallback() {
+            @Override
+            public void onMapReady(GoogleMap googleMap) {
+                signalsGoogleMap = googleMap;
+            }
+        };
+    }
+
     @Override
-    public void showMessage(String message) {
-        Snackbar.make(binding.getRoot(), message, Snackbar.LENGTH_LONG).show();
+    public void updateMapCameraPosition(double latitude, double longitude, float zoom) {
+        CameraUpdate center =
+                CameraUpdateFactory.newLatLng(new LatLng(latitude, longitude));
+        CameraUpdate cameraZoom = CameraUpdateFactory.zoomTo(zoom);
+
+        signalsGoogleMap.moveCamera(center);
+        signalsGoogleMap.animateCamera(cameraZoom);
     }
 
     @Override
@@ -184,14 +184,20 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
         }
     }
 
-    @Override
-    public void updateMapCameraPosition(double latitude, double longitude, int zoom) {
-        CameraUpdate center =
-                CameraUpdateFactory.newLatLng(new LatLng(latitude, longitude));
-        CameraUpdate cameraZoom = CameraUpdateFactory.zoomTo(zoom);
+    /* Location API */
 
-        signalsGoogleMap.moveCamera(center);
-        signalsGoogleMap.animateCamera(cameraZoom);
+    private void initLocationApi() {
+        googleApiClient = new GoogleApiClient.Builder(getContext())
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .build();
+
+        // Create the LocationRequest object
+        locationRequest = LocationRequest.create()
+                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+                .setInterval(30 * 1000)        // 30 seconds, in milliseconds
+                .setFastestInterval(10 * 1000); // 10 seconds, in milliseconds
     }
 
     @Override
@@ -206,17 +212,6 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
                 LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, this);
             } else {
                 handleNewLocation(location);
-            }
-        }
-    }
-
-    public static void showPermissionDialog(Activity activity, String permission, int permissionCode) {
-        if (ContextCompat.checkSelfPermission(activity, permission) != PackageManager.PERMISSION_GRANTED) {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(activity, permission)) {
-                Toast.makeText(activity, R.string.txt_location_permission_not_granted, Toast.LENGTH_LONG).show();
-            } else {
-                ActivityCompat.requestPermissions(activity, new String[]{permission},
-                        permissionCode);
             }
         }
     }
@@ -246,6 +241,12 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
         actionsListener.onLocationChanged(currentLatitude, currentLongitude);
     }
 
+
+    @Override
+    public void showMessage(String message) {
+        Snackbar.make(binding.getRoot(), message, Snackbar.LENGTH_LONG).show();
+    }
+
     public View.OnClickListener getFabAddSignalClickListener() {
         return new View.OnClickListener() {
             @Override
@@ -256,13 +257,128 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
     }
 
     @Override
-    public void showAddSignalView() {
-        //TODO:
-        Toast.makeText(getContext(), "Fab clicked", Toast.LENGTH_SHORT).show();
+    public void toggleAddSignalView() {
+        if (binding.viewSendSignal.getVisibility() == View.INVISIBLE) {
+            showAddSignalView();
+            if (!(ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                    && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)) {
+                signalsGoogleMap.setMyLocationEnabled(true);
+            }
+
+            binding.fabAddSignal.setImageResource(android.R.drawable.ic_menu_close_clear_cancel);
+        } else {
+            if (!(ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                    && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)) {
+                signalsGoogleMap.setMyLocationEnabled(false);
+            }
+            hideAddSignalView();
+            binding.fabAddSignal.setImageResource(android.R.drawable.ic_menu_add);
+        }
+    }
+
+    private void showAddSignalView() {
+        binding.viewSendSignal.setVisibility(View.VISIBLE);
+        binding.viewSendSignal.setAlpha(0.0f);
+
+        binding.viewSendSignal
+                .animate()
+                .setInterpolator(new AccelerateDecelerateInterpolator())
+                .setDuration(300)
+                .translationY((binding.viewSendSignal.getHeight() * 1.2f))
+                .alpha(1.0f);
+    }
+
+    private void hideAddSignalView() {
+
+        binding.viewSendSignal
+                .animate()
+                .setInterpolator(new AccelerateDecelerateInterpolator())
+                .setDuration(300)
+                .translationY(-(binding.viewSendSignal.getHeight() * 1.2f)).withEndAction(new Runnable() {
+            @Override
+            public void run() {
+                binding.viewSendSignal.setVisibility(View.INVISIBLE);
+            }
+        });
+    }
+
+    @Override
+    public void hideKeyboard() {
+        super.hideKeyboard();
+    }
+
+    @Override
+    public void showSendPhotoBottomSheet() {
+        SendPhotoBottomSheet sendPhotoBottomSheet = new SendPhotoBottomSheet();
+        sendPhotoBottomSheet.setListener(new SendPhotoBottomSheet.PhotoTypeSelectListener() {
+            @Override
+            public void onPhotoTypeSelected(@SendPhotoBottomSheet.PhotoType int photoType) {
+                if (photoType == SendPhotoBottomSheet.PhotoType.CAMERA) {
+                    actionsListener.onCameraOptionSelected();
+                } else if (photoType == SendPhotoBottomSheet.PhotoType.GALLERY) {
+                    actionsListener.onGalleryOptionSelected();
+                }
+            }
+        });
+        sendPhotoBottomSheet.show(getFragmentManager(), SendPhotoBottomSheet.TAG);
+    }
+
+    @Override
+    public void openCamera() {
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        startActivityForResult(intent, REQUEST_CAMERA);
+    }
+
+    @Override
+    public void openGallery() {
+        Intent intent = new Intent(
+                Intent.ACTION_PICK,
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        startActivityForResult(intent, REQUEST_GALLERY);
+    }
+
+    @Override
+    public void openLoginScreen() {
+        Intent intent = new Intent(getContext(), AuthenticationActivity.class);
+        startActivity(intent);
     }
 
     @Override
     protected Presenter getPresenter() {
         return signalsMapPresenter;
+    }
+
+
+    public static void showPermissionDialog(Activity activity, String permission, int permissionCode) {
+        if (ContextCompat.checkSelfPermission(activity, permission) != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(activity, permission)) {
+                Toast.makeText(activity, R.string.txt_location_permission_not_granted, Toast.LENGTH_LONG).show();
+            } else {
+                ActivityCompat.requestPermissions(activity, new String[]{permission},
+                        permissionCode);
+            }
+        }
+    }
+
+    /* OnClick Listeners */
+
+    public View.OnClickListener getOnSignalSendClickListener() {
+        return new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String description = binding.viewSendSignal.getSignalDescription();
+                File photo = null;
+                actionsListener.onSendSignalClicked(description, photo);
+            }
+        };
+    }
+
+    public View.OnClickListener getOnSignalPhotoClickListener() {
+        return new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                actionsListener.onSignalPhotoClicked();
+            }
+        };
     }
 }

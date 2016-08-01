@@ -10,7 +10,19 @@
         <com.google.android.gms.maps.MapView
             android:id="@+id/map_signals"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:layout_gravity="center_horizontal|top" />
+
+        <org.helpapaw.helpapaw.sendsignal.SendSignalView
+            android:id="@+id/view_send_signal"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="-50dp"
+            app:cardElevation="4dp"
+            app:cardCornerRadius="8dp"
+            android:visibility="invisible" />
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/fab_add_signal"

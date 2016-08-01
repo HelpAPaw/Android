@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="bottom"
+    android:orientation="vertical"
+    app:elevation="4dp">
+
+    <View
+        android:id="@+id/fakeShadow"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@drawable/shadow" />
+
+    <LinearLayout
+        android:id="@+id/grp_camera_option"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:background="?android:attr/selectableItemBackground"
+        android:clickable="true">
+
+        <android.support.v7.widget.AppCompatImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginEnd="@dimen/bottom_sheet_horizontal_margin"
+            android:layout_marginLeft="@dimen/bottom_sheet_horizontal_margin"
+            android:layout_marginRight="@dimen/bottom_sheet_horizontal_margin"
+            android:layout_marginStart="@dimen/bottom_sheet_horizontal_margin"
+            android:tint="@android:color/black"
+            app:srcCompat="@drawable/ic_camera" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/bottom_sheet_horizontal_margin"
+            android:layout_marginStart="@dimen/bottom_sheet_horizontal_margin"
+            android:layout_gravity="center_vertical"
+            android:text="Take a Photo"
+            android:textColor="#DE000000" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/grp_gallery_option"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:background="?android:attr/selectableItemBackground"
+        android:clickable="true">
+
+        <android.support.v7.widget.AppCompatImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginEnd="@dimen/bottom_sheet_horizontal_margin"
+            android:layout_marginLeft="@dimen/bottom_sheet_horizontal_margin"
+            android:layout_marginRight="@dimen/bottom_sheet_horizontal_margin"
+            android:layout_marginStart="@dimen/bottom_sheet_horizontal_margin"
+            android:tint="@android:color/black"
+            app:srcCompat="@drawable/ic_camera" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/bottom_sheet_horizontal_margin"
+            android:layout_marginStart="@dimen/bottom_sheet_horizontal_margin"
+            android:layout_gravity="center_vertical"
+            android:text="Choose from Gallery"
+            android:textColor="#DE000000" />
+    </LinearLayout>
+</LinearLayout>

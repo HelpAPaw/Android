@@ -9,15 +9,15 @@ import org.helpapaw.helpapaw.data.user.UserManager;
  * Created by iliyan on 7/25/16
  */
 public class Injection {
-    private static ImageLoader glideImageLoader;
+    private static ImageLoader imageLoader;
     private static UserManager userManagerInstance;
     private static SignalRepository signalRepositoryInstance;
 
     public synchronized static ImageLoader getImageLoader() {
-        if (glideImageLoader == null) {
-            glideImageLoader = new GlideImageLoader();
+        if (imageLoader == null) {
+            imageLoader = new GlideImageLoader();
         }
-        return glideImageLoader;
+        return imageLoader;
     }
 
     public synchronized static UserManager getUserManagerInstance() {
