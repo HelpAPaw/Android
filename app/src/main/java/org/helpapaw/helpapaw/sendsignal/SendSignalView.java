@@ -8,6 +8,7 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import org.helpapaw.helpapaw.R;
@@ -20,6 +21,7 @@ public class SendSignalView extends CardView {
     ImageView imgSignalPhoto;
     EditText editSignalDescription;
     TextView txtSignalSend;
+    ProgressBar progressSendSignal;
 
     public SendSignalView(Context context) {
         super(context);
@@ -49,6 +51,7 @@ public class SendSignalView extends CardView {
         imgSignalPhoto = (ImageView) this.findViewById(R.id.img_signal_photo);
         editSignalDescription = (EditText) this.findViewById(R.id.edit_signal_description);
         txtSignalSend = (TextView) this.findViewById(R.id.txt_signal_send);
+        progressSendSignal = (ProgressBar) this.findViewById(R.id.progress_send_signal);
     }
 
     public void setOnSignalSendClickListener(OnClickListener clickListener){
@@ -73,5 +76,21 @@ public class SendSignalView extends CardView {
 
     public String getSignalDescription(){
         return editSignalDescription.getText().toString().trim();
+    }
+
+    public void clearData(){
+        imgSignalPhoto.setImageResource(R.drawable.ic_camera);
+        editSignalDescription.setText(null);
+        setProgressVisibility(false);
+    }
+
+    public void setProgressVisibility(boolean visibility){
+        if(visibility){
+            progressSendSignal.setVisibility(VISIBLE);
+            txtSignalSend.setVisibility(GONE);
+        } else {
+            txtSignalSend.setVisibility(VISIBLE);
+            progressSendSignal.setVisibility(GONE);
+        }
     }
 }

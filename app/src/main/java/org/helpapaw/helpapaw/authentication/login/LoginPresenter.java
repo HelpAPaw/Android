@@ -6,7 +6,7 @@ import android.util.Patterns;
 import org.helpapaw.helpapaw.base.Presenter;
 import org.helpapaw.helpapaw.data.user.UserManager;
 import org.helpapaw.helpapaw.utils.Injection;
-import org.helpapaw.helpapaw.utils.NetworkUtils;
+import org.helpapaw.helpapaw.utils.Utils;
 
 /**
  * Created by iliyan on 7/25/16
@@ -49,7 +49,7 @@ public class LoginPresenter extends Presenter<LoginContract.View> implements Log
     }
 
     private void attemptToLogin(String email, String password) {
-        if (NetworkUtils.getInstance().hasNetworkConnection()) {
+        if (Utils.getInstance().hasNetworkConnection()) {
             userManager.login(email, password, new UserManager.LoginCallback() {
                 @Override
                 public void onLoginSuccess() {

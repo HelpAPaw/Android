@@ -6,7 +6,9 @@ import org.helpapaw.helpapaw.data.repositories.PhotoRepository;
 import org.helpapaw.helpapaw.data.repositories.SignalRepository;
 import org.helpapaw.helpapaw.data.user.UserManager;
 import org.helpapaw.helpapaw.utils.Injection;
+import org.helpapaw.helpapaw.utils.Utils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -15,7 +17,7 @@ import java.util.List;
 public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> implements SignalsMapContract.UserActionsListener {
 
     private static final float DEFAULT_MAP_ZOOM = 14.5f;
-    private static final int DEFAULT_SEARCH_RADIUS = 50;
+    private static final int DEFAULT_SEARCH_RADIUS = 4000;
 
     private UserManager userManager;
     private SignalRepository signalRepository;
@@ -24,26 +26,35 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
     private double latitude;
     private double longitude;
     private String photoUri;
+    private boolean sendSignalViewVisibility;
+    private List<Signal> signalsList;
 
     public SignalsMapPresenter(SignalsMapContract.View view) {
         super(view);
         signalRepository = Injection.getSignalRepositoryInstance();
         userManager = Injection.getUserManagerInstance();
         photoRepository = Injection.getPhotoRepositoryInstance();
+        sendSignalViewVisibility = false;
+        signalsList = new ArrayList<>();
     }
 
     @Override
-    public void onLocationChanged(double latitude, double longitude) {
+    public void onInitSignalsMap() {
+        getView().setAddSignalViewVisibility(sendSignalViewVisibility);
+        if (!isEmpty(photoUri)) {
+            getView().setThumbnailImage(photoUri);
+        }
+        if (signalsList != null && signalsList.size() > 0) {
+            getView().displaySignals(signalsList);
+        }
+    }
 
-        this.latitude = latitude;
-        this.longitude = longitude;
-
-        getView().updateMapCameraPosition(latitude, longitude, DEFAULT_MAP_ZOOM);
-
+    private void getAllSignals(double latitude, double longitude) {
         signalRepository.getAllSignals(latitude, longitude, DEFAULT_SEARCH_RADIUS,
                 new SignalRepository.LoadSignalsCallback() {
                     @Override
                     public void onSignalsLoaded(List<Signal> signals) {
+                        signalsList = signals;
                         getView().displaySignals(signals);
                     }
 
@@ -55,35 +66,72 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
     }
 
     @Override
-    public void onAddSignalClicked() {
-        getView().toggleAddSignalView();
+    public void onLocationChanged(double latitude, double longitude) {
+
+        if (this.latitude != 0 && this.longitude != 0) {
+            if (Utils.getInstance().getDistanceBetween(latitude, longitude, this.latitude, this.longitude) > 300) {
+                getAllSignals(latitude, longitude);
+            }
+        } else {
+            getAllSignals(latitude, longitude);
+        }
+
+        this.latitude = latitude;
+        this.longitude = longitude;
+
+        getView().updateMapCameraPosition(latitude, longitude, DEFAULT_MAP_ZOOM);
+    }
+
+    @Override
+    public void onAddSignalClicked(boolean visibility) {
+        getView().setAddSignalViewVisibility(!visibility);
+        sendSignalViewVisibility = !visibility;
     }
 
     @Override
     public void onSendSignalClicked(final String description) {
         getView().hideKeyboard();
+        getView().setSignalViewProgressVisibility(true);
+
         userManager.isLoggedIn(new UserManager.LoginCallback() {
             @Override
             public void onLoginSuccess() {
                 Long tsLong = System.currentTimeMillis() / 1000;
                 String timestamp = tsLong.toString();
 
-                signalRepository.saveSignal(new Signal(description, timestamp, 0, latitude, longitude), new SignalRepository.SaveSignalCallback() {
-                    @Override
-                    public void onSignalSaved(String signalId) {
-                        savePhoto(photoUri, signalId);
-                    }
-
-                    @Override
-                    public void onSignalFailure(String message) {
-                        getView().showMessage(message);
-                    }
-                });
+                if (isEmpty(description)) {
+                    //TODO: extract text
+                    getView().showMessage("Signal description is required!");
+                } else {
+                    saveSignal(description, timestamp, 0, latitude, longitude);
+                }
             }
 
             @Override
             public void onLoginFailure(String message) {
+                getView().setSignalViewProgressVisibility(false);
                 getView().openLoginScreen();
+            }
+        });
+    }
+
+    private void saveSignal(String description, String timestamp, int status,
+                            final double latitude, final double longitude) {
+        signalRepository.saveSignal(new Signal(description, timestamp, status, latitude, longitude), new SignalRepository.SaveSignalCallback() {
+            @Override
+            public void onSignalSaved(String signalId) {
+                if (photoUri != null && photoUri.length() > 0) {
+                    savePhoto(photoUri, signalId);
+                } else {
+                    getAllSignals(latitude, longitude);
+                    getView().setAddSignalViewVisibility(false);
+                    getView().clearSignalViewData();
+                }
+            }
+
+            @Override
+            public void onSignalFailure(String message) {
+                getView().showMessage(message);
             }
         });
     }
@@ -92,6 +140,10 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
         photoRepository.savePhoto(photoUri, signalId, new PhotoRepository.SavePhotoCallback() {
             @Override
             public void onPhotoSaved() {
+                getAllSignals(latitude, longitude);
+                //TODO: extract text
+                getView().setAddSignalViewVisibility(false);
+                getView().clearSignalViewData();
                 getView().showMessage("Signal successfully added!");
             }
 
@@ -103,7 +155,7 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
     }
 
     @Override
-    public void onSignalPhotoClicked() {
+    public void onChoosePhotoIconClicked() {
         getView().hideKeyboard();
         getView().showSendPhotoBottomSheet();
     }
@@ -121,5 +173,14 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
     @Override
     public void onSignalPhotoSelected(String photoUri) {
         this.photoUri = photoUri;
+    }
+
+    @Override
+    public void onStoragePermissionGranted() {
+        getView().setThumbnailImage(photoUri);
+    }
+
+    private boolean isEmpty(String value) {
+        return !(value != null && value.length() > 0);
     }
 }

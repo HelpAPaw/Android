@@ -7,12 +7,6 @@
     android:orientation="vertical"
     app:elevation="4dp">
 
-    <View
-        android:id="@+id/fakeShadow"
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:background="@drawable/shadow" />
-
     <LinearLayout
         android:id="@+id/grp_camera_option"
         android:layout_width="match_parent"
@@ -34,10 +28,10 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
             android:layout_marginLeft="@dimen/bottom_sheet_horizontal_margin"
             android:layout_marginStart="@dimen/bottom_sheet_horizontal_margin"
-            android:layout_gravity="center_vertical"
-            android:text="Take a Photo"
+            android:text="@string/txt_take_photo"
             android:textColor="#DE000000" />
     </LinearLayout>
 
@@ -57,15 +51,15 @@
             android:layout_marginRight="@dimen/bottom_sheet_horizontal_margin"
             android:layout_marginStart="@dimen/bottom_sheet_horizontal_margin"
             android:tint="@android:color/black"
-            app:srcCompat="@drawable/ic_camera" />
+            app:srcCompat="@drawable/ic_gallery" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
             android:layout_marginLeft="@dimen/bottom_sheet_horizontal_margin"
             android:layout_marginStart="@dimen/bottom_sheet_horizontal_margin"
-            android:layout_gravity="center_vertical"
-            android:text="Choose from Gallery"
+            android:text="@string/txt_choose_existing"
             android:textColor="#DE000000" />
     </LinearLayout>
 </LinearLayout>

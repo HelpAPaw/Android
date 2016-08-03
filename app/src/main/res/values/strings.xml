@@ -30,4 +30,6 @@
     <string name="txt_location_permission_not_granted">Location permissions not granted!</string>
     <string name="txt_signal_description">signal description</string>
     <string name="txt_send">Send</string>
+    <string name="txt_take_photo">Take Photo</string>
+    <string name="txt_choose_existing">Choose Existing</string>
 </resources>

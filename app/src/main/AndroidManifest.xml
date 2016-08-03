@@ -20,7 +20,9 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_android_map_api_key" />
 
-        <activity android:name=".signalsmap.SignalsMapActivity">
+        <activity
+            android:name=".signalsmap.SignalsMapActivity"
+            android:windowSoftInputMode="stateHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
