@@ -1,6 +1,7 @@
 package org.helpapaw.helpapaw.utils;
 
 import android.content.Context;
+import android.location.Location;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
@@ -9,13 +10,13 @@ import org.helpapaw.helpapaw.base.PawApplication;
 /**
  * Created by iliyan on 7/25/16
  */
-public class NetworkUtils {
+public class Utils {
 
-    private static NetworkUtils instance;
+    private static Utils instance;
 
-    public synchronized static NetworkUtils getInstance() {
+    public synchronized static Utils getInstance() {
         if (instance == null) {
-            instance = new NetworkUtils();
+            instance = new Utils();
         }
         return instance;
     }
@@ -31,5 +32,18 @@ public class NetworkUtils {
                     }
         }
         return false;
+    }
+
+    public float getDistanceBetween(double latitudePointOne, double longitudePointOne,
+                                    double latitudePointTwo, double longitudePointTwo){
+        Location pointOne = new Location("");
+        pointOne.setLatitude(latitudePointOne);
+        pointOne.setLongitude(longitudePointOne);
+
+        Location pointTwo = new Location("");
+        pointTwo.setLatitude(latitudePointTwo);
+        pointTwo.setLongitude(longitudePointTwo);
+
+        return pointOne.distanceTo(pointTwo);
     }
 }

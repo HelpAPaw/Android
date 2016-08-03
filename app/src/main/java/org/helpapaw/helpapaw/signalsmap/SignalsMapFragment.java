@@ -34,6 +34,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import org.helpapaw.helpapaw.R;
@@ -49,14 +50,17 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 public class SignalsMapFragment extends BaseFragment implements SignalsMapContract.View, GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
     public static final String TAG = SignalsMapFragment.class.getSimpleName();
 
+    private static final int READ_EXTERNAL_STORAGE_PERMISSIONS_REQUEST = 0;
     private static final int LOCATION_PERMISSIONS_REQUEST = 1;
     private static final int REQUEST_CAMERA = 2;
     private static final int REQUEST_GALLERY = 3;
@@ -149,6 +153,7 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
             @Override
             public void onMapReady(GoogleMap googleMap) {
                 signalsGoogleMap = googleMap;
+                actionsListener.onInitSignalsMap();
             }
         };
     }
@@ -166,15 +171,21 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
     @Override
     public void displaySignals(List<Signal> signals) {
         Signal signal;
-        for (int i = 0; i < signals.size(); i++) {
-            signal = signals.get(i);
-            MarkerOptions markerOptions = new MarkerOptions()
-                    .position(new LatLng(signal.getLatitude(), signal.getLongitude()))
-                    .title(signal.getTitle());
+        Marker marker;
+        Map<String, Signal> signalMarkers = new HashMap<>();
+        if (signalsGoogleMap != null) {
+            for (int i = 0; i < signals.size(); i++) {
+                signal = signals.get(i);
+                MarkerOptions markerOptions = new MarkerOptions()
+                        .position(new LatLng(signal.getLatitude(), signal.getLongitude()))
+                        .title(signal.getTitle());
 
-            markerOptions.icon(BitmapDescriptorFactory.fromResource(getDrawableFromStatus(signal.getStatus())));
-
-            signalsGoogleMap.addMarker(markerOptions);
+                markerOptions.icon(BitmapDescriptorFactory.fromResource(getDrawableFromStatus(signal.getStatus())));
+                marker = signalsGoogleMap.addMarker(markerOptions);
+                signalMarkers.put(marker.getId(), signal);
+            }
+            SignalInfoWindowAdapter infoWindowAdapter = new SignalInfoWindowAdapter(signalMarkers, getActivity().getLayoutInflater());
+            signalsGoogleMap.setInfoWindowAdapter(infoWindowAdapter);
         }
     }
 
@@ -214,6 +225,7 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
             showPermissionDialog(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION,
                     LOCATION_PERMISSIONS_REQUEST);
         } else {
+            signalsGoogleMap.setMyLocationEnabled(true);
             Location location = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
             if (location == null) {
                 LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, this);
@@ -258,26 +270,18 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
         return new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                actionsListener.onAddSignalClicked();
+                boolean visibility = binding.viewSendSignal.getVisibility() == View.VISIBLE;
+                actionsListener.onAddSignalClicked(visibility);
             }
         };
     }
 
     @Override
-    public void toggleAddSignalView() {
-        if (binding.viewSendSignal.getVisibility() == View.INVISIBLE) {
+    public void setAddSignalViewVisibility(boolean visibility) {
+        if (visibility) {
             showAddSignalView();
-            if (!(ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                    && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)) {
-                signalsGoogleMap.setMyLocationEnabled(true);
-            }
-
             binding.fabAddSignal.setImageResource(android.R.drawable.ic_menu_close_clear_cancel);
         } else {
-            if (!(ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                    && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)) {
-                signalsGoogleMap.setMyLocationEnabled(false);
-            }
             hideAddSignalView();
             binding.fabAddSignal.setImageResource(android.R.drawable.ic_menu_add);
         }
@@ -391,13 +395,12 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
     }
 
 
-    public static void showPermissionDialog(Activity activity, String permission, int permissionCode) {
+    public void showPermissionDialog(Activity activity, String permission, int permissionCode) {
         if (ContextCompat.checkSelfPermission(activity, permission) != PackageManager.PERMISSION_GRANTED) {
             if (ActivityCompat.shouldShowRequestPermissionRationale(activity, permission)) {
                 Toast.makeText(activity, R.string.txt_location_permission_not_granted, Toast.LENGTH_LONG).show();
             } else {
-                ActivityCompat.requestPermissions(activity, new String[]{permission},
-                        permissionCode);
+                requestPermissions(new String[]{permission}, permissionCode);
             }
         }
     }
@@ -408,26 +411,62 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
         if (requestCode == REQUEST_CAMERA) {
             if (resultCode == Activity.RESULT_OK) {
                 Uri takenPhotoUri = getPhotoFileUri(imageFileName);
-                loadImageByUri(takenPhotoUri);
+                setThumbnailImage(takenPhotoUri.toString());
                 actionsListener.onSignalPhotoSelected(takenPhotoUri.toString());
             }
         }
 
         if (requestCode == REQUEST_GALLERY && resultCode == Activity.RESULT_OK && data != null && data.getData() != null) {
             Uri photoUri = data.getData();
-            loadImageByUri(photoUri);
+            setThumbnailImage(photoUri.toString());
             actionsListener.onSignalPhotoSelected(photoUri.toString());
         }
     }
 
-    private void loadImageByUri(Uri photoUri) {
-        Bitmap selectedImage = null;
-        try {
-            selectedImage = MediaStore.Images.Media.getBitmap(getContext().getContentResolver(), photoUri);
-        } catch (IOException e) {
-            e.printStackTrace();
+    @Override
+    public void setThumbnailImage(String photoUri) {
+        if (ContextCompat.checkSelfPermission(getContext(),
+                Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            showPermissionDialog(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE,
+                    READ_EXTERNAL_STORAGE_PERMISSIONS_REQUEST);
+        } else {
+            if (photoUri != null) {
+                Bitmap selectedImage = null;
+                try {
+                    selectedImage = MediaStore.Images.Media.getBitmap(getContext().getContentResolver(), Uri.parse(photoUri));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                binding.viewSendSignal.setSignalPhoto(Bitmap.createScaledBitmap(selectedImage, 120, 120, false));
+            }
         }
-        binding.viewSendSignal.setSignalPhoto(Bitmap.createScaledBitmap(selectedImage, 120, 120, false));
+    }
+
+    @Override
+    public void clearSignalViewData() {
+        binding.viewSendSignal.clearData();
+    }
+
+    @Override
+    public void setSignalViewProgressVisibility(boolean visibility) {
+        binding.viewSendSignal.setProgressVisibility(visibility);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case READ_EXTERNAL_STORAGE_PERMISSIONS_REQUEST:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    actionsListener.onStoragePermissionGranted();
+                } else {
+                    // Permission Denied
+                    Toast.makeText(getContext(), "Sorry we could not load that photo without permissions.", Toast.LENGTH_SHORT)
+                            .show();
+                }
+                break;
+            default:
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
     }
 
     /* OnClick Listeners */
@@ -446,7 +485,7 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
         return new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                actionsListener.onSignalPhotoClicked();
+                actionsListener.onChoosePhotoIconClicked();
             }
         };
     }

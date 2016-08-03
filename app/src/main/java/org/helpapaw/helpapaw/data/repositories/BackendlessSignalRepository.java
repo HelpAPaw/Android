@@ -65,7 +65,7 @@ public class BackendlessSignalRepository implements SignalRepository {
                 List<Signal> signals = new ArrayList<>();
                 for (int i = 0; i < response.getCurrentPage().size(); i++) {
                     GeoPoint geoPoint = response.getCurrentPage().get(i);
-                    signals.add(new Signal(geoPoint.getMetadata(SIGNAL_TITLE).toString(),
+                    signals.add(new Signal(geoPoint.getObjectId(), geoPoint.getMetadata(SIGNAL_TITLE).toString(),
                             geoPoint.getMetadata(SIGNAL_DATE_SUBMITTED).toString(),
                             Integer.parseInt(geoPoint.getMetadata(SIGNAL_STATUS).toString()),
                             geoPoint.getLatitude(), geoPoint.getLongitude()));

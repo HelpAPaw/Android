@@ -6,6 +6,8 @@ import org.helpapaw.helpapaw.data.repositories.PhotoRepository;
 import org.helpapaw.helpapaw.data.repositories.SignalRepository;
 import org.helpapaw.helpapaw.data.user.BackendlessUserManager;
 import org.helpapaw.helpapaw.data.user.UserManager;
+import org.helpapaw.helpapaw.utils.images.ImageLoader;
+import org.helpapaw.helpapaw.utils.images.PicassoImageLoader;
 
 /**
  * Created by iliyan on 7/25/16
@@ -18,7 +20,7 @@ public class Injection {
 
     public synchronized static ImageLoader getImageLoader() {
         if (imageLoader == null) {
-            imageLoader = new GlideImageLoader();
+            imageLoader = new PicassoImageLoader();
         }
         return imageLoader;
     }

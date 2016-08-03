@@ -20,6 +20,7 @@ public class BackendlessPhotoRepository implements PhotoRepository {
 
     private final static String PHOTO_EXTENSION = ".jpg";
     private final static String PHOTOS_DIRECTORY = "signal_photos";
+    private final static int PHOTO_QUALITY = 30;
 
     @Override
     public void savePhoto(String photoUri, String photoName, final SavePhotoCallback callback) {
@@ -30,7 +31,8 @@ public class BackendlessPhotoRepository implements PhotoRepository {
             e.printStackTrace();
         }
         Backendless.Files.Android.upload(photo,
-                Bitmap.CompressFormat.JPEG, 30, photoName + PHOTO_EXTENSION, PHOTOS_DIRECTORY, true, new AsyncCallback<BackendlessFile>() {
+                Bitmap.CompressFormat.JPEG, PHOTO_QUALITY, photoName + PHOTO_EXTENSION,
+                PHOTOS_DIRECTORY, true, new AsyncCallback<BackendlessFile>() {
                     @Override
                     public void handleResponse(final BackendlessFile backendlessFile) {
                         callback.onPhotoSaved();

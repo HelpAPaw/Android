@@ -17,7 +17,7 @@ public interface SignalsMapContract {
 
         void updateMapCameraPosition(double latitude, double longitude, float zoom);
 
-        void toggleAddSignalView();
+        void setAddSignalViewVisibility(boolean visibility);
 
         void hideKeyboard();
 
@@ -28,22 +28,32 @@ public interface SignalsMapContract {
         void openGallery();
 
         void openLoginScreen();
+
+        void setThumbnailImage(String photoUri);
+
+        void clearSignalViewData();
+
+        void setSignalViewProgressVisibility(boolean visibility);
     }
 
     interface UserActionsListener {
 
+        void onInitSignalsMap();
+
         void onLocationChanged(double latitude, double longitude);
 
-        void onAddSignalClicked();
+        void onAddSignalClicked(boolean visibility);
 
         void onSendSignalClicked(String description);
 
-        void onSignalPhotoClicked();
+        void onChoosePhotoIconClicked();
 
         void onCameraOptionSelected();
 
         void onGalleryOptionSelected();
 
         void onSignalPhotoSelected(String photoUri);
+
+        void onStoragePermissionGranted();
     }
 }

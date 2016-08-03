@@ -20,7 +20,7 @@ import org.helpapaw.helpapaw.authentication.AuthenticationActivity;
 import org.helpapaw.helpapaw.data.user.UserManager;
 import org.helpapaw.helpapaw.databinding.ActivityBaseBinding;
 import org.helpapaw.helpapaw.utils.Injection;
-import org.helpapaw.helpapaw.utils.NetworkUtils;
+import org.helpapaw.helpapaw.utils.Utils;
 
 /**
  * Created by iliyan on 6/22/16
@@ -80,7 +80,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     private void signOut() {
-        if (NetworkUtils.getInstance().hasNetworkConnection()) {
+        if (Utils.getInstance().hasNetworkConnection()) {
             userManager.logout(new UserManager.LogoutCallback() {
                 @Override
                 public void onLogoutSuccess() {
