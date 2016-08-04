@@ -5,15 +5,13 @@ package org.helpapaw.helpapaw.data.models;
  */
 public class Comment {
     private String objectId;
-    private String ownerFirstName;
-    private String ownerLastName;
+    private String ownerName;
     private String dateCreated;
     private String text;
 
-    public Comment(String objectId, String ownerFirstName, String ownerLastName, String dateCreated, String text) {
+    public Comment(String objectId, String ownerName, String dateCreated, String text) {
         this.objectId = objectId;
-        this.ownerFirstName = ownerFirstName;
-        this.ownerLastName = ownerLastName;
+        this.ownerName = ownerName;
         this.dateCreated = dateCreated;
         this.text = text;
     }
@@ -28,5 +26,9 @@ public class Comment {
 
     public String getDateCreated() {
         return dateCreated;
+    }
+
+    public String getOwnerName() {
+        return ownerName;
     }
 }

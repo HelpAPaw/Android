@@ -18,7 +18,6 @@ public class Comment {
         this.author = author;
     }
 
-
     public String getObjectId() {
         return objectId;
     }
@@ -35,7 +34,8 @@ public class Comment {
         return author;
     }
 
-    public org.helpapaw.helpapaw.data.models.Comment getPojoComment(){
-        return new org.helpapaw.helpapaw.data.models.Comment(objectId, "", "", created, text);
+    public org.helpapaw.helpapaw.data.models.Comment getPOJOComment() {
+        return new org.helpapaw.helpapaw.data.models.Comment(
+                objectId, author.getProperty("name").toString(), created, text);
     }
 }

@@ -33,7 +33,7 @@ public class BackendlessCommentRepository implements CommentRepository {
                     @Override
                     public void handleResponse(BackendlessCollection<org.helpapaw.helpapaw.data.models.backendless.Comment> foundComments) {
                         for (int i = 0; i < foundComments.getData().size(); i++) {
-                            comments.add(foundComments.getData().get(i).getPojoComment());
+                            comments.add(foundComments.getData().get(i).getPOJOComment());
                         }
 
                         callback.onCommentsLoaded(comments);
@@ -47,15 +47,17 @@ public class BackendlessCommentRepository implements CommentRepository {
     }
 
     @Override
-    public void saveComment(Comment comment, final SaveCommentCallback callback) {
+    public void saveComment(String commentText, final SaveCommentCallback callback) {
+        Long tsLong = System.currentTimeMillis() / 1000;
+        String timestamp = tsLong.toString();
 
         org.helpapaw.helpapaw.data.models.backendless.Comment backendlessComment =
-                new org.helpapaw.helpapaw.data.models.backendless.Comment(comment.getObjectId(),
-                        comment.getText(), comment.getDateCreated(), Backendless.UserService.CurrentUser());
+                new org.helpapaw.helpapaw.data.models.backendless.Comment(null,
+                        commentText, timestamp, Backendless.UserService.CurrentUser());
 
         Backendless.Persistence.save(backendlessComment, new AsyncCallback<org.helpapaw.helpapaw.data.models.backendless.Comment>() {
             public void handleResponse(org.helpapaw.helpapaw.data.models.backendless.Comment response) {
-                callback.onCommentSaved(response.getPojoComment());
+                callback.onCommentSaved(response.getPOJOComment());
             }
 
             public void handleFault(BackendlessFault fault) {

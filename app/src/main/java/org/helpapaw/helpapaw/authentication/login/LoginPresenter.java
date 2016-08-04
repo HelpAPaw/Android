@@ -68,7 +68,7 @@ public class LoginPresenter extends Presenter<LoginContract.View> implements Log
         }
     }
 
-    private void setProgressIndicator(boolean active){
+    private void setProgressIndicator(boolean active) {
         getView().setProgressIndicator(active);
         this.showProgressBar = active;
     }

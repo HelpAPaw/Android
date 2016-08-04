@@ -1,6 +1,9 @@
 package org.helpapaw.helpapaw.signaldetails;
 
+import org.helpapaw.helpapaw.data.models.Comment;
 import org.helpapaw.helpapaw.data.models.Signal;
+
+import java.util.List;
 
 /**
  * Created by iliyan on 7/25/16
@@ -16,11 +19,15 @@ public interface SignalDetailsContract {
         void hideKeyboard();
 
         void showSignalDetails(Signal signal);
+
+        void displayComments(List<Comment> comments);
     }
 
     interface UserActionsListener {
 
         void onInitDetailsScreen(Signal signal);
+
+        void onAddCommentButtonClicked(String comment);
 
     }
 }

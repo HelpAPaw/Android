@@ -12,12 +12,15 @@ import org.helpapaw.helpapaw.R;
 import org.helpapaw.helpapaw.base.BaseFragment;
 import org.helpapaw.helpapaw.base.Presenter;
 import org.helpapaw.helpapaw.base.PresenterManager;
+import org.helpapaw.helpapaw.data.models.Comment;
 import org.helpapaw.helpapaw.data.models.Signal;
 import org.helpapaw.helpapaw.databinding.FragmentSignalDetailsBinding;
 
+import java.util.List;
+
 public class SignalDetailsFragment extends BaseFragment implements SignalDetailsContract.View {
 
-    private final static String SIGNAL_DETAILS = "SIGNAL_DETAILS";
+    private final static String SIGNAL_DETAILS = "signalDetails";
 
     SignalDetailsPresenter signalDetailsPresenter;
     SignalDetailsContract.UserActionsListener actionsListener;
@@ -52,7 +55,7 @@ public class SignalDetailsFragment extends BaseFragment implements SignalDetails
         actionsListener = signalDetailsPresenter;
 
         Signal signal = null;
-        if(getArguments()!=null){
+        if (getArguments() != null) {
             signal = getArguments().getParcelable(SIGNAL_DETAILS);
         }
 
@@ -87,6 +90,10 @@ public class SignalDetailsFragment extends BaseFragment implements SignalDetails
 
     }
 
-    /* OnClick Listeners */
+    @Override
+    public void displayComments(List<Comment> comments) {
 
+    }
+
+    /* OnClick Listeners */
 }

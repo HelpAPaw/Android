@@ -29,7 +29,7 @@ public class SignalDetailsActivity extends AppCompatActivity {
         if (supportActionBar != null) {
             supportActionBar.setDisplayHomeAsUpEnabled(true);
             supportActionBar.setDisplayShowTitleEnabled(false);
-            binding.toolbarTitle.setText("Signal Details");
+            binding.toolbarTitle.setText(getString(R.string.txt_signal_details_title));
         }
 
         if (null == savedInstanceState) {
