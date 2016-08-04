@@ -11,7 +11,7 @@ public interface CommentRepository {
 
     void getAllCommentsBySignalId(String signalId, LoadCommentsCallback callback);
 
-    void saveComment(Comment comment, SaveCommentCallback callback);
+    void saveComment(String commentText, SaveCommentCallback callback);
 
     interface LoadCommentsCallback {
 

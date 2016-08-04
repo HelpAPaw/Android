@@ -10,7 +10,6 @@ import com.backendless.exceptions.BackendlessFault;
  */
 public class BackendlessUserManager implements UserManager {
 
-
     @Override
     public void login(String email, String password, final LoginCallback loginCallback) {
         Backendless.UserService.login(email, password, new AsyncCallback<BackendlessUser>() {
@@ -60,9 +59,27 @@ public class BackendlessUserManager implements UserManager {
     public void isLoggedIn(final LoginCallback loginCallback) {
         Backendless.UserService.isValidLogin(new AsyncCallback<Boolean>() {
             @Override
-            public void handleResponse(Boolean response) {
-                if (response) {
-                    loginCallback.onLoginSuccess();
+            public void handleResponse(Boolean isValidLogin) {
+                if (isValidLogin) {
+                    if (Backendless.UserService.CurrentUser() == null) {
+                        String currentUserId = Backendless.UserService.loggedInUser();
+                        if (!currentUserId.equals("")) {
+                            Backendless.UserService.findById(currentUserId, new AsyncCallback<BackendlessUser>() {
+                                @Override
+                                public void handleResponse(BackendlessUser currentUser) {
+                                    Backendless.UserService.setCurrentUser(currentUser);
+                                    loginCallback.onLoginSuccess();
+                                }
+
+                                @Override
+                                public void handleFault(BackendlessFault fault) {
+                                    loginCallback.onLoginFailure(fault.getMessage());
+                                }
+                            });
+                        }
+                    } else {
+                        loginCallback.onLoginSuccess();
+                    }
                 } else {
                     loginCallback.onLoginFailure(null);
                 }

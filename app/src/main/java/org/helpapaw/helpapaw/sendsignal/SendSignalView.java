@@ -2,7 +2,6 @@ package org.helpapaw.helpapaw.sendsignal;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
 import android.support.v7.widget.CardView;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -54,38 +53,30 @@ public class SendSignalView extends CardView {
         progressSendSignal = (ProgressBar) this.findViewById(R.id.progress_send_signal);
     }
 
-    public void setOnSignalSendClickListener(OnClickListener clickListener){
+    public void setOnSignalSendClickListener(OnClickListener clickListener) {
         txtSignalSend.setOnClickListener(clickListener);
     }
 
-    public void setOnSignalPhotoClickListener(OnClickListener clickListener){
+    public void setOnSignalPhotoClickListener(OnClickListener clickListener) {
         imgSignalPhoto.setOnClickListener(clickListener);
     }
 
-    public void setSignalPhoto(Drawable drawable){
-        imgSignalPhoto.setImageDrawable(drawable);
-    }
-
-    public void setSignalPhoto(Bitmap bitmap){
+    public void setSignalPhoto(Bitmap bitmap) {
         imgSignalPhoto.setImageBitmap(bitmap);
     }
 
-    public ImageView getSignalImageView(){
-        return imgSignalPhoto;
-    }
-
-    public String getSignalDescription(){
+    public String getSignalDescription() {
         return editSignalDescription.getText().toString().trim();
     }
 
-    public void clearData(){
+    public void clearData() {
         imgSignalPhoto.setImageResource(R.drawable.ic_camera);
         editSignalDescription.setText(null);
         setProgressVisibility(false);
     }
 
-    public void setProgressVisibility(boolean visibility){
-        if(visibility){
+    public void setProgressVisibility(boolean visibility) {
+        if (visibility) {
             progressSendSignal.setVisibility(VISIBLE);
             txtSignalSend.setVisibility(GONE);
         } else {
