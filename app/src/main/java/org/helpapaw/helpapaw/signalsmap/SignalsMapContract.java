@@ -34,6 +34,8 @@ public interface SignalsMapContract {
         void clearSignalViewData();
 
         void setSignalViewProgressVisibility(boolean visibility);
+
+        void openSignalDetailsScreen(Signal signal);
     }
 
     interface UserActionsListener {
@@ -55,5 +57,7 @@ public interface SignalsMapContract {
         void onSignalPhotoSelected(String photoUri);
 
         void onStoragePermissionGranted();
+
+        void onSignalInfoWindowClicked(Signal signal);
     }
 }

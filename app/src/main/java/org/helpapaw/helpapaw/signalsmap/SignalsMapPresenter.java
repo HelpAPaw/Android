@@ -180,6 +180,11 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
         getView().setThumbnailImage(photoUri);
     }
 
+    @Override
+    public void onSignalInfoWindowClicked(Signal signal) {
+        getView().openSignalDetailsScreen(signal);
+    }
+
     private boolean isEmpty(String value) {
         return !(value != null && value.length() > 0);
     }

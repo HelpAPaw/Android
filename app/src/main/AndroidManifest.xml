@@ -32,6 +32,11 @@
         <activity
             android:name=".authentication.AuthenticationActivity"
             android:windowSoftInputMode="stateHidden" />
+
+        <activity
+            android:name=".signaldetails.SignalDetailsActivity"
+            android:windowSoftInputMode="stateHidden" />
+
     </application>
 
 </manifest>

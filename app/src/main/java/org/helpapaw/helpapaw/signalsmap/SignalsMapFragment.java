@@ -10,11 +10,9 @@ import android.graphics.Bitmap;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -45,9 +43,9 @@ import org.helpapaw.helpapaw.base.PresenterManager;
 import org.helpapaw.helpapaw.data.models.Signal;
 import org.helpapaw.helpapaw.databinding.FragmentSignalsMapBinding;
 import org.helpapaw.helpapaw.sendsignal.SendPhotoBottomSheet;
+import org.helpapaw.helpapaw.signaldetails.SignalDetailsActivity;
+import org.helpapaw.helpapaw.utils.Utils;
 
-import java.io.File;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -172,7 +170,7 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
     public void displaySignals(List<Signal> signals) {
         Signal signal;
         Marker marker;
-        Map<String, Signal> signalMarkers = new HashMap<>();
+        final Map<String, Signal> signalMarkers = new HashMap<>();
         if (signalsGoogleMap != null) {
             for (int i = 0; i < signals.size(); i++) {
                 signal = signals.get(i);
@@ -186,6 +184,13 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
             }
             SignalInfoWindowAdapter infoWindowAdapter = new SignalInfoWindowAdapter(signalMarkers, getActivity().getLayoutInflater());
             signalsGoogleMap.setInfoWindowAdapter(infoWindowAdapter);
+
+            signalsGoogleMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+                @Override
+                public void onInfoWindowClick(Marker marker) {
+                    actionsListener.onSignalInfoWindowClicked(signalMarkers.get(marker.getId()));
+                }
+            });
         }
     }
 
@@ -222,7 +227,7 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
     public void onConnected(Bundle bundle) {
         if (ContextCompat.checkSelfPermission(getContext(),
                 Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            showPermissionDialog(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION,
+            Utils.getInstance().showPermissionDialog(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION,
                     LOCATION_PERMISSIONS_REQUEST);
         } else {
             signalsGoogleMap.setMyLocationEnabled(true);
@@ -342,35 +347,9 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
         if (intent.resolveActivity(getContext().getPackageManager()) != null) {
             String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
             imageFileName = "JPEG_" + timeStamp + ".jpg";
-            intent.putExtra(MediaStore.EXTRA_OUTPUT, getPhotoFileUri(imageFileName));
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, Utils.getInstance().getPhotoFileUri(getContext(), imageFileName));
             startActivityForResult(intent, REQUEST_CAMERA);
         }
-    }
-
-    public Uri getPhotoFileUri(String fileName) {
-        // Only continue if the SD Card is mounted
-        if (isExternalStorageAvailable()) {
-            // Get safe storage directory for photos
-            // Use `getExternalFilesDir` on Context to access package-specific directories.
-            // This way, we don't need to request external read/write runtime permissions.
-            File mediaStorageDir = new File(
-                    getContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES), TAG);
-
-            // Create the storage directory if it does not exist
-            if (!mediaStorageDir.exists() && !mediaStorageDir.mkdirs()) {
-                Log.d(TAG, "failed to create directory");
-            }
-
-            // Return the file target for the photo based on filename
-            return Uri.fromFile(new File(mediaStorageDir.getPath() + File.separator + fileName));
-        }
-        return null;
-    }
-
-    // Returns true if external storage for photos is available
-    private boolean isExternalStorageAvailable() {
-        String state = Environment.getExternalStorageState();
-        return state.equals(Environment.MEDIA_MOUNTED);
     }
 
     @Override
@@ -394,25 +373,29 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
         return signalsMapPresenter;
     }
 
-
-    public void showPermissionDialog(Activity activity, String permission, int permissionCode) {
-        if (ContextCompat.checkSelfPermission(activity, permission) != PackageManager.PERMISSION_GRANTED) {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(activity, permission)) {
-                Toast.makeText(activity, R.string.txt_location_permission_not_granted, Toast.LENGTH_LONG).show();
-            } else {
-                requestPermissions(new String[]{permission}, permissionCode);
-            }
-        }
-    }
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_CAMERA) {
             if (resultCode == Activity.RESULT_OK) {
-                Uri takenPhotoUri = getPhotoFileUri(imageFileName);
-                setThumbnailImage(takenPhotoUri.toString());
-                actionsListener.onSignalPhotoSelected(takenPhotoUri.toString());
+                //check if image need to be rotated
+                //save the new image
+
+                Uri takenPhotoUri = Utils.getInstance().getPhotoFileUri(getContext(), imageFileName);
+
+                if (Utils.getInstance().isRotationNeeded(takenPhotoUri.toString())) {
+                    //Bitmap fixedBitmap = Utils.getInstance().fixBitmapOrientation(Utils.getInstance()
+                           // .getBitmapFromUri(getContext(), takenPhotoUri.toString()), takenPhotoUri.toString());
+                   // Utils.getInstance().saveImageToExternalStorage(fixedBitmap, takenPhotoUri);
+
+                    Bitmap bitmap = Utils.getInstance()
+                            .getBitmapFromUri(getContext(), takenPhotoUri.toString());
+                    binding.viewSendSignal.setSignalPhoto(Bitmap.createScaledBitmap(bitmap, 120, 120, false));
+                }
+
+                //setThumbnailImage(takenPhotoUri.toString());
+                //binding.viewSendSignal.setSignalPhoto(Bitmap.createScaledBitmap(fixedBitmap, 120, 120, false));
+                //actionsListener.onSignalPhotoSelected(takenPhotoUri.toString());
             }
         }
 
@@ -427,18 +410,11 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
     public void setThumbnailImage(String photoUri) {
         if (ContextCompat.checkSelfPermission(getContext(),
                 Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            showPermissionDialog(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE,
+            Utils.getInstance().showPermissionDialog(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE,
                     READ_EXTERNAL_STORAGE_PERMISSIONS_REQUEST);
         } else {
-            if (photoUri != null) {
-                Bitmap selectedImage = null;
-                try {
-                    selectedImage = MediaStore.Images.Media.getBitmap(getContext().getContentResolver(), Uri.parse(photoUri));
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                binding.viewSendSignal.setSignalPhoto(Bitmap.createScaledBitmap(selectedImage, 120, 120, false));
-            }
+            binding.viewSendSignal.setSignalPhoto(Bitmap.createScaledBitmap(
+                    Utils.getInstance().getBitmapFromUri(getContext(), photoUri), 120, 120, false));
         }
     }
 
@@ -453,7 +429,14 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+    public void openSignalDetailsScreen(Signal signal) {
+        Intent intent = new Intent(getContext(), SignalDetailsActivity.class);
+        intent.putExtra(SignalDetailsActivity.SIGNAL_KEY, signal);
+        startActivity(intent);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode) {
             case READ_EXTERNAL_STORAGE_PERMISSIONS_REQUEST:
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {

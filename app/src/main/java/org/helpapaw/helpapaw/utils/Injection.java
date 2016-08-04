@@ -1,7 +1,9 @@
 package org.helpapaw.helpapaw.utils;
 
+import org.helpapaw.helpapaw.data.repositories.BackendlessCommentRepository;
 import org.helpapaw.helpapaw.data.repositories.BackendlessPhotoRepository;
 import org.helpapaw.helpapaw.data.repositories.BackendlessSignalRepository;
+import org.helpapaw.helpapaw.data.repositories.CommentRepository;
 import org.helpapaw.helpapaw.data.repositories.PhotoRepository;
 import org.helpapaw.helpapaw.data.repositories.SignalRepository;
 import org.helpapaw.helpapaw.data.user.BackendlessUserManager;
@@ -17,6 +19,7 @@ public class Injection {
     private static UserManager userManagerInstance;
     private static SignalRepository signalRepositoryInstance;
     private static PhotoRepository photoRepository;
+    private static CommentRepository commentRepository;
 
     public synchronized static ImageLoader getImageLoader() {
         if (imageLoader == null) {
@@ -44,5 +47,12 @@ public class Injection {
             photoRepository = new BackendlessPhotoRepository();
         }
         return photoRepository;
+    }
+
+    public synchronized static CommentRepository getCommentRepositoryInstance() {
+        if (commentRepository == null) {
+            commentRepository = new BackendlessCommentRepository();
+        }
+        return commentRepository;
     }
 }

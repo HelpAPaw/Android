@@ -34,7 +34,7 @@ public class BackendlessSignalRepository implements SignalRepository {
         Backendless.Geo.getPoints(geoQuery, new AsyncCallback<BackendlessCollection<GeoPoint>>() {
             @Override
             public void handleResponse(BackendlessCollection<GeoPoint> response) {
-                GeoPoint geoPoint = response.getCurrentPage().get(0);
+                GeoPoint geoPoint = response.getData().get(0);
                 if (geoPoint != null) {
                     Signal signal = new Signal(geoPoint.getObjectId(), geoPoint.getMetadata(SIGNAL_TITLE).toString(),
                             geoPoint.getMetadata(SIGNAL_DATE_SUBMITTED).toString(),
@@ -63,8 +63,8 @@ public class BackendlessSignalRepository implements SignalRepository {
             @Override
             public void handleResponse(BackendlessCollection<GeoPoint> response) {
                 List<Signal> signals = new ArrayList<>();
-                for (int i = 0; i < response.getCurrentPage().size(); i++) {
-                    GeoPoint geoPoint = response.getCurrentPage().get(i);
+                for (int i = 0; i < response.getData().size(); i++) {
+                    GeoPoint geoPoint = response.getData().get(i);
                     signals.add(new Signal(geoPoint.getObjectId(), geoPoint.getMetadata(SIGNAL_TITLE).toString(),
                             geoPoint.getMetadata(SIGNAL_DATE_SUBMITTED).toString(),
                             Integer.parseInt(geoPoint.getMetadata(SIGNAL_STATUS).toString()),
