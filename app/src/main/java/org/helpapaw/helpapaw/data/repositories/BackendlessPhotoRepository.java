@@ -47,10 +47,14 @@ public class BackendlessPhotoRepository implements PhotoRepository {
 
     @Override
     public String getPhotoUrl(String signalId) {
-        return "https://api.backendless.com/" +
-                PawApplication.YOUR_APP_ID + "/" +
-                PawApplication.YOUR_APP_VERSION + "/files/" +
-                PHOTOS_DIRECTORY + "/" + signalId + PHOTO_EXTENSION;
+        if (signalId != null) {
+            return "https://api.backendless.com/" +
+                    PawApplication.YOUR_APP_ID + "/" +
+                    PawApplication.YOUR_APP_VERSION + "/files/" +
+                    PHOTOS_DIRECTORY + "/" + signalId + PHOTO_EXTENSION;
+        } else {
+            return null;
+        }
     }
 
 

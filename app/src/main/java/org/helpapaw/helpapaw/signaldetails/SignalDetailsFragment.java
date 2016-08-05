@@ -1,12 +1,14 @@
 package org.helpapaw.helpapaw.signaldetails;
 
 
+import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import org.helpapaw.helpapaw.R;
 import org.helpapaw.helpapaw.base.BaseFragment;
@@ -15,6 +17,7 @@ import org.helpapaw.helpapaw.base.PresenterManager;
 import org.helpapaw.helpapaw.data.models.Comment;
 import org.helpapaw.helpapaw.data.models.Signal;
 import org.helpapaw.helpapaw.databinding.FragmentSignalDetailsBinding;
+import org.helpapaw.helpapaw.utils.Injection;
 
 import java.util.List;
 
@@ -71,8 +74,7 @@ public class SignalDetailsFragment extends BaseFragment implements SignalDetails
 
     @Override
     public void setProgressIndicator(boolean active) {
-        //binding.progressComments.setVisibility(active ? View.VISIBLE : View.GONE);
-        //binding.progressComments.setVisibility(active ? View.GONE : View.VISIBLE);
+        binding.progressComments.setVisibility(active ? View.VISIBLE : View.GONE);
     }
 
     @Override
@@ -87,11 +89,25 @@ public class SignalDetailsFragment extends BaseFragment implements SignalDetails
 
     @Override
     public void showSignalDetails(Signal signal) {
-
+        binding.txtSignalTitle.setText(signal.getTitle());
+        binding.txtSignalAuthor.setText(String.format(getString(R.string.txt_signal_from), signal.getAuthorName()));
+        binding.txtSubmittedDate.setText(String.format(getString(R.string.txt_submitted_on), signal.getDateSubmitted()));
+        Injection.getImageLoader().loadWithRoundedCorners(getContext(), signal.getPhotoUrl(), binding.imgSignalPhoto, R.drawable.ic_paw);
     }
 
     @Override
     public void displayComments(List<Comment> comments) {
+
+        for (int i = 0; i < comments.size(); i++) {
+            LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            View inflatedCommentView = inflater.inflate(R.layout.view_comment, binding.grpComments, false);
+            TextView txtCommentText = (TextView) inflatedCommentView.findViewById(R.id.txt_comment_text);
+            TextView txtCommentAuthor = (TextView) inflatedCommentView.findViewById(R.id.txt_comment_author);
+            Comment comment = comments.get(i);
+            txtCommentText.setText(comment.getText());
+            txtCommentAuthor.setText(comment.getOwnerName());
+            binding.grpComments.addView(inflatedCommentView);
+        }
 
     }
 

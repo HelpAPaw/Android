@@ -4,7 +4,8 @@
 
     <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="#f2f2f2">
 
         <android.support.design.widget.AppBarLayout
             android:id="@+id/app_bar"

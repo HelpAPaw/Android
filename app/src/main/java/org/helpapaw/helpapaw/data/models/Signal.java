@@ -11,19 +11,21 @@ public class Signal implements Parcelable{
     private String id;
     private String title;
     private String dateSubmitted;
+    private String authorName;
+    private String photoUrl;
     private int status;
     private double latitude;
     private double longitude;
 
-    public Signal(String id, String title, String dateSubmitted, int status, double latitude, double longitude) {
+    public Signal(String id, String title, String dateSubmitted, int status, String authorName, double latitude, double longitude) {
         this.id = id;
         this.title = title;
         this.dateSubmitted = dateSubmitted;
+        this.authorName = authorName;
         this.status = status;
         this.latitude = latitude;
         this.longitude = longitude;
     }
-
 
     public Signal(String title, String dateSubmitted, int status, double latitude, double longitude) {
         this.title = title;
@@ -33,10 +35,21 @@ public class Signal implements Parcelable{
         this.longitude = longitude;
     }
 
+
+    public Signal(String title, String dateSubmitted, int status, String authorName, double latitude, double longitude) {
+        this.title = title;
+        this.dateSubmitted = dateSubmitted;
+        this.status = status;
+        this.authorName = authorName;
+        this.latitude = latitude;
+        this.longitude = longitude;
+    }
+
     protected Signal(Parcel in) {
         id = in.readString();
         title = in.readString();
         dateSubmitted = in.readString();
+        authorName = in.readString();
         status = in.readInt();
         latitude = in.readDouble();
         longitude = in.readDouble();
@@ -78,6 +91,18 @@ public class Signal implements Parcelable{
         return id;
     }
 
+    public String getAuthorName() {
+        return authorName;
+    }
+
+    public String getPhotoUrl() {
+        return photoUrl;
+    }
+
+    public void setPhotoUrl(String photoUrl) {
+        this.photoUrl = photoUrl;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -88,6 +113,7 @@ public class Signal implements Parcelable{
         dest.writeString(id);
         dest.writeString(title);
         dest.writeString(dateSubmitted);
+        dest.writeString(authorName);
         dest.writeInt(status);
         dest.writeDouble(latitude);
         dest.writeDouble(longitude);
