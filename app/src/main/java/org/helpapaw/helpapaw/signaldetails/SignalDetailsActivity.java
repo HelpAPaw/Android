@@ -28,6 +28,7 @@ public class SignalDetailsActivity extends AppCompatActivity {
         ActionBar supportActionBar = getSupportActionBar();
         if (supportActionBar != null) {
             supportActionBar.setDisplayHomeAsUpEnabled(true);
+            supportActionBar.setHomeAsUpIndicator(R.drawable.ic_close);
             supportActionBar.setDisplayShowTitleEnabled(false);
             binding.toolbarTitle.setText(getString(R.string.txt_signal_details_title));
         }
@@ -39,6 +40,12 @@ public class SignalDetailsActivity extends AppCompatActivity {
                 initFragment(SignalDetailsFragment.newInstance(signal));
             }
         }
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        finish();
+        return false;
     }
 
     private void initFragment(Fragment signalsDetailsFragment) {

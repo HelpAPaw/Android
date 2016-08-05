@@ -20,4 +20,15 @@ public class PicassoImageLoader implements ImageLoader {
                 .into(imageView);
     }
 
+    @Override
+    public void loadWithRoundedCorners(Context context, String url, ImageView imageView, @DrawableRes int placeholder) {
+        Picasso.with(context)
+                .load(url)
+                .placeholder(placeholder)
+                .transform(new RoundedTransformation(16, 0))
+                .fit()
+                .centerCrop()
+                .into(imageView);
+    }
+
 }

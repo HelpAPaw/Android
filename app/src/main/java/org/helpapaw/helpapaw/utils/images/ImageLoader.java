@@ -11,4 +11,6 @@ public interface ImageLoader {
 
     void load(Context context, String url, ImageView imageView, @DrawableRes int placeholder);
 
+    void loadWithRoundedCorners(Context context, String url, ImageView imageView, @DrawableRes int placeholder);
+
 }

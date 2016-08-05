@@ -2,6 +2,7 @@ package org.helpapaw.helpapaw.data.repositories;
 
 import com.backendless.Backendless;
 import com.backendless.BackendlessCollection;
+import com.backendless.BackendlessUser;
 import com.backendless.async.callback.AsyncCallback;
 import com.backendless.exceptions.BackendlessFault;
 import com.backendless.geo.BackendlessGeoQuery;
@@ -27,7 +28,7 @@ public class BackendlessSignalRepository implements SignalRepository {
 
     @Override
     public void getSignalById(String signalId, final LoadSignalCallback callback) {
-        String whereClause = "objectId = " + signalId;
+        String whereClause = "objectId = '" + signalId + "'";
         BackendlessGeoQuery geoQuery = new BackendlessGeoQuery();
         geoQuery.setWhereClause(whereClause);
 
@@ -39,6 +40,7 @@ public class BackendlessSignalRepository implements SignalRepository {
                     Signal signal = new Signal(geoPoint.getObjectId(), geoPoint.getMetadata(SIGNAL_TITLE).toString(),
                             geoPoint.getMetadata(SIGNAL_DATE_SUBMITTED).toString(),
                             Integer.parseInt(geoPoint.getMetadata(SIGNAL_STATUS).toString()),
+                            ((BackendlessUser) geoPoint.getMetadata(SIGNAL_AUTHOR)).getProperty("name").toString(),
                             geoPoint.getLatitude(), geoPoint.getLongitude());
 
                     callback.onSignalLoaded(signal);
@@ -68,6 +70,7 @@ public class BackendlessSignalRepository implements SignalRepository {
                     signals.add(new Signal(geoPoint.getObjectId(), geoPoint.getMetadata(SIGNAL_TITLE).toString(),
                             geoPoint.getMetadata(SIGNAL_DATE_SUBMITTED).toString(),
                             Integer.parseInt(geoPoint.getMetadata(SIGNAL_STATUS).toString()),
+                            ((BackendlessUser) geoPoint.getMetadata(SIGNAL_AUTHOR)).getProperty("name").toString(),
                             geoPoint.getLatitude(), geoPoint.getLongitude()));
                 }
                 callback.onSignalsLoaded(signals);
