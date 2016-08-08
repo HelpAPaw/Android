@@ -23,7 +23,10 @@ public interface LoginContract {
 
         void closeLoginScreen();
 
+        void showNoInternetMessage();
+
         boolean isActive();
+
     }
 
     interface UserActionsListener {

@@ -25,6 +25,8 @@ public class SignalInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
 
     private final static String PHOTO_EXTENSION = ".jpg";
     private final static String PHOTOS_DIRECTORY = "signal_photos";
+    private static final String BACKENDLESS_API_URL = "https://api.backendless.com/";
+    private static final String FILES_FOLDER = "/files/";
 
     private Map<String, Signal> signalMarkers;
     private LayoutInflater inflater;
@@ -101,9 +103,9 @@ public class SignalInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
     }
 
     private String getPhotoUrl(String signalId) {
-        return "https://api.backendless.com/" +
+        return BACKENDLESS_API_URL +
                 PawApplication.YOUR_APP_ID + "/" +
-                PawApplication.YOUR_APP_VERSION + "/files/" +
+                PawApplication.YOUR_APP_VERSION + FILES_FOLDER +
                 PHOTOS_DIRECTORY + "/" + signalId + PHOTO_EXTENSION;
     }
 }

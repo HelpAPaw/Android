@@ -94,6 +94,11 @@ public class RegisterFragment extends BaseFragment implements RegisterContract.V
     }
 
     @Override
+    public void showNoInternetMessage() {
+        showMessage(getString(R.string.txt_no_internet));
+    }
+
+    @Override
     public boolean isActive() {
         return isAdded();
     }

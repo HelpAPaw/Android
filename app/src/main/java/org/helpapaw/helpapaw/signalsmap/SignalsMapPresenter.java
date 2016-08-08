@@ -102,8 +102,7 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
                 String timestamp = tsLong.toString();
 
                 if (isEmpty(description)) {
-                    //TODO: extract text
-                    getView().showMessage("Signal description is required!");
+                    getView().showDescriptionErrorMessage();
                 } else {
                     saveSignal(description, timestamp, 0, latitude, longitude);
                 }
@@ -147,10 +146,10 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
             public void onPhotoSaved() {
                 if (!isViewAvailable()) return;
                 getAllSignals(latitude, longitude);
-                //TODO: extract text
+
                 getView().setAddSignalViewVisibility(false);
                 getView().clearSignalViewData();
-                getView().showMessage("Signal successfully added!");
+                getView().showAddedSignalMessage();
             }
 
             @Override

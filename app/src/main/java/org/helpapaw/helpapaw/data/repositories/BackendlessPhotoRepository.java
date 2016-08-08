@@ -20,6 +20,9 @@ public class BackendlessPhotoRepository implements PhotoRepository {
 
     private final static String PHOTO_EXTENSION = ".jpg";
     private final static String PHOTOS_DIRECTORY = "signal_photos";
+    private static final String BACKENDLESS_API_DOMAIN = "https://api.backendless.com/";
+    private static final String FILES_FOLDER = "/files/";
+
     private final static int PHOTO_QUALITY = 10;
 
     @Override
@@ -48,9 +51,9 @@ public class BackendlessPhotoRepository implements PhotoRepository {
     @Override
     public String getPhotoUrl(String signalId) {
         if (signalId != null) {
-            return "https://api.backendless.com/" +
+            return BACKENDLESS_API_DOMAIN +
                     PawApplication.YOUR_APP_ID + "/" +
-                    PawApplication.YOUR_APP_VERSION + "/files/" +
+                    PawApplication.YOUR_APP_VERSION + FILES_FOLDER +
                     PHOTOS_DIRECTORY + "/" + signalId + PHOTO_EXTENSION;
         } else {
             return null;

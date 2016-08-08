@@ -39,6 +39,10 @@ public interface SignalsMapContract {
 
         void closeSignalsMapScreen();
 
+        void showDescriptionErrorMessage();
+
+        void showAddedSignalMessage();
+
         boolean isActive();
     }
 

@@ -21,6 +21,10 @@ import java.util.Locale;
  * Created by iliyan on 8/4/16
  */
 public class BackendlessCommentRepository implements CommentRepository {
+    private static final String DATE_TIME_FORMAT = "MM/dd/yyyy hh:mm:ss";
+    private static final String NAME_FIELD = "name";
+    private static final String CREATED_FIELD = "created";
+
     @Override
     public void getAllCommentsBySignalId(String signalId, final LoadCommentsCallback callback) {
         final List<Comment> comments = new ArrayList<>();
@@ -29,7 +33,7 @@ public class BackendlessCommentRepository implements CommentRepository {
         BackendlessDataQuery dataQuery = new BackendlessDataQuery();
         dataQuery.setWhereClause(whereClause);
         QueryOptions queryOptions = new QueryOptions();
-        queryOptions.setSortBy(Collections.singletonList("created"));
+        queryOptions.setSortBy(Collections.singletonList(CREATED_FIELD));
         dataQuery.setQueryOptions(queryOptions);
 
         Backendless.Persistence.of(FINComment.class).find(dataQuery,
@@ -39,8 +43,8 @@ public class BackendlessCommentRepository implements CommentRepository {
                         for (int i = 0; i < foundComments.getData().size(); i++) {
                             FINComment currentComment = foundComments.getData().get(i);
                             String authorName = null;
-                            if (currentComment.getAuthor() != null && currentComment.getAuthor().getProperty("name") != null) {
-                                authorName = currentComment.getAuthor().getProperty("name").toString();
+                            if (currentComment.getAuthor() != null && currentComment.getAuthor().getProperty(NAME_FIELD) != null) {
+                                authorName = currentComment.getAuthor().getProperty(NAME_FIELD).toString();
                             }
 
                             Comment comment = new Comment(currentComment.getObjectId(),
@@ -60,7 +64,7 @@ public class BackendlessCommentRepository implements CommentRepository {
 
     @Override
     public void saveComment(String commentText, String signalId, final SaveCommentCallback callback) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss", Locale.getDefault());
+        SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_TIME_FORMAT, Locale.getDefault());
         String currentDate = dateFormat.format(new Date());
 
         FINComment backendlessComment =
@@ -69,8 +73,8 @@ public class BackendlessCommentRepository implements CommentRepository {
         Backendless.Persistence.save(backendlessComment, new AsyncCallback<FINComment>() {
             public void handleResponse(FINComment newComment) {
                 String authorName = null;
-                if (newComment.getAuthor() != null && newComment.getAuthor().getProperty("name") != null) {
-                    authorName = newComment.getAuthor().getProperty("name").toString();
+                if (newComment.getAuthor() != null && newComment.getAuthor().getProperty(NAME_FIELD) != null) {
+                    authorName = newComment.getAuthor().getProperty(NAME_FIELD).toString();
                 }
                 Comment comment = new Comment(newComment.getObjectId(),
                         authorName, newComment.getCreated(), newComment.getText());

@@ -10,6 +10,10 @@ import com.backendless.exceptions.BackendlessFault;
  */
 public class BackendlessUserManager implements UserManager {
 
+    private static final String USER_EMAIL_FIELD = "email";
+    private static final String USER_NAME_FIELD = "name";
+    private static final String USER_PHONE_NUMBER_FIELD = "phoneNumber";
+
     @Override
     public void login(String email, String password, final LoginCallback loginCallback) {
         Backendless.UserService.login(email, password, new AsyncCallback<BackendlessUser>() {
@@ -26,9 +30,9 @@ public class BackendlessUserManager implements UserManager {
     @Override
     public void register(String email, String password, String name, String phoneNumber, final RegistrationCallback registrationCallback) {
         BackendlessUser user = new BackendlessUser();
-        user.setProperty("email", email);
-        user.setProperty("name", name);
-        user.setProperty("phoneNumber", phoneNumber);
+        user.setProperty(USER_EMAIL_FIELD, email);
+        user.setProperty(USER_NAME_FIELD, name);
+        user.setProperty(USER_PHONE_NUMBER_FIELD, phoneNumber);
         user.setPassword(password);
 
         Backendless.UserService.register(user, new AsyncCallback<BackendlessUser>() {

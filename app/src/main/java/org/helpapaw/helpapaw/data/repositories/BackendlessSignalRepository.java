@@ -25,6 +25,8 @@ public class BackendlessSignalRepository implements SignalRepository {
     private static final String SIGNAL_DATE_SUBMITTED = "dateSubmitted";
     private static final String SIGNAL_STATUS = "status";
     private static final String SIGNAL_AUTHOR = "author";
+    private static final String NAME_FIELD = "name";
+
 
     @Override
     public void getSignalById(String signalId, final LoadSignalCallback callback) {
@@ -40,7 +42,7 @@ public class BackendlessSignalRepository implements SignalRepository {
                     Signal signal = new Signal(geoPoint.getObjectId(), geoPoint.getMetadata(SIGNAL_TITLE).toString(),
                             geoPoint.getMetadata(SIGNAL_DATE_SUBMITTED).toString(),
                             Integer.parseInt(geoPoint.getMetadata(SIGNAL_STATUS).toString()),
-                            ((BackendlessUser) geoPoint.getMetadata(SIGNAL_AUTHOR)).getProperty("name").toString(),
+                            ((BackendlessUser) geoPoint.getMetadata(SIGNAL_AUTHOR)).getProperty(NAME_FIELD).toString(),
                             geoPoint.getLatitude(), geoPoint.getLongitude());
 
                     callback.onSignalLoaded(signal);
@@ -70,7 +72,7 @@ public class BackendlessSignalRepository implements SignalRepository {
                     signals.add(new Signal(geoPoint.getObjectId(), geoPoint.getMetadata(SIGNAL_TITLE).toString(),
                             geoPoint.getMetadata(SIGNAL_DATE_SUBMITTED).toString(),
                             Integer.parseInt(geoPoint.getMetadata(SIGNAL_STATUS).toString()),
-                            ((BackendlessUser) geoPoint.getMetadata(SIGNAL_AUTHOR)).getProperty("name").toString(),
+                            ((BackendlessUser) geoPoint.getMetadata(SIGNAL_AUTHOR)).getProperty(NAME_FIELD).toString(),
                             geoPoint.getLatitude(), geoPoint.getLongitude()));
                 }
                 callback.onSignalsLoaded(signals);

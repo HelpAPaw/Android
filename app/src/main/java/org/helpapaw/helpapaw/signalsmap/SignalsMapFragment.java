@@ -385,8 +385,8 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
 
                 if (Utils.getInstance().isRotationNeeded(takenPhotoUri.toString())) {
                     //Bitmap fixedBitmap = Utils.getInstance().fixBitmapOrientation(Utils.getInstance()
-                           // .getBitmapFromUri(getContext(), takenPhotoUri.toString()), takenPhotoUri.toString());
-                   // Utils.getInstance().saveImageToExternalStorage(fixedBitmap, takenPhotoUri);
+                    // .getBitmapFromUri(getContext(), takenPhotoUri.toString()), takenPhotoUri.toString());
+                    // Utils.getInstance().saveImageToExternalStorage(fixedBitmap, takenPhotoUri);
 
                     Bitmap bitmap = Utils.getInstance()
                             .getBitmapFromUri(getContext(), takenPhotoUri.toString());
@@ -437,9 +437,19 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
 
     @Override
     public void closeSignalsMapScreen() {
-        if(getActivity()!=null){
+        if (getActivity() != null) {
             getActivity().finish();
         }
+    }
+
+    @Override
+    public void showDescriptionErrorMessage() {
+        showMessage(getString(R.string.txt_description_required));
+    }
+
+    @Override
+    public void showAddedSignalMessage() {
+        showMessage(getString(R.string.txt_signal_added_successfully));
     }
 
     @Override
@@ -466,7 +476,7 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
 
     /* OnClick Listeners */
 
-    public void onBackPressed(){
+    public void onBackPressed() {
         actionsListener.onBackButtonPressed();
     }
 

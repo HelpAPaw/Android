@@ -61,8 +61,7 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
 
             @Override
             public void onCommentsFailure(String message) {
-                if (getView() == null || !getView().isActive()) return;
-
+                if (!isViewAvailable()) return;
                 getView().showMessage(message);
             }
         });
