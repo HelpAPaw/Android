@@ -50,13 +50,13 @@ public class LoginPresenter extends Presenter<LoginContract.View> implements Log
             userManager.login(email, password, new UserManager.LoginCallback() {
                 @Override
                 public void onLoginSuccess() {
-                    if (getView() == null || !getView().isActive()) return;
+                    if (!isViewAvailable()) return;
                     getView().closeLoginScreen();
                 }
 
                 @Override
                 public void onLoginFailure(String message) {
-                    if (getView() == null || !getView().isActive()) return;
+                    if (!isViewAvailable()) return;
                     setProgressIndicator(false);
                     getView().showMessage(message);
                 }
@@ -70,6 +70,10 @@ public class LoginPresenter extends Presenter<LoginContract.View> implements Log
     private void setProgressIndicator(boolean active) {
         getView().setProgressIndicator(active);
         this.showProgressBar = active;
+    }
+
+    private boolean isViewAvailable(){
+        return  getView() != null && getView().isActive();
     }
 
     @Override
