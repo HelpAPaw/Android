@@ -2,6 +2,7 @@ package org.helpapaw.helpapaw.signaldetails;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
@@ -11,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import org.helpapaw.helpapaw.R;
+import org.helpapaw.helpapaw.authentication.AuthenticationActivity;
 import org.helpapaw.helpapaw.base.BaseFragment;
 import org.helpapaw.helpapaw.base.Presenter;
 import org.helpapaw.helpapaw.base.PresenterManager;
@@ -64,6 +66,8 @@ public class SignalDetailsFragment extends BaseFragment implements SignalDetails
 
         actionsListener.onInitDetailsScreen(signal);
 
+        binding.btnAddComment.setOnClickListener(getOnAddCommentClickListener());
+
         return binding.getRoot();
     }
 
@@ -106,10 +110,41 @@ public class SignalDetailsFragment extends BaseFragment implements SignalDetails
             Comment comment = comments.get(i);
             txtCommentText.setText(comment.getText());
             txtCommentAuthor.setText(comment.getOwnerName());
-            binding.grpComments.addView(inflatedCommentView);
+            binding.grpComments.addView(inflatedCommentView, 0);
         }
 
     }
 
+    @Override
+    public void showCommentErrorMessage() {
+        binding.editComment.setError(getString(R.string.txt_error_empty_comment));
+    }
+
+    @Override
+    public void clearSendCommentView() {
+        binding.editComment.setError(null);
+        binding.editComment.setText(null);
+    }
+
+    @Override
+    public void openLoginScreen() {
+        Intent intent = new Intent(getContext(), AuthenticationActivity.class);
+        startActivity(intent);
+    }
+
+    @Override
+    public boolean isActive() {
+        return isAdded();
+    }
+
     /* OnClick Listeners */
+    public View.OnClickListener getOnAddCommentClickListener() {
+        return new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String commentText = binding.editComment.getText().toString();
+                actionsListener.onAddCommentButtonClicked(commentText);
+            }
+        };
+    }
 }

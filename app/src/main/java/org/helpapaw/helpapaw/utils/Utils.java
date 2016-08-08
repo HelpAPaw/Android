@@ -23,6 +23,7 @@ import org.helpapaw.helpapaw.base.PawApplication;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.regex.Pattern;
 
 /**
  * Created by iliyan on 7/25/16
@@ -36,6 +37,21 @@ public class Utils {
             instance = new Utils();
         }
         return instance;
+    }
+
+    public boolean isEmailValid(String email) {
+        Pattern EMAIL_ADDRESS
+                = Pattern.compile(
+                "[a-zA-Z0-9\\+\\.\\_\\%\\-\\+]{1,256}" +
+                        "\\@" +
+                        "[a-zA-Z0-9][a-zA-Z0-9\\-]{0,64}" +
+                        "(" +
+                        "\\." +
+                        "[a-zA-Z0-9][a-zA-Z0-9\\-]{0,25}" +
+                        ")+"
+        );
+
+        return EMAIL_ADDRESS.matcher(email).matches();
     }
 
     //Network

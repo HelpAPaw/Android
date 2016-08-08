@@ -6,8 +6,19 @@ import android.os.Parcelable;
 /**
  * Created by iliyan on 7/28/16
  */
-public class Signal implements Parcelable{
+public class Signal implements Parcelable {
 
+    public static final Creator<Signal> CREATOR = new Creator<Signal>() {
+        @Override
+        public Signal createFromParcel(Parcel in) {
+            return new Signal(in);
+        }
+
+        @Override
+        public Signal[] newArray(int size) {
+            return new Signal[size];
+        }
+    };
     private String id;
     private String title;
     private String dateSubmitted;
@@ -27,6 +38,7 @@ public class Signal implements Parcelable{
         this.longitude = longitude;
     }
 
+
     public Signal(String title, String dateSubmitted, int status, double latitude, double longitude) {
         this.title = title;
         this.dateSubmitted = dateSubmitted;
@@ -34,7 +46,6 @@ public class Signal implements Parcelable{
         this.latitude = latitude;
         this.longitude = longitude;
     }
-
 
     public Signal(String title, String dateSubmitted, int status, String authorName, double latitude, double longitude) {
         this.title = title;
@@ -54,18 +65,6 @@ public class Signal implements Parcelable{
         latitude = in.readDouble();
         longitude = in.readDouble();
     }
-
-    public static final Creator<Signal> CREATOR = new Creator<Signal>() {
-        @Override
-        public Signal createFromParcel(Parcel in) {
-            return new Signal(in);
-        }
-
-        @Override
-        public Signal[] newArray(int size) {
-            return new Signal[size];
-        }
-    };
 
     public String getTitle() {
         return title;

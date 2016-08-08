@@ -22,7 +22,7 @@ public class PawApplication extends Application {
         Backendless.initApp(this, YOUR_APP_ID, YOUR_SECRET_KEY, YOUR_APP_VERSION);
     }
 
-    public static PawApplication getContext(){
+    public static PawApplication getContext() {
         return pawApplication;
     }
 }

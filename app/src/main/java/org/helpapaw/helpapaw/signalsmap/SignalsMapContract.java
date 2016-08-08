@@ -36,6 +36,10 @@ public interface SignalsMapContract {
         void setSignalViewProgressVisibility(boolean visibility);
 
         void openSignalDetailsScreen(Signal signal);
+
+        void closeSignalsMapScreen();
+
+        boolean isActive();
     }
 
     interface UserActionsListener {
@@ -59,5 +63,7 @@ public interface SignalsMapContract {
         void onStoragePermissionGranted();
 
         void onSignalInfoWindowClicked(Signal signal);
+
+        void onBackButtonPressed();
     }
 }

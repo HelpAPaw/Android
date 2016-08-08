@@ -25,6 +25,8 @@ public interface RegisterContract {
 
         void closeRegistrationScreen();
 
+        boolean isActive();
+
     }
 
     interface UserActionsListener {

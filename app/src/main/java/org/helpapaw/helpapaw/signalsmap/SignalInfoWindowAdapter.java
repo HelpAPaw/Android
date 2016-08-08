@@ -90,13 +90,13 @@ public class SignalInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
     private String getStatusString(int status) {
         switch (status) {
             case 0:
-                return "Status: Help needed";
+                return inflater.getContext().getString(R.string.txt_status_help_needed);
             case 1:
-                return "Status: Somebody on the way";
+                return inflater.getContext().getString(R.string.txt_status_somebody_on_the_way);
             case 2:
-                return "Status: Solved";
+                return inflater.getContext().getString(R.string.txt_status_solved);
             default:
-                return "Status: Help needed";
+                return inflater.getContext().getString(R.string.txt_status_help_needed);
         }
     }
 

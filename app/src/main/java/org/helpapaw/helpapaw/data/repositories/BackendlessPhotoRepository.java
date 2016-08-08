@@ -20,7 +20,7 @@ public class BackendlessPhotoRepository implements PhotoRepository {
 
     private final static String PHOTO_EXTENSION = ".jpg";
     private final static String PHOTOS_DIRECTORY = "signal_photos";
-    private final static int PHOTO_QUALITY = 30;
+    private final static int PHOTO_QUALITY = 10;
 
     @Override
     public void savePhoto(String photoUri, String photoName, final SavePhotoCallback callback) {

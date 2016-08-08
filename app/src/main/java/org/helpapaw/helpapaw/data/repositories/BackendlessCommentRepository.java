@@ -10,9 +10,12 @@ import com.backendless.persistence.QueryOptions;
 import org.helpapaw.helpapaw.data.models.Comment;
 import org.helpapaw.helpapaw.data.models.backendless.FINComment;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by iliyan on 8/4/16
@@ -34,7 +37,15 @@ public class BackendlessCommentRepository implements CommentRepository {
                     @Override
                     public void handleResponse(BackendlessCollection<FINComment> foundComments) {
                         for (int i = 0; i < foundComments.getData().size(); i++) {
-                            comments.add(foundComments.getData().get(i).getPOJOComment());
+                            FINComment currentComment = foundComments.getData().get(i);
+                            String authorName = null;
+                            if (currentComment.getAuthor() != null && currentComment.getAuthor().getProperty("name") != null) {
+                                authorName = currentComment.getAuthor().getProperty("name").toString();
+                            }
+
+                            Comment comment = new Comment(currentComment.getObjectId(),
+                                    authorName, currentComment.getCreated(), currentComment.getText());
+                            comments.add(comment);
                         }
 
                         callback.onCommentsLoaded(comments);
@@ -48,18 +59,22 @@ public class BackendlessCommentRepository implements CommentRepository {
     }
 
     @Override
-    public void saveComment(String commentText, final SaveCommentCallback callback) {
-        //TODO: change it to return date in MM/dd/yyyy hh:mm:ss format
-        Long tsLong = System.currentTimeMillis() / 1000;
-        String timestamp = tsLong.toString();
+    public void saveComment(String commentText, String signalId, final SaveCommentCallback callback) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss", Locale.getDefault());
+        String currentDate = dateFormat.format(new Date());
 
         FINComment backendlessComment =
-                new FINComment(null,
-                        commentText, timestamp, Backendless.UserService.CurrentUser());
+                new FINComment(commentText, currentDate, signalId, Backendless.UserService.CurrentUser());
 
         Backendless.Persistence.save(backendlessComment, new AsyncCallback<FINComment>() {
-            public void handleResponse(FINComment response) {
-                callback.onCommentSaved(response.getPOJOComment());
+            public void handleResponse(FINComment newComment) {
+                String authorName = null;
+                if (newComment.getAuthor() != null && newComment.getAuthor().getProperty("name") != null) {
+                    authorName = newComment.getAuthor().getProperty("name").toString();
+                }
+                Comment comment = new Comment(newComment.getObjectId(),
+                        authorName, newComment.getCreated(), newComment.getText());
+                callback.onCommentSaved(comment);
             }
 
             public void handleFault(BackendlessFault fault) {

@@ -436,6 +436,18 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
     }
 
     @Override
+    public void closeSignalsMapScreen() {
+        if(getActivity()!=null){
+            getActivity().finish();
+        }
+    }
+
+    @Override
+    public boolean isActive() {
+        return isAdded();
+    }
+
+    @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode) {
             case READ_EXTERNAL_STORAGE_PERMISSIONS_REQUEST:
@@ -443,7 +455,7 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
                     actionsListener.onStoragePermissionGranted();
                 } else {
                     // Permission Denied
-                    Toast.makeText(getContext(), "Sorry we could not load that photo without permissions.", Toast.LENGTH_SHORT)
+                    Toast.makeText(getContext(), R.string.txt_storage_permissions_not_granted, Toast.LENGTH_SHORT)
                             .show();
                 }
                 break;
@@ -453,6 +465,10 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
     }
 
     /* OnClick Listeners */
+
+    public void onBackPressed(){
+        actionsListener.onBackButtonPressed();
+    }
 
     public View.OnClickListener getOnSignalSendClickListener() {
         return new View.OnClickListener() {
