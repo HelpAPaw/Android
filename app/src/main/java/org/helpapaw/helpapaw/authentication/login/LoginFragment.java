@@ -1,7 +1,6 @@
 package org.helpapaw.helpapaw.authentication.login;
 
 
-import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
@@ -15,7 +14,6 @@ import org.helpapaw.helpapaw.base.BaseFragment;
 import org.helpapaw.helpapaw.base.Presenter;
 import org.helpapaw.helpapaw.base.PresenterManager;
 import org.helpapaw.helpapaw.databinding.FragmentLoginBinding;
-import org.helpapaw.helpapaw.signalsmap.SignalsMapActivity;
 
 public class LoginFragment extends BaseFragment implements LoginContract.View {
 
@@ -83,13 +81,6 @@ public class LoginFragment extends BaseFragment implements LoginContract.View {
     }
 
     @Override
-    public void openSignalsMapScreen() {
-        Intent intent = new Intent(getContext(), SignalsMapActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
-    }
-
-    @Override
     public void setProgressIndicator(boolean active) {
         binding.progressLogin.setVisibility(active ? View.VISIBLE : View.GONE);
         binding.grpLogin.setVisibility(active ? View.GONE : View.VISIBLE);
@@ -103,6 +94,18 @@ public class LoginFragment extends BaseFragment implements LoginContract.View {
     @Override
     public void hideKeyboard() {
         super.hideKeyboard();
+    }
+
+    @Override
+    public void closeLoginScreen() {
+        if(getActivity()!=null) {
+            getActivity().finish();
+        }
+    }
+
+    @Override
+    public boolean isActive() {
+        return isAdded();
     }
 
     /* OnClick Listeners */

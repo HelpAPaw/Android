@@ -54,12 +54,15 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
                 new SignalRepository.LoadSignalsCallback() {
                     @Override
                     public void onSignalsLoaded(List<Signal> signals) {
+                        if (getView() == null || !getView().isActive()) return;
+
                         signalsList = signals;
                         getView().displaySignals(signals);
                     }
 
                     @Override
                     public void onSignalsFailure(String message) {
+                        if (getView() == null || !getView().isActive()) return;
                         getView().showMessage(message);
                     }
                 });
@@ -84,8 +87,7 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
 
     @Override
     public void onAddSignalClicked(boolean visibility) {
-        getView().setAddSignalViewVisibility(!visibility);
-        sendSignalViewVisibility = !visibility;
+        setSendSignalViewVisibility(!visibility);
     }
 
     @Override
@@ -96,6 +98,7 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
         userManager.isLoggedIn(new UserManager.LoginCallback() {
             @Override
             public void onLoginSuccess() {
+                if (getView() == null || !getView().isActive()) return;
                 Long tsLong = System.currentTimeMillis() / 1000;
                 String timestamp = tsLong.toString();
 
@@ -109,6 +112,8 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
 
             @Override
             public void onLoginFailure(String message) {
+                if (getView() == null || !getView().isActive()) return;
+
                 getView().setSignalViewProgressVisibility(false);
                 getView().openLoginScreen();
             }
@@ -120,7 +125,8 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
         signalRepository.saveSignal(new Signal(description, timestamp, status, latitude, longitude), new SignalRepository.SaveSignalCallback() {
             @Override
             public void onSignalSaved(String signalId) {
-                if (photoUri != null && photoUri.length() > 0) {
+                if (getView() == null || !getView().isActive()) return;
+                if (!isEmpty(photoUri)) {
                     savePhoto(photoUri, signalId);
                 } else {
                     getAllSignals(latitude, longitude);
@@ -131,6 +137,7 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
 
             @Override
             public void onSignalFailure(String message) {
+                if (getView() == null || !getView().isActive()) return;
                 getView().showMessage(message);
             }
         });
@@ -140,6 +147,8 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
         photoRepository.savePhoto(photoUri, signalId, new PhotoRepository.SavePhotoCallback() {
             @Override
             public void onPhotoSaved() {
+                if (getView() == null || !getView().isActive()) return;
+
                 getAllSignals(latitude, longitude);
                 //TODO: extract text
                 getView().setAddSignalViewVisibility(false);
@@ -149,6 +158,7 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
 
             @Override
             public void onPhotoFailure(String message) {
+                if (getView() == null || !getView().isActive()) return;
                 getView().showMessage(message);
             }
         });
@@ -183,6 +193,20 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
     @Override
     public void onSignalInfoWindowClicked(Signal signal) {
         getView().openSignalDetailsScreen(signal);
+    }
+
+    @Override
+    public void onBackButtonPressed() {
+        if (sendSignalViewVisibility) {
+            setSendSignalViewVisibility(false);
+        } else {
+            getView().closeSignalsMapScreen();
+        }
+    }
+
+    private void setSendSignalViewVisibility(boolean visibility) {
+        sendSignalViewVisibility = visibility;
+        getView().setAddSignalViewVisibility(visibility);
     }
 
     private boolean isEmpty(String value) {

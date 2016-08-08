@@ -1,8 +1,5 @@
 package org.helpapaw.helpapaw.authentication.login;
 
-import android.text.TextUtils;
-import android.util.Patterns;
-
 import org.helpapaw.helpapaw.base.Presenter;
 import org.helpapaw.helpapaw.data.user.UserManager;
 import org.helpapaw.helpapaw.utils.Injection;
@@ -33,12 +30,12 @@ public class LoginPresenter extends Presenter<LoginContract.View> implements Log
     public void onLoginButtonClicked(String email, String password) {
         getView().clearErrorMessages();
 
-        if (TextUtils.isEmpty(email) || !Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+        if (isEmpty(email) || !Utils.getInstance().isEmailValid(email)) {
             getView().showEmailErrorMessage();
             return;
         }
 
-        if (TextUtils.isEmpty(password) || password.length() < MIN_PASS_LENGTH) {
+        if (isEmpty(password) || password.length() < MIN_PASS_LENGTH) {
             getView().showPasswordErrorMessage();
             return;
         }
@@ -53,11 +50,13 @@ public class LoginPresenter extends Presenter<LoginContract.View> implements Log
             userManager.login(email, password, new UserManager.LoginCallback() {
                 @Override
                 public void onLoginSuccess() {
-                    getView().openSignalsMapScreen();
+                    if (getView() == null || !getView().isActive()) return;
+                    getView().closeLoginScreen();
                 }
 
                 @Override
                 public void onLoginFailure(String message) {
+                    if (getView() == null || !getView().isActive()) return;
                     setProgressIndicator(false);
                     getView().showMessage(message);
                 }
@@ -76,5 +75,9 @@ public class LoginPresenter extends Presenter<LoginContract.View> implements Log
     @Override
     public void onRegisterButtonClicked() {
         getView().openRegisterScreen();
+    }
+
+    private boolean isEmpty(String value) {
+        return !(value != null && value.length() > 0);
     }
 }

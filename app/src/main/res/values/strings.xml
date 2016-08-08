@@ -40,4 +40,9 @@
     <string name="txt_signal_from">Signal from %1$s</string>
     <string name="txt_submitted_on">Submitted on %1$s</string>
     <string name="txt_comment_hint">Enter a comment</string>
+    <string name="txt_error_empty_comment">Comment should not be empty!</string>
+    <string name="txt_status_help_needed">Status: Help needed</string>
+    <string name="txt_status_somebody_on_the_way">Status: Somebody on the way</string>
+    <string name="txt_status_solved">Status: Solved</string>
+    <string name="txt_storage_permissions_not_granted">Sorry we could not load that photo without permissions.</string>
 </resources>

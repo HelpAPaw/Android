@@ -94,6 +94,11 @@ public class RegisterFragment extends BaseFragment implements RegisterContract.V
     }
 
     @Override
+    public boolean isActive() {
+        return isAdded();
+    }
+
+    @Override
     public void hideKeyboard() {
         super.hideKeyboard();
     }

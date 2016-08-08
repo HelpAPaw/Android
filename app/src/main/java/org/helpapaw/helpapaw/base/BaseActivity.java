@@ -26,7 +26,7 @@ import org.helpapaw.helpapaw.utils.Utils;
  * Created by iliyan on 6/22/16
  */
 public abstract class BaseActivity extends AppCompatActivity {
-    ActivityBaseBinding binding;
+    protected ActivityBaseBinding binding;
     private ActionBarDrawerToggle drawerToggle;
     private UserManager userManager;
 

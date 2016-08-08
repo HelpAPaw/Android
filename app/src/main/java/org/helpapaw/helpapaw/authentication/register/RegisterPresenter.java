@@ -1,8 +1,5 @@
 package org.helpapaw.helpapaw.authentication.register;
 
-import android.text.TextUtils;
-import android.util.Patterns;
-
 import org.helpapaw.helpapaw.base.Presenter;
 import org.helpapaw.helpapaw.data.user.UserManager;
 import org.helpapaw.helpapaw.utils.Injection;
@@ -34,17 +31,17 @@ public class RegisterPresenter extends Presenter<RegisterContract.View> implemen
     public void onRegisterButtonClicked(String email, String password, String name, String phoneNumber) {
         getView().clearErrorMessages();
 
-        if (TextUtils.isEmpty(email) || !Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+        if (isEmpty(email) || !Utils.getInstance().isEmailValid(email)) {
             getView().showEmailErrorMessage();
             return;
         }
 
-        if (TextUtils.isEmpty(password) || password.length() < MIN_PASS_LENGTH) {
+        if (isEmpty(password) || password.length() < MIN_PASS_LENGTH) {
             getView().showPasswordErrorMessage();
             return;
         }
 
-        if (TextUtils.isEmpty(name)) {
+        if (isEmpty(name)) {
             getView().showNameErrorMessage();
             return;
         }
@@ -59,11 +56,13 @@ public class RegisterPresenter extends Presenter<RegisterContract.View> implemen
             userManager.register(email, password, name, phoneNumber, new UserManager.RegistrationCallback() {
                 @Override
                 public void onRegistrationSuccess() {
+                    if (getView() == null || !getView().isActive()) return;
                     getView().closeRegistrationScreen();
                 }
 
                 @Override
                 public void onRegistrationFailure(String message) {
+                    if (getView() == null || !getView().isActive()) return;
                     setProgressIndicator(false);
                     getView().showMessage(message);
                 }
@@ -74,7 +73,7 @@ public class RegisterPresenter extends Presenter<RegisterContract.View> implemen
         }
     }
 
-    private void setProgressIndicator(boolean active){
+    private void setProgressIndicator(boolean active) {
         getView().setProgressIndicator(active);
         this.showProgressBar = active;
     }
@@ -87,5 +86,9 @@ public class RegisterPresenter extends Presenter<RegisterContract.View> implemen
     @Override
     public void onWhyPhoneButtonClicked() {
         getView().showWhyPhoneDialog();
+    }
+
+    private boolean isEmpty(String value) {
+        return !(value != null && value.length() > 0);
     }
 }

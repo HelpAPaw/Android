@@ -7,6 +7,7 @@ import com.backendless.BackendlessUser;
  */
 public class FINComment {
     private String objectId;
+    private String signalID;
     private String text;
     private String created;
     private BackendlessUser author;
@@ -14,8 +15,16 @@ public class FINComment {
     public FINComment() {
     }
 
-    public FINComment(String objectId, String text, String created, BackendlessUser author) {
+    public FINComment(String text, String created, String signalID, BackendlessUser author) {
+        this.text = text;
+        this.created = created;
+        this.author = author;
+        this.signalID = signalID;
+    }
+
+    public FINComment(String objectId, String text, String created, String signalID, BackendlessUser author) {
         this.objectId = objectId;
+        this.signalID = signalID;
         this.text = text;
         this.created = created;
         this.author = author;
@@ -37,11 +46,6 @@ public class FINComment {
         return author;
     }
 
-    public org.helpapaw.helpapaw.data.models.Comment getPOJOComment() {
-        return new org.helpapaw.helpapaw.data.models.Comment(
-                objectId, author.getProperty("name").toString(), created, text);
-    }
-
     public void setObjectId(String objectId) {
         this.objectId = objectId;
     }
@@ -56,5 +60,13 @@ public class FINComment {
 
     public void setAuthor(BackendlessUser author) {
         this.author = author;
+    }
+
+    public String getSignalID() {
+        return signalID;
+    }
+
+    public void setSignalID(String signalID) {
+        this.signalID = signalID;
     }
 }

@@ -21,6 +21,15 @@ public interface SignalDetailsContract {
         void showSignalDetails(Signal signal);
 
         void displayComments(List<Comment> comments);
+
+        void showCommentErrorMessage();
+
+        void clearSendCommentView();
+
+        void openLoginScreen();
+
+        boolean isActive();
+
     }
 
     interface UserActionsListener {
