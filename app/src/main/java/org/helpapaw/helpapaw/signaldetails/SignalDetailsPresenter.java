@@ -26,7 +26,7 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
 
     public SignalDetailsPresenter(SignalDetailsContract.View view) {
         super(view);
-        showProgressBar = false;
+        showProgressBar = true;
         commentRepository = Injection.getCommentRepositoryInstance();
         photoRepository = Injection.getPhotoRepositoryInstance();
         userManager = Injection.getUserManagerInstance();
@@ -34,9 +34,9 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
 
     @Override
     public void onInitDetailsScreen(Signal signal) {
+        setProgressIndicator(showProgressBar);
         if (signal != null) {
             this.signal = signal;
-            setProgressIndicator(true);
             signal.setPhotoUrl(photoRepository.getPhotoUrl(signal.getId()));
             getView().showSignalDetails(signal);
 
@@ -53,8 +53,7 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
         commentRepository.getAllCommentsBySignalId(signalId, new CommentRepository.LoadCommentsCallback() {
             @Override
             public void onCommentsLoaded(List<Comment> comments) {
-                if (getView() == null || !getView().isActive()) return;
-
+                if (!isViewAvailable()) return;
                 getView().displayComments(comments);
                 commentList = comments;
                 setProgressIndicator(false);
@@ -78,15 +77,14 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
             userManager.isLoggedIn(new UserManager.LoginCallback() {
                 @Override
                 public void onLoginSuccess() {
-                    if (getView() == null || !getView().isActive()) return;
-
+                    if (!isViewAvailable()) return;
                     getView().clearSendCommentView();
                     saveComment(comment, signal.getId());
                 }
 
                 @Override
                 public void onLoginFailure(String message) {
-                    if (getView() == null || !getView().isActive()) return;
+                    if (!isViewAvailable()) return;
                     setProgressIndicator(false);
                     getView().openLoginScreen();
                 }
@@ -101,17 +99,22 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
         commentRepository.saveComment(comment, signalId, new CommentRepository.SaveCommentCallback() {
             @Override
             public void onCommentSaved(Comment comment) {
-                if (getView() == null || !getView().isActive()) return;
+                if (!isViewAvailable()) return;
                 setProgressIndicator(false);
+                commentList.add(comment);
                 getView().displayComments(Collections.singletonList(comment));
             }
 
             @Override
             public void onCommentFailure(String message) {
-                if (getView() == null || !getView().isActive()) return;
+                if (!isViewAvailable()) return;
                 getView().showMessage(message);
             }
         });
+    }
+
+    private boolean isViewAvailable() {
+        return getView() != null && getView().isActive();
     }
 
     private void setProgressIndicator(boolean active) {

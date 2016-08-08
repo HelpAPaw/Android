@@ -56,13 +56,13 @@ public class RegisterPresenter extends Presenter<RegisterContract.View> implemen
             userManager.register(email, password, name, phoneNumber, new UserManager.RegistrationCallback() {
                 @Override
                 public void onRegistrationSuccess() {
-                    if (getView() == null || !getView().isActive()) return;
+                    if (!isViewAvailable()) return;
                     getView().closeRegistrationScreen();
                 }
 
                 @Override
                 public void onRegistrationFailure(String message) {
-                    if (getView() == null || !getView().isActive()) return;
+                    if (!isViewAvailable()) return;
                     setProgressIndicator(false);
                     getView().showMessage(message);
                 }
@@ -86,6 +86,10 @@ public class RegisterPresenter extends Presenter<RegisterContract.View> implemen
     @Override
     public void onWhyPhoneButtonClicked() {
         getView().showWhyPhoneDialog();
+    }
+
+    private boolean isViewAvailable() {
+        return getView() != null && getView().isActive();
     }
 
     private boolean isEmpty(String value) {
