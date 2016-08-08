@@ -12,7 +12,6 @@ public class LoginPresenter extends Presenter<LoginContract.View> implements Log
     private static final int MIN_PASS_LENGTH = 6;
 
     private UserManager userManager;
-
     private boolean showProgressBar;
 
     public LoginPresenter(LoginContract.View view) {
@@ -62,7 +61,7 @@ public class LoginPresenter extends Presenter<LoginContract.View> implements Log
                 }
             });
         } else {
-            getView().showMessage("No Internet connection!");
+            getView().showNoInternetMessage();
             setProgressIndicator(false);
         }
     }
@@ -72,8 +71,8 @@ public class LoginPresenter extends Presenter<LoginContract.View> implements Log
         this.showProgressBar = active;
     }
 
-    private boolean isViewAvailable(){
-        return  getView() != null && getView().isActive();
+    private boolean isViewAvailable() {
+        return getView() != null && getView().isActive();
     }
 
     @Override

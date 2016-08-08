@@ -68,7 +68,7 @@ public class RegisterPresenter extends Presenter<RegisterContract.View> implemen
                 }
             });
         } else {
-            getView().showMessage("No Internet connection!");
+            getView().showNoInternetMessage();
             setProgressIndicator(false);
         }
     }

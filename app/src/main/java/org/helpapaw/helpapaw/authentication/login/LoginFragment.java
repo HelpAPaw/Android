@@ -104,6 +104,11 @@ public class LoginFragment extends BaseFragment implements LoginContract.View {
     }
 
     @Override
+    public void showNoInternetMessage() {
+        showMessage(getString(R.string.txt_no_internet));
+    }
+
+    @Override
     public boolean isActive() {
         return isAdded();
     }
