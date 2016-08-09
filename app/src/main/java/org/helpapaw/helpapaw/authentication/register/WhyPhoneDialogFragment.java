@@ -13,8 +13,6 @@ import org.helpapaw.helpapaw.R;
  */
 public class WhyPhoneDialogFragment extends DialogFragment {
 
-    private final static String TAG = "WhyPhoneDialogFragment";
-
     public static WhyPhoneDialogFragment newInstance() {
         return new WhyPhoneDialogFragment();
     }
@@ -31,9 +29,5 @@ public class WhyPhoneDialogFragment extends DialogFragment {
                             }
                         }
                 ).create();
-    }
-
-    public static String getTAG() {
-        return TAG;
     }
 }

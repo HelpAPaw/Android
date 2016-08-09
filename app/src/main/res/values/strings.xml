@@ -27,4 +27,29 @@
     <string name="txt_why_want_phone">Why do you want my phone number?</string>
     <string name="txt_why_phone_description">Entering your phone number is not required for registration. However, we strongly encourage you to fill it so you can be quickly reached if a volunteer needs information about a signal that you submitted.</string>
     <string name="txt_i_see">I see</string>
+    <string name="txt_location_permission_not_granted">Location permissions not granted!</string>
+    <string name="txt_signal_description">signal description</string>
+    <string name="txt_send">Send</string>
+    <string name="txt_take_photo">Take Photo</string>
+    <string name="txt_choose_existing">Choose Existing</string>
+    <string name="permission_not_granted">Permission was not granted!</string>
+    <string name="txt_storage_permissions_for_camera">Sorry we could not open the camera without your permission.</string>
+    <string name="txt_storage_permissions_for_gallery">Sorry we could not open the gallery without your permission.</string>
+    <string name="txt_status_help_needed">Status: Help needed</string>
+    <string name="txt_status_somebody_on_the_way">Status: Somebody on the way</string>
+    <string name="txt_status_solved">Status: Solved</string>
+    <string name="txt_description_required">Signal description is required!</string>
+    <string name="txt_signal_added_successfully">Signal successfully added!</string>
+    <string name="txt_logout_successfully">You successfully logged out.</string>
+
+    <!-- Strings related to Signal Details screen -->
+    <string name="txt_signal_details_title">Signal Details</string>
+    <string name="txt_comments">Comments</string>
+    <string name="txt_signal_from">Signal from %1$s</string>
+    <string name="txt_submitted_on">Submitted on %1$s</string>
+    <string name="txt_comment_hint">Enter a comment</string>
+    <string name="txt_error_empty_comment">Comment should not be empty!</string>
+    <string name="txt_no_comments">There are no comments yet.</string>
+    <string name="txt_signal_photo_description">Signal Photo</string>
+
 </resources>

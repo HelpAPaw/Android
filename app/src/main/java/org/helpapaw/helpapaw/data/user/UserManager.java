@@ -13,7 +13,6 @@ public interface UserManager {
 
     void isLoggedIn(LoginCallback loginCallback);
 
-
     interface LoginCallback {
 
         void onLoginSuccess();

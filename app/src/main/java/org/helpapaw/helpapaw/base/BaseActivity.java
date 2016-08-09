@@ -1,6 +1,5 @@
 package org.helpapaw.helpapaw.base;
 
-import android.content.Intent;
 import android.content.res.Configuration;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
@@ -16,17 +15,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
 import org.helpapaw.helpapaw.R;
-import org.helpapaw.helpapaw.authentication.AuthenticationActivity;
 import org.helpapaw.helpapaw.data.user.UserManager;
 import org.helpapaw.helpapaw.databinding.ActivityBaseBinding;
 import org.helpapaw.helpapaw.utils.Injection;
-import org.helpapaw.helpapaw.utils.NetworkUtils;
+import org.helpapaw.helpapaw.utils.Utils;
 
 /**
  * Created by iliyan on 6/22/16
  */
 public abstract class BaseActivity extends AppCompatActivity {
-    ActivityBaseBinding binding;
+    protected ActivityBaseBinding binding;
     private ActionBarDrawerToggle drawerToggle;
     private UserManager userManager;
 
@@ -80,13 +78,11 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     private void signOut() {
-        if (NetworkUtils.getInstance().hasNetworkConnection()) {
+        if (Utils.getInstance().hasNetworkConnection()) {
             userManager.logout(new UserManager.LogoutCallback() {
                 @Override
                 public void onLogoutSuccess() {
-                    Intent intent = new Intent(BaseActivity.this, AuthenticationActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    startActivity(intent);
+                    Snackbar.make(binding.getRoot().findViewById(R.id.fab_add_signal), R.string.txt_logout_successfully, Snackbar.LENGTH_LONG).show();
                 }
 
                 @Override

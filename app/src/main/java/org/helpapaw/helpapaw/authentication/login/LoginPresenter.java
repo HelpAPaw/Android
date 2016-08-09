@@ -1,12 +1,9 @@
 package org.helpapaw.helpapaw.authentication.login;
 
-import android.text.TextUtils;
-import android.util.Patterns;
-
 import org.helpapaw.helpapaw.base.Presenter;
 import org.helpapaw.helpapaw.data.user.UserManager;
 import org.helpapaw.helpapaw.utils.Injection;
-import org.helpapaw.helpapaw.utils.NetworkUtils;
+import org.helpapaw.helpapaw.utils.Utils;
 
 /**
  * Created by iliyan on 7/25/16
@@ -15,7 +12,6 @@ public class LoginPresenter extends Presenter<LoginContract.View> implements Log
     private static final int MIN_PASS_LENGTH = 6;
 
     private UserManager userManager;
-
     private boolean showProgressBar;
 
     public LoginPresenter(LoginContract.View view) {
@@ -33,12 +29,12 @@ public class LoginPresenter extends Presenter<LoginContract.View> implements Log
     public void onLoginButtonClicked(String email, String password) {
         getView().clearErrorMessages();
 
-        if (TextUtils.isEmpty(email) || !Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+        if (isEmpty(email) || !Utils.getInstance().isEmailValid(email)) {
             getView().showEmailErrorMessage();
             return;
         }
 
-        if (TextUtils.isEmpty(password) || password.length() < MIN_PASS_LENGTH) {
+        if (isEmpty(password) || password.length() < MIN_PASS_LENGTH) {
             getView().showPasswordErrorMessage();
             return;
         }
@@ -49,32 +45,42 @@ public class LoginPresenter extends Presenter<LoginContract.View> implements Log
     }
 
     private void attemptToLogin(String email, String password) {
-        if (NetworkUtils.getInstance().hasNetworkConnection()) {
+        if (Utils.getInstance().hasNetworkConnection()) {
             userManager.login(email, password, new UserManager.LoginCallback() {
                 @Override
                 public void onLoginSuccess() {
-                    getView().openSignalsMapScreen();
+                    if (!isViewAvailable()) return;
+                    getView().closeLoginScreen();
                 }
 
                 @Override
                 public void onLoginFailure(String message) {
+                    if (!isViewAvailable()) return;
                     setProgressIndicator(false);
                     getView().showMessage(message);
                 }
             });
         } else {
-            getView().showMessage("No Internet connection!");
+            getView().showNoInternetMessage();
             setProgressIndicator(false);
         }
     }
 
-    private void setProgressIndicator(boolean active){
+    private void setProgressIndicator(boolean active) {
         getView().setProgressIndicator(active);
         this.showProgressBar = active;
+    }
+
+    private boolean isViewAvailable() {
+        return getView() != null && getView().isActive();
     }
 
     @Override
     public void onRegisterButtonClicked() {
         getView().openRegisterScreen();
+    }
+
+    private boolean isEmpty(String value) {
+        return !(value != null && value.length() > 0);
     }
 }
