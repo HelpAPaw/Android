@@ -99,9 +99,9 @@ public class SignalDetailsFragment extends BaseFragment implements SignalDetails
         binding.txtSignalAuthor.setText(String.format(getString(R.string.txt_signal_from), signal.getAuthorName()));
         try {
             String formattedDate = Utils.getInstance().getFormattedDate(signal.getDateSubmitted());
-            binding.txtSubmittedDate.setText(String.format(getString(R.string.txt_submitted_on), formattedDate));
+            binding.txtSubmittedDate.setText(formattedDate);
         } catch (ParseException e) {
-            binding.txtSubmittedDate.setText(String.format(getString(R.string.txt_submitted_on), signal.getDateSubmitted()));
+            binding.txtSubmittedDate.setText(signal.getDateSubmitted());
         }
 
         Injection.getImageLoader().loadWithRoundedCorners(getContext(), signal.getPhotoUrl(), binding.imgSignalPhoto, R.drawable.ic_paw);
