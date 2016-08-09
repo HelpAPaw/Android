@@ -1,8 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#ff9700</color>
-    <color name="colorPrimaryDark">#f67c01</color>
-    <color name="colorAccent">#ff9700</color>
+    <color name="color_primary">#ff9700</color>
+    <color name="color_primary_dark">#f67c01</color>
+    <color name="color_accent">#ff9700</color>
 
     <color name="blue">#177ffa</color>
+    <color name="transparent_white">#e6ffffff</color>
+    <color name="gray">#ccccd1</color>
+    <color name="comments_gray">#999999</color>
+    <color name="signal_details_background">#f2f2f2</color>
+    <color name="bottom_sheet_options_gray">#DE000000</color>
 </resources>

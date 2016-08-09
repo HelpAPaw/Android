@@ -1,12 +1,9 @@
 package org.helpapaw.helpapaw.authentication.register;
 
-import android.text.TextUtils;
-import android.util.Patterns;
-
 import org.helpapaw.helpapaw.base.Presenter;
 import org.helpapaw.helpapaw.data.user.UserManager;
 import org.helpapaw.helpapaw.utils.Injection;
-import org.helpapaw.helpapaw.utils.NetworkUtils;
+import org.helpapaw.helpapaw.utils.Utils;
 
 /**
  * Created by iliyan on 7/25/16
@@ -34,17 +31,17 @@ public class RegisterPresenter extends Presenter<RegisterContract.View> implemen
     public void onRegisterButtonClicked(String email, String password, String name, String phoneNumber) {
         getView().clearErrorMessages();
 
-        if (TextUtils.isEmpty(email) || !Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+        if (isEmpty(email) || !Utils.getInstance().isEmailValid(email)) {
             getView().showEmailErrorMessage();
             return;
         }
 
-        if (TextUtils.isEmpty(password) || password.length() < MIN_PASS_LENGTH) {
+        if (isEmpty(password) || password.length() < MIN_PASS_LENGTH) {
             getView().showPasswordErrorMessage();
             return;
         }
 
-        if (TextUtils.isEmpty(name)) {
+        if (isEmpty(name)) {
             getView().showNameErrorMessage();
             return;
         }
@@ -55,26 +52,28 @@ public class RegisterPresenter extends Presenter<RegisterContract.View> implemen
     }
 
     private void attemptToRegister(String email, String password, String name, String phoneNumber) {
-        if (NetworkUtils.getInstance().hasNetworkConnection()) {
+        if (Utils.getInstance().hasNetworkConnection()) {
             userManager.register(email, password, name, phoneNumber, new UserManager.RegistrationCallback() {
                 @Override
                 public void onRegistrationSuccess() {
+                    if (!isViewAvailable()) return;
                     getView().closeRegistrationScreen();
                 }
 
                 @Override
                 public void onRegistrationFailure(String message) {
+                    if (!isViewAvailable()) return;
                     setProgressIndicator(false);
                     getView().showMessage(message);
                 }
             });
         } else {
-            getView().showMessage("No Internet connection!");
+            getView().showNoInternetMessage();
             setProgressIndicator(false);
         }
     }
 
-    private void setProgressIndicator(boolean active){
+    private void setProgressIndicator(boolean active) {
         getView().setProgressIndicator(active);
         this.showProgressBar = active;
     }
@@ -87,5 +86,13 @@ public class RegisterPresenter extends Presenter<RegisterContract.View> implemen
     @Override
     public void onWhyPhoneButtonClicked() {
         getView().showWhyPhoneDialog();
+    }
+
+    private boolean isViewAvailable() {
+        return getView() != null && getView().isActive();
+    }
+
+    private boolean isEmpty(String value) {
+        return !(value != null && value.length() > 0);
     }
 }

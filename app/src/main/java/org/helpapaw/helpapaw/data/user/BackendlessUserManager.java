@@ -10,6 +10,9 @@ import com.backendless.exceptions.BackendlessFault;
  */
 public class BackendlessUserManager implements UserManager {
 
+    private static final String USER_EMAIL_FIELD = "email";
+    private static final String USER_NAME_FIELD = "name";
+    private static final String USER_PHONE_NUMBER_FIELD = "phoneNumber";
 
     @Override
     public void login(String email, String password, final LoginCallback loginCallback) {
@@ -27,9 +30,9 @@ public class BackendlessUserManager implements UserManager {
     @Override
     public void register(String email, String password, String name, String phoneNumber, final RegistrationCallback registrationCallback) {
         BackendlessUser user = new BackendlessUser();
-        user.setProperty("email", email);
-        user.setProperty("name", name);
-        user.setProperty("phoneNumber", phoneNumber);
+        user.setProperty(USER_EMAIL_FIELD, email);
+        user.setProperty(USER_NAME_FIELD, name);
+        user.setProperty(USER_PHONE_NUMBER_FIELD, phoneNumber);
         user.setPassword(password);
 
         Backendless.UserService.register(user, new AsyncCallback<BackendlessUser>() {
@@ -60,9 +63,27 @@ public class BackendlessUserManager implements UserManager {
     public void isLoggedIn(final LoginCallback loginCallback) {
         Backendless.UserService.isValidLogin(new AsyncCallback<Boolean>() {
             @Override
-            public void handleResponse(Boolean response) {
-                if (response) {
-                    loginCallback.onLoginSuccess();
+            public void handleResponse(Boolean isValidLogin) {
+                if (isValidLogin) {
+                    if (Backendless.UserService.CurrentUser() == null) {
+                        String currentUserId = Backendless.UserService.loggedInUser();
+                        if (!currentUserId.equals("")) {
+                            Backendless.UserService.findById(currentUserId, new AsyncCallback<BackendlessUser>() {
+                                @Override
+                                public void handleResponse(BackendlessUser currentUser) {
+                                    Backendless.UserService.setCurrentUser(currentUser);
+                                    loginCallback.onLoginSuccess();
+                                }
+
+                                @Override
+                                public void handleFault(BackendlessFault fault) {
+                                    loginCallback.onLoginFailure(fault.getMessage());
+                                }
+                            });
+                        }
+                    } else {
+                        loginCallback.onLoginSuccess();
+                    }
                 } else {
                     loginCallback.onLoginFailure(null);
                 }

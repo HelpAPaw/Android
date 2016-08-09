@@ -17,11 +17,15 @@ public interface LoginContract {
 
         void openRegisterScreen();
 
-        void openSignalsMapScreen();
-
         void setProgressIndicator(boolean active);
 
         void hideKeyboard();
+
+        void closeLoginScreen();
+
+        void showNoInternetMessage();
+
+        boolean isActive();
 
     }
 

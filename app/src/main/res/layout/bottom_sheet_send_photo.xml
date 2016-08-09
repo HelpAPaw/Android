@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="bottom"
+    android:orientation="vertical"
+    app:elevation="4dp">
+
+    <LinearLayout
+        android:id="@+id/grp_camera_option"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:background="?android:attr/selectableItemBackground"
+        android:clickable="true">
+
+        <android.support.v7.widget.AppCompatImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginEnd="@dimen/bottom_sheet_horizontal_margin"
+            android:layout_marginLeft="@dimen/bottom_sheet_horizontal_margin"
+            android:layout_marginRight="@dimen/bottom_sheet_horizontal_margin"
+            android:layout_marginStart="@dimen/bottom_sheet_horizontal_margin"
+            android:tint="@android:color/black"
+            app:srcCompat="@drawable/ic_camera" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="@dimen/bottom_sheet_horizontal_margin"
+            android:layout_marginStart="@dimen/bottom_sheet_horizontal_margin"
+            android:text="@string/txt_take_photo"
+            android:textColor="@color/bottom_sheet_options_gray" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/grp_gallery_option"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:background="?android:attr/selectableItemBackground"
+        android:clickable="true">
+
+        <android.support.v7.widget.AppCompatImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginEnd="@dimen/bottom_sheet_horizontal_margin"
+            android:layout_marginLeft="@dimen/bottom_sheet_horizontal_margin"
+            android:layout_marginRight="@dimen/bottom_sheet_horizontal_margin"
+            android:layout_marginStart="@dimen/bottom_sheet_horizontal_margin"
+            android:tint="@android:color/black"
+            app:srcCompat="@drawable/ic_gallery" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="@dimen/bottom_sheet_horizontal_margin"
+            android:layout_marginStart="@dimen/bottom_sheet_horizontal_margin"
+            android:text="@string/txt_choose_existing"
+            android:textColor="@color/bottom_sheet_options_gray" />
+    </LinearLayout>
+</LinearLayout>

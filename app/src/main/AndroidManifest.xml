@@ -4,6 +4,9 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
         android:name=".base.PawApplication"
@@ -15,16 +18,25 @@
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="@string/google_android_map_api_key"/>
+            android:value="@string/google_android_map_api_key" />
 
-        <activity android:name=".signalsmap.SignalsMapActivity">
+        <activity
+            android:name=".signalsmap.SignalsMapActivity"
+            android:windowSoftInputMode="stateHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".authentication.AuthenticationActivity" />
+        <activity
+            android:name=".authentication.AuthenticationActivity"
+            android:windowSoftInputMode="stateHidden" />
+
+        <activity
+            android:name=".signaldetails.SignalDetailsActivity"
+            android:windowSoftInputMode="stateHidden" />
+
     </application>
 
 </manifest>

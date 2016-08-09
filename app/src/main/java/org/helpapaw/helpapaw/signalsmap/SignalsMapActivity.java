@@ -1,44 +1,31 @@
 package org.helpapaw.helpapaw.signalsmap;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.GravityCompat;
 
 import org.helpapaw.helpapaw.R;
-import org.helpapaw.helpapaw.authentication.AuthenticationActivity;
 import org.helpapaw.helpapaw.base.BaseActivity;
-import org.helpapaw.helpapaw.data.user.UserManager;
-import org.helpapaw.helpapaw.utils.Injection;
 
 public class SignalsMapActivity extends BaseActivity {
+
+    SignalsMapFragment fragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         if (null == savedInstanceState) {
-            UserManager userManager = Injection.getUserManagerInstance();
-            userManager.isLoggedIn(new UserManager.LoginCallback() {
-                @Override
-                public void onLoginSuccess() {
-                    initFragment(SignalsMapFragment.newInstance());
-                }
-
-                @Override
-                public void onLoginFailure(String message) {
-                    Intent intent = new Intent(SignalsMapActivity.this, AuthenticationActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    startActivity(intent);
-                }
-            });
+            fragment = SignalsMapFragment.newInstance();
+            initFragment(fragment);
         }
     }
 
     @Override
     protected String getToolbarTitle() {
-        return getString(R.string.txt_signals_map);
+        return getString(R.string.app_name);
     }
 
     private void initFragment(Fragment signalsMapFragment) {
@@ -53,5 +40,14 @@ public class SignalsMapActivity extends BaseActivity {
         return R.layout.activity_base;
     }
 
-
+    @Override
+    public void onBackPressed() {
+        if (binding.drawer.isDrawerOpen(GravityCompat.START)) {
+            binding.drawer.closeDrawers();
+        } else {
+            if (fragment != null) {
+                fragment.onBackPressed();
+            }
+        }
+    }
 }

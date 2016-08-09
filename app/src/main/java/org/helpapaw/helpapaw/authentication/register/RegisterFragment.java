@@ -38,12 +38,12 @@ public class RegisterFragment extends BaseFragment implements RegisterContract.V
 
         if (savedInstanceState == null || PresenterManager.getInstance().getPresenter(getScreenId()) == null) {
             registerPresenter = new RegisterPresenter(this);
-            actionsListener = registerPresenter;
         } else {
             registerPresenter = PresenterManager.getInstance().getPresenter(getScreenId());
             registerPresenter.setView(this);
-            actionsListener = registerPresenter;
         }
+
+        actionsListener = registerPresenter;
 
         binding.btnSignup.setOnClickListener(getBtnSignUpListener());
         binding.txtLogin.setOnClickListener(getTxtLoginClickListener());
@@ -91,6 +91,16 @@ public class RegisterFragment extends BaseFragment implements RegisterContract.V
         if (getActivity() != null) {
             getActivity().getSupportFragmentManager().popBackStack();
         }
+    }
+
+    @Override
+    public void showNoInternetMessage() {
+        showMessage(getString(R.string.txt_no_internet));
+    }
+
+    @Override
+    public boolean isActive() {
+        return isAdded();
     }
 
     @Override

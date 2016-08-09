@@ -25,6 +25,9 @@ public interface RegisterContract {
 
         void closeRegistrationScreen();
 
+        void showNoInternetMessage();
+
+        boolean isActive();
     }
 
     interface UserActionsListener {
