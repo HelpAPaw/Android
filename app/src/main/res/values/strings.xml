@@ -46,7 +46,6 @@
     <string name="txt_signal_details_title">Signal Details</string>
     <string name="txt_comments">Comments</string>
     <string name="txt_signal_from">Signal from %1$s</string>
-    <string name="txt_submitted_on">Submitted on %1$s</string>
     <string name="txt_comment_hint">Enter a comment</string>
     <string name="txt_error_empty_comment">Comment should not be empty!</string>
     <string name="txt_no_comments">There are no comments yet.</string>

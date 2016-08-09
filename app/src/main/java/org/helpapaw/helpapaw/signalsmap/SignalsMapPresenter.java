@@ -106,7 +106,6 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
             public void onLoginSuccess() {
                 if (!isViewAvailable()) return;
 
-
                 if (isEmpty(description)) {
                     getView().showDescriptionErrorMessage();
                 } else {
