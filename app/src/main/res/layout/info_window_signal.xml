@@ -6,14 +6,15 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingTop="2dp"
-        android:paddingBottom="2dp">
+        android:paddingBottom="2dp"
+        android:paddingTop="2dp">
 
         <ImageView
             android:id="@+id/img_signal_photo"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_marginRight="8dp"
+            android:contentDescription="@string/txt_signal_photo_description"
             android:scaleType="centerCrop" />
 
         <TextView
