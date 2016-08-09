@@ -32,7 +32,7 @@
             android:layout_marginLeft="@dimen/bottom_sheet_horizontal_margin"
             android:layout_marginStart="@dimen/bottom_sheet_horizontal_margin"
             android:text="@string/txt_take_photo"
-            android:textColor="#DE000000" />
+            android:textColor="@color/bottom_sheet_options_gray" />
     </LinearLayout>
 
     <LinearLayout
@@ -60,6 +60,6 @@
             android:layout_marginLeft="@dimen/bottom_sheet_horizontal_margin"
             android:layout_marginStart="@dimen/bottom_sheet_horizontal_margin"
             android:text="@string/txt_choose_existing"
-            android:textColor="#DE000000" />
+            android:textColor="@color/bottom_sheet_options_gray" />
     </LinearLayout>
 </LinearLayout>

@@ -50,5 +50,6 @@
     <string name="txt_comment_hint">Enter a comment</string>
     <string name="txt_error_empty_comment">Comment should not be empty!</string>
     <string name="txt_no_comments">There are no comments yet.</string>
+    <string name="txt_signal_photo_description">Signal Photo</string>
 
 </resources>

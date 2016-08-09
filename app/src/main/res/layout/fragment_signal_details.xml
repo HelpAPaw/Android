@@ -10,7 +10,7 @@
             android:layout_height="wrap_content"
             android:layout_above="@+id/grp_add_comment"
             android:layout_alignParentTop="true"
-            android:background="#f2f2f2">
+            android:background="@color/signal_details_background">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -28,6 +28,7 @@
                         android:id="@+id/img_signal_photo"
                         android:layout_width="150dp"
                         android:layout_height="150dp"
+                        android:contentDescription="@string/txt_signal_photo_description"
                         android:background="@drawable/ic_paw" />
 
                     <LinearLayout
@@ -73,7 +74,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="5dp"
                         android:text="@string/txt_comments"
-                        android:textColor="@color/colorAccent"
+                        android:textColor="@color/color_accent"
                         android:textSize="22sp" />
 
                     <ProgressBar
