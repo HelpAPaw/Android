@@ -13,7 +13,7 @@ public interface SignalsMapContract {
 
         void showMessage(String message);
 
-        void displaySignals(List<Signal> signals);
+        void displaySignals(List<Signal> signals, boolean showPopup);
 
         void updateMapCameraPosition(double latitude, double longitude, float zoom);
 
@@ -64,7 +64,9 @@ public interface SignalsMapContract {
 
         void onSignalPhotoSelected(String photoUri);
 
-        void onStoragePermissionGranted();
+        void onStoragePermissionForCameraGranted();
+
+        void onStoragePermissionForGalleryGranted();
 
         void onSignalInfoWindowClicked(Signal signal);
 

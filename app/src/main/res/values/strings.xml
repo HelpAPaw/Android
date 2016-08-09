@@ -33,7 +33,8 @@
     <string name="txt_take_photo">Take Photo</string>
     <string name="txt_choose_existing">Choose Existing</string>
     <string name="permission_not_granted">Permission was not granted!</string>
-    <string name="txt_storage_permissions_not_granted">Sorry we could not load that photo without permissions.</string>
+    <string name="txt_storage_permissions_for_camera">Sorry we could not open the camera without your permission.</string>
+    <string name="txt_storage_permissions_for_gallery">Sorry we could not open the gallery without your permission.</string>
 
     <!-- Strings related to Signal Details screen -->
     <string name="txt_signal_details_title">Signal Details</string>
@@ -47,5 +48,6 @@
     <string name="txt_status_solved">Status: Solved</string>
     <string name="txt_description_required">Signal description is required!</string>
     <string name="txt_signal_added_successfully">Signal successfully added!</string>
+    <string name="txt_logout_successfully">You successfully logged out.</string>
 
 </resources>

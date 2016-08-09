@@ -8,8 +8,11 @@ import org.helpapaw.helpapaw.data.user.UserManager;
 import org.helpapaw.helpapaw.utils.Injection;
 import org.helpapaw.helpapaw.utils.Utils;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by iliyan on 7/28/16
@@ -18,6 +21,7 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
 
     private static final float DEFAULT_MAP_ZOOM = 14.5f;
     private static final int DEFAULT_SEARCH_RADIUS = 4000;
+    private static final String DATE_TIME_FORMAT = "MM/dd/yyyy hh:mm:ss";
 
     private UserManager userManager;
     private SignalRepository signalRepository;
@@ -45,18 +49,18 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
             getView().setThumbnailImage(photoUri);
         }
         if (signalsList != null && signalsList.size() > 0) {
-            getView().displaySignals(signalsList);
+            getView().displaySignals(signalsList, false);
         }
     }
 
-    private void getAllSignals(double latitude, double longitude) {
+    private void getAllSignals(double latitude, double longitude, final boolean showPopup) {
         signalRepository.getAllSignals(latitude, longitude, DEFAULT_SEARCH_RADIUS,
                 new SignalRepository.LoadSignalsCallback() {
                     @Override
                     public void onSignalsLoaded(List<Signal> signals) {
                         if (!isViewAvailable()) return;
                         signalsList = signals;
-                        getView().displaySignals(signals);
+                        getView().displaySignals(signals, showPopup);
                     }
 
                     @Override
@@ -72,10 +76,10 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
 
         if (this.latitude != 0 && this.longitude != 0) {
             if (Utils.getInstance().getDistanceBetween(latitude, longitude, this.latitude, this.longitude) > 300) {
-                getAllSignals(latitude, longitude);
+                getAllSignals(latitude, longitude, false);
             }
         } else {
-            getAllSignals(latitude, longitude);
+            getAllSignals(latitude, longitude, false);
         }
 
         this.latitude = latitude;
@@ -89,6 +93,9 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
         setSendSignalViewVisibility(!visibility);
     }
 
+    SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_TIME_FORMAT, Locale.getDefault());
+    String currentDate = dateFormat.format(new Date());
+
     @Override
     public void onSendSignalClicked(final String description) {
         getView().hideKeyboard();
@@ -98,13 +105,12 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
             @Override
             public void onLoginSuccess() {
                 if (!isViewAvailable()) return;
-                Long tsLong = System.currentTimeMillis() / 1000;
-                String timestamp = tsLong.toString();
+
 
                 if (isEmpty(description)) {
                     getView().showDescriptionErrorMessage();
                 } else {
-                    saveSignal(description, timestamp, 0, latitude, longitude);
+                    saveSignal(description, currentDate, 0, latitude, longitude);
                 }
             }
 
@@ -117,16 +123,16 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
         });
     }
 
-    private void saveSignal(String description, String timestamp, int status,
+    private void saveSignal(String description, String dateSubmitted, int status,
                             final double latitude, final double longitude) {
-        signalRepository.saveSignal(new Signal(description, timestamp, status, latitude, longitude), new SignalRepository.SaveSignalCallback() {
+        signalRepository.saveSignal(new Signal(description, dateSubmitted, status, latitude, longitude), new SignalRepository.SaveSignalCallback() {
             @Override
             public void onSignalSaved(String signalId) {
                 if (!isViewAvailable()) return;
                 if (!isEmpty(photoUri)) {
                     savePhoto(photoUri, signalId);
                 } else {
-                    getAllSignals(latitude, longitude);
+                    getAllSignals(latitude, longitude, true);
                     getView().setAddSignalViewVisibility(false);
                     getView().clearSignalViewData();
                 }
@@ -145,7 +151,7 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
             @Override
             public void onPhotoSaved() {
                 if (!isViewAvailable()) return;
-                getAllSignals(latitude, longitude);
+                getAllSignals(latitude, longitude, true);
 
                 getView().setAddSignalViewVisibility(false);
                 getView().clearSignalViewData();
@@ -179,11 +185,17 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
     @Override
     public void onSignalPhotoSelected(String photoUri) {
         this.photoUri = photoUri;
+        getView().setThumbnailImage(photoUri);
     }
 
     @Override
-    public void onStoragePermissionGranted() {
-        getView().setThumbnailImage(photoUri);
+    public void onStoragePermissionForCameraGranted() {
+        getView().openCamera();
+    }
+
+    @Override
+    public void onStoragePermissionForGalleryGranted() {
+        getView().openGallery();
     }
 
     @Override

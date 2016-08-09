@@ -18,7 +18,7 @@ public class SignalsMapActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
 
         if (null == savedInstanceState) {
-             fragment = SignalsMapFragment.newInstance();
+            fragment = SignalsMapFragment.newInstance();
             initFragment(fragment);
         }
     }
@@ -45,7 +45,9 @@ public class SignalsMapActivity extends BaseActivity {
         if (binding.drawer.isDrawerOpen(GravityCompat.START)) {
             binding.drawer.closeDrawers();
         } else {
-            fragment.onBackPressed();
+            if (fragment != null) {
+                fragment.onBackPressed();
+            }
         }
     }
 }

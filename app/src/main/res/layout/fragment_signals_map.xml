@@ -30,8 +30,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
             android:layout_margin="16dp"
-            android:src="@android:drawable/ic_menu_add"
-            android:tint="@android:color/white"
+            android:src="@drawable/fab_add"
             app:layout_anchor="@id/map_signals"
             app:layout_anchorGravity="bottom|right|end" />
 
