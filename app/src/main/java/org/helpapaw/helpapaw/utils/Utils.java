@@ -7,15 +7,17 @@ import android.net.NetworkInfo;
 
 import org.helpapaw.helpapaw.base.PawApplication;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 import java.util.regex.Pattern;
 
 /**
  * Created by iliyan on 7/25/16
  */
 public class Utils {
-
-    private static final String SCHEME_FILE = "file";
-    private static final String SCHEME_CONTENT = "content";
 
     private static Utils instance;
 
@@ -26,6 +28,7 @@ public class Utils {
         return instance;
     }
 
+    //Validation
     public boolean isEmailValid(String email) {
         Pattern EMAIL_ADDRESS
                 = Pattern.compile(
@@ -67,6 +70,17 @@ public class Utils {
         pointTwo.setLongitude(longitudePointTwo);
 
         return pointOne.distanceTo(pointTwo);
+    }
+
+    //Dates
+    public String getFormattedDate(String date) throws ParseException {
+        Date newDate;
+        String SERVER_DATE_FORMAT = "MM/dd/yyyy hh:mm:ss";
+        String DETAILS_DATE_FORMAT = "dd.MM.yyyy, h:m a";
+        DateFormat originalFormat = new SimpleDateFormat(SERVER_DATE_FORMAT, Locale.getDefault());
+        DateFormat targetFormat = new SimpleDateFormat(DETAILS_DATE_FORMAT, Locale.getDefault());
+        newDate = originalFormat.parse(date);
+        return targetFormat.format(newDate);
     }
 
 }

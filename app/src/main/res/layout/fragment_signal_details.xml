@@ -8,9 +8,9 @@
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#f2f2f2"
+            android:layout_above="@+id/grp_add_comment"
             android:layout_alignParentTop="true"
-            android:layout_above="@+id/grp_add_comment">
+            android:background="#f2f2f2">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -71,7 +71,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="15dp"
+                        android:layout_marginBottom="5dp"
                         android:text="@string/txt_comments"
                         android:textColor="@color/colorAccent"
                         android:textSize="22sp" />
@@ -85,27 +85,35 @@
                         android:visibility="gone" />
                 </LinearLayout>
 
-            <LinearLayout
-                android:id="@+id/grp_comments"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:orientation="vertical"
-                android:animateLayoutChanges="true"/>
+                <LinearLayout
+                    android:id="@+id/grp_comments"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:animateLayoutChanges="true"
+                    android:orientation="vertical" />
+
+                <TextView
+                    android:id="@+id/txt_no_comments"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="@string/txt_no_comments"
+                    android:visibility="gone" />
             </LinearLayout>
 
         </ScrollView>
 
         <LinearLayout
+            android:id="@+id/grp_add_comment"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:layout_gravity="center_horizontal|bottom"
-            android:background="@drawable/border_top"
-            android:orientation="horizontal"
             android:layout_alignParentBottom="true"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
-            android:id="@+id/grp_add_comment">
+            android:layout_gravity="center_horizontal|bottom"
+            android:background="@drawable/border_top"
+            android:orientation="horizontal">
 
             <EditText
                 android:id="@+id/edit_comment"

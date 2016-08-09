@@ -41,8 +41,14 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
             getView().showSignalDetails(signal);
 
             if (commentList != null) {
-                getView().displayComments(commentList);
                 setProgressIndicator(false);
+
+                if (commentList.size() == 0) {
+                    getView().setNoCommentsTextVisibility(true);
+                } else {
+                    getView().displayComments(commentList);
+                    getView().setNoCommentsTextVisibility(false);
+                }
             } else {
                 loadCommentsForSignal(signal.getId());
             }
@@ -54,9 +60,15 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
             @Override
             public void onCommentsLoaded(List<Comment> comments) {
                 if (!isViewAvailable()) return;
-                getView().displayComments(comments);
                 commentList = comments;
                 setProgressIndicator(false);
+
+                if (commentList.size() == 0) {
+                    getView().setNoCommentsTextVisibility(true);
+                } else {
+                    getView().displayComments(comments);
+                    getView().setNoCommentsTextVisibility(false);
+                }
             }
 
             @Override
@@ -101,6 +113,7 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
                 if (!isViewAvailable()) return;
                 setProgressIndicator(false);
                 commentList.add(comment);
+                getView().setNoCommentsTextVisibility(false);
                 getView().displayComments(Collections.singletonList(comment));
             }
 

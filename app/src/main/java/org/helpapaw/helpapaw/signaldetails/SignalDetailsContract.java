@@ -28,8 +28,9 @@ public interface SignalDetailsContract {
 
         void openLoginScreen();
 
-        boolean isActive();
+        void setNoCommentsTextVisibility(boolean visibility);
 
+        boolean isActive();
     }
 
     interface UserActionsListener {

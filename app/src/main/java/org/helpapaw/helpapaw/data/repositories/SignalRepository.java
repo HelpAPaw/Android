@@ -32,7 +32,7 @@ public interface SignalRepository {
 
     interface SaveSignalCallback {
 
-        void onSignalSaved(String signalId);
+        void onSignalSaved(Signal signal);
 
         void onSignalFailure(String message);
     }

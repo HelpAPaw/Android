@@ -1,7 +1,7 @@
 package org.helpapaw.helpapaw.sendsignal;
 
 import android.content.Context;
-import android.graphics.Bitmap;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v7.widget.CardView;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -61,8 +61,9 @@ public class SendSignalView extends CardView {
         imgSignalPhoto.setOnClickListener(clickListener);
     }
 
-    public void setSignalPhoto(Bitmap bitmap) {
-        imgSignalPhoto.setImageBitmap(bitmap);
+    public void setSignalPhoto(RoundedBitmapDrawable bitmap) {
+        imgSignalPhoto.setScaleType(ImageView.ScaleType.FIT_XY);
+        imgSignalPhoto.setImageDrawable(bitmap);
     }
 
     public String getSignalDescription() {
@@ -70,6 +71,7 @@ public class SendSignalView extends CardView {
     }
 
     public void clearData() {
+        imgSignalPhoto.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
         imgSignalPhoto.setImageResource(R.drawable.ic_camera);
         editSignalDescription.setText(null);
         setProgressVisibility(false);

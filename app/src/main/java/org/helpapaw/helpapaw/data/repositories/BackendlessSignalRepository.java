@@ -98,7 +98,13 @@ public class BackendlessSignalRepository implements SignalRepository {
                 signal.getLongitude(), meta, new AsyncCallback<GeoPoint>() {
                     @Override
                     public void handleResponse(GeoPoint geoPoint) {
-                        callback.onSignalSaved(geoPoint.getObjectId());
+                        Signal savedSignal = new Signal(geoPoint.getObjectId(), geoPoint.getMetadata(SIGNAL_TITLE).toString(),
+                                geoPoint.getMetadata(SIGNAL_DATE_SUBMITTED).toString(),
+                                Integer.parseInt(geoPoint.getMetadata(SIGNAL_STATUS).toString()),
+                                ((BackendlessUser) geoPoint.getMetadata(SIGNAL_AUTHOR)).getProperty(NAME_FIELD).toString(),
+                                geoPoint.getLatitude(), geoPoint.getLongitude());
+
+                        callback.onSignalSaved(savedSignal);
                     }
 
                     @Override

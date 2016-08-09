@@ -127,14 +127,15 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
                             final double latitude, final double longitude) {
         signalRepository.saveSignal(new Signal(description, dateSubmitted, status, latitude, longitude), new SignalRepository.SaveSignalCallback() {
             @Override
-            public void onSignalSaved(String signalId) {
+            public void onSignalSaved(Signal signal) {
                 if (!isViewAvailable()) return;
                 if (!isEmpty(photoUri)) {
-                    savePhoto(photoUri, signalId);
+                    savePhoto(photoUri, signal);
                 } else {
-                    getAllSignals(latitude, longitude, true);
+                    signalsList.add(signal);
+                    getView().displaySignals(signalsList, true);
                     getView().setAddSignalViewVisibility(false);
-                    getView().clearSignalViewData();
+                    clearSignalViewData();
                 }
             }
 
@@ -146,15 +147,15 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
         });
     }
 
-    private void savePhoto(String photoUri, String signalId) {
-        photoRepository.savePhoto(photoUri, signalId, new PhotoRepository.SavePhotoCallback() {
+    private void savePhoto(final String photoUri, final Signal signal) {
+        photoRepository.savePhoto(photoUri, signal.getId(), new PhotoRepository.SavePhotoCallback() {
             @Override
             public void onPhotoSaved() {
                 if (!isViewAvailable()) return;
-                getAllSignals(latitude, longitude, true);
-
+                signalsList.add(signal);
+                getView().displaySignals(signalsList, true);
                 getView().setAddSignalViewVisibility(false);
-                getView().clearSignalViewData();
+                clearSignalViewData();
                 getView().showAddedSignalMessage();
             }
 
@@ -214,6 +215,11 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
 
     private boolean isViewAvailable() {
         return getView() != null && getView().isActive();
+    }
+
+    private void clearSignalViewData() {
+        getView().clearSignalViewData();
+        photoUri = null;
     }
 
     private void setSendSignalViewVisibility(boolean visibility) {

@@ -5,6 +5,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.databinding.DataBindingUtil;
 import android.location.Location;
 import android.net.Uri;
@@ -13,6 +14,8 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -58,12 +61,15 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
 
     public static final String TAG = SignalsMapFragment.class.getSimpleName();
 
+    private static final String DATE_TIME_FORMAT = "yyyyMMdd_HHmmss";
+    private static final String PHOTO_PREFIX = "JPEG_";
+    private static final String PHOTO_EXTENSION = ".jpg";
+
     private static final int LOCATION_PERMISSIONS_REQUEST = 1;
     private static final int REQUEST_CAMERA = 2;
     private static final int REQUEST_GALLERY = 3;
     private static final int READ_EXTERNAL_STORAGE_FOR_CAMERA = 4;
     private static final int READ_EXTERNAL_STORAGE_FOR_GALLERY = 5;
-
 
     private GoogleApiClient googleApiClient;
     private LocationRequest locationRequest;
@@ -170,6 +176,8 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
 
     @Override
     public void displaySignals(List<Signal> signals, boolean showPopup) {
+        signalsGoogleMap.clear();
+
         Signal signal;
         Marker marker = null;
 
@@ -194,6 +202,10 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
                     actionsListener.onSignalInfoWindowClicked(signalMarkers.get(marker.getId()));
                 }
             });
+
+            if (showPopup && marker != null) {
+                marker.showInfoWindow();
+            }
         }
     }
 
@@ -353,8 +365,8 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
         } else {
             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             if (intent.resolveActivity(getContext().getPackageManager()) != null) {
-                String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
-                imageFileName = "JPEG_" + timeStamp + ".jpg";
+                String timeStamp = new SimpleDateFormat(DATE_TIME_FORMAT, Locale.getDefault()).format(new Date());
+                imageFileName = PHOTO_PREFIX + timeStamp + PHOTO_EXTENSION;
                 intent.putExtra(MediaStore.EXTRA_OUTPUT, ImageUtils.getInstance().getPhotoFileUri(getContext(), imageFileName));
                 startActivityForResult(intent, REQUEST_CAMERA);
             }
@@ -407,7 +419,10 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
 
     @Override
     public void setThumbnailImage(String photoUri) {
-        binding.viewSendSignal.setSignalPhoto(ImageUtils.getInstance().getRotatedBitmap(new File(photoUri)));
+        Resources res = getResources();
+        RoundedBitmapDrawable drawable = RoundedBitmapDrawableFactory.create(res, ImageUtils.getInstance().getRotatedBitmap(new File(photoUri)));
+        drawable.setCornerRadius(10);
+        binding.viewSendSignal.setSignalPhoto(drawable);
     }
 
     @Override

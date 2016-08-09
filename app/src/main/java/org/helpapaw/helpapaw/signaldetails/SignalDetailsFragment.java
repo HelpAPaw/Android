@@ -20,7 +20,9 @@ import org.helpapaw.helpapaw.data.models.Comment;
 import org.helpapaw.helpapaw.data.models.Signal;
 import org.helpapaw.helpapaw.databinding.FragmentSignalDetailsBinding;
 import org.helpapaw.helpapaw.utils.Injection;
+import org.helpapaw.helpapaw.utils.Utils;
 
+import java.text.ParseException;
 import java.util.List;
 
 public class SignalDetailsFragment extends BaseFragment implements SignalDetailsContract.View {
@@ -95,21 +97,36 @@ public class SignalDetailsFragment extends BaseFragment implements SignalDetails
     public void showSignalDetails(Signal signal) {
         binding.txtSignalTitle.setText(signal.getTitle());
         binding.txtSignalAuthor.setText(String.format(getString(R.string.txt_signal_from), signal.getAuthorName()));
-        binding.txtSubmittedDate.setText(String.format(getString(R.string.txt_submitted_on), signal.getDateSubmitted()));
+        try {
+            String formattedDate = Utils.getInstance().getFormattedDate(signal.getDateSubmitted());
+            binding.txtSubmittedDate.setText(String.format(getString(R.string.txt_submitted_on), formattedDate));
+        } catch (ParseException e) {
+            binding.txtSubmittedDate.setText(String.format(getString(R.string.txt_submitted_on), signal.getDateSubmitted()));
+        }
+
         Injection.getImageLoader().loadWithRoundedCorners(getContext(), signal.getPhotoUrl(), binding.imgSignalPhoto, R.drawable.ic_paw);
     }
 
     @Override
     public void displayComments(List<Comment> comments) {
+        LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         for (int i = 0; i < comments.size(); i++) {
-            LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             View inflatedCommentView = inflater.inflate(R.layout.view_comment, binding.grpComments, false);
             TextView txtCommentText = (TextView) inflatedCommentView.findViewById(R.id.txt_comment_text);
             TextView txtCommentAuthor = (TextView) inflatedCommentView.findViewById(R.id.txt_comment_author);
+            TextView txtCommentDate = (TextView) inflatedCommentView.findViewById(R.id.txt_comment_date);
+
             Comment comment = comments.get(i);
             txtCommentText.setText(comment.getText());
             txtCommentAuthor.setText(comment.getOwnerName());
+            try {
+                String formattedDate = Utils.getInstance().getFormattedDate(comment.getDateCreated());
+                txtCommentDate.setText(formattedDate);
+            } catch (ParseException e) {
+                txtCommentDate.setText(comment.getDateCreated());
+            }
+
             binding.grpComments.addView(inflatedCommentView, 0);
         }
 
@@ -130,6 +147,15 @@ public class SignalDetailsFragment extends BaseFragment implements SignalDetails
     public void openLoginScreen() {
         Intent intent = new Intent(getContext(), AuthenticationActivity.class);
         startActivity(intent);
+    }
+
+    @Override
+    public void setNoCommentsTextVisibility(boolean visibility) {
+        if(visibility){
+            binding.txtNoComments.setVisibility(View.VISIBLE);
+        } else {
+            binding.txtNoComments.setVisibility(View.GONE);
+        }
     }
 
     @Override
