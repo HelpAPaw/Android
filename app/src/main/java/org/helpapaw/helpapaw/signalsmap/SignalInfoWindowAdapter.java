@@ -49,21 +49,23 @@ public class SignalInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
     public View getInfoContents(Marker marker) {
 
         Signal signal = signalMarkers.get(marker.getId());
-        String photoUrl = getPhotoUrl(signal.getId());
+        if (signal != null) {
+            String photoUrl = getPhotoUrl(signal.getId());
 
-        if (lastShownMarker == null || !lastShownMarker.getId().equals(marker.getId())) {
-            lastShownMarker = marker;
+            if (lastShownMarker == null || !lastShownMarker.getId().equals(marker.getId())) {
+                lastShownMarker = marker;
 
-            binding.txtSignalTitle.setText(signal.getTitle());
-            binding.txtSignalStatus.setText(getStatusString(signal.getStatus()));
+                binding.txtSignalTitle.setText(signal.getTitle());
+                binding.txtSignalStatus.setText(getStatusString(signal.getStatus()));
 
-            Picasso.with(inflater.getContext()).load(photoUrl).resize(200, 200)
-                    .centerCrop()
-                    .noFade()
-                    .placeholder(R.drawable.ic_paw)
-                    .transform(new RoundedTransformation(16, 0))
-                    .into(binding.imgSignalPhoto, new MarkerCallback(marker));
+                Picasso.with(inflater.getContext()).load(photoUrl).resize(200, 200)
+                        .centerCrop()
+                        .noFade()
+                        .placeholder(R.drawable.ic_paw)
+                        .transform(new RoundedTransformation(16, 0))
+                        .into(binding.imgSignalPhoto, new MarkerCallback(marker));
 
+            }
         }
 
         return binding.getRoot();
