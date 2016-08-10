@@ -54,21 +54,25 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
     }
 
     private void getAllSignals(double latitude, double longitude, final boolean showPopup) {
-        signalRepository.getAllSignals(latitude, longitude, DEFAULT_SEARCH_RADIUS,
-                new SignalRepository.LoadSignalsCallback() {
-                    @Override
-                    public void onSignalsLoaded(List<Signal> signals) {
-                        if (!isViewAvailable()) return;
-                        signalsList = signals;
-                        getView().displaySignals(signals, showPopup);
-                    }
+        if (Utils.getInstance().hasNetworkConnection()) {
+            signalRepository.getAllSignals(latitude, longitude, DEFAULT_SEARCH_RADIUS,
+                    new SignalRepository.LoadSignalsCallback() {
+                        @Override
+                        public void onSignalsLoaded(List<Signal> signals) {
+                            if (!isViewAvailable()) return;
+                            signalsList = signals;
+                            getView().displaySignals(signals, showPopup);
+                        }
 
-                    @Override
-                    public void onSignalsFailure(String message) {
-                        if (!isViewAvailable()) return;
-                        getView().showMessage(message);
-                    }
-                });
+                        @Override
+                        public void onSignalsFailure(String message) {
+                            if (!isViewAvailable()) return;
+                            getView().showMessage(message);
+                        }
+                    });
+        } else {
+            getView().showNoInternetMessage();
+        }
     }
 
     @Override

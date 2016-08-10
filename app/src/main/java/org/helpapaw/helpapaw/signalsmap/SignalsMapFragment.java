@@ -60,6 +60,7 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
         GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
     public static final String TAG = SignalsMapFragment.class.getSimpleName();
+    private static final String MAP_VIEW_STATE = "mapViewSaveState";
 
     private static final String DATE_TIME_FORMAT = "yyyyMMdd_HHmmss";
     private static final String PHOTO_PREFIX = "JPEG_";
@@ -94,7 +95,8 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
         // Inflate the layout for this fragment
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_signals_map, container, false);
 
-        binding.mapSignals.onCreate(savedInstanceState);
+        final Bundle mapViewSavedInstanceState = savedInstanceState != null ? savedInstanceState.getBundle(MAP_VIEW_STATE) : null;
+        binding.mapSignals.onCreate(mapViewSavedInstanceState);
 
         if (binding.mapSignals != null) {
             binding.mapSignals.getMapAsync(getMapReadyCallback());
@@ -140,10 +142,13 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
         super.onDestroy();
     }
 
-    @Override
     public void onSaveInstanceState(Bundle outState) {
+        //This MUST be done before saving any of your own or your base class's variables
+        final Bundle mapViewSaveState = new Bundle(outState);
+        binding.mapSignals.onSaveInstanceState(mapViewSaveState);
+        outState.putBundle(MAP_VIEW_STATE, mapViewSaveState);
+
         super.onSaveInstanceState(outState);
-        binding.mapSignals.onSaveInstanceState(outState);
     }
 
     @Override
@@ -283,7 +288,7 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
 
     @Override
     public void showMessage(String message) {
-        Snackbar.make(binding.getRoot(), message, Snackbar.LENGTH_LONG).show();
+        Snackbar.make(binding.fabAddSignal, message, Snackbar.LENGTH_LONG).show();
     }
 
     public View.OnClickListener getFabAddSignalClickListener() {
@@ -457,6 +462,11 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
     @Override
     public void showAddedSignalMessage() {
         showMessage(getString(R.string.txt_signal_added_successfully));
+    }
+
+    @Override
+    public void showNoInternetMessage() {
+        showMessage(getString(R.string.txt_no_internet));
     }
 
     @Override

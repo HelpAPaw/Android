@@ -2,37 +2,41 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <FrameLayout
-        android:id="@+id/grp_signals_map_container"
+    <android.support.design.widget.CoordinatorLayout
+        android:id="@+id/grp_signals_map_coordinator"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <com.google.android.gms.maps.MapView
-            android:id="@+id/map_signals"
+        <FrameLayout
+            android:id="@+id/grp_signals_map_container"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="center_horizontal|top" />
+            android:layout_height="match_parent">
 
-        <org.helpapaw.helpapaw.sendsignal.SendSignalView
-            android:id="@+id/view_send_signal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_marginTop="-50dp"
-            app:cardElevation="4dp"
-            app:cardCornerRadius="8dp"
-            android:visibility="invisible" />
+            <com.google.android.gms.maps.MapView
+                android:id="@+id/map_signals"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_horizontal|top" />
 
+            <org.helpapaw.helpapaw.sendsignal.SendSignalView
+                android:id="@+id/view_send_signal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="-50dp"
+                android:visibility="invisible"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="4dp" />
+
+        </FrameLayout>
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/fab_add_signal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
             android:layout_margin="16dp"
             android:src="@drawable/fab_add"
-            app:layout_anchor="@id/map_signals"
+            app:layout_anchor="@id/grp_signals_map_container"
             app:layout_anchorGravity="bottom|right|end" />
-
-    </FrameLayout>
+    </android.support.design.widget.CoordinatorLayout>
 </layout>
