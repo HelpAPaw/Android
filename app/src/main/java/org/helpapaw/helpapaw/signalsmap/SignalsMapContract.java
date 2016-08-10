@@ -43,6 +43,8 @@ public interface SignalsMapContract {
 
         void showAddedSignalMessage();
 
+        void showNoInternetMessage();
+
         boolean isActive();
     }
 
