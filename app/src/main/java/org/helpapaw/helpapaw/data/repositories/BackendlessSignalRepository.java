@@ -26,35 +26,7 @@ public class BackendlessSignalRepository implements SignalRepository {
     private static final String SIGNAL_STATUS = "status";
     private static final String SIGNAL_AUTHOR = "author";
     private static final String NAME_FIELD = "name";
-
-
-    @Override
-    public void getSignalById(String signalId, final LoadSignalCallback callback) {
-        String whereClause = "objectId = '" + signalId + "'";
-        BackendlessGeoQuery geoQuery = new BackendlessGeoQuery();
-        geoQuery.setWhereClause(whereClause);
-
-        Backendless.Geo.getPoints(geoQuery, new AsyncCallback<BackendlessCollection<GeoPoint>>() {
-            @Override
-            public void handleResponse(BackendlessCollection<GeoPoint> response) {
-                GeoPoint geoPoint = response.getData().get(0);
-                if (geoPoint != null) {
-                    Signal signal = new Signal(geoPoint.getObjectId(), geoPoint.getMetadata(SIGNAL_TITLE).toString(),
-                            geoPoint.getMetadata(SIGNAL_DATE_SUBMITTED).toString(),
-                            Integer.parseInt(geoPoint.getMetadata(SIGNAL_STATUS).toString()),
-                            ((BackendlessUser) geoPoint.getMetadata(SIGNAL_AUTHOR)).getProperty(NAME_FIELD).toString(),
-                            geoPoint.getLatitude(), geoPoint.getLongitude());
-
-                    callback.onSignalLoaded(signal);
-                }
-            }
-
-            @Override
-            public void handleFault(BackendlessFault fault) {
-                callback.onSignalsFailure(fault.getMessage());
-            }
-        });
-    }
+    private static final String PHONE_FIELD = "phoneNumber";
 
     @Override
     public void getAllSignals(double latitude, double longitude,
@@ -69,10 +41,25 @@ public class BackendlessSignalRepository implements SignalRepository {
                 List<Signal> signals = new ArrayList<>();
                 for (int i = 0; i < response.getData().size(); i++) {
                     GeoPoint geoPoint = response.getData().get(i);
-                    signals.add(new Signal(geoPoint.getObjectId(), geoPoint.getMetadata(SIGNAL_TITLE).toString(),
-                            geoPoint.getMetadata(SIGNAL_DATE_SUBMITTED).toString(),
-                            Integer.parseInt(geoPoint.getMetadata(SIGNAL_STATUS).toString()),
-                            ((BackendlessUser) geoPoint.getMetadata(SIGNAL_AUTHOR)).getProperty(NAME_FIELD).toString(),
+
+                    String signalTitle = getToStringOrNull(geoPoint.getMetadata(SIGNAL_TITLE));
+                    String dateSubmitted = getToStringOrNull(geoPoint.getMetadata(SIGNAL_DATE_SUBMITTED));
+                    String signalStatus = getToStringOrNull(geoPoint.getMetadata(SIGNAL_STATUS));
+
+                    String signalAuthorName = null;
+                    String signalAuthorPhone = null;
+
+                    if ((geoPoint.getMetadata(SIGNAL_AUTHOR)) != null) {
+                        signalAuthorName = getToStringOrNull(((BackendlessUser) geoPoint.getMetadata(SIGNAL_AUTHOR)).getProperty(NAME_FIELD));
+                    }
+
+                    if ((geoPoint.getMetadata(SIGNAL_AUTHOR)) != null) {
+                        signalAuthorPhone = getToStringOrNull(((BackendlessUser) geoPoint.getMetadata(SIGNAL_AUTHOR)).getProperty(PHONE_FIELD));
+                    }
+
+                    signals.add(new Signal(geoPoint.getObjectId(), signalTitle,
+                            dateSubmitted, Integer.parseInt(signalStatus),
+                            signalAuthorName, signalAuthorPhone,
                             geoPoint.getLatitude(), geoPoint.getLongitude()));
                 }
                 callback.onSignalsLoaded(signals);
@@ -98,10 +85,26 @@ public class BackendlessSignalRepository implements SignalRepository {
                 signal.getLongitude(), meta, new AsyncCallback<GeoPoint>() {
                     @Override
                     public void handleResponse(GeoPoint geoPoint) {
-                        Signal savedSignal = new Signal(geoPoint.getObjectId(), geoPoint.getMetadata(SIGNAL_TITLE).toString(),
-                                geoPoint.getMetadata(SIGNAL_DATE_SUBMITTED).toString(),
-                                Integer.parseInt(geoPoint.getMetadata(SIGNAL_STATUS).toString()),
-                                ((BackendlessUser) geoPoint.getMetadata(SIGNAL_AUTHOR)).getProperty(NAME_FIELD).toString(),
+                        String signalTitle = getToStringOrNull(geoPoint.getMetadata(SIGNAL_TITLE));
+
+                        String dateSubmitted = getToStringOrNull(geoPoint.getMetadata(SIGNAL_DATE_SUBMITTED));
+
+                        String signalStatus = getToStringOrNull(geoPoint.getMetadata(SIGNAL_STATUS));
+
+                        String signalAuthorName = null;
+                        String signalAuthorPhone = null;
+
+                        if ((geoPoint.getMetadata(SIGNAL_AUTHOR)) != null) {
+                            signalAuthorName = getToStringOrNull(((BackendlessUser) geoPoint.getMetadata(SIGNAL_AUTHOR)).getProperty(NAME_FIELD));
+                        }
+
+                        if ((geoPoint.getMetadata(SIGNAL_AUTHOR)) != null) {
+                            signalAuthorPhone = getToStringOrNull(((BackendlessUser) geoPoint.getMetadata(SIGNAL_AUTHOR)).getProperty(PHONE_FIELD));
+                        }
+
+                        Signal savedSignal = new Signal(geoPoint.getObjectId(), signalTitle,
+                                dateSubmitted, Integer.parseInt(signalStatus),
+                                signalAuthorName, signalAuthorPhone,
                                 geoPoint.getLatitude(), geoPoint.getLongitude());
 
                         callback.onSignalSaved(savedSignal);
@@ -112,5 +115,50 @@ public class BackendlessSignalRepository implements SignalRepository {
                         callback.onSignalFailure(backendlessFault.getMessage());
                     }
                 });
+    }
+
+    @Override
+    public void updateSignalStatus(final String signalId, final int status, final UpdateStatusCallback callback) {
+        String whereClause = "objectId = '" + signalId + "'";
+        BackendlessGeoQuery geoQuery = new BackendlessGeoQuery();
+        geoQuery.setWhereClause(whereClause);
+        geoQuery.setIncludeMeta(true);
+
+        Backendless.Geo.getPoints(geoQuery, new AsyncCallback<BackendlessCollection<GeoPoint>>() {
+            @Override
+            public void handleResponse(BackendlessCollection<GeoPoint> response) {
+                GeoPoint signalPoint = response.getData().get(0);
+                if (signalPoint != null) {
+                    Map<String, Object> meta = signalPoint.getMetadata();
+                    meta.put(SIGNAL_STATUS, status);
+
+                    signalPoint.setMetadata(meta);
+                    Backendless.Geo.savePoint(signalPoint, new AsyncCallback<GeoPoint>() {
+                        @Override
+                        public void handleResponse(GeoPoint response) {
+                            callback.onStatusUpdated();
+                        }
+
+                        @Override
+                        public void handleFault(BackendlessFault fault) {
+                            callback.onStatusFailure(fault.getMessage());
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void handleFault(BackendlessFault fault) {
+                callback.onStatusFailure(fault.getMessage());
+            }
+        });
+    }
+
+    private String getToStringOrNull(Object object) {
+        if (object != null) {
+            return object.toString();
+        } else {
+            return null;
+        }
     }
 }

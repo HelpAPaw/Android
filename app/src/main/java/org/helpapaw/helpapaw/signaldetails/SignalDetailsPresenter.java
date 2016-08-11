@@ -5,8 +5,10 @@ import org.helpapaw.helpapaw.data.models.Comment;
 import org.helpapaw.helpapaw.data.models.Signal;
 import org.helpapaw.helpapaw.data.repositories.CommentRepository;
 import org.helpapaw.helpapaw.data.repositories.PhotoRepository;
+import org.helpapaw.helpapaw.data.repositories.SignalRepository;
 import org.helpapaw.helpapaw.data.user.UserManager;
 import org.helpapaw.helpapaw.utils.Injection;
+import org.helpapaw.helpapaw.utils.Utils;
 
 import java.util.Collections;
 import java.util.List;
@@ -22,6 +24,7 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
 
     private CommentRepository commentRepository;
     private PhotoRepository photoRepository;
+    private SignalRepository signalRepository;
     private UserManager userManager;
 
     public SignalDetailsPresenter(SignalDetailsContract.View view) {
@@ -30,6 +33,7 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
         commentRepository = Injection.getCommentRepositoryInstance();
         photoRepository = Injection.getPhotoRepositoryInstance();
         userManager = Injection.getUserManagerInstance();
+        signalRepository = Injection.getSignalRepositoryInstance();
     }
 
     @Override
@@ -84,6 +88,7 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
         if (comment != null && comment.trim().length() > 0) {
             getView().hideKeyboard();
             setProgressIndicator(true);
+            getView().scrollToBottom();
 
             userManager.isLoggedIn(new UserManager.LoginCallback() {
                 @Override
@@ -104,6 +109,32 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
         } else {
             getView().showCommentErrorMessage();
         }
+    }
+
+    @Override
+    public void onStatusChanged(int status) {
+        if(Utils.getInstance().hasNetworkConnection()) {
+            signalRepository.updateSignalStatus(signal.getId(), status, new SignalRepository.UpdateStatusCallback() {
+                @Override
+                public void onStatusUpdated() {
+
+                }
+
+                @Override
+                public void onStatusFailure(String message) {
+                    if(!isViewAvailable()) return;
+                    getView().showMessage(message);
+                }
+            });
+        } else {
+            getView().showNoInternetMessage();
+        }
+    }
+
+    @Override
+    public void onCallButtonClicked() {
+        String phoneNumber = signal.getAuthorPhone();
+        getView().openNumberDialer(phoneNumber);
     }
 
     private void saveComment(String comment, String signalId) {
