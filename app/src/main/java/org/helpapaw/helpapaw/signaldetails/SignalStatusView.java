@@ -37,6 +37,7 @@ public class SignalStatusView extends FrameLayout {
     AppCompatImageView imgSolvedSelected;
 
     private int selectedStatus;
+    private boolean isExpanded = false;
     private StatusCallback callback;
     private List<LinearLayout> statusList = new ArrayList<>();
     private List<AppCompatImageView> selectedImages = new ArrayList<>();
@@ -127,7 +128,6 @@ public class SignalStatusView extends FrameLayout {
         this.selectedStatus = status;
 
         for (int i = 0; i < statusList.size(); i++) {
-            statusList.get(i).setClickable(false);
             if (i != status) {
                 statusList.get(i).animate().alpha(0);
             }
@@ -138,8 +138,6 @@ public class SignalStatusView extends FrameLayout {
             @Override
             public void run() {
                 updateStatus(status);
-
-
             }
         });
         animateStatusViewHeight(getPixels(TypedValue.COMPLEX_UNIT_DIP, 80));
@@ -230,7 +228,7 @@ public class SignalStatusView extends FrameLayout {
         super.onRestoreInstanceState(savedState.getSuperState());
 
         this.selectedStatus = savedState.selectedStatus;
-        boolean isExpanded = savedState.isExpanded;
+        this.isExpanded = savedState.isExpanded;
 
         restoreState(selectedStatus, isExpanded);
     }
