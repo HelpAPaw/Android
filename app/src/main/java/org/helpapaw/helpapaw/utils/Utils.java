@@ -74,13 +74,16 @@ public class Utils {
 
     //Dates
     public String getFormattedDate(String date) throws ParseException {
-        Date newDate;
-        String SERVER_DATE_FORMAT = "MM/dd/yyyy hh:mm:ss";
-        String DETAILS_DATE_FORMAT = "dd.MM.yyyy, hh:mm a";
-        DateFormat originalFormat = new SimpleDateFormat(SERVER_DATE_FORMAT, Locale.getDefault());
-        DateFormat targetFormat = new SimpleDateFormat(DETAILS_DATE_FORMAT, Locale.getDefault());
-        newDate = originalFormat.parse(date);
-        return targetFormat.format(newDate);
+        if(date!=null) {
+            Date newDate;
+            String SERVER_DATE_FORMAT = "MM/dd/yyyy hh:mm:ss";
+            String DETAILS_DATE_FORMAT = "dd.MM.yyyy, hh:mm a";
+            DateFormat originalFormat = new SimpleDateFormat(SERVER_DATE_FORMAT, Locale.getDefault());
+            DateFormat targetFormat = new SimpleDateFormat(DETAILS_DATE_FORMAT, Locale.getDefault());
+            newDate = originalFormat.parse(date);
+            return targetFormat.format(newDate);
+        }
+        else return "";
     }
 
 }
