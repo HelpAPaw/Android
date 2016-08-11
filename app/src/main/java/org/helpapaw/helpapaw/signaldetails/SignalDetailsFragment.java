@@ -4,11 +4,13 @@ package org.helpapaw.helpapaw.signaldetails;
 import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import org.helpapaw.helpapaw.R;
@@ -69,6 +71,9 @@ public class SignalDetailsFragment extends BaseFragment implements SignalDetails
         actionsListener.onInitDetailsScreen(signal);
 
         binding.btnAddComment.setOnClickListener(getOnAddCommentClickListener());
+        binding.imgCall.setOnClickListener(getOnCallButtonClickListener());
+
+        binding.viewSignalStatus.setStatusCallback(getStatusViewCallback());
 
         return binding.getRoot();
     }
@@ -96,12 +101,19 @@ public class SignalDetailsFragment extends BaseFragment implements SignalDetails
     @Override
     public void showSignalDetails(Signal signal) {
         binding.txtSignalTitle.setText(signal.getTitle());
-        binding.txtSignalAuthor.setText(String.format(getString(R.string.txt_signal_from), signal.getAuthorName()));
+        binding.txtSignalAuthor.setText(signal.getAuthorName());
         try {
             String formattedDate = Utils.getInstance().getFormattedDate(signal.getDateSubmitted());
             binding.txtSubmittedDate.setText(formattedDate);
         } catch (ParseException e) {
             binding.txtSubmittedDate.setText(signal.getDateSubmitted());
+        }
+        binding.viewSignalStatus.updateStatus(signal.getStatus());
+
+        if (signal.getAuthorPhone() == null) {
+            binding.imgCall.setVisibility(View.GONE);
+        } else {
+            binding.imgCall.setVisibility(View.VISIBLE);
         }
 
         Injection.getImageLoader().loadWithRoundedCorners(getContext(), signal.getPhotoUrl(), binding.imgSignalPhoto, R.drawable.ic_paw);
@@ -127,7 +139,7 @@ public class SignalDetailsFragment extends BaseFragment implements SignalDetails
                 txtCommentDate.setText(comment.getDateCreated());
             }
 
-            binding.grpComments.addView(inflatedCommentView, 0);
+            binding.grpComments.addView(inflatedCommentView);
         }
 
     }
@@ -151,11 +163,32 @@ public class SignalDetailsFragment extends BaseFragment implements SignalDetails
 
     @Override
     public void setNoCommentsTextVisibility(boolean visibility) {
-        if(visibility){
+        if (visibility) {
             binding.txtNoComments.setVisibility(View.VISIBLE);
         } else {
             binding.txtNoComments.setVisibility(View.GONE);
         }
+    }
+
+    @Override
+    public void showNoInternetMessage() {
+        showMessage(getString(R.string.txt_no_internet));
+    }
+
+    @Override
+    public void scrollToBottom() {
+        binding.scrollSignalDetails.post(new Runnable() {
+            @Override
+            public void run() {
+                binding.scrollSignalDetails.fullScroll(ScrollView.FOCUS_DOWN);
+            }
+        });
+    }
+
+    @Override
+    public void openNumberDialer(String phoneNumber) {
+        Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + phoneNumber));
+        startActivity(intent);
     }
 
     @Override
@@ -170,6 +203,24 @@ public class SignalDetailsFragment extends BaseFragment implements SignalDetails
             public void onClick(View v) {
                 String commentText = binding.editComment.getText().toString();
                 actionsListener.onAddCommentButtonClicked(commentText);
+            }
+        };
+    }
+
+    public StatusCallback getStatusViewCallback() {
+        return new StatusCallback() {
+            @Override
+            public void onStatusChanged(int status) {
+                actionsListener.onStatusChanged(status);
+            }
+        };
+    }
+
+    public View.OnClickListener getOnCallButtonClickListener() {
+        return new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                actionsListener.onCallButtonClicked();
             }
         };
     }

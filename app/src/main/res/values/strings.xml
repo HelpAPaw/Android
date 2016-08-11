@@ -50,5 +50,9 @@
     <string name="txt_error_empty_comment">Comment should not be empty!</string>
     <string name="txt_no_comments">There are no comments yet.</string>
     <string name="txt_signal_photo_description">Signal Photo</string>
+    <string name="txt_somebody_on_the_way">Somebody on the way</string>
+    <string name="txt_solved">Solved</string>
+    <string name="txt_help_needed">Help needed</string>
+    <string name="txt_status">Status</string>
 
 </resources>

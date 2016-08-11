@@ -30,6 +30,12 @@ public interface SignalDetailsContract {
 
         void setNoCommentsTextVisibility(boolean visibility);
 
+        void openNumberDialer(String phoneNumber);
+
+        void showNoInternetMessage();
+
+        void scrollToBottom();
+
         boolean isActive();
     }
 
@@ -39,5 +45,8 @@ public interface SignalDetailsContract {
 
         void onAddCommentButtonClicked(String comment);
 
+        void onStatusChanged(int status);
+
+        void onCallButtonClicked();
     }
 }

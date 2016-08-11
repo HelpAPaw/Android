@@ -9,19 +9,12 @@ import java.util.List;
  */
 public interface SignalRepository {
 
-    void getSignalById(String signalId, LoadSignalCallback callback);
-
     void getAllSignals(double latitude, double longitude, double radius, LoadSignalsCallback callback);
 
     void saveSignal(Signal signal, SaveSignalCallback callback);
 
+    void updateSignalStatus(String signalId, int status, UpdateStatusCallback callback);
 
-    interface LoadSignalCallback {
-
-        void onSignalLoaded(Signal signal);
-
-        void onSignalsFailure(String message);
-    }
 
     interface LoadSignalsCallback {
 
@@ -37,5 +30,11 @@ public interface SignalRepository {
         void onSignalFailure(String message);
     }
 
+    interface UpdateStatusCallback {
+
+        void onStatusUpdated();
+
+        void onStatusFailure(String message);
+    }
 }
 

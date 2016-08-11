@@ -6,6 +6,7 @@
         android:layout_height="match_parent">
 
         <ScrollView
+            android:id="@+id/scroll_signal_details"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_above="@+id/grp_add_comment"
@@ -28,38 +29,61 @@
                         android:id="@+id/img_signal_photo"
                         android:layout_width="150dp"
                         android:layout_height="150dp"
-                        android:contentDescription="@string/txt_signal_photo_description"
-                        android:background="@drawable/ic_paw" />
+                        android:background="@drawable/ic_paw"
+                        android:contentDescription="@string/txt_signal_photo_description" />
 
-                    <LinearLayout
+                    <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:orientation="vertical">
+                        android:paddingLeft="15dp">
 
                         <TextView
                             android:id="@+id/txt_signal_title"
                             android:layout_width="match_parent"
-                            android:layout_height="0dp"
-                            android:layout_weight="1"
-                            android:gravity="center"
+                            android:layout_height="wrap_content"
+                            android:layout_above="@+id/txt_signal_author"
+                            android:layout_alignParentTop="true"
+                            android:gravity="center_vertical"
+                            android:text="title"
                             android:textSize="22sp" />
 
                         <TextView
                             android:id="@+id/txt_signal_author"
-                            android:layout_width="match_parent"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:gravity="center_horizontal"
+                            android:layout_above="@+id/txt_submitted_date"
+                            android:layout_alignParentLeft="true"
+                            android:layout_alignParentStart="true"
+                            android:layout_toLeftOf="@+id/img_call"
+                            android:layout_toStartOf="@+id/img_call"
                             android:padding="4dp"
+                            android:text="author"
                             android:textSize="16sp" />
 
                         <TextView
                             android:id="@+id/txt_submitted_date"
-                            android:layout_width="match_parent"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:gravity="center_horizontal"
+                            android:layout_alignParentBottom="true"
+                            android:layout_alignParentEnd="true"
+                            android:layout_alignParentLeft="true"
+                            android:layout_alignParentRight="true"
+                            android:layout_alignParentStart="true"
                             android:padding="4dp"
+                            android:text="date"
                             android:textSize="16sp" />
-                    </LinearLayout>
+
+
+                        <ImageView
+                            android:id="@+id/img_call"
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:layout_alignParentEnd="true"
+                            android:layout_alignParentRight="true"
+                            android:layout_below="@+id/txt_signal_title"
+                            android:src="@drawable/ic_call"
+                            android:visibility="visible" />
+                    </RelativeLayout>
 
                 </LinearLayout>
 
@@ -73,17 +97,23 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="5dp"
-                        android:text="@string/txt_comments"
+                        android:text="@string/txt_status"
                         android:textColor="@color/color_accent"
                         android:textSize="22sp" />
 
-                    <ProgressBar
-                        android:id="@+id/progress_comments"
-                        style="?android:attr/progressBarStyleInverse"
+                    <org.helpapaw.helpapaw.signaldetails.SignalStatusView
+                        android:id="@+id/view_signal_status"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                    <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center_horizontal"
-                        android:visibility="gone" />
+                        android:layout_marginBottom="5dp"
+                        android:layout_marginTop="20dp"
+                        android:text="@string/txt_comments"
+                        android:textColor="@color/color_accent"
+                        android:textSize="22sp" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -100,6 +130,15 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:text="@string/txt_no_comments"
+                    android:visibility="gone" />
+
+                <ProgressBar
+                    android:id="@+id/progress_comments"
+                    style="?android:attr/progressBarStyleInverse"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:padding="15dp"
                     android:visibility="gone" />
             </LinearLayout>
 

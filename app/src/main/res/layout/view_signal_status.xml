@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/grp_status_container"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/grp_signal_need_help"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:orientation="horizontal"
+        android:visibility="visible">
+
+        <ImageView
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_gravity="center_vertical"
+            android:contentDescription="@string/txt_help_needed"
+            android:src="@drawable/pin_red" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="80dp"
+            android:layout_marginLeft="10dp"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:text="@string/txt_help_needed"
+            android:textSize="18sp" />
+
+        <android.support.v7.widget.AppCompatImageView
+            android:id="@+id/img_signal_need_help_selected"
+            android:layout_width="40dp"
+            android:layout_height="80dp"
+            android:layout_gravity="center_vertical"
+            android:padding="10dp"
+            android:src="@drawable/ic_dropdown" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/grp_signal_on_way"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:orientation="horizontal"
+        android:visibility="gone">
+
+        <ImageView
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_gravity="center_vertical"
+            android:contentDescription="@string/txt_somebody_on_the_way"
+            android:src="@drawable/pin_orange" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="80dp"
+            android:layout_marginLeft="10dp"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:text="@string/txt_somebody_on_the_way"
+            android:textSize="18sp" />
+
+        <android.support.v7.widget.AppCompatImageView
+            android:id="@+id/img_signal_on_way_selected"
+            android:layout_width="40dp"
+            android:layout_height="80dp"
+            android:layout_gravity="center_vertical"
+            android:padding="10dp"
+            android:src="@drawable/ic_done" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/grp_signal_solved"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:orientation="horizontal"
+        android:visibility="gone">
+
+        <ImageView
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_gravity="center_vertical"
+            android:contentDescription="@string/txt_solved"
+            android:src="@drawable/pin_green" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="80dp"
+            android:layout_marginLeft="10dp"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:text="@string/txt_solved"
+            android:textSize="18sp" />
+
+        <android.support.v7.widget.AppCompatImageView
+            android:id="@+id/img_signal_solved_selected"
+            android:layout_width="40dp"
+            android:layout_height="80dp"
+            android:layout_gravity="center_vertical"
+            android:padding="10dp"
+            android:src="@drawable/ic_done" />
+    </LinearLayout>
+
+
+</FrameLayout>

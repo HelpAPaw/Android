@@ -6,7 +6,59 @@ import android.os.Parcelable;
 /**
  * Created by iliyan on 7/28/16
  */
-public class Signal implements Parcelable {
+public class Signal implements Parcelable{
+
+    private String id;
+    private String title;
+    private String dateSubmitted;
+    private String authorName;
+    private String authorPhone;
+    private String photoUrl;
+    private int status;
+    private double latitude;
+    private double longitude;
+
+    public Signal(String id, String title, String dateSubmitted, int status, String authorName, String authorPhone, double latitude, double longitude) {
+        this.id = id;
+        this.title = title;
+        this.dateSubmitted = dateSubmitted;
+        this.authorName = authorName;
+        this.status = status;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.authorPhone = authorPhone;
+    }
+
+
+    public Signal(String title, String dateSubmitted, int status, double latitude, double longitude) {
+        this.title = title;
+        this.dateSubmitted = dateSubmitted;
+        this.status = status;
+        this.latitude = latitude;
+        this.longitude = longitude;
+    }
+
+    public Signal(String title, String dateSubmitted, int status, String authorName, String authorPhone, double latitude, double longitude) {
+        this.title = title;
+        this.dateSubmitted = dateSubmitted;
+        this.status = status;
+        this.authorName = authorName;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.authorPhone = authorPhone;
+    }
+
+    protected Signal(Parcel in) {
+        id = in.readString();
+        title = in.readString();
+        dateSubmitted = in.readString();
+        authorName = in.readString();
+        authorPhone = in.readString();
+        photoUrl = in.readString();
+        status = in.readInt();
+        latitude = in.readDouble();
+        longitude = in.readDouble();
+    }
 
     public static final Creator<Signal> CREATOR = new Creator<Signal>() {
         @Override
@@ -19,52 +71,6 @@ public class Signal implements Parcelable {
             return new Signal[size];
         }
     };
-    private String id;
-    private String title;
-    private String dateSubmitted;
-    private String authorName;
-    private String photoUrl;
-    private int status;
-    private double latitude;
-    private double longitude;
-
-    public Signal(String id, String title, String dateSubmitted, int status, String authorName, double latitude, double longitude) {
-        this.id = id;
-        this.title = title;
-        this.dateSubmitted = dateSubmitted;
-        this.authorName = authorName;
-        this.status = status;
-        this.latitude = latitude;
-        this.longitude = longitude;
-    }
-
-
-    public Signal(String title, String dateSubmitted, int status, double latitude, double longitude) {
-        this.title = title;
-        this.dateSubmitted = dateSubmitted;
-        this.status = status;
-        this.latitude = latitude;
-        this.longitude = longitude;
-    }
-
-    public Signal(String title, String dateSubmitted, int status, String authorName, double latitude, double longitude) {
-        this.title = title;
-        this.dateSubmitted = dateSubmitted;
-        this.status = status;
-        this.authorName = authorName;
-        this.latitude = latitude;
-        this.longitude = longitude;
-    }
-
-    protected Signal(Parcel in) {
-        id = in.readString();
-        title = in.readString();
-        dateSubmitted = in.readString();
-        authorName = in.readString();
-        status = in.readInt();
-        latitude = in.readDouble();
-        longitude = in.readDouble();
-    }
 
     public String getTitle() {
         return title;
@@ -102,6 +108,10 @@ public class Signal implements Parcelable {
         this.photoUrl = photoUrl;
     }
 
+    public String getAuthorPhone() {
+        return authorPhone;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -113,6 +123,8 @@ public class Signal implements Parcelable {
         dest.writeString(title);
         dest.writeString(dateSubmitted);
         dest.writeString(authorName);
+        dest.writeString(authorPhone);
+        dest.writeString(photoUrl);
         dest.writeInt(status);
         dest.writeDouble(latitude);
         dest.writeDouble(longitude);

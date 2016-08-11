@@ -4,6 +4,7 @@ import com.backendless.Backendless;
 import com.backendless.BackendlessUser;
 import com.backendless.async.callback.AsyncCallback;
 import com.backendless.exceptions.BackendlessFault;
+import com.backendless.persistence.local.UserTokenStorageFactory;
 
 /**
  * Created by iliyan on 7/25/16
@@ -94,5 +95,10 @@ public class BackendlessUserManager implements UserManager {
                 loginCallback.onLoginFailure(fault.getMessage());
             }
         });
+    }
+
+    @Override
+    public String getUserToken() {
+       return UserTokenStorageFactory.instance().getStorage().get();
     }
 }

@@ -83,6 +83,7 @@ public abstract class BaseActivity extends AppCompatActivity {
                 @Override
                 public void onLogoutSuccess() {
                     Snackbar.make(binding.getRoot().findViewById(R.id.fab_add_signal), R.string.txt_logout_successfully, Snackbar.LENGTH_LONG).show();
+                    binding.navView.getMenu().findItem(R.id.nav_item_sign_out).setVisible(false);
                 }
 
                 @Override
@@ -122,6 +123,21 @@ public abstract class BaseActivity extends AppCompatActivity {
         super.onConfigurationChanged(newConfig);
         // Pass any configuration change to the drawer toggles
         drawerToggle.onConfigurationChanged(newConfig);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        String userToken = userManager.getUserToken();
+
+        binding.navView.getMenu().findItem(R.id.nav_item_sign_out).setChecked(false);
+
+        if (userToken != null && !userToken.equals("")) {
+            binding.navView.getMenu().findItem(R.id.nav_item_sign_out).setVisible(true);
+        } else {
+            binding.navView.getMenu().findItem(R.id.nav_item_sign_out).setVisible(false);
+        }
     }
 
     @Override

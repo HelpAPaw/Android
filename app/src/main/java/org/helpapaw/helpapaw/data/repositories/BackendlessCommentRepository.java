@@ -33,6 +33,7 @@ public class BackendlessCommentRepository implements CommentRepository {
         BackendlessDataQuery dataQuery = new BackendlessDataQuery();
         dataQuery.setWhereClause(whereClause);
         QueryOptions queryOptions = new QueryOptions();
+        queryOptions.setPageSize(30);
         queryOptions.setSortBy(Collections.singletonList(CREATED_FIELD));
         dataQuery.setQueryOptions(queryOptions);
 
@@ -43,8 +44,8 @@ public class BackendlessCommentRepository implements CommentRepository {
                         for (int i = 0; i < foundComments.getData().size(); i++) {
                             FINComment currentComment = foundComments.getData().get(i);
                             String authorName = null;
-                            if (currentComment.getAuthor() != null && currentComment.getAuthor().getProperty(NAME_FIELD) != null) {
-                                authorName = currentComment.getAuthor().getProperty(NAME_FIELD).toString();
+                            if (currentComment.getAuthor() != null) {
+                                authorName = getToStringOrNull(currentComment.getAuthor().getProperty(NAME_FIELD));
                             }
 
                             Comment comment = new Comment(currentComment.getObjectId(),
@@ -73,8 +74,8 @@ public class BackendlessCommentRepository implements CommentRepository {
         Backendless.Persistence.save(backendlessComment, new AsyncCallback<FINComment>() {
             public void handleResponse(FINComment newComment) {
                 String authorName = null;
-                if (newComment.getAuthor() != null && newComment.getAuthor().getProperty(NAME_FIELD) != null) {
-                    authorName = newComment.getAuthor().getProperty(NAME_FIELD).toString();
+                if (newComment.getAuthor() != null) {
+                    authorName = getToStringOrNull(newComment.getAuthor().getProperty(NAME_FIELD));
                 }
                 Comment comment = new Comment(newComment.getObjectId(),
                         authorName, newComment.getCreated(), newComment.getText());
@@ -85,5 +86,13 @@ public class BackendlessCommentRepository implements CommentRepository {
                 callback.onCommentFailure(fault.getMessage());
             }
         });
+    }
+
+    private String getToStringOrNull(Object object) {
+        if (object != null) {
+            return object.toString();
+        } else {
+            return null;
+        }
     }
 }
