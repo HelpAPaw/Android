@@ -45,6 +45,8 @@ public interface SignalsMapContract {
 
         void showNoInternetMessage();
 
+        void setProgressVisibility(boolean visibility);
+
         boolean isActive();
     }
 
@@ -73,5 +75,9 @@ public interface SignalsMapContract {
         void onSignalInfoWindowClicked(Signal signal);
 
         void onBackButtonPressed();
+
+        void onRefreshButtonClicked();
+
+        void onSignalStatusUpdated(Signal signal);
     }
 }

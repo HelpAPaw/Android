@@ -1,6 +1,6 @@
 package org.helpapaw.helpapaw.signaldetails;
 
-
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
@@ -72,7 +72,7 @@ public class SignalDetailsFragment extends BaseFragment implements SignalDetails
 
         binding.btnAddComment.setOnClickListener(getOnAddCommentClickListener());
         binding.imgCall.setOnClickListener(getOnCallButtonClickListener());
-
+        binding.scrollSignalDetails.setOnBottomReachedListener(getOnBottomReachedListener());
         binding.viewSignalStatus.setStatusCallback(getStatusViewCallback());
 
         return binding.getRoot();
@@ -80,7 +80,9 @@ public class SignalDetailsFragment extends BaseFragment implements SignalDetails
 
     @Override
     public void showMessage(String message) {
-        Snackbar.make(binding.getRoot(), message, Snackbar.LENGTH_LONG).show();
+        if (getView() != null) {
+            Snackbar.make(getView(), message, Snackbar.LENGTH_LONG).show();
+        }
     }
 
     @Override
@@ -141,7 +143,6 @@ public class SignalDetailsFragment extends BaseFragment implements SignalDetails
 
             binding.grpComments.addView(inflatedCommentView);
         }
-
     }
 
     @Override
@@ -165,6 +166,7 @@ public class SignalDetailsFragment extends BaseFragment implements SignalDetails
     public void setNoCommentsTextVisibility(boolean visibility) {
         if (visibility) {
             binding.txtNoComments.setVisibility(View.VISIBLE);
+            setShadowVisibility(false);
         } else {
             binding.txtNoComments.setVisibility(View.GONE);
         }
@@ -186,6 +188,11 @@ public class SignalDetailsFragment extends BaseFragment implements SignalDetails
     }
 
     @Override
+    public void showStatusUpdatedMessage() {
+        showMessage(getString(R.string.txt_status_updated));
+    }
+
+    @Override
     public void openNumberDialer(String phoneNumber) {
         Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + phoneNumber));
         startActivity(intent);
@@ -194,6 +201,28 @@ public class SignalDetailsFragment extends BaseFragment implements SignalDetails
     @Override
     public boolean isActive() {
         return isAdded();
+    }
+
+    @Override
+    public void closeScreenWithResult(Signal signal) {
+        Intent data = new Intent();
+        data.putExtra("signal", signal);
+        getActivity().setResult(Activity.RESULT_OK, data);
+
+        getActivity().finish();
+    }
+
+    @Override
+    public void setShadowVisibility(boolean visibility) {
+        if (visibility) {
+            binding.viewShadow.animate().alpha(1);
+        } else {
+            binding.viewShadow.animate().alpha(0);
+        }
+    }
+
+    public void onBackPressed() {
+        actionsListener.onSignalDetailsClosing();
     }
 
     /* OnClick Listeners */
@@ -221,6 +250,15 @@ public class SignalDetailsFragment extends BaseFragment implements SignalDetails
             @Override
             public void onClick(View v) {
                 actionsListener.onCallButtonClicked();
+            }
+        };
+    }
+
+    public InteractiveScrollView.OnBottomReachedListener getOnBottomReachedListener() {
+        return new InteractiveScrollView.OnBottomReachedListener() {
+            @Override
+            public void onBottomReached(boolean isBottomReached) {
+                actionsListener.onBottomReached(isBottomReached);
             }
         };
     }

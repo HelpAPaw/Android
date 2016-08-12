@@ -55,6 +55,7 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
 
     private void getAllSignals(double latitude, double longitude, final boolean showPopup) {
         if (Utils.getInstance().hasNetworkConnection()) {
+            getView().setProgressVisibility(true);
             signalRepository.getAllSignals(latitude, longitude, DEFAULT_SEARCH_RADIUS,
                     new SignalRepository.LoadSignalsCallback() {
                         @Override
@@ -62,12 +63,14 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
                             if (!isViewAvailable()) return;
                             signalsList = signals;
                             getView().displaySignals(signals, showPopup);
+                            getView().setProgressVisibility(false);
                         }
 
                         @Override
                         public void onSignalsFailure(String message) {
                             if (!isViewAvailable()) return;
                             getView().showMessage(message);
+                            getView().setProgressVisibility(false);
                         }
                     });
         } else {
@@ -84,12 +87,13 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
             }
         } else {
             getAllSignals(latitude, longitude, false);
+            getView().updateMapCameraPosition(latitude, longitude, DEFAULT_MAP_ZOOM);
         }
 
         this.latitude = latitude;
         this.longitude = longitude;
 
-        getView().updateMapCameraPosition(latitude, longitude, DEFAULT_MAP_ZOOM);
+
     }
 
     @Override
@@ -213,6 +217,24 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
             setSendSignalViewVisibility(false);
         } else {
             getView().closeSignalsMapScreen();
+        }
+    }
+
+    @Override
+    public void onRefreshButtonClicked() {
+        getAllSignals(latitude, longitude, false);
+    }
+
+    @Override
+    public void onSignalStatusUpdated(Signal signal) {
+        for (int i = 0; i < signalsList.size(); i++) {
+            Signal currentSignal = signalsList.get(i);
+            if(currentSignal.getId().equals(signal.getId())){
+                signalsList.remove(i);
+                signalsList.add(signal);
+                getView().displaySignals(signalsList, true);
+                break;
+            }
         }
     }
 

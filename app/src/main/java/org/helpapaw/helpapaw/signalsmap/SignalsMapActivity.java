@@ -9,17 +9,16 @@ import android.support.v4.view.GravityCompat;
 import org.helpapaw.helpapaw.R;
 import org.helpapaw.helpapaw.base.BaseActivity;
 
-public class SignalsMapActivity extends BaseActivity {
+import java.util.List;
 
-    SignalsMapFragment fragment;
+public class SignalsMapActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         if (null == savedInstanceState) {
-            fragment = SignalsMapFragment.newInstance();
-            initFragment(fragment);
+            initFragment(SignalsMapFragment.newInstance());
         }
     }
 
@@ -45,8 +44,13 @@ public class SignalsMapActivity extends BaseActivity {
         if (binding.drawer.isDrawerOpen(GravityCompat.START)) {
             binding.drawer.closeDrawers();
         } else {
-            if (fragment != null) {
-                fragment.onBackPressed();
+            List<Fragment> fragmentList = getSupportFragmentManager().getFragments();
+            if (fragmentList != null) {
+                for (Fragment fragment : fragmentList) {
+                    if (fragment instanceof SignalsMapFragment) {
+                        ((SignalsMapFragment) fragment).onBackPressed();
+                    }
+                }
             }
         }
     }
