@@ -9,6 +9,7 @@ public interface PhotoRepository {
 
     String getPhotoUrl(String signalId);
 
+
     interface SavePhotoCallback {
 
         void onPhotoSaved();

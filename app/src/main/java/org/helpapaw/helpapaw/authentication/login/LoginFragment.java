@@ -1,6 +1,5 @@
 package org.helpapaw.helpapaw.authentication.login;
 
-
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
@@ -125,7 +124,6 @@ public class LoginFragment extends BaseFragment implements LoginContract.View {
             }
         };
     }
-
 
     public View.OnClickListener getTxtSignUpClickListener() {
         return new View.OnClickListener() {
