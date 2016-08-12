@@ -13,6 +13,7 @@ public interface CommentRepository {
 
     void saveComment(String commentText, String signalId, SaveCommentCallback callback);
 
+
     interface LoadCommentsCallback {
 
         void onCommentsLoaded(List<Comment> comments);
