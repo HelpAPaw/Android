@@ -36,6 +36,12 @@ public interface SignalDetailsContract {
 
         void scrollToBottom();
 
+        void showStatusUpdatedMessage();
+
+        void closeScreenWithResult(Signal signal);
+
+        void setShadowVisibility(boolean visibility);
+
         boolean isActive();
     }
 
@@ -48,5 +54,9 @@ public interface SignalDetailsContract {
         void onStatusChanged(int status);
 
         void onCallButtonClicked();
+
+        void onSignalDetailsClosing();
+
+        void onBottomReached(boolean isBottomReached);
     }
 }

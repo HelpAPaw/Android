@@ -54,5 +54,7 @@
     <string name="txt_solved">Solved</string>
     <string name="txt_help_needed">Help needed</string>
     <string name="txt_status">Status</string>
+    <string name="txt_refresh">Refresh</string>
+    <string name="txt_status_updated">Status successfully updated!</string>
 
 </resources>

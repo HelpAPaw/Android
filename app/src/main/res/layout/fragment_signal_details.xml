@@ -5,7 +5,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <ScrollView
+        <org.helpapaw.helpapaw.signaldetails.InteractiveScrollView
             android:id="@+id/scroll_signal_details"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -44,7 +44,6 @@
                             android:layout_above="@+id/txt_signal_author"
                             android:layout_alignParentTop="true"
                             android:gravity="center_vertical"
-                            android:text="title"
                             android:textSize="22sp" />
 
                         <TextView
@@ -57,7 +56,6 @@
                             android:layout_toLeftOf="@+id/img_call"
                             android:layout_toStartOf="@+id/img_call"
                             android:padding="4dp"
-                            android:text="author"
                             android:textSize="16sp" />
 
                         <TextView
@@ -70,7 +68,6 @@
                             android:layout_alignParentRight="true"
                             android:layout_alignParentStart="true"
                             android:padding="4dp"
-                            android:text="date"
                             android:textSize="16sp" />
 
 
@@ -142,7 +139,16 @@
                     android:visibility="gone" />
             </LinearLayout>
 
-        </ScrollView>
+        </org.helpapaw.helpapaw.signaldetails.InteractiveScrollView>
+
+        <View
+            android:id="@+id/view_shadow"
+            android:layout_width="match_parent"
+            android:layout_height="15dp"
+            android:background="@drawable/shadow_top"
+            android:layout_alignBottom="@+id/scroll_signal_details"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
 
         <LinearLayout
             android:id="@+id/grp_add_comment"

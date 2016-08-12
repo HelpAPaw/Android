@@ -125,8 +125,6 @@ public class SignalStatusView extends FrameLayout {
 
     private void collapseStatusView(final int status) {
 
-        this.selectedStatus = status;
-
         for (int i = 0; i < statusList.size(); i++) {
             if (i != status) {
                 statusList.get(i).animate().alpha(0);
@@ -151,6 +149,7 @@ public class SignalStatusView extends FrameLayout {
                 statusList.get(i).setVisibility(VISIBLE);
             }
         }
+        this.selectedStatus = status;
         selectedImages.get(status).setImageResource(R.drawable.ic_dropdown);
     }
 
@@ -189,7 +188,7 @@ public class SignalStatusView extends FrameLayout {
             statusList.get(i).setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (getSelectedStatus() != selectedStatus) {
+                    if (getSelectedStatus() != selectedStatus && isExpanded()) {
                         if (callback != null) {
                             callback.onStatusChanged(selectedStatus);
                         }
@@ -200,6 +199,8 @@ public class SignalStatusView extends FrameLayout {
                     } else {
                         expandStatusView(selectedStatus);
                     }
+
+
                 }
             });
         }

@@ -22,6 +22,8 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
     private List<Comment> commentList;
     private Signal signal;
 
+    private boolean statusChanged;
+
     private CommentRepository commentRepository;
     private PhotoRepository photoRepository;
     private SignalRepository signalRepository;
@@ -30,6 +32,7 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
     public SignalDetailsPresenter(SignalDetailsContract.View view) {
         super(view);
         showProgressBar = true;
+        statusChanged = false;
         commentRepository = Injection.getCommentRepositoryInstance();
         photoRepository = Injection.getPhotoRepositoryInstance();
         userManager = Injection.getUserManagerInstance();
@@ -60,27 +63,33 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
     }
 
     private void loadCommentsForSignal(String signalId) {
-        commentRepository.getAllCommentsBySignalId(signalId, new CommentRepository.LoadCommentsCallback() {
-            @Override
-            public void onCommentsLoaded(List<Comment> comments) {
-                if (!isViewAvailable()) return;
-                commentList = comments;
-                setProgressIndicator(false);
+        if(Utils.getInstance().hasNetworkConnection()) {
+            commentRepository.getAllCommentsBySignalId(signalId, new CommentRepository.LoadCommentsCallback() {
+                @Override
+                public void onCommentsLoaded(List<Comment> comments) {
+                    if (!isViewAvailable()) return;
+                    commentList = comments;
+                    setProgressIndicator(false);
 
-                if (commentList.size() == 0) {
-                    getView().setNoCommentsTextVisibility(true);
-                } else {
-                    getView().displayComments(comments);
-                    getView().setNoCommentsTextVisibility(false);
+                    if (commentList.size() == 0) {
+                        getView().setNoCommentsTextVisibility(true);
+                    } else {
+                        getView().displayComments(comments);
+                        getView().setNoCommentsTextVisibility(false);
+                    }
                 }
-            }
 
-            @Override
-            public void onCommentsFailure(String message) {
-                if (!isViewAvailable()) return;
-                getView().showMessage(message);
+                @Override
+                public void onCommentsFailure(String message) {
+                    if (!isViewAvailable()) return;
+                    getView().showMessage(message);
+                }
+            });
+        } else {
+            if(isViewAvailable()) {
+                getView().showNoInternetMessage();
             }
-        });
+        }
     }
 
     @Override
@@ -113,16 +122,18 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
 
     @Override
     public void onStatusChanged(int status) {
-        if(Utils.getInstance().hasNetworkConnection()) {
+        if (Utils.getInstance().hasNetworkConnection()) {
             signalRepository.updateSignalStatus(signal.getId(), status, new SignalRepository.UpdateStatusCallback() {
                 @Override
-                public void onStatusUpdated() {
-
+                public void onStatusUpdated(int status) {
+                    if(!isViewAvailable()) return;
+                    setSignalStatus(status);
+                    getView().showStatusUpdatedMessage();
                 }
 
                 @Override
                 public void onStatusFailure(String message) {
-                    if(!isViewAvailable()) return;
+                    if (!isViewAvailable()) return;
                     getView().showMessage(message);
                 }
             });
@@ -135,6 +146,16 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
     public void onCallButtonClicked() {
         String phoneNumber = signal.getAuthorPhone();
         getView().openNumberDialer(phoneNumber);
+    }
+
+    @Override
+    public void onSignalDetailsClosing() {
+        getView().closeScreenWithResult(signal);
+    }
+
+    @Override
+    public void onBottomReached(boolean isBottomReached) {
+        getView().setShadowVisibility(!isBottomReached);
     }
 
     private void saveComment(String comment, String signalId) {
@@ -154,6 +175,11 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
                 getView().showMessage(message);
             }
         });
+    }
+
+    private void setSignalStatus(int status) {
+        this.signal.setStatus(status);
+        statusChanged = true;
     }
 
     private boolean isViewAvailable() {

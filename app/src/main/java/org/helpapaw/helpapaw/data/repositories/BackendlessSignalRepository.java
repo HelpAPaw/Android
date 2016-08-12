@@ -135,8 +135,9 @@ public class BackendlessSignalRepository implements SignalRepository {
                     signalPoint.setMetadata(meta);
                     Backendless.Geo.savePoint(signalPoint, new AsyncCallback<GeoPoint>() {
                         @Override
-                        public void handleResponse(GeoPoint response) {
-                            callback.onStatusUpdated();
+                        public void handleResponse(GeoPoint geoPoint) {
+                            String signalStatus = getToStringOrNull(geoPoint.getMetadata(SIGNAL_STATUS));
+                            callback.onStatusUpdated(Integer.parseInt(signalStatus));
                         }
 
                         @Override

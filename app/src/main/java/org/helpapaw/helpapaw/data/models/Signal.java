@@ -112,6 +112,10 @@ public class Signal implements Parcelable{
         return authorPhone;
     }
 
+    public void setStatus(int status) {
+        this.status = status;
+    }
+
     @Override
     public int describeContents() {
         return 0;

@@ -7,6 +7,8 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.databinding.DataBindingUtil;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
@@ -16,11 +18,16 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
+import android.support.v4.view.MenuItemCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -71,6 +78,7 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
     private static final int REQUEST_GALLERY = 3;
     private static final int READ_EXTERNAL_STORAGE_FOR_CAMERA = 4;
     private static final int READ_EXTERNAL_STORAGE_FOR_GALLERY = 5;
+    private static final int REQUEST_SIGNAL_DETAILS = 6;
 
     private GoogleApiClient googleApiClient;
     private LocationRequest locationRequest;
@@ -80,6 +88,7 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
     private SignalsMapContract.UserActionsListener actionsListener;
 
     FragmentSignalsMapBinding binding;
+    private Menu optionsMenu;
 
     public SignalsMapFragment() {
         // Required empty public constructor
@@ -111,6 +120,8 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
         actionsListener = signalsMapPresenter;
 
         initLocationApi();
+
+        setHasOptionsMenu(true);
 
         binding.fabAddSignal.setOnClickListener(getFabAddSignalClickListener());
         binding.viewSendSignal.setOnSignalSendClickListener(getOnSignalSendClickListener());
@@ -157,6 +168,22 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
         binding.mapSignals.onLowMemory();
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_signals_map, menu);
+        this.optionsMenu = menu;
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.menu_item_refresh) {
+            actionsListener.onRefreshButtonClicked();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     /* Google Maps */
 
     private OnMapReadyCallback getMapReadyCallback() {
@@ -181,13 +208,13 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
 
     @Override
     public void displaySignals(List<Signal> signals, boolean showPopup) {
-        signalsGoogleMap.clear();
 
         Signal signal;
         Marker marker = null;
 
         final Map<String, Signal> signalMarkers = new HashMap<>();
         if (signalsGoogleMap != null) {
+            signalsGoogleMap.clear();
             for (int i = 0; i < signals.size(); i++) {
                 signal = signals.get(i);
                 MarkerOptions markerOptions = new MarkerOptions()
@@ -420,6 +447,13 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
             File photoFile = ImageUtils.getInstance().getFromMediaUri(getContext(), getContext().getContentResolver(), photoMediaUri);
             actionsListener.onSignalPhotoSelected(Uri.fromFile(photoFile).getPath());
         }
+
+        if(requestCode == REQUEST_SIGNAL_DETAILS){
+            if(resultCode == Activity.RESULT_OK){
+                Signal signal = data.getParcelableExtra("signal");
+                actionsListener.onSignalStatusUpdated(signal);
+            }
+        }
     }
 
     @Override
@@ -444,7 +478,7 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
     public void openSignalDetailsScreen(Signal signal) {
         Intent intent = new Intent(getContext(), SignalDetailsActivity.class);
         intent.putExtra(SignalDetailsActivity.SIGNAL_KEY, signal);
-        startActivity(intent);
+        startActivityForResult(intent, REQUEST_SIGNAL_DETAILS);
     }
 
     @Override
@@ -467,6 +501,27 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
     @Override
     public void showNoInternetMessage() {
         showMessage(getString(R.string.txt_no_internet));
+    }
+
+    @Override
+    public void setProgressVisibility(boolean visibility) {
+        if (optionsMenu != null) {
+            final MenuItem refreshItem = optionsMenu
+                    .findItem(R.id.menu_item_refresh);
+            if (refreshItem != null) {
+                if (visibility) {
+                    MenuItemCompat.setActionView(refreshItem, R.layout.toolbar_progress);
+                    if (refreshItem.getActionView() != null) {
+                        ProgressBar progressBar = (ProgressBar) refreshItem.getActionView().findViewById(R.id.toolbar_progress_bar);
+                        if (progressBar != null) {
+                            progressBar.getIndeterminateDrawable().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN);
+                        }
+                    }
+                } else {
+                    MenuItemCompat.setActionView(refreshItem, null);
+                }
+            }
+        }
     }
 
     @Override

@@ -7,10 +7,13 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.view.MenuItem;
 
 import org.helpapaw.helpapaw.R;
 import org.helpapaw.helpapaw.data.models.Signal;
 import org.helpapaw.helpapaw.databinding.ActivitySignalDetailsBinding;
+
+import java.util.List;
 
 public class SignalDetailsActivity extends AppCompatActivity {
 
@@ -37,9 +40,19 @@ public class SignalDetailsActivity extends AppCompatActivity {
 
             if (getIntent() != null) {
                 Signal signal = getIntent().getParcelableExtra(SIGNAL_KEY);
-                initFragment(SignalDetailsFragment.newInstance(signal));
+                SignalDetailsFragment fragment = SignalDetailsFragment.newInstance(signal);
+                initFragment(fragment);
             }
         }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            onBackPressed();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -53,6 +66,18 @@ public class SignalDetailsActivity extends AppCompatActivity {
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.add(R.id.grp_content_frame, signalsDetailsFragment);
         transaction.commit();
+    }
+
+    @Override
+    public void onBackPressed() {
+        List<Fragment> fragmentList = getSupportFragmentManager().getFragments();
+        if (fragmentList != null) {
+            for (Fragment fragment : fragmentList) {
+                if (fragment instanceof SignalDetailsFragment) {
+                    ((SignalDetailsFragment) fragment).onBackPressed();
+                }
+            }
+        }
     }
 
 }

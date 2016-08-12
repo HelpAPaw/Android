@@ -32,7 +32,7 @@ public interface SignalRepository {
 
     interface UpdateStatusCallback {
 
-        void onStatusUpdated();
+        void onStatusUpdated(int status);
 
         void onStatusFailure(String message);
     }
