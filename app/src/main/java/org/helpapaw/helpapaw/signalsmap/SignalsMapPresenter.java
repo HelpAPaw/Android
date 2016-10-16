@@ -1,5 +1,13 @@
 package org.helpapaw.helpapaw.signalsmap;
 
+import android.annotation.TargetApi;
+import android.app.job.JobInfo;
+import android.app.job.JobScheduler;
+import android.content.ComponentName;
+import android.content.Context;
+import android.os.Build;
+
+import org.helpapaw.helpapaw.R;
 import org.helpapaw.helpapaw.base.Presenter;
 import org.helpapaw.helpapaw.data.models.Signal;
 import org.helpapaw.helpapaw.data.repositories.PhotoRepository;
@@ -7,6 +15,7 @@ import org.helpapaw.helpapaw.data.repositories.SignalRepository;
 import org.helpapaw.helpapaw.data.user.UserManager;
 import org.helpapaw.helpapaw.utils.Injection;
 import org.helpapaw.helpapaw.utils.Utils;
+import org.helpapaw.helpapaw.utils.services.JobSchedulerService;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -14,13 +23,16 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import static org.helpapaw.helpapaw.utils.services.JobSchedulerService.JOB_ID;
+import static org.helpapaw.helpapaw.utils.services.JobSchedulerService.TIME_INTERVAL;
+
 /**
  * Created by iliyan on 7/28/16
  */
 public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> implements SignalsMapContract.UserActionsListener {
 
     private static final float DEFAULT_MAP_ZOOM = 14.5f;
-    private static final int DEFAULT_SEARCH_RADIUS = 4000;
+    public static final int DEFAULT_SEARCH_RADIUS = 4000;
     private static final String DATE_TIME_FORMAT = "MM/dd/yyyy hh:mm:ss";
 
     private UserManager userManager;
@@ -29,6 +41,7 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
 
     private double latitude;
     private double longitude;
+
     private String photoUri;
     private boolean sendSignalViewVisibility;
     private List<Signal> signalsList;
@@ -78,6 +91,10 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
         }
     }
 
+    public static void getAllSignalsWithoutViewUpate(){
+
+    }
+
     @Override
     public void onLocationChanged(double latitude, double longitude) {
 
@@ -87,6 +104,7 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
             }
         } else {
             getAllSignals(latitude, longitude, false);
+
             getView().updateMapCameraPosition(latitude, longitude, DEFAULT_MAP_ZOOM);
         }
 
@@ -99,6 +117,25 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
     @Override
     public void onAddSignalClicked(boolean visibility) {
         setSendSignalViewVisibility(!visibility);
+        if(!visibility){
+            getView().addMapMarker(latitude,longitude);
+        }else{
+            getView().displaySignals(signalsList,false);
+            //onRefreshButtonClicked();
+        }
+
+
+    }
+
+    @Override
+    public void onMarkerMoved(double latitude, double longitude) {
+        this.latitude = latitude;
+        this.longitude = longitude;
+    }
+
+    @Override
+    public void onCancelAddSignal() {
+       getView().displaySignals(signalsList,false);
     }
 
     SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_TIME_FORMAT, Locale.getDefault());
@@ -129,6 +166,8 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
             }
         });
     }
+
+
 
     private void saveSignal(String description, String dateSubmitted, int status,
                             final double latitude, final double longitude) {
@@ -236,6 +275,107 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
                 break;
             }
         }
+    }
+
+    @Override
+    public void onFilterEmergency() {
+        List<Signal> emergencyList = new ArrayList<>();
+        for (int i = 0; i < signalsList.size(); i++) {
+            Signal currentSignal = signalsList.get(i);
+
+            if(currentSignal.getStatus() == 0){
+                emergencyList.add(currentSignal);
+            }
+        }
+        getView().displaySignals(emergencyList, true);
+    }
+
+    @Override
+    public void onFilterInProgress() {
+        List<Signal> emergencyList = new ArrayList<>();
+        for (int i = 0; i < signalsList.size(); i++) {
+            Signal currentSignal = signalsList.get(i);
+
+            if(currentSignal.getStatus() == 1){
+                emergencyList.add(currentSignal);
+
+            }
+        }
+        getView().displaySignals(emergencyList, true);
+    }
+
+    @Override
+    public void onFilterSolved() {
+        List<Signal> emergencyList = new ArrayList<>();
+        for (int i = 0; i < signalsList.size(); i++) {
+            Signal currentSignal = signalsList.get(i);
+
+            if(currentSignal.getStatus() == 2){
+                emergencyList.add(currentSignal);
+
+            }
+        }
+        getView().displaySignals(emergencyList, true);
+    }
+
+    @Override
+    public void onAuthenticationAction() {
+        getView().hideKeyboard();
+        String userToken = userManager.getUserToken();
+
+        if(userToken!=null && !userToken.isEmpty()){
+            logoutUser();
+        }else{
+            getView().openLoginScreen();
+        }
+    }
+
+
+    private void logoutUser(){
+        if (Utils.getInstance().hasNetworkConnection()) {
+            userManager.logout(new UserManager.LogoutCallback() {
+                @Override
+                public void onLogoutSuccess() {
+                    getView().onLogoutSuccess();
+                }
+
+                @Override
+                public void onLogoutFailure(String message) {
+                    getView().onLogoutFailure(message);
+                }
+            });
+        }else{
+            getView().onLogoutFailure("No connection.");
+        }
+    }
+    @Override
+    public void onLoginAction() {
+
+    }
+
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    @Override
+    public void onSetupSchedulerService(Context context) {
+
+//        JobScheduler jobScheduler = (JobScheduler) context.getSystemService(Context.JOB_SCHEDULER_SERVICE);
+//        ComponentName serviceName = new ComponentName(context, JobSchedulerService.class);
+//
+//        JobInfo.Builder builder = new JobInfo.Builder(JOB_ID,serviceName);
+//        builder.setRequiresDeviceIdle(true);
+//        builder.setPersisted(true);
+//       // builder.setPeriodic(TIME_INTERVAL);
+//        builder.setOverrideDeadline(5000);
+////        jobScheduler.cancelAll();
+//
+//        jobScheduler.schedule(builder.build());
+
+    }
+
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    @Override
+    public void onCancelSchedulerService(Context context) {
+        JobScheduler jobScheduler = (JobScheduler) context.getSystemService(Context.JOB_SCHEDULER_SERVICE);
+        jobScheduler.cancel(JOB_ID);
     }
 
     private boolean isViewAvailable() {

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:padding="8dp"
+    android:weightSum="3"
+    android:gravity="center"
+    android:background="@color/cardview_light_background"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <ImageView
+        android:id="@+id/iv_signal_emergency"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:padding="4dp"
+        android:src="@drawable/pin_red"/>
+    <ImageView
+        android:id="@+id/iv_signal_in_progress"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:padding="4dp"
+        android:src="@drawable/pin_orange"/>
+    <ImageView
+        android:id="@+id/iv_signal_solved"
+        android:layout_width="4dp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content" android:padding="8dp"
+        android:src="@drawable/pin_green"/>
+</LinearLayout>

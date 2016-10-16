@@ -56,5 +56,11 @@
     <string name="txt_status">Status</string>
     <string name="txt_refresh">Refresh</string>
     <string name="txt_status_updated">Status successfully updated!</string>
+    <string name="text_emergency_help_required">Emergency. Help required.</string>
+    <string name="text_help_is_on_the_way">Help is on the way.</string>
+    <string name="text_help_provided">Solved.</string>
+    <string name="text_notification_content">%d Singals for paws in trouble near you.</string>
+    <string name="txt_logout">Log out</string>
+  <string name="error_facebook_not_installed">Facebook not installed</string>
 
 </resources>

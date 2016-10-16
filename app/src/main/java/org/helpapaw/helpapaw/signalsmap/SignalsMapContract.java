@@ -1,5 +1,7 @@
 package org.helpapaw.helpapaw.signalsmap;
 
+import android.content.Context;
+
 import org.helpapaw.helpapaw.data.models.Signal;
 
 import java.util.List;
@@ -48,6 +50,14 @@ public interface SignalsMapContract {
         void setProgressVisibility(boolean visibility);
 
         boolean isActive();
+
+        void addMapMarker(double latitude, double longitude);
+
+        void clearMapMarker();
+
+        void onLogoutSuccess();
+        void onLogoutFailure(String message);
+
     }
 
     interface UserActionsListener {
@@ -57,6 +67,10 @@ public interface SignalsMapContract {
         void onLocationChanged(double latitude, double longitude);
 
         void onAddSignalClicked(boolean visibility);
+
+        void onMarkerMoved(double latitude, double longitude);
+
+        void onCancelAddSignal();
 
         void onSendSignalClicked(String description);
 
@@ -79,5 +93,21 @@ public interface SignalsMapContract {
         void onRefreshButtonClicked();
 
         void onSignalStatusUpdated(Signal signal);
+
+        void onFilterEmergency();
+
+        void onFilterInProgress();
+
+        void onFilterSolved();
+
+        void onAuthenticationAction();
+
+        void onLoginAction();
+
+        void onSetupSchedulerService(Context context);
+
+        void onCancelSchedulerService(Context context);
+
+
     }
 }

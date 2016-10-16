@@ -8,6 +8,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ScrollView;
@@ -22,6 +25,7 @@ import org.helpapaw.helpapaw.data.models.Comment;
 import org.helpapaw.helpapaw.data.models.Signal;
 import org.helpapaw.helpapaw.databinding.FragmentSignalDetailsBinding;
 import org.helpapaw.helpapaw.utils.Injection;
+import org.helpapaw.helpapaw.utils.SharingUtils;
 import org.helpapaw.helpapaw.utils.Utils;
 
 import java.text.ParseException;
@@ -62,7 +66,7 @@ public class SignalDetailsFragment extends BaseFragment implements SignalDetails
         }
 
         actionsListener = signalDetailsPresenter;
-
+        setHasOptionsMenu(true);
         Signal signal = null;
         if (getArguments() != null) {
             signal = getArguments().getParcelable(SIGNAL_DETAILS);
@@ -196,6 +200,30 @@ public class SignalDetailsFragment extends BaseFragment implements SignalDetails
     public void openNumberDialer(String phoneNumber) {
         Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + phoneNumber));
         startActivity(intent);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_signal_details, menu);
+
+
+
+        super.onCreateOptionsMenu(menu, inflater);
+
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        if(item.getItemId()== R.id.menu_item_share){
+          if(SharingUtils.verifyPackageInstalled(getActivity(), SharingUtils.PACKAGE_FACEBOOK)) {
+              startActivity(SharingUtils.shareFacebook(getActivity(), binding.txtSignalTitle.getText().toString()));
+          }else{
+              Snackbar.make(getView(), getString(R.string.error_facebook_not_installed), Snackbar.LENGTH_LONG).show();
+          }
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     @Override

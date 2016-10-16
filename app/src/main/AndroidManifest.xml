@@ -7,7 +7,8 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
     <application
         android:name=".base.PawApplication"
         android:allowBackup="true"
@@ -37,6 +38,25 @@
             android:name=".signaldetails.SignalDetailsActivity"
             android:windowSoftInputMode="stateHidden" />
 
+        <receiver
+            android:name=".utils.services.WakeupAlarm"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="mypackage.START_ALARM"></action>
+            </intent-filter>
+        </receiver>
+        <receiver android:name=".utils.services.AutoStart">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"></action>
+            </intent-filter>
+        </receiver>
+        <service
+            android:name=".utils.services.JobSchedulerService"
+            android:permission="android.permission.BIND_JOB_SERVICE"
+            android:exported="true"/>
+        <service
+            android:name=".utils.services.WakeupService"
+            android:enabled="true"></service>
     </application>
 
 </manifest>
