@@ -2,13 +2,17 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_item_one"
-            android:title="One" />
+            android:title="@string/text_emergency_help_required"
+            android:icon="@drawable/pin_red"/>
         <item
             android:id="@+id/nav_item_two"
-            android:title="Two" />
+            android:title="@string/text_help_is_on_the_way"
+            android:icon="@drawable/pin_orange"/>
         <item
             android:id="@+id/nav_item_three"
-            android:title="Three" />
+            android:title="@string/text_help_provided"
+            android:icon="@drawable/pin_green"
+            />
     </group>
     <group android:checkableBehavior="single">
         <item
