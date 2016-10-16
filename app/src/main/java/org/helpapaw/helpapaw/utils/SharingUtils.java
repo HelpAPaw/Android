@@ -39,8 +39,6 @@ public class SharingUtils {
 
         return shareIntent;
     }
-
-
     public static boolean verifyPackageInstalled(Context context, String appPackage) {
 
         boolean installed = false;
