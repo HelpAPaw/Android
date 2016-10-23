@@ -357,17 +357,17 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
     @Override
     public void onSetupSchedulerService(Context context) {
 
-//        JobScheduler jobScheduler = (JobScheduler) context.getSystemService(Context.JOB_SCHEDULER_SERVICE);
-//        ComponentName serviceName = new ComponentName(context, JobSchedulerService.class);
+        JobScheduler jobScheduler = (JobScheduler) context.getSystemService(Context.JOB_SCHEDULER_SERVICE);
+        ComponentName serviceName = new ComponentName(context, JobSchedulerService.class);
 //
-//        JobInfo.Builder builder = new JobInfo.Builder(JOB_ID,serviceName);
-//        builder.setRequiresDeviceIdle(true);
-//        builder.setPersisted(true);
+        JobInfo.Builder builder = new JobInfo.Builder(JOB_ID,serviceName);
+        builder.setRequiresDeviceIdle(true);
+        builder.setPersisted(true);
 //       // builder.setPeriodic(TIME_INTERVAL);
-//        builder.setOverrideDeadline(5000);
-////        jobScheduler.cancelAll();
+        builder.setPeriodic(TIME_INTERVAL);
+        jobScheduler.cancelAll();
 //
-//        jobScheduler.schedule(builder.build());
+        jobScheduler.schedule(builder.build());
 
     }
 

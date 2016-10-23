@@ -42,21 +42,21 @@ public abstract class BaseActivity extends AppCompatActivity {
         // Adding menu icon to Toolbar
         ActionBar supportActionBar = getSupportActionBar();
         if (supportActionBar != null) {
-//            VectorDrawableCompat indicator =
-//                    VectorDrawableCompat.create(getResources(), R.drawable.ic_menu, getTheme());
-//            if (indicator != null) {
-//                indicator.setTint(ResourcesCompat.getColor(getResources(), android.R.color.white, getTheme()));
-//            }
-//            supportActionBar.setHomeAsUpIndicator(indicator);
-//            supportActionBar.setDisplayHomeAsUpEnabled(true);
+            VectorDrawableCompat indicator =
+                    VectorDrawableCompat.create(getResources(), R.drawable.ic_menu, getTheme());
+            if (indicator != null) {
+                indicator.setTint(ResourcesCompat.getColor(getResources(), android.R.color.white, getTheme()));
+            }
+            supportActionBar.setHomeAsUpIndicator(indicator);
+            supportActionBar.setDisplayHomeAsUpEnabled(true);
             supportActionBar.setDisplayShowTitleEnabled(false);
             binding.toolbarTitle.setText(getToolbarTitle());
         }
 
-//        drawerToggle = setupDrawerToggle();
-//        binding.drawer.addDrawerListener(drawerToggle);
+        drawerToggle = setupDrawerToggle();
+        binding.drawer.addDrawerListener(drawerToggle);
 
-//        binding.navView.setNavigationItemSelectedListener(getNavigationItemSelectedListener());
+        binding.navView.setNavigationItemSelectedListener(getNavigationItemSelectedListener());
     }
 
     public NavigationView.OnNavigationItemSelectedListener getNavigationItemSelectedListener() {
@@ -120,17 +120,16 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-//        if (id == android.R.id.home) {
-//            binding.drawer.openDrawer(GravityCompat.START);
-//        }
-//        return drawerToggle.onOptionsItemSelected(item) ||
-        return super.onOptionsItemSelected(item);
+        if (id == android.R.id.home) {
+            binding.drawer.openDrawer(GravityCompat.START);
+        }
+        return drawerToggle.onOptionsItemSelected(item) || super.onOptionsItemSelected(item);
     }
 
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-//        drawerToggle.syncState();
+        drawerToggle.syncState();
     }
 
     @Override

@@ -78,6 +78,11 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/java/org/helpapaw/helpapaw/utils/LocationUtils.java">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/app/src/main/java/org/helpapaw/helpapaw/utils/SharingUtils.java">
           <value>
             <set />
