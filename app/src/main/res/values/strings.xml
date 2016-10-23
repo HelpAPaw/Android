@@ -62,5 +62,8 @@
     <string name="text_notification_content">%d Singals for paws in trouble near you.</string>
     <string name="txt_logout">Log out</string>
   <string name="error_facebook_not_installed">Facebook not installed</string>
+    <string name="text_show_shelters">Animal Shelters</string>
+    <string name="text_vets_near_me">Vets near me</string>
+    <string name="text_faqs">FAQs</string>
 
 </resources>

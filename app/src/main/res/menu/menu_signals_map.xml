@@ -8,9 +8,10 @@
         app:showAsAction="always" />
 
     <item
-        android:id="@+id/menu_item_settings"
+        android:id="@+id/menu_item_filter"
         android:title="Log out"
-        app:showAsAction="collapseActionView">
+        android:icon="@drawable/ic_filter_list_white_24dp"
+        app:showAsAction="always">
 
     </item>
 </menu>

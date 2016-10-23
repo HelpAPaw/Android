@@ -34,6 +34,7 @@ import org.helpapaw.helpapaw.data.repositories.SignalRepository;
 import org.helpapaw.helpapaw.signalsmap.SignalsMapActivity;
 import org.helpapaw.helpapaw.signalsmap.SignalsMapPresenter;
 import org.helpapaw.helpapaw.utils.Injection;
+import org.helpapaw.helpapaw.utils.LocationUtils;
 import org.helpapaw.helpapaw.utils.Utils;
 
 import java.util.List;
@@ -46,22 +47,23 @@ import static org.helpapaw.helpapaw.signalsmap.SignalsMapPresenter.DEFAULT_SEARC
  */
 
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-public class JobSchedulerService extends JobService{
+public class JobSchedulerService extends JobService {
     //TODO 1. Request users location.
     //TODO 2. On Location changed make request for data.
     //TODO 3. Send notifications
 
-    private static final String TAG= JobSchedulerService.class.getSimpleName();
+    private static final String TAG = JobSchedulerService.class.getSimpleName();
     private UpdateAppsAsyncTask updateTask = new UpdateAppsAsyncTask();
     LocationManager locationManager;
     public static int JOB_ID = 12;
-    public static long TIME_INTERVAL =10*1000;
-//    PowerManager.WakeLock wl =  pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK|PowerManager.ACQUIRE_CAUSES_WAKEUP , "");
+    public static long TIME_INTERVAL = 1*60 * 1000;
+    //    PowerManager.WakeLock wl =  pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK|PowerManager.ACQUIRE_CAUSES_WAKEUP , "");
 //    wl.acquire();
-    public static long LOCATION_UPDATE_TIME = 5000;
-    public static float LOCATION_MIN_DISTANCE =5;
+    public static long LOCATION_UPDATE_TIME = 2 * 60 * 1000;
+    public static float LOCATION_MIN_DISTANCE = 0;
     public JobParameters jobParameters;
-
+    public Location oldLocation;
+    public Location current;
     int counter = 0;
     SignalRepository signalRepository = Injection.getSignalRepositoryInstance();
     private Handler mJobHandler = new Handler(new Handler.Callback() {
@@ -73,30 +75,38 @@ public class JobSchedulerService extends JobService{
             return false;
         }
     });
-    private boolean firstTime=true;
+    private boolean firstTime = true;
 
-    //    PowerManager pm = (PowerManager) this.getSystemService(Context.POWER_SERVICE);
-//    PowerManager.WakeLock wl = null;
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        Log.i(TAG, "Service created");
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.i(TAG, "Service destroyed");
+    }
+
     @Override
     public boolean onStartJob(JobParameters params) {
         jobParameters = params;
-//        wl =  pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK|PowerManager.ACQUIRE_CAUSES_WAKEUP , "");
-//        wl.acquire();
         Log.e(TAG, "onStart JOB");
-//        mJobHandler.sendMessage(Message.obtain(mJobHandler, 1, params));
         // Note: this is preformed on the main thread.
         // Acquire a reference to the system Location Manager
         locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-        LocationProvider locationProvider = locationManager.getProvider(locationManager.getBestProvider(getLocationCriteria(),true));
-//        LocationProvider locationProvider = locationManager.getProvider(locationManager.getBestProvider());
+        LocationProvider locationProvider = locationManager.getProvider(locationManager.getBestProvider(getLocationCriteria(), true));
+        //  LocationProvider locationProvider = locationManager.getProvider(locationManager.getBestProvider());
         // Define a listener that responds to location updates
-
 
         // Register the listener with the Location Manager to receive location updates
 
-                Log.e(TAG, "onStart is location enabled");
+        Log.e(TAG, "onStart is location enabled");
+        oldLocation = locationManager.getLastKnownLocation(locationProvider.getName());
 
-                locationManager.requestLocationUpdates(locationProvider.getName(), LOCATION_UPDATE_TIME, LOCATION_MIN_DISTANCE, locationListener);
+        locationManager.requestLocationUpdates(locationProvider.getName(), LOCATION_UPDATE_TIME, LOCATION_MIN_DISTANCE, locationListener);
 //            }else {
 //
 //                Log.e(TAG, "onStart permission not available");
@@ -104,56 +114,63 @@ public class JobSchedulerService extends JobService{
 //            }
 
 
-        return false;
+        return true;
     }
 
     private boolean isLocationEnabled() {
         return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
-                locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+                locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER) || locationManager.isProviderEnabled(LocationManager.PASSIVE_PROVIDER);
     }
 
     @Override
     public boolean onStopJob(JobParameters params) { // Note: return true to reschedule this job.
         Log.e(TAG, "onStop JOB");
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-          locationManager.removeUpdates(locationListener);
-        }
-
+//        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            locationManager.removeUpdates(locationListener);
+//        }
+//
         boolean shouldReschedule = true;// Return true if you want the job to be rescheduled.
-//        wl.release();
         return shouldReschedule;
     }
 
     LocationListener locationListener = new LocationListener() {
-        @Override
+
         public void onLocationChanged(Location location) {
-            if (Utils.getInstance().hasNetworkConnection()) {
-                signalRepository.getAllSignals(location.getLatitude(), location.getLongitude(), DEFAULT_SEARCH_RADIUS, new SignalRepository.LoadSignalsCallback() {
-                    @Override
-                    public void onSignalsLoaded(List<Signal> signals) {
-                        Log.e(TAG, "onSignalsLoaded CHANGED JOB");
-                        if (signals != null && !signals.isEmpty()) {
-                            createNotification(getApplicationContext(), SignalsMapActivity.class, signals.size(),counter);
+          if( LocationUtils.shouldRequestUpdate(oldLocation, location)) {
+              Log.e(TAG, "Location update triggered ");
+              if (Utils.getInstance().hasNetworkConnection()) {
+                  signalRepository.getAllSignals(location.getLatitude(), location.getLongitude(), DEFAULT_SEARCH_RADIUS, new SignalRepository.LoadSignalsCallback() {
+                      @Override
+                      public void onSignalsLoaded(List<Signal> signals) {
+                          Log.e(TAG, "onSignalsLoaded CHANGED JOB");
+                          if (signals != null && !signals.isEmpty()) {
+                              createNotification(getApplicationContext(), SignalsMapActivity.class, signals.size(), counter);
 
-                        } else {
-                            createNotification(getApplicationContext(), SignalsMapActivity.class, 0,counter);
+                          } else {
+                              createNotification(getApplicationContext(), SignalsMapActivity.class, 0, counter);
 
-                        }
-                    }
+                          }
+                      }
 
-                    @Override
-                    public void onSignalsFailure(String message) {
-                        Log.e(TAG, "onSignalsFailure CHANGED JOB");
-                        jobFinished(jobParameters, true);
-                    }
-                });
-            } else {
-                Log.e(TAG, "No network ");
-                createNotification(getApplicationContext(), SignalsMapActivity.class, 0,counter);
-                jobFinished(jobParameters, true);
-            }
+                      @Override
+                      public void onSignalsFailure(String message) {
+                          Log.e(TAG, "onSignalsFailure CHANGED JOB");
+                          jobFinished(jobParameters, true);
+                      }
+                  });
+              } else {
+                  Log.e(TAG, "No network ");
+                  createNotification(getApplicationContext(), SignalsMapActivity.class, 0, counter);
+//                jobFinished(jobParameters, true);
+              }
+          }else{
+              Log.d(TAG, "Distance below");
+              createNotification(getApplicationContext(), SignalsMapActivity.class, 0, (int) LocationUtils.getDistance(oldLocation, location));
+              jobFinished(jobParameters, true);
+          }
 
         }
+
         @Override
         public void onStatusChanged(String provider, int status, Bundle extras) {
             Log.e(TAG, provider + " status " + status);
@@ -169,11 +186,6 @@ public class JobSchedulerService extends JobService{
             Log.e(TAG, provider + " status: disabled");
         }
     };
-
-
-
-
-
 
     private class UpdateAppsAsyncTask extends AsyncTask<JobParameters, Void, JobParameters[]> {
 
@@ -206,8 +218,7 @@ public class JobSchedulerService extends JobService{
     }
 
 
-
-    private static Criteria getLocationCriteria(){
+    private static Criteria getLocationCriteria() {
 
         Criteria criteria = new Criteria();
         criteria.setAccuracy(Criteria.ACCURACY_COARSE);
@@ -216,21 +227,20 @@ public class JobSchedulerService extends JobService{
         criteria.setSpeedRequired(false);
         criteria.setBearingRequired(false);
 
-        return  criteria;
+        return criteria;
     }
 
 
-
-    private void createNotification(Context context, Class<?> tClass,int signalsCount, int locationChangedCounter) {
+    private void createNotification(Context context, Class<?> tClass, int signalsCount, int locationChangedCounter) {
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context);
-       if(Utils.getInstance().hasNetworkConnection() && signalsCount>0) {
+        if (Utils.getInstance().hasNetworkConnection() && signalsCount > 0) {
 
-           mBuilder.setSmallIcon(R.drawable.ic_paw).setContentTitle("Help needed. Location " + locationChangedCounter);
-           mBuilder.setContentText(String.format(getString(R.string.text_notification_content), signalsCount));
-       }else{
-           mBuilder.setSmallIcon(R.drawable.ic_paw).setContentTitle("Help might be needed. Location " + locationChangedCounter);
-           mBuilder.setContentText("Paws might need help. Take a look.");
-       }
+            mBuilder.setSmallIcon(R.drawable.ic_paw).setContentTitle("Help needed. Location " + locationChangedCounter);
+            mBuilder.setContentText(String.format(getString(R.string.text_notification_content), signalsCount));
+        } else {
+            mBuilder.setSmallIcon(R.drawable.ic_paw).setContentTitle("Help might be needed. " + locationChangedCounter);
+            mBuilder.setContentText("Paws might need help. Take a look.");
+        }
         // Creates an explicit intent for an Activity in your app
         Intent resultIntent = new Intent(context, tClass);
 

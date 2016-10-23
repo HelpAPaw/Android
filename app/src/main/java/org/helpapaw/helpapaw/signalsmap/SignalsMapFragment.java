@@ -94,6 +94,7 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
     private static final String VIEW_ADD_SIGNAL = "view_add_signal";
     private static final int PADDING_TOP = 190;
     private static final int PADDING_BOTTOM = 160;
+    private static final String VIEW_FILTER_SIGNALS = "view_filter_signal";
 
     private GoogleApiClient googleApiClient;
     private LocationRequest locationRequest;
@@ -113,6 +114,7 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
     private Marker mMarker;
     private LocationRequest mLocationRequest;
     private boolean mVisibilityAddSignal = false;
+    private boolean mVisibilityFilter = false;
 
     public SignalsMapFragment() {
         // Required empty public constructor
@@ -121,7 +123,6 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
     public static SignalsMapFragment newInstance() {
         return new SignalsMapFragment();
     }
-
 
 
     @Override
@@ -139,8 +140,9 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
         final Bundle mapViewSavedInstanceState = savedInstanceState != null ? savedInstanceState.getBundle(MAP_VIEW_STATE) : null;
         binding.mapSignals.onCreate(mapViewSavedInstanceState);
 
-        mVisibilityAddSignal = savedInstanceState!=null ? savedInstanceState.getBoolean(VIEW_ADD_SIGNAL) : false;
-        setAddSignalViewVisibility(mVisibilityAddSignal);
+        mVisibilityAddSignal = savedInstanceState != null ? savedInstanceState.getBoolean(VIEW_ADD_SIGNAL) : false;
+        mVisibilityFilter = savedInstanceState != null ? savedInstanceState.getBoolean(VIEW_FILTER_SIGNALS) : false;
+//        setAddSignalViewVisibility(mVisibilityAddSignal);
         if (binding.mapSignals != null) {
             binding.mapSignals.getMapAsync(getMapReadyCallback());
         }
@@ -152,8 +154,8 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
             signalsMapPresenter.setView(this);
         }
         actionsListener = signalsMapPresenter;
-        if(actionsListener!=null){
-         //   actionsListener.onCancelSchedulerService(getContext()); //cancel if previous service is running
+        if (actionsListener != null) {
+            //   actionsListener.onCancelSchedulerService(getContext()); //cancel if previous service is running
             actionsListener.onSetupSchedulerService(getContext());
         }
         initLocationApi();
@@ -203,6 +205,7 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
         outState.putBundle(MAP_VIEW_STATE, mapViewSaveState);
 
         outState.putBoolean(VIEW_ADD_SIGNAL, mVisibilityAddSignal);
+        outState.putBoolean(VIEW_FILTER_SIGNALS, mVisibilityFilter);
         super.onSaveInstanceState(outState);
     }
 
@@ -218,17 +221,16 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
 
         this.optionsMenu = menu;
 
-
-        if(userManager.getUserToken()!=null && !userManager.getUserToken().isEmpty()){
-
-
-            optionsMenu.findItem(R.id.menu_item_settings).setTitle(getString(R.string.txt_logout));
-        }else{
-            optionsMenu.findItem(R.id.menu_item_settings).setTitle(getString(R.string.txt_login));
-        }
+//
+//        if(userManager.getUserToken()!=null && !userManager.getUserToken().isEmpty()){
+//
+//
+//            optionsMenu.findItem(R.id.menu_item_filter).setTitle(getString(R.string.txt_logout));
+//        }else{
+//            optionsMenu.findItem(R.id.menu_item_filter).setTitle(getString(R.string.txt_login));
+//        }
         super.onCreateOptionsMenu(menu, inflater);
     }
-
 
 
     @Override
@@ -237,9 +239,16 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
             actionsListener.onRefreshButtonClicked();
             return true;
         }
-        if(item.getItemId() == R.id.menu_item_settings){
-            Log.d(TAG,"logout clicked");
-             actionsListener.onAuthenticationAction();
+        if (item.getItemId() == R.id.menu_item_filter) {
+            Log.d(TAG, "Filter clicked");
+            if(!mVisibilityFilter) {
+                mVisibilityFilter = true;
+                setAddSignalViewVisibility(mVisibilityAddSignal);
+            }else{
+                mVisibilityFilter = false;
+                setAddSignalViewVisibility(mVisibilityAddSignal);
+            }
+            //  actionsListener.onAuthenticationAction();
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -253,7 +262,7 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
             public void onMapReady(GoogleMap googleMap) {
                 signalsGoogleMap = googleMap;
                 actionsListener.onInitSignalsMap();
-                signalsGoogleMap.setPadding(0,PADDING_TOP,0,PADDING_BOTTOM);
+                signalsGoogleMap.setPadding(0, PADDING_TOP, 0, PADDING_BOTTOM);
                 signalsGoogleMap.setOnMapClickListener(mapClickListener);
                 signalsGoogleMap.setOnMarkerDragListener(mapDragListener);
 
@@ -266,9 +275,9 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
         @Override
         public void onMapClick(LatLng latLng) {
 
-            if( binding.viewSendSignal.getVisibility() == View.VISIBLE && !mMarkerAdded ) {
+            if (binding.viewSendSignal.getVisibility() == View.VISIBLE && !mMarkerAdded) {
                 signalsGoogleMap.clear();
-                signalsGoogleMap.setPadding(0,PADDING_TOP,0,PADDING_BOTTOM);
+                signalsGoogleMap.setPadding(0, PADDING_TOP, 0, PADDING_BOTTOM);
                 mMarker = signalsGoogleMap.addMarker(new MarkerOptions().position(latLng).draggable(true));
 
                 actionsListener.onMarkerMoved(latLng.latitude, latLng.longitude);
@@ -277,7 +286,7 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
         }
     };
 
-    private  GoogleMap.OnMarkerClickListener mMarkerClick = new GoogleMap.OnMarkerClickListener() {
+    private GoogleMap.OnMarkerClickListener mMarkerClick = new GoogleMap.OnMarkerClickListener() {
         @Override
         public boolean onMarkerClick(Marker marker) {
             return false;
@@ -298,9 +307,9 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
 
         @Override
         public void onMarkerDragEnd(Marker marker) {
-          double latitude =   marker.getPosition().latitude;
-          double longitude =  marker.getPosition().longitude;
-            if(mMarker!=null){
+            double latitude = marker.getPosition().latitude;
+            double longitude = marker.getPosition().longitude;
+            if (mMarker != null) {
                 mMarker.remove();
             }
 
@@ -329,7 +338,7 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
         final Map<String, Signal> signalMarkers = new HashMap<>();
         if (signalsGoogleMap != null) {
             signalsGoogleMap.clear();
-            signalsGoogleMap.setPadding(0,PADDING_TOP,0,PADDING_BOTTOM);
+            signalsGoogleMap.setPadding(0, PADDING_TOP, 0, PADDING_BOTTOM);
             for (int i = 0; i < signals.size(); i++) {
                 signal = signals.get(i);
                 MarkerOptions markerOptions = new MarkerOptions()
@@ -399,7 +408,7 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
             @Override
             public void onResult(@NonNull LocationSettingsResult locationSettingsResult) {
                 final Status status = locationSettingsResult.getStatus();
-                final LocationSettingsStates states= locationSettingsResult.getLocationSettingsStates();
+                final LocationSettingsStates states = locationSettingsResult.getLocationSettingsStates();
                 switch (status.getStatusCode()) {
                     case LocationSettingsStatusCodes.SUCCESS:
                         // All location settings are satisfied. The client can
@@ -413,7 +422,7 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
                             // Show the dialog by calling startResolutionForResult(),
                             // and check the result in onActivityResult().
                             status.startResolutionForResult(
-                                   getActivity(),
+                                    getActivity(),
                                     REQUEST_CHECK_SETTINGS);
                         } catch (IntentSender.SendIntentException e) {
                             // Ignore the error.
@@ -432,7 +441,7 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
             showPermissionDialog(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION,
                     LOCATION_PERMISSIONS_REQUEST);
         } else {
-           setAddSignalViewVisibility(mVisibilityAddSignal);
+            setAddSignalViewVisibility(mVisibilityAddSignal);
             signalsGoogleMap.setMyLocationEnabled(true);
             Location location = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
             if (location == null) {
@@ -479,10 +488,11 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
             public void onClick(View v) {
                 boolean visibility = binding.viewSendSignal.getVisibility() == View.VISIBLE;
                 signalsGoogleMap.clear();
+                mMarker = null;
 //                signalsGoogleMap.animateCamera();
-                updateMapCameraPosition(mCurrentLat,mCurrentLong, DEFAULT_MAP_ZOOM);
+                updateMapCameraPosition(mCurrentLat, mCurrentLong, DEFAULT_MAP_ZOOM);
                 actionsListener.onAddSignalClicked(visibility);
-              //
+                //
             }
         };
     }
@@ -490,22 +500,29 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
     @Override
     public void setAddSignalViewVisibility(boolean visibility) {
         if (visibility) {
-            mVisibilityAddSignal=visibility;
-            hideFilterSignalsView();
+            mVisibilityAddSignal = visibility;
+
+            if (mVisibilityFilter) {
+                hideFilterSignalsView();
+            }
             showAddSignalView();
             binding.fabAddSignal.setImageResource(R.drawable.ic_close);
         } else {
-            mVisibilityAddSignal=visibility;
+            mVisibilityAddSignal = visibility;
             hideAddSignalView();
-            showFilterSignalsView();
+            if (mVisibilityFilter) {
+                showFilterSignalsView();
+            }else{
+                hideFilterSignalsView();
+            }
             binding.fabAddSignal.setImageResource(R.drawable.fab_add);
         }
     }
 
-    private void showFilterSignalsView(){
+    private void showFilterSignalsView() {
         binding.viewFilterSignals.setVisibility(View.VISIBLE);
         binding.viewFilterSignals.setAlpha(0.0f);
-        if(binding.viewSendSignal.getHeight()>0) {
+        if (binding.viewSendSignal.getHeight() > 0) {
             binding.viewFilterSignals
                     .animate()
                     .setInterpolator(new AccelerateDecelerateInterpolator())
@@ -513,20 +530,20 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
                     .translationY((binding.viewSendSignal.getHeight() * 1.2f))
                     .alpha(1.0f);
             Log.d(TAG, "Height : " + binding.viewSendSignal.getHeight() + "");
-        }else{
+        } else {
             binding.viewFilterSignals
                     .animate()
                     .setInterpolator(new AccelerateDecelerateInterpolator())
                     .setDuration(300)
-                    .translationY((56 * 1.2f))
+                    .translationY((90 * 1.2f))
                     .alpha(1.0f);
             Log.d(TAG, "Height : " + binding.viewSendSignal.getHeight() + "");
         }
     }
 
-    private void hideFilterSignalsView(){
+    private void hideFilterSignalsView() {
 
-        if(binding.viewSendSignal.getHeight()>0) {
+        if (binding.viewSendSignal.getHeight() > 0) {
             binding.viewFilterSignals
                     .animate()
                     .setInterpolator(new AccelerateDecelerateInterpolator())
@@ -538,17 +555,18 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
                     Log.d(TAG, "Height : " + binding.viewSendSignal.getHeight() + "");
                 }
             });
-        }else{ binding.viewFilterSignals
-                .animate()
-                .setInterpolator(new AccelerateDecelerateInterpolator())
-                .setDuration(300)
-                .translationY(- (200 * 1.2f)).withEndAction(new Runnable() {
-                    @Override
-                    public void run() {
-                        binding.viewFilterSignals.setVisibility(View.INVISIBLE);
-                    }
-                });
-            Log.d(TAG,"Height : " + binding.viewSendSignal.getHeight() + "");
+        } else {
+            binding.viewFilterSignals
+                    .animate()
+                    .setInterpolator(new AccelerateDecelerateInterpolator())
+                    .setDuration(300)
+                    .translationY(-(200 * 1.2f)).withEndAction(new Runnable() {
+                @Override
+                public void run() {
+                    binding.viewFilterSignals.setVisibility(View.INVISIBLE);
+                }
+            });
+            Log.d(TAG, "Height : " + binding.viewSendSignal.getHeight() + "");
 
         }
     }
@@ -663,8 +681,8 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
             actionsListener.onSignalPhotoSelected(Uri.fromFile(photoFile).getPath());
         }
 
-        if(requestCode == REQUEST_SIGNAL_DETAILS){
-            if(resultCode == Activity.RESULT_OK){
+        if (requestCode == REQUEST_SIGNAL_DETAILS) {
+            if (resultCode == Activity.RESULT_OK) {
                 Signal signal = data.getParcelableExtra("signal");
                 actionsListener.onSignalStatusUpdated(signal);
             }
@@ -746,20 +764,22 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
 
     @Override
     public void addMapMarker(double latitude, double longitude) {
-        LatLng latLng = new LatLng(latitude,longitude);
+        LatLng latLng = new LatLng(latitude, longitude);
 
-        if(mMarker==null) {
+        if (mMarker == null) {
             mMarker = signalsGoogleMap.addMarker(new MarkerOptions().position(latLng).draggable(true));
             mMarkerAdded = true;
+        } else {
+            Log.d(TAG, "Marker already added");
         }
 
     }
 
     @Override
     public void clearMapMarker() {
-            signalsGoogleMap.clear();
-            mMarkerAdded = false;
-            actionsListener.onCancelAddSignal();
+        signalsGoogleMap.clear();
+        mMarkerAdded = false;
+        actionsListener.onCancelAddSignal();
     }
 
     @Override
@@ -834,7 +854,7 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
         };
     }
 
-    public View.OnClickListener getOnEmergencyClickListener(){
+    public View.OnClickListener getOnEmergencyClickListener() {
         return new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -843,7 +863,7 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
         };
     }
 
-    public View.OnClickListener getOnInProgressClickListener(){
+    public View.OnClickListener getOnInProgressClickListener() {
         return new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -852,7 +872,7 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
         };
     }
 
-    public View.OnClickListener getOnSolvedClickListener(){
+    public View.OnClickListener getOnSolvedClickListener() {
         return new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -860,9 +880,6 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
             }
         };
     }
-
-
-
 
 
 }
