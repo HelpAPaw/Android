@@ -56,10 +56,9 @@ public class JobSchedulerService extends JobService {
     private UpdateAppsAsyncTask updateTask = new UpdateAppsAsyncTask();
     LocationManager locationManager;
     public static int JOB_ID = 12;
-    public static long TIME_INTERVAL = 1*60 * 1000;
-    //    PowerManager.WakeLock wl =  pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK|PowerManager.ACQUIRE_CAUSES_WAKEUP , "");
-//    wl.acquire();
-    public static long LOCATION_UPDATE_TIME = 2 * 60 * 1000;
+    public static long TIME_INTERVAL =5* 60 * 1000;
+
+    public static long LOCATION_UPDATE_TIME = 0;
     public static float LOCATION_MIN_DISTANCE = 0;
     public JobParameters jobParameters;
     public Location oldLocation;
@@ -106,8 +105,13 @@ public class JobSchedulerService extends JobService {
         Log.e(TAG, "onStart is location enabled");
         oldLocation = locationManager.getLastKnownLocation(locationProvider.getName());
 
-        locationManager.requestLocationUpdates(locationProvider.getName(), LOCATION_UPDATE_TIME, LOCATION_MIN_DISTANCE, locationListener);
-//            }else {
+        if (isLocationEnabled()) {
+            Log.d(TAG, "Location is enabled." + locationProvider.getName());
+            locationManager.requestLocationUpdates(locationProvider.getName(), LOCATION_UPDATE_TIME, LOCATION_MIN_DISTANCE, locationListener);
+        }else{
+            Log.d(TAG, "Location not enabled.");
+        }
+// }else {
 //
 //                Log.e(TAG, "onStart permission not available");
 //                jobFinished(jobParameters, true);
@@ -136,6 +140,8 @@ public class JobSchedulerService extends JobService {
     LocationListener locationListener = new LocationListener() {
 
         public void onLocationChanged(Location location) {
+            Log.e(TAG, "onLocationChanged ");
+            counter = (int) LocationUtils.getDistance(oldLocation, location);
           if( LocationUtils.shouldRequestUpdate(oldLocation, location)) {
               Log.e(TAG, "Location update triggered ");
               if (Utils.getInstance().hasNetworkConnection()) {
@@ -144,7 +150,9 @@ public class JobSchedulerService extends JobService {
                       public void onSignalsLoaded(List<Signal> signals) {
                           Log.e(TAG, "onSignalsLoaded CHANGED JOB");
                           if (signals != null && !signals.isEmpty()) {
-                              createNotification(getApplicationContext(), SignalsMapActivity.class, signals.size(), counter);
+
+
+                             createNotification(getApplicationContext(), SignalsMapActivity.class, signals.size(), counter);
 
                           } else {
                               createNotification(getApplicationContext(), SignalsMapActivity.class, 0, counter);
@@ -165,7 +173,7 @@ public class JobSchedulerService extends JobService {
               }
           }else{
               Log.d(TAG, "Distance below");
-              createNotification(getApplicationContext(), SignalsMapActivity.class, 0, (int) LocationUtils.getDistance(oldLocation, location));
+              createNotification(getApplicationContext(), SignalsMapActivity.class, 0, counter);
               jobFinished(jobParameters, true);
           }
 
@@ -221,7 +229,7 @@ public class JobSchedulerService extends JobService {
     private static Criteria getLocationCriteria() {
 
         Criteria criteria = new Criteria();
-        criteria.setAccuracy(Criteria.ACCURACY_COARSE);
+        criteria.setAccuracy(Criteria.ACCURACY_FINE);
         criteria.setAltitudeRequired(true);
         criteria.setPowerRequirement(Criteria.POWER_LOW);
         criteria.setSpeedRequired(false);

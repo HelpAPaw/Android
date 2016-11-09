@@ -70,7 +70,7 @@ public class LocationUtils {
     }
 
     public static boolean shouldRequestUpdate(Location oldLocation, Location current) {
-        boolean shouldRequestUpdate = false;
+        boolean shouldRequestUpdate = true;
 
         float distance = current.distanceTo(oldLocation);
 

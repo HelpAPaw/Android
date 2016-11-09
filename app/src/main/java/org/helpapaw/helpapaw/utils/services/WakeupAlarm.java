@@ -4,7 +4,10 @@ import android.app.AlarmManager;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.TaskStackBuilder;
+import android.app.job.JobInfo;
+import android.app.job.JobScheduler;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.os.PowerManager;
@@ -13,6 +16,10 @@ import android.widget.Toast;
 
 import org.helpapaw.helpapaw.R;
 import org.helpapaw.helpapaw.signalsmap.SignalsMapActivity;
+
+import static android.app.AlarmManager.RTC_WAKEUP;
+import static org.helpapaw.helpapaw.utils.services.JobSchedulerService.JOB_ID;
+import static org.helpapaw.helpapaw.utils.services.JobSchedulerService.TIME_INTERVAL;
 
 /**
  * Created by Emil Ivanov on 9/24/2016.
@@ -26,10 +33,10 @@ public class WakeupAlarm extends BroadcastReceiver {
         wl =  pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK|PowerManager.ACQUIRE_CAUSES_WAKEUP , "");
         wl.acquire();
 
-
         // Put here YOUR code.
-        Toast.makeText(context, "Alarm !!!!!!!!!!", Toast.LENGTH_LONG).show(); // For example
+//        Toast.makeText(context, "Alarm !!!!!!!!!!", Toast.LENGTH_LONG).show(); // For example
         createNotification(context, SignalsMapActivity.class);
+
         wl.release();
     }
 
@@ -37,7 +44,11 @@ public class WakeupAlarm extends BroadcastReceiver {
         AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         Intent i = new Intent(context, WakeupAlarm.class);
         PendingIntent pi = PendingIntent.getBroadcast(context, 0, i, 0);
-        am.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), 1000 * 60 * 1, pi); // Millisec * Second * Minute
+
+        am.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
+                AlarmManager.INTERVAL_HALF_HOUR,
+                AlarmManager.INTERVAL_HALF_HOUR, pi);
+//        am.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), 1000 * 60 *2, pi); // Millisec * Second * Minute
     }
 
     public void cancelAlarm(Context context) {
@@ -49,8 +60,8 @@ public class WakeupAlarm extends BroadcastReceiver {
 
     private void createNotification(Context context, Class<?> tClass) {
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context);
-        mBuilder.setSmallIcon(R.drawable.ic_paw).setContentTitle("Help needed");
-        mBuilder.setContentText("Paw in trouble near you.");
+        mBuilder.setSmallIcon(R.drawable.ic_paw).setContentTitle("Help might be needed. ");
+        mBuilder.setContentText("Paws might need help. Take a look.");
 
         // Creates an explicit intent for an Activity in your app
         Intent resultIntent = new Intent(context, tClass);
@@ -67,7 +78,7 @@ public class WakeupAlarm extends BroadcastReceiver {
         PendingIntent resultPendingIntent =
                 stackBuilder.getPendingIntent(
                         0,
-                        PendingIntent.FLAG_UPDATE_CURRENT
+                        PendingIntent.FLAG_CANCEL_CURRENT
                 );
         mBuilder.setContentIntent(resultPendingIntent);
         NotificationManager mNotificationManager =
