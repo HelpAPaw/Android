@@ -8,6 +8,7 @@ import android.support.v4.view.GravityCompat;
 
 import org.helpapaw.helpapaw.R;
 import org.helpapaw.helpapaw.base.BaseActivity;
+import org.helpapaw.helpapaw.utils.services.WakeupAlarm;
 
 import java.util.List;
 
@@ -16,6 +17,8 @@ public class SignalsMapActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+//
+
 
         if (null == savedInstanceState) {
             initFragment(SignalsMapFragment.newInstance());

@@ -16,6 +16,7 @@ import org.helpapaw.helpapaw.data.user.UserManager;
 import org.helpapaw.helpapaw.utils.Injection;
 import org.helpapaw.helpapaw.utils.Utils;
 import org.helpapaw.helpapaw.utils.services.JobSchedulerService;
+import org.helpapaw.helpapaw.utils.services.WakeupAlarm;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -353,15 +354,31 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
 
     }
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+
     @Override
     public void onSetupSchedulerService(Context context) {
 
+        if(Build.VERSION.SDK_INT>=21) {
+            setupScheduler(context);
+        }else{
+            setupAlarmManager(context);
+        }
+
+    }
+
+    private void setupAlarmManager(Context context){
+        WakeupAlarm wakeupAlarm = new WakeupAlarm();
+        wakeupAlarm.cancelAlarm(context);
+        wakeupAlarm.setAlarm(context);
+    }
+
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    private void setupScheduler(Context context){
         JobScheduler jobScheduler = (JobScheduler) context.getSystemService(Context.JOB_SCHEDULER_SERVICE);
         ComponentName serviceName = new ComponentName(context, JobSchedulerService.class);
 //
         JobInfo.Builder builder = new JobInfo.Builder(JOB_ID,serviceName);
-        builder.setRequiresDeviceIdle(true);
+//        builder.setRequiresDeviceIdle(true);
         builder.setPersisted(true);
 //       // builder.setPeriodic(TIME_INTERVAL);
         builder.setPeriodic(TIME_INTERVAL);

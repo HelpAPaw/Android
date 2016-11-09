@@ -12,6 +12,7 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.location.Location;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
@@ -65,6 +66,7 @@ import org.helpapaw.helpapaw.sendsignal.SendPhotoBottomSheet;
 import org.helpapaw.helpapaw.signaldetails.SignalDetailsActivity;
 import org.helpapaw.helpapaw.utils.Injection;
 import org.helpapaw.helpapaw.utils.images.ImageUtils;
+import org.helpapaw.helpapaw.utils.services.WakeupAlarm;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -95,6 +97,9 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
     private static final int PADDING_TOP = 190;
     private static final int PADDING_BOTTOM = 160;
     private static final String VIEW_FILTER_SIGNALS = "view_filter_signal";
+    private static final String MARKER_LATITUDE = "marker_latitude";
+    private static final String MARKER_LONGITUDE = "marker_longitude";
+
 
     private GoogleApiClient googleApiClient;
     private LocationRequest locationRequest;
@@ -115,7 +120,8 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
     private LocationRequest mLocationRequest;
     private boolean mVisibilityAddSignal = false;
     private boolean mVisibilityFilter = false;
-
+    private double mLatitude= 0.0;
+    private double mLongitude = 0.0;
     public SignalsMapFragment() {
         // Required empty public constructor
     }
@@ -131,6 +137,15 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
 
     }
 
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        mLatitude = savedInstanceState != null ? savedInstanceState.getDouble(MARKER_LATITUDE) : 0.0 ;
+        mLongitude = savedInstanceState != null ? savedInstanceState.getDouble(MARKER_LONGITUDE): 0.0 ;
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -142,6 +157,11 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
 
         mVisibilityAddSignal = savedInstanceState != null ? savedInstanceState.getBoolean(VIEW_ADD_SIGNAL) : false;
         mVisibilityFilter = savedInstanceState != null ? savedInstanceState.getBoolean(VIEW_FILTER_SIGNALS) : false;
+
+
+
+
+
 //        setAddSignalViewVisibility(mVisibilityAddSignal);
         if (binding.mapSignals != null) {
             binding.mapSignals.getMapAsync(getMapReadyCallback());
@@ -155,8 +175,7 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
         }
         actionsListener = signalsMapPresenter;
         if (actionsListener != null) {
-            //   actionsListener.onCancelSchedulerService(getContext()); //cancel if previous service is running
-            actionsListener.onSetupSchedulerService(getContext());
+             actionsListener.onSetupSchedulerService(getContext());
         }
         initLocationApi();
 
@@ -203,7 +222,10 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
         final Bundle mapViewSaveState = new Bundle(outState);
         binding.mapSignals.onSaveInstanceState(mapViewSaveState);
         outState.putBundle(MAP_VIEW_STATE, mapViewSaveState);
-
+        if(mMarker!=null) {
+            outState.putDouble(MARKER_LATITUDE, mMarker.getPosition().latitude);
+            outState.putDouble(MARKER_LONGITUDE, mMarker.getPosition().longitude);
+        }
         outState.putBoolean(VIEW_ADD_SIGNAL, mVisibilityAddSignal);
         outState.putBoolean(VIEW_FILTER_SIGNALS, mVisibilityFilter);
         super.onSaveInstanceState(outState);
@@ -265,6 +287,7 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
                 signalsGoogleMap.setPadding(0, PADDING_TOP, 0, PADDING_BOTTOM);
                 signalsGoogleMap.setOnMapClickListener(mapClickListener);
                 signalsGoogleMap.setOnMarkerDragListener(mapDragListener);
+
 
             }
         };
@@ -335,35 +358,41 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
         Signal signal;
         Marker marker = null;
 
-        final Map<String, Signal> signalMarkers = new HashMap<>();
-        if (signalsGoogleMap != null) {
-            signalsGoogleMap.clear();
-            signalsGoogleMap.setPadding(0, PADDING_TOP, 0, PADDING_BOTTOM);
-            for (int i = 0; i < signals.size(); i++) {
-                signal = signals.get(i);
-                MarkerOptions markerOptions = new MarkerOptions()
-                        .position(new LatLng(signal.getLatitude(), signal.getLongitude()))
-                        .title(signal.getTitle());
 
-                markerOptions.icon(BitmapDescriptorFactory.fromResource(getDrawableFromStatus(signal.getStatus())));
 
-                marker = signalsGoogleMap.addMarker(markerOptions);
-                signalMarkers.put(marker.getId(), signal);
-            }
-            SignalInfoWindowAdapter infoWindowAdapter = new SignalInfoWindowAdapter(signalMarkers, getActivity().getLayoutInflater());
-            signalsGoogleMap.setInfoWindowAdapter(infoWindowAdapter);
 
-            signalsGoogleMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
-                @Override
-                public void onInfoWindowClick(Marker marker) {
-                    actionsListener.onSignalInfoWindowClicked(signalMarkers.get(marker.getId()));
+
+
+            final Map<String, Signal> signalMarkers = new HashMap<>();
+            if (signalsGoogleMap != null) {
+                signalsGoogleMap.clear();
+                signalsGoogleMap.setPadding(0, PADDING_TOP, 0, PADDING_BOTTOM);
+                for (int i = 0; i < signals.size(); i++) {
+                    signal = signals.get(i);
+                    MarkerOptions markerOptions = new MarkerOptions()
+                            .position(new LatLng(signal.getLatitude(), signal.getLongitude()))
+                            .title(signal.getTitle());
+
+                    markerOptions.icon(BitmapDescriptorFactory.fromResource(getDrawableFromStatus(signal.getStatus())));
+
+                    marker = signalsGoogleMap.addMarker(markerOptions);
+                    signalMarkers.put(marker.getId(), signal);
                 }
-            });
+                SignalInfoWindowAdapter infoWindowAdapter = new SignalInfoWindowAdapter(signalMarkers, getActivity().getLayoutInflater());
+                signalsGoogleMap.setInfoWindowAdapter(infoWindowAdapter);
 
-            if (showPopup && marker != null) {
-                marker.showInfoWindow();
+                signalsGoogleMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+                    @Override
+                    public void onInfoWindowClick(Marker marker) {
+                        actionsListener.onSignalInfoWindowClicked(signalMarkers.get(marker.getId()));
+                    }
+                });
+
+                if (showPopup && marker != null) {
+                    marker.showInfoWindow();
+                }
             }
-        }
+
     }
 
     private int getDrawableFromStatus(int status) {
@@ -443,11 +472,18 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
         } else {
             setAddSignalViewVisibility(mVisibilityAddSignal);
             signalsGoogleMap.setMyLocationEnabled(true);
-            Location location = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
-            if (location == null) {
-                LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, this);
-            } else {
-                handleNewLocation(location);
+
+
+
+            if(!mVisibilityAddSignal){
+
+
+                Location location = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
+                if (location == null) {
+                    LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, this);
+                } else {
+                    handleNewLocation(location);
+                }
             }
         }
     }
