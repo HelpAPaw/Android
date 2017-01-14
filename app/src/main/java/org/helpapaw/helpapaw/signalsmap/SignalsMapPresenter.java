@@ -7,6 +7,13 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.os.Build;
 
+import com.evernote.android.job.JobManager;
+import com.evernote.android.job.JobRequest;
+import com.evernote.android.job.util.JobApi;
+import com.evernote.android.job.util.support.PersistableBundleCompat;
+
+import net.vrallev.android.cat.Cat;
+
 import org.helpapaw.helpapaw.R;
 import org.helpapaw.helpapaw.base.Presenter;
 import org.helpapaw.helpapaw.data.models.Signal;
@@ -15,6 +22,7 @@ import org.helpapaw.helpapaw.data.repositories.SignalRepository;
 import org.helpapaw.helpapaw.data.user.UserManager;
 import org.helpapaw.helpapaw.utils.Injection;
 import org.helpapaw.helpapaw.utils.Utils;
+import org.helpapaw.helpapaw.utils.backgroundscheduler.SignalsSyncJob;
 import org.helpapaw.helpapaw.utils.services.JobSchedulerService;
 import org.helpapaw.helpapaw.utils.services.WakeupAlarm;
 
@@ -46,6 +54,14 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
     private String photoUri;
     private boolean sendSignalViewVisibility;
     private List<Signal> signalsList;
+
+    private JobManager mJobManager;
+    private static final String LAST_JOB_ID = "LAST_JOB_ID";
+    private static final boolean REQUIRES_CHARGING = false;
+    private static final boolean REQUIRES_NETWORK = false;
+    private static final boolean REQUIRES_IDLE = false;
+
+    private int mLastJobId ;
 
     public SignalsMapPresenter(SignalsMapContract.View view) {
         super(view);
@@ -357,12 +373,13 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
 
     @Override
     public void onSetupSchedulerService(Context context) {
-
-        if(Build.VERSION.SDK_INT>=21) {
-            setupScheduler(context);
-        }else{
-            setupAlarmManager(context);
-        }
+        mJobManager = JobManager.instance();
+        testAllImpl(context);
+//        if(Build.VERSION.SDK_INT>=21) {
+//            setupScheduler(context);
+//        }else{
+//            setupAlarmManager(context);
+//        }
 
     }
 
@@ -411,5 +428,74 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
 
     private boolean isEmpty(String value) {
         return !(value != null && value.length() > 0);
+    }
+
+
+    private void testSimple() {
+        PersistableBundleCompat extras = new PersistableBundleCompat();
+        extras.putString("key", "Hello world");
+
+        mLastJobId = new JobRequest.Builder(SignalsSyncJob.TAG)
+                .setExecutionWindow(3_000L, 4_000L)
+                .setBackoffCriteria(5_000L, JobRequest.BackoffPolicy.LINEAR)
+                .setRequiresCharging(false)
+                .setRequiresDeviceIdle(false)
+                .setRequiredNetworkType(JobRequest.NetworkType.values()[0])
+                .setExtras(extras)
+                .setRequirementsEnforced(true)
+                .setPersisted(true)
+                .build()
+                .schedule();
+    }
+
+    private void testAllImpl(Context context) {
+        JobApi currentApi = mJobManager.getApi();
+
+        for (JobApi api : JobApi.values()) {
+            if (api.isSupported(context)) {
+                mJobManager.forceApi(api);
+                testCancelAll();
+//                testExact();
+               // testSimple();
+                testPeriodic();
+            } else {
+                Cat.w("%s is not supported", api);
+            }
+        }
+
+        mJobManager.forceApi(currentApi);
+    }
+
+    private void testPeriodic() {
+        mLastJobId = new JobRequest.Builder(SignalsSyncJob.TAG)
+                .setPeriodic(JobRequest.MIN_INTERVAL, JobRequest.MIN_FLEX)
+                .setRequiresCharging(REQUIRES_CHARGING)
+                .setRequiresDeviceIdle(REQUIRES_IDLE)
+                .setRequiredNetworkType(JobRequest.NetworkType.values()[0])
+                .setPersisted(true)
+                .build()
+                .schedule();
+    }
+
+    private void testExact() {
+        PersistableBundleCompat extras = new PersistableBundleCompat();
+        extras.putString("key", "Hello world");
+
+        mLastJobId = new JobRequest.Builder(SignalsSyncJob.TAG)
+                .setBackoffCriteria(5_000L, JobRequest.BackoffPolicy.EXPONENTIAL)
+                .setExtras(extras)
+                .setExact(20_000L)
+                .setPersisted(true)
+                .setUpdateCurrent(true)
+                .build()
+                .schedule();
+    }
+
+    private void testCancelLast() {
+        mJobManager.cancel(mLastJobId);
+    }
+
+    private void testCancelAll() {
+        mJobManager.cancelAll();
     }
 }

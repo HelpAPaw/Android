@@ -10,4 +10,7 @@
     <color name="comments_gray">#999999</color>
     <color name="signal_details_background">#f2f2f2</color>
     <color name="bottom_sheet_options_gray">#DE000000</color>
+    <color name="color_emergency">#eb1c23</color>
+    <color name="color_in_progress">#f59120</color>
+    <color name="color_resolved">#8dc43f</color>
 </resources>

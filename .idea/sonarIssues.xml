@@ -3,6 +3,11 @@
   <component name="issues">
     <option name="index">
       <map>
+        <entry key="/Dummy.txt">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="/fragment.java">
           <value>
             <set />
@@ -23,7 +28,82 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/../../HealthyFood/app/build.gradle">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../../HealthyFood/app/src/main/AndroidManifest.xml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../../HealthyFood/app/src/main/java/com/beawesome/healtyfood/ApplicationClass.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../../HealthyFood/app/src/main/java/com/beawesome/healtyfood/DetailsActivity.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../../HealthyFood/app/src/main/java/com/beawesome/healtyfood/MainActivity.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../../HealthyFood/app/src/main/java/com/beawesome/healtyfood/adapters/FoodAdapter.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../../HealthyFood/app/src/main/java/com/beawesome/healtyfood/entities/ApplicationClass.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../../HealthyFood/app/src/main/java/com/beawesome/healtyfood/entities/Food.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../../HealthyFood/app/src/main/java/com/beawesome/healtyfood/network/RestDataSource.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../../HealthyFood/app/src/main/res/layout/activity_details.xml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../../HealthyFood/app/src/main/res/layout/activity_main.xml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../../HealthyFood/app/src/main/res/layout/row_layout_food_list.xml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../../HealthyFood/app/src/main/res/values/colors.xml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../../HealthyFood/app/src/main/res/values/dimens.xml">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/app/build.gradle">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/app/build/generated/source/apt/debug/org/helpapaw/helpapaw/databinding/FragmentSignalsMapBinding.java">
           <value>
             <set />
           </value>
@@ -34,6 +114,26 @@
           </value>
         </entry>
         <entry key="$PROJECT_DIR$/app/src/main/java/org/helpapaw/helpapaw/base/BaseActivity.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/java/org/helpapaw/helpapaw/base/PawApplication.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/java/org/helpapaw/helpapaw/data/models/Signal.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/java/org/helpapaw/helpapaw/data/repositories/BackendlessSignalRepository.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/java/org/helpapaw/helpapaw/faq/FAQsView.java">
           <value>
             <set />
           </value>
@@ -54,6 +154,11 @@
           </value>
         </entry>
         <entry key="$PROJECT_DIR$/app/src/main/java/org/helpapaw/helpapaw/signalsmap/FilterSignalView.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/java/org/helpapaw/helpapaw/signalsmap/PlacePickerFragment.java">
           <value>
             <set />
           </value>
@@ -93,12 +198,27 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/java/org/helpapaw/helpapaw/utils/TutorialUtils.java">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/app/src/main/java/org/helpapaw/helpapaw/utils/WakeupAlarm.java">
           <value>
             <set />
           </value>
         </entry>
         <entry key="$PROJECT_DIR$/app/src/main/java/org/helpapaw/helpapaw/utils/WakeupService.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/java/org/helpapaw/helpapaw/utils/backgroundscheduler/ScheduledCreator.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/java/org/helpapaw/helpapaw/utils/backgroundscheduler/SignalsSyncJob.java">
           <value>
             <set />
           </value>
@@ -119,6 +239,31 @@
           </value>
         </entry>
         <entry key="$PROJECT_DIR$/app/src/main/java/org/helpapaw/helpapaw/utils/services/WakeupService.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/res/drawable/selector_filter_background.xml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/res/drawable/selector_filter_background_emergency.xml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/res/drawable/selector_filter_background_in_progress.xml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/res/drawable/selector_filter_background_resolved.xml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/res/layout/activity_faqs_view.xml">
           <value>
             <set />
           </value>
@@ -153,7 +298,32 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/res/values/colors.xml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/res/values/dimens.xml">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/app/src/main/res/values/strings.xml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../../android-play-places/PlaceCompleteFragment/Application/src/main/AndroidManifest.xml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../../android-play-places/PlacePicker/Application/src/main/AndroidManifest.xml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../../android-play-places/PlacePicker/Application/src/main/res/values/base-strings.xml">
           <value>
             <set />
           </value>

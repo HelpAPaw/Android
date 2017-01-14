@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.v7.widget.CardView;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import org.helpapaw.helpapaw.R;
@@ -14,9 +15,9 @@ import org.helpapaw.helpapaw.R;
 
 public class FilterSignalView extends CardView {
 
-    ImageView mImageViewEmergency;
-    ImageView mImageViewInProgressImage;
-    ImageView mImageViewSolvedImage;
+    ImageButton mImageViewEmergency;
+    ImageButton mImageViewInProgressImage;
+    ImageButton mImageViewSolvedImage;
 
     public FilterSignalView(Context context) {
         super(context);
@@ -43,9 +44,9 @@ public class FilterSignalView extends CardView {
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
-        mImageViewEmergency = (ImageView) this.findViewById(R.id.iv_signal_emergency);
-        mImageViewInProgressImage = (ImageView) this.findViewById(R.id.iv_signal_in_progress);
-        mImageViewSolvedImage = (ImageView) this.findViewById(R.id.iv_signal_solved);
+        mImageViewEmergency = (ImageButton) this.findViewById(R.id.iv_signal_emergency);
+        mImageViewInProgressImage = (ImageButton) this.findViewById(R.id.iv_signal_in_progress);
+        mImageViewSolvedImage = (ImageButton) this.findViewById(R.id.iv_signal_solved);
     }
 
 
@@ -59,4 +60,20 @@ public class FilterSignalView extends CardView {
         mImageViewSolvedImage.setOnClickListener(clickListener);
     }
 
+
+    public void setStateActiveEmergency(){
+        mImageViewEmergency.setSelected(true);
+        mImageViewSolvedImage.setSelected(false);
+        mImageViewInProgressImage.setSelected(false);
+    }
+    public void setStateActiveInProgess(){
+        mImageViewEmergency.setSelected(false);
+        mImageViewSolvedImage.setSelected(false);
+        mImageViewInProgressImage.setSelected(true);
+    }
+    public void setStateActiveResolved(){
+        mImageViewEmergency.setSelected(false);
+        mImageViewSolvedImage.setSelected(true);
+        mImageViewInProgressImage.setSelected(false);
+    }
 }

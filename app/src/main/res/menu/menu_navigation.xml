@@ -1,18 +1,15 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/nav_item_one"
-            android:title="@string/text_vets_near_me"
-           />
-        <item
-            android:id="@+id/nav_item_two"
-            android:title="@string/text_show_shelters"
-          />
-        <item
-            android:id="@+id/nav_item_three"
+            android:id="@+id/nav_item_faqs"
             android:title="@string/text_faqs"
-
             />
+        <item android:id="@+id/nav_item_feedback"
+            android:checkable="false"
+            android:title="@string/text_feedback"/>
+
+        <item android:id="@+id/nav_item_about"
+            android:title="@string/text_about"/>
     </group>
     <group android:checkableBehavior="single">
         <item

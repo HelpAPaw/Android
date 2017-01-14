@@ -45,6 +45,7 @@ import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStates;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
+import com.google.android.gms.location.places.Places;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -100,7 +101,7 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
     private static final String MARKER_LATITUDE = "marker_latitude";
     private static final String MARKER_LONGITUDE = "marker_longitude";
 
-
+    private  MenuInflater mMenuInflater;
     private GoogleApiClient googleApiClient;
     private LocationRequest locationRequest;
     private GoogleMap signalsGoogleMap;
@@ -122,6 +123,7 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
     private boolean mVisibilityFilter = false;
     private double mLatitude= 0.0;
     private double mLongitude = 0.0;
+    private Signal mNotificationSignal;
     public SignalsMapFragment() {
         // Required empty public constructor
     }
@@ -130,10 +132,21 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
         return new SignalsMapFragment();
     }
 
+    public static SignalsMapFragment newInstance(Signal signal) {
+        SignalsMapFragment signalsMapFragment =  new SignalsMapFragment();
+        Bundle args = new Bundle();
+        args.putParcelable(Signal.KEY_SIGNAL , signal);
+        signalsMapFragment.setArguments(args);
+        return signalsMapFragment;
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if(getArguments()!=null && getArguments().containsKey(Signal.KEY_SIGNAL)){
+
+            mNotificationSignal = getArguments().getParcelable(Signal.KEY_SIGNAL);
+        }
 
     }
 
@@ -239,6 +252,7 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        mMenuInflater = inflater;
         inflater.inflate(R.menu.menu_signals_map, menu);
 
         this.optionsMenu = menu;
@@ -358,11 +372,6 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
         Signal signal;
         Marker marker = null;
 
-
-
-
-
-
             final Map<String, Signal> signalMarkers = new HashMap<>();
             if (signalsGoogleMap != null) {
                 signalsGoogleMap.clear();
@@ -377,6 +386,17 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
 
                     marker = signalsGoogleMap.addMarker(markerOptions);
                     signalMarkers.put(marker.getId(), signal);
+                    if(mNotificationSignal!=null) {
+                        if (signal.getTitle().equalsIgnoreCase(mNotificationSignal.getTitle())){
+                            showPopup=true;
+                            updateMapCameraPosition(mNotificationSignal.getLatitude(),mNotificationSignal.getLongitude(),DEFAULT_MAP_ZOOM);
+                            if (showPopup && marker != null) {
+                                if (marker.getTitle().equalsIgnoreCase(mNotificationSignal.getTitle())) {
+                                    marker.showInfoWindow();
+                                }
+                            }
+                        }
+                    }
                 }
                 SignalInfoWindowAdapter infoWindowAdapter = new SignalInfoWindowAdapter(signalMarkers, getActivity().getLayoutInflater());
                 signalsGoogleMap.setInfoWindowAdapter(infoWindowAdapter);
@@ -387,12 +407,10 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
                         actionsListener.onSignalInfoWindowClicked(signalMarkers.get(marker.getId()));
                     }
                 });
-
                 if (showPopup && marker != null) {
                     marker.showInfoWindow();
                 }
             }
-
     }
 
     private int getDrawableFromStatus(int status) {
@@ -415,6 +433,7 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API)
+                .addApi(Places.GEO_DATA_API)
                 .build();
 
         // Create the LocationRequest object
@@ -748,6 +767,8 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
         Intent intent = new Intent(getContext(), SignalDetailsActivity.class);
         intent.putExtra(SignalDetailsActivity.SIGNAL_KEY, signal);
         startActivityForResult(intent, REQUEST_SIGNAL_DETAILS);
+
+
     }
 
     @Override
@@ -777,6 +798,7 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
         if (optionsMenu != null) {
             final MenuItem refreshItem = optionsMenu
                     .findItem(R.id.menu_item_refresh);
+
             if (refreshItem != null) {
                 if (visibility) {
                     MenuItemCompat.setActionView(refreshItem, R.layout.toolbar_progress);
@@ -787,7 +809,10 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
                         }
                     }
                 } else {
+
                     MenuItemCompat.setActionView(refreshItem, null);
+
+
                 }
             }
         }
@@ -895,6 +920,7 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
             @Override
             public void onClick(View v) {
                 actionsListener.onFilterEmergency();
+               binding.viewFilterSignals.setStateActiveEmergency();
             }
         };
     }
@@ -904,6 +930,8 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
             @Override
             public void onClick(View v) {
                 actionsListener.onFilterInProgress();
+                binding.viewFilterSignals.setStateActiveInProgess();
+
             }
         };
     }
@@ -913,9 +941,14 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
             @Override
             public void onClick(View v) {
                 actionsListener.onFilterSolved();
+                binding.viewFilterSignals.setStateActiveResolved();
             }
         };
     }
+
+
+
+
 
 
 }

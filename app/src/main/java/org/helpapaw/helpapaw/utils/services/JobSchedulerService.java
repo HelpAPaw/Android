@@ -1,6 +1,5 @@
 package org.helpapaw.helpapaw.utils.services;
 
-import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -9,7 +8,6 @@ import android.app.job.JobParameters;
 import android.app.job.JobService;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -20,19 +18,14 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.os.PowerManager;
-import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 import android.widget.Toast;
-
-import com.google.android.gms.common.stats.WakeLockEvent;
 
 import org.helpapaw.helpapaw.R;
 import org.helpapaw.helpapaw.data.models.Signal;
 import org.helpapaw.helpapaw.data.repositories.SignalRepository;
 import org.helpapaw.helpapaw.signalsmap.SignalsMapActivity;
-import org.helpapaw.helpapaw.signalsmap.SignalsMapPresenter;
 import org.helpapaw.helpapaw.utils.Injection;
 import org.helpapaw.helpapaw.utils.LocationUtils;
 import org.helpapaw.helpapaw.utils.Utils;
@@ -150,13 +143,11 @@ public class JobSchedulerService extends JobService {
                       public void onSignalsLoaded(List<Signal> signals) {
                           Log.e(TAG, "onSignalsLoaded CHANGED JOB");
                           if (signals != null && !signals.isEmpty()) {
-
-
-                             createNotification(getApplicationContext(), SignalsMapActivity.class, signals.size(), counter);
-
+                              for (int i = 0; i < signals.size(); i++) {
+                                  createNotificationForSignal(getApplicationContext(), SignalsMapActivity.class, signals.get(i), i);
+                              }
                           } else {
-                              createNotification(getApplicationContext(), SignalsMapActivity.class, 0, counter);
-
+                              createOfflineNotification(getApplicationContext(), SignalsMapActivity.class);
                           }
                       }
 
@@ -168,12 +159,12 @@ public class JobSchedulerService extends JobService {
                   });
               } else {
                   Log.e(TAG, "No network ");
-                  createNotification(getApplicationContext(), SignalsMapActivity.class, 0, counter);
+                  createOfflineNotification(getApplicationContext(), SignalsMapActivity.class);
 //                jobFinished(jobParameters, true);
               }
           }else{
               Log.d(TAG, "Distance below");
-              createNotification(getApplicationContext(), SignalsMapActivity.class, 0, counter);
+              createOfflineNotification(getApplicationContext(), SignalsMapActivity.class);
               jobFinished(jobParameters, true);
           }
 
@@ -239,14 +230,43 @@ public class JobSchedulerService extends JobService {
     }
 
 
-    private void createNotification(Context context, Class<?> tClass, int signalsCount, int locationChangedCounter) {
+    private void createNotificationForSignal(Context context, Class<?> tClass, Signal signal, int notificationId){
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context);
-        if (Utils.getInstance().hasNetworkConnection() && signalsCount > 0) {
+        if (Utils.getInstance().hasNetworkConnection() && signal !=null) {
+            mBuilder.setSmallIcon(R.drawable.ic_paw).setContentTitle("Help needed.");
+            mBuilder.setContentText(signal.getTitle());
+        }
+        // Creates an explicit intent for an Activity in your app
+        Intent resultIntent = new Intent(context, tClass);
+        resultIntent.putExtra(Signal.KEY_SIGNAL, signal);
+        // The stack builder object will contain an artificial back stack for the
+        // started Activity.
+        // This ensures that navigating backward from the Activity leads out of
+        // your application to the Home screen.
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
+        // Adds the back stack for the Intent (but not the Intent itself)
+        stackBuilder.addParentStack(tClass);
+        // Adds the Intent that starts the Activity to the top of the stack
+        stackBuilder.addNextIntent(resultIntent);
+        PendingIntent resultPendingIntent =
+                stackBuilder.getPendingIntent(notificationId,
+                        PendingIntent.FLAG_ONE_SHOT
+                );
+        mBuilder.setContentIntent(resultPendingIntent);
+        mBuilder.setAutoCancel(true);
+        NotificationManager mNotificationManager =
+                (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        // mId allows you to update the notification later on.
+        mNotificationManager.notify(notificationId, mBuilder.build());
 
-            mBuilder.setSmallIcon(R.drawable.ic_paw).setContentTitle("Help needed. Location " + locationChangedCounter);
-            mBuilder.setContentText(String.format(getString(R.string.text_notification_content), signalsCount));
-        } else {
-            mBuilder.setSmallIcon(R.drawable.ic_paw).setContentTitle("Help might be needed. " + locationChangedCounter);
+
+    }
+
+
+    private void createOfflineNotification(Context context, Class<?> tClass) {
+        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context);
+        if (!Utils.getInstance().hasNetworkConnection()){
+            mBuilder.setSmallIcon(R.drawable.ic_paw).setContentTitle("Help might be needed.");
             mBuilder.setContentText("Paws might need help. Take a look.");
         }
         // Creates an explicit intent for an Activity in your app
@@ -267,6 +287,7 @@ public class JobSchedulerService extends JobService {
                         PendingIntent.FLAG_CANCEL_CURRENT
                 );
         mBuilder.setContentIntent(resultPendingIntent);
+        mBuilder.setAutoCancel(true);
         NotificationManager mNotificationManager =
                 (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         // mId allows you to update the notification later on.
