@@ -7,7 +7,7 @@ import android.os.Parcelable;
  * Created by iliyan on 7/28/16
  */
 public class Signal implements Parcelable{
-
+    public static String KEY_SIGNAL ="signal";
     private String id;
     private String title;
     private String dateSubmitted;

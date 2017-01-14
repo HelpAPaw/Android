@@ -1,15 +1,12 @@
 package org.helpapaw.helpapaw.utils;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-
-import org.apache.commons.io.FileUtils;
-import org.helpapaw.helpapaw.R;
-
-import java.io.File;
+import android.net.Uri;
+import android.support.v4.app.ShareCompat;
 
 /**
  * Created by Emil Ivanov on 10/15/2016.
@@ -18,6 +15,10 @@ import java.io.File;
 public class SharingUtils {
     public static final String PACKAGE_FACEBOOK = "com.facebook.katana";
 
+
+    public static final String EMAIL = "emil.iv.ivanov@gmail.com";
+    public static final String SUBJECT ="[Help A Paw] Feedback";
+    public static final String CHOOSER_TITLE = "Send Feedback";
     /**
      * Using default sharing implemetation for Facebook
      * @param context
@@ -52,4 +53,24 @@ public class SharingUtils {
         return installed;
     }
 
+    public static Intent sendFeedback(){
+        Intent intent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
+                "mailto",EMAIL, null));
+        intent.setType("text/plain");
+        intent.putExtra(Intent.EXTRA_SUBJECT,SUBJECT );
+
+        return Intent.createChooser(intent, "Send Feedback");
+    }
+
+    public static void sendFeedbackUsingCompat(Activity activity){
+        ShareCompat.IntentBuilder.from(activity)
+                .setType("message/rfc822")
+                .addEmailTo(EMAIL)
+                .setSubject(SUBJECT)
+//                .setText(body)
+                //.setHtmlText(body) //If you are using HTML in your body text
+                .setChooserTitle(CHOOSER_TITLE)
+                .startChooser();
+
+    }
 }

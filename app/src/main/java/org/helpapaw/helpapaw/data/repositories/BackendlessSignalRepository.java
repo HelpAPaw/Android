@@ -32,7 +32,7 @@ public class BackendlessSignalRepository implements SignalRepository {
     public void getAllSignals(double latitude, double longitude,
                               double radius, final LoadSignalsCallback callback) {
         BackendlessGeoQuery query =
-                new BackendlessGeoQuery(latitude, longitude, radius, Units.KILOMETERS);
+                new BackendlessGeoQuery(latitude, longitude, radius, Units.METERS);
         query.setIncludeMeta(true);
 
         Backendless.Geo.getPoints(query, new AsyncCallback<BackendlessCollection<GeoPoint>>() {

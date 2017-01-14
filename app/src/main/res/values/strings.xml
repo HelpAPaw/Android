@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Help A Paw</string>
     <string name="google_android_map_api_key">***REMOVED***</string>
-
+    <string name="google_places_api_key">***REMOVED***</string>
     <!-- Strings related to Login and Register screens -->
     <string name="txt_invalid_email">Invalid email.</string>
     <string name="txt_invalid_password">The password is too short.</string>
@@ -61,9 +61,21 @@
     <string name="text_help_provided">Solved.</string>
     <string name="text_notification_content">%d Singals for paws in trouble near you.</string>
     <string name="txt_logout">Log out</string>
-  <string name="error_facebook_not_installed">Facebook not installed</string>
+    <string name="error_facebook_not_installed">Facebook not installed</string>
     <string name="text_show_shelters">Animal Shelters</string>
     <string name="text_vets_near_me">Vets near me</string>
     <string name="text_faqs">FAQs</string>
+    <string name="text_about">About</string>
+    <string name="text_feedback">Feedback</string>
+    <string name="overflow_prompt_title">Filter the signals</string>
+    <string name="overflow_prompt_description">High, In-progress, Resolved</string>
+    <string name="menu_prompt_title">More settings</string>
+    <string name="menu_prompt_description">Expolore more settings</string>
+    <string name="text_tutorial_send_signal">Send your first signal</string>
+    <string name="overflow_prompt_title_refresh">Refresh the signals</string>
+    <string name="overflow_prompt_title_filter">Filter signals</string>
+    <string name="overflow_prompt_description_filter">Filter all available signals by category: Emergency, In-progress, Resolved</string>
+    <string name="text_fab_add_signal">Tap to start composing your first signal.</string>
+    <string name="txt_faqs_view_title">FAQs</string>
 
 </resources>
