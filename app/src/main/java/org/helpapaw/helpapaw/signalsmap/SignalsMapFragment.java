@@ -10,6 +10,7 @@ import android.content.res.Resources;
 import android.databinding.DataBindingUtil;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
@@ -33,6 +34,9 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+
+import com.getkeepsafe.taptargetview.TapTarget;
+import com.getkeepsafe.taptargetview.TapTargetSequence;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
@@ -57,6 +61,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import org.helpapaw.helpapaw.R;
 import org.helpapaw.helpapaw.authentication.AuthenticationActivity;
+import org.helpapaw.helpapaw.base.BaseActivity;
 import org.helpapaw.helpapaw.base.BaseFragment;
 import org.helpapaw.helpapaw.base.Presenter;
 import org.helpapaw.helpapaw.base.PresenterManager;
@@ -205,6 +210,8 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
         return binding.getRoot();
     }
 
+
+
     @Override
     public void onResume() {
         super.onResume();
@@ -244,6 +251,77 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
         super.onSaveInstanceState(outState);
     }
 
+
+    private TapTarget createTargetRefresh(){
+
+        Drawable drawableFocus = ContextCompat.getDrawable(getActivity(),R.drawable.ic_refresh);
+        return TapTarget.forView(((SignalsMapActivity)getActivity()).getToolbar().getChildAt(2),getString(R.string.overflow_prompt_title_filter),getString(R.string.overflow_prompt_description_filter))
+                .dimColor(android.R.color.darker_gray)
+                .outerCircleColor(R.color.color_primary_dark)
+                .targetCircleColor(R.color.color_emergency)
+                .textColor(android.R.color.white)
+                .cancelable(true)
+                .icon(drawableFocus);
+
+    }
+
+    private TapTarget createTargetAddSignal(){
+
+        return TapTarget.forView(getView().findViewById(R.id.fab_add_signal),getString(R.string.text_tutorial_send_signal),getString(R.string.text_fab_add_signal))
+                .dimColor(android.R.color.darker_gray)
+                .outerCircleColor(R.color.color_primary_dark)
+                .targetCircleColor(R.color.color_emergency)
+                .textColor(android.R.color.white)
+                .cancelable(true);
+
+
+    }
+
+    private TapTarget createTargetSideNav(){
+
+        Drawable drawableFocus = null;
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            drawableFocus = ContextCompat.getDrawable(getActivity(),R.drawable.ic_menu);
+        }else{
+            drawableFocus = ContextCompat.getDrawable(getActivity(),R.drawable.ic_menu_white_24dp);
+        }
+
+        return TapTarget.forView(((SignalsMapActivity) getActivity()).getToolbar().getChildAt(1),getString(R.string.text_tutorial_navigation),getString(R.string.menu_prompt_description))
+                .dimColor(android.R.color.darker_gray)
+                .outerCircleColor(R.color.color_primary_dark)
+                .targetCircleColor(R.color.color_emergency)
+                .textColor(android.R.color.white)
+                .cancelable(true)
+                .icon(drawableFocus);
+
+
+    }
+
+    public void showTutorial() {
+        new TapTargetSequence(getActivity())
+                .targets(
+                        createTargetSideNav(),
+                        createTargetRefresh(),
+//                        createTargetFilter(),
+                        createTargetAddSignal()
+                )
+                .listener(new TapTargetSequence.Listener() {
+                    // This listener will tell us when interesting(tm) events happen in regards
+                    // to the sequence
+                    @Override
+                    public void onSequenceFinish() {
+                        // Yay
+                    }
+
+                    @Override
+                    public void onSequenceCanceled(TapTarget lastTarget) {
+                        // Boo
+                    }
+                }).continueOnCancel(true).start();
+    }
+
+
     @Override
     public void onLowMemory() {
         super.onLowMemory();
@@ -256,7 +334,7 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
         inflater.inflate(R.menu.menu_signals_map, menu);
 
         this.optionsMenu = menu;
-
+        showTutorial();
 //
 //        if(userManager.getUserToken()!=null && !userManager.getUserToken().isEmpty()){
 //

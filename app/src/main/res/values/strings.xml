@@ -73,9 +73,10 @@
     <string name="menu_prompt_description">Expolore more settings</string>
     <string name="text_tutorial_send_signal">Send your first signal</string>
     <string name="overflow_prompt_title_refresh">Refresh the signals</string>
-    <string name="overflow_prompt_title_filter">Filter signals</string>
-    <string name="overflow_prompt_description_filter">Filter all available signals by category: Emergency, In-progress, Resolved</string>
+    <string name="overflow_prompt_title_filter">Refresh or Filter siglans </string>
+    <string name="overflow_prompt_description_filter">Filter all available signals by category:\tEmergency,\tIn-progress,\tResolved</string>
     <string name="text_fab_add_signal">Tap to start composing your first signal.</string>
     <string name="txt_faqs_view_title">FAQs</string>
+    <string name="text_tutorial_navigation">Side Navigation</string>
 
 </resources>
