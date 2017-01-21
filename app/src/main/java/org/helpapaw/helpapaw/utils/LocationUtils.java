@@ -13,7 +13,6 @@ import android.support.v4.app.ActivityCompat;
 
 public class LocationUtils {
 
-
     /**
      * Time difference threshold set for one minute.
      */
@@ -79,7 +78,6 @@ public class LocationUtils {
         }
 
         return shouldRequestUpdate;
-
     }
 
 

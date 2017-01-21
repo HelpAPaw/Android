@@ -206,10 +206,7 @@ public class SignalDetailsFragment extends BaseFragment implements SignalDetails
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_signal_details, menu);
 
-
-
         super.onCreateOptionsMenu(menu, inflater);
-
     }
 
     @Override
