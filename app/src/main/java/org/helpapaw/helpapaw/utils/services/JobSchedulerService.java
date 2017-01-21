@@ -135,39 +135,38 @@ public class JobSchedulerService extends JobService {
         public void onLocationChanged(Location location) {
             Log.e(TAG, "onLocationChanged ");
             counter = (int) LocationUtils.getDistance(oldLocation, location);
-          if( LocationUtils.shouldRequestUpdate(oldLocation, location)) {
-              Log.e(TAG, "Location update triggered ");
-              if (Utils.getInstance().hasNetworkConnection()) {
-                  signalRepository.getAllSignals(location.getLatitude(), location.getLongitude(), DEFAULT_SEARCH_RADIUS, new SignalRepository.LoadSignalsCallback() {
-                      @Override
-                      public void onSignalsLoaded(List<Signal> signals) {
-                          Log.e(TAG, "onSignalsLoaded CHANGED JOB");
-                          if (signals != null && !signals.isEmpty()) {
-                              for (int i = 0; i < signals.size(); i++) {
-                                  createNotificationForSignal(getApplicationContext(), SignalsMapActivity.class, signals.get(i), i);
-                              }
-                          } else {
-                              createOfflineNotification(getApplicationContext(), SignalsMapActivity.class);
-                          }
-                      }
+            if( LocationUtils.shouldRequestUpdate(oldLocation, location)) {
+                Log.e(TAG, "Location update triggered ");
+                if (Utils.getInstance().hasNetworkConnection()) {
+                    signalRepository.getAllSignals(location.getLatitude(), location.getLongitude(), DEFAULT_SEARCH_RADIUS, new SignalRepository.LoadSignalsCallback() {
+                        @Override
+                        public void onSignalsLoaded(List<Signal> signals) {
+                            Log.e(TAG, "onSignalsLoaded CHANGED JOB");
+                            if (signals != null && !signals.isEmpty()) {
+                                for (int i = 0; i < signals.size(); i++) {
+                                    createNotificationForSignal(getApplicationContext(), SignalsMapActivity.class, signals.get(i), i);
+                                }
+                            } else {
+//                                createOfflineNotification(getApplicationContext(), SignalsMapActivity.class);
+                            }
+                        }
 
-                      @Override
-                      public void onSignalsFailure(String message) {
-                          Log.e(TAG, "onSignalsFailure CHANGED JOB");
-                          jobFinished(jobParameters, true);
-                      }
-                  });
-              } else {
-                  Log.e(TAG, "No network ");
-                  createOfflineNotification(getApplicationContext(), SignalsMapActivity.class);
-//                jobFinished(jobParameters, true);
-              }
-          }else{
-              Log.d(TAG, "Distance below");
-              createOfflineNotification(getApplicationContext(), SignalsMapActivity.class);
-              jobFinished(jobParameters, true);
-          }
-
+                        @Override
+                        public void onSignalsFailure(String message) {
+                            Log.e(TAG, "onSignalsFailure CHANGED JOB");
+                            jobFinished(jobParameters, true);
+                        }
+                    });
+                } else {
+                    Log.e(TAG, "No network ");
+//                    createOfflineNotification(getApplicationContext(), SignalsMapActivity.class);
+                //                jobFinished(jobParameters, true);
+                }
+            }else{
+                Log.d(TAG, "Distance below");
+//                createOfflineNotification(getApplicationContext(), SignalsMapActivity.class);
+                jobFinished(jobParameters, true);
+            }
         }
 
         @Override
@@ -187,7 +186,6 @@ public class JobSchedulerService extends JobService {
     };
 
     private class UpdateAppsAsyncTask extends AsyncTask<JobParameters, Void, JobParameters[]> {
-
 
         @Override
         protected JobParameters[] doInBackground(JobParameters... params) {
@@ -216,7 +214,6 @@ public class JobSchedulerService extends JobService {
         }
     }
 
-
     private static Criteria getLocationCriteria() {
 
         Criteria criteria = new Criteria();
@@ -228,7 +225,6 @@ public class JobSchedulerService extends JobService {
 
         return criteria;
     }
-
 
     private void createNotificationForSignal(Context context, Class<?> tClass, Signal signal, int notificationId){
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context);
@@ -258,10 +254,7 @@ public class JobSchedulerService extends JobService {
                 (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         // mId allows you to update the notification later on.
         mNotificationManager.notify(notificationId, mBuilder.build());
-
-
     }
-
 
     private void createOfflineNotification(Context context, Class<?> tClass) {
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context);

@@ -34,7 +34,6 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-
 import com.getkeepsafe.taptargetview.TapTarget;
 import com.getkeepsafe.taptargetview.TapTargetSequence;
 import com.google.android.gms.common.ConnectionResult;
@@ -61,7 +60,6 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import org.helpapaw.helpapaw.R;
 import org.helpapaw.helpapaw.authentication.AuthenticationActivity;
-import org.helpapaw.helpapaw.base.BaseActivity;
 import org.helpapaw.helpapaw.base.BaseFragment;
 import org.helpapaw.helpapaw.base.Presenter;
 import org.helpapaw.helpapaw.base.PresenterManager;
@@ -72,7 +70,6 @@ import org.helpapaw.helpapaw.sendsignal.SendPhotoBottomSheet;
 import org.helpapaw.helpapaw.signaldetails.SignalDetailsActivity;
 import org.helpapaw.helpapaw.utils.Injection;
 import org.helpapaw.helpapaw.utils.images.ImageUtils;
-import org.helpapaw.helpapaw.utils.services.WakeupAlarm;
 
 import java.io.File;
 import java.text.SimpleDateFormat;

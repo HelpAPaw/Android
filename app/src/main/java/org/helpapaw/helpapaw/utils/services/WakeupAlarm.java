@@ -4,22 +4,13 @@ import android.app.AlarmManager;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.TaskStackBuilder;
-import android.app.job.JobInfo;
-import android.app.job.JobScheduler;
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.os.PowerManager;
 import android.support.v7.app.NotificationCompat;
-import android.widget.Toast;
 
 import org.helpapaw.helpapaw.R;
-import org.helpapaw.helpapaw.signalsmap.SignalsMapActivity;
-
-import static android.app.AlarmManager.RTC_WAKEUP;
-import static org.helpapaw.helpapaw.utils.services.JobSchedulerService.JOB_ID;
-import static org.helpapaw.helpapaw.utils.services.JobSchedulerService.TIME_INTERVAL;
 
 /**
  * Created by Emil Ivanov on 9/24/2016.
@@ -33,9 +24,7 @@ public class WakeupAlarm extends BroadcastReceiver {
         wl =  pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK|PowerManager.ACQUIRE_CAUSES_WAKEUP , "");
         wl.acquire();
 
-        // Put here YOUR code.
-//        Toast.makeText(context, "Alarm !!!!!!!!!!", Toast.LENGTH_LONG).show(); // For example
-        createNotification(context, SignalsMapActivity.class);
+//        createNotification(context, SignalsMapActivity.class);
 
         wl.release();
     }
