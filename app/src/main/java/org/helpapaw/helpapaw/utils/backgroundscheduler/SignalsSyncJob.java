@@ -125,7 +125,7 @@ public class SignalsSyncJob extends Job {
     private void createNotificationForSignal(Context context, Class<?> tClass, Signal signal, int notificationId){
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context);
         if (Utils.getInstance().hasNetworkConnection() && signal !=null) {
-            mBuilder.setSmallIcon(R.drawable.ic_paw).setContentTitle("Help needed.");
+            mBuilder.setSmallIcon(R.drawable.ic_paw_notif).setContentTitle("Help needed. (SignalsSyncJob)");
             mBuilder.setContentText(signal.getTitle());
         }
         // Creates an explicit intent for an Activity in your app
