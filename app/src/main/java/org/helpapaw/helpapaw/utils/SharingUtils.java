@@ -16,7 +16,7 @@ public class SharingUtils {
     public static final String PACKAGE_FACEBOOK = "com.facebook.katana";
 
 
-    public static final String EMAIL = "emil.iv.ivanov@gmail.com";
+    public static final String EMAIL = "help.a.paw.app@gmail.com";
     public static final String SUBJECT ="[Help A Paw] Feedback";
     public static final String CHOOSER_TITLE = "Send Feedback";
     /**
@@ -71,6 +71,5 @@ public class SharingUtils {
                 //.setHtmlText(body) //If you are using HTML in your body text
                 .setChooserTitle(CHOOSER_TITLE)
                 .startChooser();
-
     }
 }
