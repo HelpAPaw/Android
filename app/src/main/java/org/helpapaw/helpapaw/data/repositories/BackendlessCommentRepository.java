@@ -1,5 +1,7 @@
 package org.helpapaw.helpapaw.data.repositories;
 
+import android.util.Log;
+
 import com.backendless.Backendless;
 import com.backendless.BackendlessCollection;
 import com.backendless.async.callback.AsyncCallback;
@@ -10,6 +12,7 @@ import com.backendless.persistence.QueryOptions;
 import org.helpapaw.helpapaw.data.models.Comment;
 import org.helpapaw.helpapaw.data.models.backendless.FINComment;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -48,8 +51,18 @@ public class BackendlessCommentRepository implements CommentRepository {
                                 authorName = getToStringOrNull(currentComment.getAuthor().getProperty(NAME_FIELD));
                             }
 
+                            Date dateCreated = null;
+                            try {
+                                String dateCreatedString = currentComment.getCreated();
+                                DateFormat dateFormat = new SimpleDateFormat(DATE_TIME_FORMAT, Locale.getDefault());
+                                dateCreated = dateFormat.parse(dateCreatedString);
+                            }
+                            catch (Exception ex) {
+                                Log.d(BackendlessCommentRepository.class.getName(), "Failed to parse comment date.");
+                            }
+
                             Comment comment = new Comment(currentComment.getObjectId(),
-                                    authorName, currentComment.getCreated(), currentComment.getText());
+                                    authorName, dateCreated, currentComment.getText());
                             comments.add(comment);
                         }
 
@@ -77,8 +90,19 @@ public class BackendlessCommentRepository implements CommentRepository {
                 if (newComment.getAuthor() != null) {
                     authorName = getToStringOrNull(newComment.getAuthor().getProperty(NAME_FIELD));
                 }
+
+                Date dateCreated = null;
+                try {
+                    String dateCreatedString = newComment.getCreated();
+                    DateFormat dateFormat = new SimpleDateFormat(DATE_TIME_FORMAT, Locale.getDefault());
+                    dateCreated = dateFormat.parse(dateCreatedString);
+                }
+                catch (Exception ex) {
+                    Log.d(BackendlessCommentRepository.class.getName(), "Failed to parse comment date.");
+                }
+
                 Comment comment = new Comment(newComment.getObjectId(),
-                        authorName, newComment.getCreated(), newComment.getText());
+                        authorName, dateCreated, newComment.getText());
                 callback.onCommentSaved(comment);
             }
 

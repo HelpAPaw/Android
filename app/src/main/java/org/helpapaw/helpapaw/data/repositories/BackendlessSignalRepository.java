@@ -1,5 +1,7 @@
 package org.helpapaw.helpapaw.data.repositories;
 
+import android.util.Log;
+
 import com.backendless.Backendless;
 import com.backendless.BackendlessCollection;
 import com.backendless.BackendlessUser;
@@ -12,6 +14,7 @@ import com.backendless.geo.Units;
 import org.helpapaw.helpapaw.data.models.Signal;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,8 +46,17 @@ public class BackendlessSignalRepository implements SignalRepository {
                     GeoPoint geoPoint = response.getData().get(i);
 
                     String signalTitle = getToStringOrNull(geoPoint.getMetadata(SIGNAL_TITLE));
-                    String dateSubmitted = getToStringOrNull(geoPoint.getMetadata(SIGNAL_DATE_SUBMITTED));
+                    String dateSubmittedString = getToStringOrNull(geoPoint.getMetadata(SIGNAL_DATE_SUBMITTED));
                     String signalStatus = getToStringOrNull(geoPoint.getMetadata(SIGNAL_STATUS));
+
+                    Date dateSubmitted = null;
+                    try {
+
+                        dateSubmitted = new Date(Long.valueOf(dateSubmittedString));
+                    }
+                    catch (Exception ex){
+                        Log.d(BackendlessSignalRepository.class.getName(), "Failed to parse signal date.");
+                    }
 
                     String signalAuthorName = null;
                     String signalAuthorPhone = null;
@@ -77,7 +89,7 @@ public class BackendlessSignalRepository implements SignalRepository {
 
         Map<String, Object> meta = new HashMap<>();
         meta.put(SIGNAL_TITLE, signal.getTitle());
-        meta.put(SIGNAL_DATE_SUBMITTED, signal.getDateSubmitted());
+        meta.put(SIGNAL_DATE_SUBMITTED, signal.getDateSubmitted().getTime());
         meta.put(SIGNAL_STATUS, signal.getStatus());
         meta.put(SIGNAL_AUTHOR, Backendless.UserService.CurrentUser());
 
@@ -87,8 +99,8 @@ public class BackendlessSignalRepository implements SignalRepository {
                     public void handleResponse(GeoPoint geoPoint) {
                         String signalTitle = getToStringOrNull(geoPoint.getMetadata(SIGNAL_TITLE));
 
-                        String dateSubmitted = getToStringOrNull(geoPoint.getMetadata(SIGNAL_DATE_SUBMITTED));
-
+                        String dateSubmittedString = getToStringOrNull(geoPoint.getMetadata(SIGNAL_DATE_SUBMITTED));
+                        Date   dateSubmitted = new Date(Long.valueOf(dateSubmittedString));
                         String signalStatus = getToStringOrNull(geoPoint.getMetadata(SIGNAL_STATUS));
 
                         String signalAuthorName = null;

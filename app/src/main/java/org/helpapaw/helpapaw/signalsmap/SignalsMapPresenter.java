@@ -14,7 +14,6 @@ import com.evernote.android.job.util.support.PersistableBundleCompat;
 
 import net.vrallev.android.cat.Cat;
 
-import org.helpapaw.helpapaw.R;
 import org.helpapaw.helpapaw.base.Presenter;
 import org.helpapaw.helpapaw.data.models.Signal;
 import org.helpapaw.helpapaw.data.repositories.PhotoRepository;
@@ -26,11 +25,9 @@ import org.helpapaw.helpapaw.utils.backgroundscheduler.SignalsSyncJob;
 import org.helpapaw.helpapaw.utils.services.JobSchedulerService;
 import org.helpapaw.helpapaw.utils.services.WakeupAlarm;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 import static org.helpapaw.helpapaw.utils.services.JobSchedulerService.JOB_ID;
 import static org.helpapaw.helpapaw.utils.services.JobSchedulerService.TIME_INTERVAL;
@@ -155,9 +152,6 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
        getView().displaySignals(signalsList,false);
     }
 
-    SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_TIME_FORMAT, Locale.getDefault());
-    String currentDate = dateFormat.format(new Date());
-
     @Override
     public void onSendSignalClicked(final String description) {
         getView().hideKeyboard();
@@ -171,7 +165,7 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
                 if (isEmpty(description)) {
                     getView().showDescriptionErrorMessage();
                 } else {
-                    saveSignal(description, currentDate, 0, latitude, longitude);
+                    saveSignal(description, new Date(), 0, latitude, longitude);
                 }
             }
 
@@ -186,7 +180,7 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
 
 
 
-    private void saveSignal(String description, String dateSubmitted, int status,
+    private void saveSignal(String description, Date dateSubmitted, int status,
                             final double latitude, final double longitude) {
         signalRepository.saveSignal(new Signal(description, dateSubmitted, status, latitude, longitude), new SignalRepository.SaveSignalCallback() {
             @Override

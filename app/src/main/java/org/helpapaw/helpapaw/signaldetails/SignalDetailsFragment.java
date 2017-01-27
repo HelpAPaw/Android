@@ -28,7 +28,6 @@ import org.helpapaw.helpapaw.utils.Injection;
 import org.helpapaw.helpapaw.utils.SharingUtils;
 import org.helpapaw.helpapaw.utils.Utils;
 
-import java.text.ParseException;
 import java.util.List;
 
 public class SignalDetailsFragment extends BaseFragment implements SignalDetailsContract.View {
@@ -108,12 +107,9 @@ public class SignalDetailsFragment extends BaseFragment implements SignalDetails
     public void showSignalDetails(Signal signal) {
         binding.txtSignalTitle.setText(signal.getTitle());
         binding.txtSignalAuthor.setText(signal.getAuthorName());
-        try {
-            String formattedDate = Utils.getInstance().getFormattedDate(signal.getDateSubmitted());
-            binding.txtSubmittedDate.setText(formattedDate);
-        } catch (ParseException e) {
-            binding.txtSubmittedDate.setText(signal.getDateSubmitted());
-        }
+
+        String formattedDate = Utils.getInstance().getFormattedDate(signal.getDateSubmitted());
+        binding.txtSubmittedDate.setText(formattedDate);
         binding.viewSignalStatus.updateStatus(signal.getStatus());
 
         if (signal.getAuthorPhone() == null) {
@@ -138,12 +134,9 @@ public class SignalDetailsFragment extends BaseFragment implements SignalDetails
             Comment comment = comments.get(i);
             txtCommentText.setText(comment.getText());
             txtCommentAuthor.setText(comment.getOwnerName());
-            try {
-                String formattedDate = Utils.getInstance().getFormattedDate(comment.getDateCreated());
-                txtCommentDate.setText(formattedDate);
-            } catch (ParseException e) {
-                txtCommentDate.setText(comment.getDateCreated());
-            }
+
+            String formattedDate = Utils.getInstance().getFormattedDate(comment.getDateCreated());
+            txtCommentDate.setText(formattedDate);
 
             binding.grpComments.addView(inflatedCommentView);
         }
