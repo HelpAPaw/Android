@@ -15,6 +15,7 @@ import android.view.animation.Animation;
 import android.view.animation.Transformation;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 
 import org.helpapaw.helpapaw.R;
 
@@ -24,13 +25,14 @@ import java.util.List;
 /**
  * Created by iliyan on 0/29/16
  */
-public class SignalStatusView extends FrameLayout {
+public class SignalStatusView extends FrameLayout implements SignalStatusViewContract{
 
     FrameLayout grpStatusContainer;
 
     LinearLayout grpSignalNeedHelp;
     LinearLayout grpSignalOnWay;
     LinearLayout grpSignalSolved;
+    ProgressBar  grpProgressBar;
 
     AppCompatImageView imgNeedHelpSelected;
     AppCompatImageView imgOnWaySelected;
@@ -79,6 +81,8 @@ public class SignalStatusView extends FrameLayout {
         grpSignalNeedHelp = (LinearLayout) this.findViewById(R.id.grp_signal_need_help);
         grpSignalOnWay = (LinearLayout) this.findViewById(R.id.grp_signal_on_way);
         grpSignalSolved = (LinearLayout) this.findViewById(R.id.grp_signal_solved);
+
+        grpProgressBar = (ProgressBar) this.findViewById(R.id.grp_progress_bar);
 
         imgNeedHelpSelected = (AppCompatImageView) grpSignalNeedHelp.findViewById(R.id.img_signal_need_help_selected);
         imgOnWaySelected = (AppCompatImageView) grpSignalOnWay.findViewById(R.id.img_signal_on_way_selected);
@@ -184,25 +188,41 @@ public class SignalStatusView extends FrameLayout {
 
     public void setStatusClickListeners(List<LinearLayout> statusList) {
         for (int i = 0; i < statusList.size(); i++) {
-            final int selectedStatus = i;
+            final int selectedStatusL = i;
             statusList.get(i).setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (getSelectedStatus() != selectedStatus && isExpanded()) {
-                        if (callback != null) {
-                            callback.onStatusChanged(selectedStatus);
-                        }
-                    }
 
                     if (isExpanded()) {
-                        collapseStatusView(selectedStatus);
-                    } else {
-                        expandStatusView(selectedStatus);
-                    }
+                        if (getSelectedStatus() != selectedStatusL) {
+                            if (callback != null) {
+                                grpProgressBar.setVisibility(VISIBLE);
 
+                                callback.onRequestStatusChange(selectedStatusL);
+                            }
+                        }
+                    }
+                    else {
+                        expandStatusView(selectedStatusL);
+                    }
 
                 }
             });
+        }
+    }
+
+    @Override
+    public void onStatusChangeRequestFinished(boolean success, int newStatus) {
+
+        grpProgressBar.setVisibility(GONE);
+
+        if (success) {
+            if (isExpanded()) {
+                collapseStatusView(newStatus);
+            }
+            else {
+                expandStatusView(newStatus);
+            }
         }
     }
 
@@ -301,6 +321,10 @@ class ResizeAnimation extends Animation {
 }
 
 interface StatusCallback {
-    void onStatusChanged(int status);
+    void onRequestStatusChange(int status);
+}
+
+interface SignalStatusViewContract {
+    void onStatusChangeRequestFinished(boolean success, int newStatus);
 }
 
