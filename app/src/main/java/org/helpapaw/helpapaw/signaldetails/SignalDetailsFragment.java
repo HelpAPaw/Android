@@ -264,10 +264,15 @@ public class SignalDetailsFragment extends BaseFragment implements SignalDetails
     public StatusCallback getStatusViewCallback() {
         return new StatusCallback() {
             @Override
-            public void onStatusChanged(int status) {
-                actionsListener.onStatusChanged(status);
+            public void onRequestStatusChange(int status) {
+                actionsListener.onRequestStatusChange(status);
             }
         };
+    }
+
+    @Override
+    public void onStatusChangeRequestFinished(boolean success, int newStatus) {
+        binding.viewSignalStatus.onStatusChangeRequestFinished(success, newStatus);
     }
 
     public View.OnClickListener getOnCallButtonClickListener() {

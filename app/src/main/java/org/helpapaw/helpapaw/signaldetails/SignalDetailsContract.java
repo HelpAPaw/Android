@@ -43,6 +43,8 @@ public interface SignalDetailsContract {
         void setShadowVisibility(boolean visibility);
 
         boolean isActive();
+
+        void onStatusChangeRequestFinished(boolean success, int newStatus);
     }
 
     interface UserActionsListener {
@@ -51,7 +53,7 @@ public interface SignalDetailsContract {
 
         void onAddCommentButtonClicked(String comment);
 
-        void onStatusChanged(int status);
+        void onRequestStatusChange(int status);
 
         void onCallButtonClicked();
 

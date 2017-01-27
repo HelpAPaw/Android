@@ -149,9 +149,7 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
 
             mNotificationSignal = getArguments().getParcelable(Signal.KEY_SIGNAL);
         }
-
     }
-
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
@@ -172,10 +170,6 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
 
         mVisibilityAddSignal = savedInstanceState != null ? savedInstanceState.getBoolean(VIEW_ADD_SIGNAL) : false;
         mVisibilityFilter = savedInstanceState != null ? savedInstanceState.getBoolean(VIEW_FILTER_SIGNALS) : false;
-
-
-
-
 
 //        setAddSignalViewVisibility(mVisibilityAddSignal);
         if (binding.mapSignals != null) {
@@ -206,8 +200,6 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
 
         return binding.getRoot();
     }
-
-
 
     @Override
     public void onResume() {
@@ -291,8 +283,6 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
                 .textColor(android.R.color.white)
                 .cancelable(true)
                 .icon(drawableFocus);
-
-
     }
 
     public void showTutorial() {
@@ -331,7 +321,7 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
         inflater.inflate(R.menu.menu_signals_map, menu);
 
         this.optionsMenu = menu;
-        showTutorial();
+//        showTutorial();
 //
 //        if(userManager.getUserToken()!=null && !userManager.getUserToken().isEmpty()){
 //
