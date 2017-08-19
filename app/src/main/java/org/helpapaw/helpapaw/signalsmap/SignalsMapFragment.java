@@ -135,9 +135,9 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
     }
 
     public static SignalsMapFragment newInstance(Signal signal) {
-        SignalsMapFragment signalsMapFragment =  new SignalsMapFragment();
+        SignalsMapFragment signalsMapFragment = new SignalsMapFragment();
         Bundle args = new Bundle();
-        args.putParcelable(Signal.KEY_SIGNAL , signal);
+        args.putParcelable(Signal.KEY_SIGNAL, signal);
         signalsMapFragment.setArguments(args);
         return signalsMapFragment;
     }
@@ -145,7 +145,7 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if(getArguments()!=null && getArguments().containsKey(Signal.KEY_SIGNAL)){
+        if(getArguments() !=null && getArguments().containsKey(Signal.KEY_SIGNAL)){
 
             mNotificationSignal = getArguments().getParcelable(Signal.KEY_SIGNAL);
         }
@@ -206,7 +206,6 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
         super.onResume();
         binding.mapSignals.onResume();
         googleApiClient.connect();
-
     }
 
     @Override
@@ -251,7 +250,6 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
                 .textColor(android.R.color.white)
                 .cancelable(true)
                 .icon(drawableFocus);
-
     }
 
     private TapTarget createTargetAddSignal(){
@@ -262,8 +260,6 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
                 .targetCircleColor(R.color.color_emergency)
                 .textColor(android.R.color.white)
                 .cancelable(true);
-
-
     }
 
     private TapTarget createTargetSideNav(){
@@ -340,18 +336,18 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
             actionsListener.onRefreshButtonClicked();
             return true;
         }
-        if (item.getItemId() == R.id.menu_item_filter) {
-            Log.d(TAG, "Filter clicked");
-            if(!mVisibilityFilter) {
-                mVisibilityFilter = true;
-                setAddSignalViewVisibility(mVisibilityAddSignal);
-            }else{
-                mVisibilityFilter = false;
-                setAddSignalViewVisibility(mVisibilityAddSignal);
-            }
-            //  actionsListener.onAuthenticationAction();
-            return true;
-        }
+//        if (item.getItemId() == R.id.menu_item_filter) {
+//            Log.d(TAG, "Filter clicked");
+//            if(!mVisibilityFilter) {
+//                mVisibilityFilter = true;
+//                setAddSignalViewVisibility(mVisibilityAddSignal);
+//            }else{
+//                mVisibilityFilter = false;
+//                setAddSignalViewVisibility(mVisibilityAddSignal);
+//            }
+//            //  actionsListener.onAuthenticationAction();
+//            return true;
+//        }
         return super.onOptionsItemSelected(item);
     }
 
@@ -366,8 +362,6 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
                 signalsGoogleMap.setPadding(0, PADDING_TOP, 0, PADDING_BOTTOM);
                 signalsGoogleMap.setOnMapClickListener(mapClickListener);
                 signalsGoogleMap.setOnMarkerDragListener(mapDragListener);
-
-
             }
         };
     }
@@ -451,10 +445,11 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
 
                     marker = signalsGoogleMap.addMarker(markerOptions);
                     signalMarkers.put(marker.getId(), signal);
-                    if(mNotificationSignal!=null) {
-                        if (signal.getTitle().equalsIgnoreCase(mNotificationSignal.getTitle())){
-                            showPopup=true;
-                            updateMapCameraPosition(mNotificationSignal.getLatitude(),mNotificationSignal.getLongitude(),DEFAULT_MAP_ZOOM);
+                    if (mNotificationSignal != null) {
+                        // TODO: change title comparison to ID comparison
+                        if (signal.getTitle().equalsIgnoreCase(mNotificationSignal.getTitle())) {
+                            showPopup = true;
+                            updateMapCameraPosition(mNotificationSignal.getLatitude(), mNotificationSignal.getLongitude(), DEFAULT_MAP_ZOOM);
                             if (showPopup && marker != null) {
                                 if (marker.getTitle().equalsIgnoreCase(mNotificationSignal.getTitle())) {
                                     marker.showInfoWindow();
@@ -557,10 +552,7 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
             setAddSignalViewVisibility(mVisibilityAddSignal);
             signalsGoogleMap.setMyLocationEnabled(true);
 
-
-
             if(!mVisibilityAddSignal){
-
 
                 Location location = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
                 if (location == null) {
@@ -612,7 +604,6 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
 //                signalsGoogleMap.animateCamera();
                 updateMapCameraPosition(mCurrentLat, mCurrentLong, DEFAULT_MAP_ZOOM);
                 actionsListener.onAddSignalClicked(visibility);
-                //
             }
         };
     }
@@ -832,8 +823,6 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
         Intent intent = new Intent(getContext(), SignalDetailsActivity.class);
         intent.putExtra(SignalDetailsActivity.SIGNAL_KEY, signal);
         startActivityForResult(intent, REQUEST_SIGNAL_DETAILS);
-
-
     }
 
     @Override
@@ -876,8 +865,6 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
                 } else {
 
                     MenuItemCompat.setActionView(refreshItem, null);
-
-
                 }
             }
         }
@@ -965,7 +952,6 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
                 mMarkerAdded = false;
 
                 actionsListener.onSendSignalClicked(description);
-
             }
         };
     }
@@ -1010,10 +996,4 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
             }
         };
     }
-
-
-
-
-
-
 }
