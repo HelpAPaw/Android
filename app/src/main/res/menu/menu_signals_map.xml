@@ -7,11 +7,10 @@
         android:title="@string/txt_refresh"
         app:showAsAction="always" />
 
-    <item
-        android:id="@+id/menu_item_filter"
-        android:title="Log out"
-        android:icon="@drawable/ic_filter_list_white_24dp"
-        app:showAsAction="always">
-
-    </item>
+    <!--<item-->
+        <!--android:id="@+id/menu_item_filter"-->
+        <!--android:title="Log out"-->
+        <!--android:icon="@drawable/ic_filter_list_white_24dp"-->
+        <!--app:showAsAction="always">-->
+    <!--</item>-->
 </menu>

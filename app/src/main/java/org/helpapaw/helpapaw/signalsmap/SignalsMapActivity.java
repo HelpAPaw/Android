@@ -1,19 +1,12 @@
 package org.helpapaw.helpapaw.signalsmap;
 
-import android.graphics.drawable.Drawable;
-import android.os.Build;
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.View;
-
-import com.getkeepsafe.taptargetview.TapTarget;
-import com.getkeepsafe.taptargetview.TapTargetSequence;
 
 import org.helpapaw.helpapaw.R;
 import org.helpapaw.helpapaw.base.BaseActivity;
@@ -21,16 +14,11 @@ import org.helpapaw.helpapaw.data.models.Signal;
 
 import java.util.List;
 
-
 public class SignalsMapActivity extends BaseActivity {
 
-    private Toolbar mToolbar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
-
 
         if (null == savedInstanceState) {
             if(getIntent().hasExtra(Signal.KEY_SIGNAL)){
@@ -59,11 +47,13 @@ public class SignalsMapActivity extends BaseActivity {
         return R.layout.activity_base;
     }
 
+    @SuppressLint("RestrictedApi")
     @Override
     public void onBackPressed() {
         if (binding.drawer.isDrawerOpen(GravityCompat.START)) {
             binding.drawer.closeDrawers();
         } else {
+            //noinspection RestrictedApi
             List<Fragment> fragmentList = getSupportFragmentManager().getFragments();
             if (fragmentList != null) {
                 for (Fragment fragment : fragmentList) {
@@ -79,6 +69,4 @@ public class SignalsMapActivity extends BaseActivity {
     public Toolbar getToolbar(){
         return binding.toolbar;
     }
-
-
 }

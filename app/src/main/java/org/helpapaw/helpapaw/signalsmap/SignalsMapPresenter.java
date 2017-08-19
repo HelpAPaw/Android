@@ -137,8 +137,6 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
             getView().displaySignals(signalsList,false);
             //onRefreshButtonClicked();
         }
-
-
     }
 
     @Override
