@@ -6,6 +6,8 @@ import com.backendless.Backendless;
 import com.evernote.android.job.JobManager;
 import com.facebook.stetho.Stetho;
 
+import org.helpapaw.helpapaw.data.user.UserManager;
+import org.helpapaw.helpapaw.utils.Injection;
 import org.helpapaw.helpapaw.utils.backgroundscheduler.ScheduledCreator;
 
 /**
@@ -25,6 +27,26 @@ public class PawApplication extends Application {
         JobManager.create(this).addJobCreator(new ScheduledCreator());
         pawApplication = this;
         Backendless.initApp(this, YOUR_APP_ID, YOUR_SECRET_KEY, YOUR_APP_VERSION);
+
+        // This is done in order to handle the situation where user token is saved on the device but is invalidated on the server
+        final UserManager userManager = Injection.getUserManagerInstance();
+        userManager.isLoggedIn(new UserManager.LoginCallback() {
+            @Override
+            public void onLoginSuccess() {
+                // Do nothing
+            }
+
+            @Override
+            public void onLoginFailure(String message) {
+                userManager.logout(new UserManager.LogoutCallback() {
+                    @Override
+                    public void onLogoutSuccess() {}
+
+                    @Override
+                    public void onLogoutFailure(String message) {}
+                });
+            }
+        });
     }
 
     public static PawApplication getContext() {
