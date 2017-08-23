@@ -1,18 +1,6 @@
 package org.helpapaw.helpapaw.signalsmap;
 
-import android.annotation.TargetApi;
-import android.app.job.JobInfo;
-import android.app.job.JobScheduler;
-import android.content.ComponentName;
-import android.content.Context;
-import android.os.Build;
-
 import com.evernote.android.job.JobManager;
-import com.evernote.android.job.JobRequest;
-import com.evernote.android.job.util.JobApi;
-import com.evernote.android.job.util.support.PersistableBundleCompat;
-
-import net.vrallev.android.cat.Cat;
 
 import org.helpapaw.helpapaw.base.Presenter;
 import org.helpapaw.helpapaw.data.models.Signal;
@@ -21,16 +9,10 @@ import org.helpapaw.helpapaw.data.repositories.SignalRepository;
 import org.helpapaw.helpapaw.data.user.UserManager;
 import org.helpapaw.helpapaw.utils.Injection;
 import org.helpapaw.helpapaw.utils.Utils;
-import org.helpapaw.helpapaw.utils.backgroundscheduler.SignalsSyncJob;
-import org.helpapaw.helpapaw.utils.services.JobSchedulerService;
-import org.helpapaw.helpapaw.utils.services.WakeupAlarm;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import static org.helpapaw.helpapaw.utils.services.JobSchedulerService.JOB_ID;
-import static org.helpapaw.helpapaw.utils.services.JobSchedulerService.TIME_INTERVAL;
 
 /**
  * Created by iliyan on 7/28/16
@@ -60,7 +42,7 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
 
     private int mLastJobId ;
 
-    public SignalsMapPresenter(SignalsMapContract.View view) {
+    SignalsMapPresenter(SignalsMapContract.View view) {
         super(view);
         signalRepository = Injection.getSignalRepositoryInstance();
         userManager = Injection.getUserManagerInstance();
@@ -339,7 +321,6 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
         }
     }
 
-
     private void logoutUser(){
         if (Utils.getInstance().hasNetworkConnection()) {
             userManager.logout(new UserManager.LogoutCallback() {
@@ -362,48 +343,6 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
 
     }
 
-
-    @Override
-    public void onSetupSchedulerService(Context context) {
-        mJobManager = JobManager.instance();
-        testAllImpl(context);
-//        if(Build.VERSION.SDK_INT>=21) {
-//            setupScheduler(context);
-//        }else{
-//            setupAlarmManager(context);
-//        }
-
-    }
-
-    private void setupAlarmManager(Context context){
-        WakeupAlarm wakeupAlarm = new WakeupAlarm();
-        wakeupAlarm.cancelAlarm(context);
-        wakeupAlarm.setAlarm(context);
-    }
-
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    private void setupScheduler(Context context){
-        JobScheduler jobScheduler = (JobScheduler) context.getSystemService(Context.JOB_SCHEDULER_SERVICE);
-        ComponentName serviceName = new ComponentName(context, JobSchedulerService.class);
-//
-        JobInfo.Builder builder = new JobInfo.Builder(JOB_ID,serviceName);
-//        builder.setRequiresDeviceIdle(true);
-        builder.setPersisted(true);
-//       // builder.setPeriodic(TIME_INTERVAL);
-        builder.setPeriodic(TIME_INTERVAL);
-        jobScheduler.cancelAll();
-//
-        jobScheduler.schedule(builder.build());
-
-    }
-
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    @Override
-    public void onCancelSchedulerService(Context context) {
-        JobScheduler jobScheduler = (JobScheduler) context.getSystemService(Context.JOB_SCHEDULER_SERVICE);
-        jobScheduler.cancel(JOB_ID);
-    }
-
     private boolean isViewAvailable() {
         return getView() != null && getView().isActive();
     }
@@ -420,74 +359,5 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
 
     private boolean isEmpty(String value) {
         return !(value != null && value.length() > 0);
-    }
-
-
-    private void testSimple() {
-        PersistableBundleCompat extras = new PersistableBundleCompat();
-        extras.putString("key", "Hello world");
-
-        mLastJobId = new JobRequest.Builder(SignalsSyncJob.TAG)
-                .setExecutionWindow(3_000L, 4_000L)
-                .setBackoffCriteria(5_000L, JobRequest.BackoffPolicy.LINEAR)
-                .setRequiresCharging(false)
-                .setRequiresDeviceIdle(false)
-                .setRequiredNetworkType(JobRequest.NetworkType.values()[0])
-                .setExtras(extras)
-                .setRequirementsEnforced(true)
-                .setPersisted(true)
-                .build()
-                .schedule();
-    }
-
-    private void testAllImpl(Context context) {
-        JobApi currentApi = mJobManager.getApi();
-
-        for (JobApi api : JobApi.values()) {
-            if (api.isSupported(context)) {
-                mJobManager.forceApi(api);
-                testCancelAll();
-//                testExact();
-               // testSimple();
-                testPeriodic();
-            } else {
-                Cat.w("%s is not supported", api);
-            }
-        }
-
-        mJobManager.forceApi(currentApi);
-    }
-
-    private void testPeriodic() {
-        mLastJobId = new JobRequest.Builder(SignalsSyncJob.TAG)
-                .setPeriodic(JobRequest.MIN_INTERVAL, JobRequest.MIN_FLEX)
-                .setRequiresCharging(REQUIRES_CHARGING)
-                .setRequiresDeviceIdle(REQUIRES_IDLE)
-                .setRequiredNetworkType(JobRequest.NetworkType.values()[0])
-                .setPersisted(true)
-                .build()
-                .schedule();
-    }
-
-    private void testExact() {
-        PersistableBundleCompat extras = new PersistableBundleCompat();
-        extras.putString("key", "Hello world");
-
-        mLastJobId = new JobRequest.Builder(SignalsSyncJob.TAG)
-                .setBackoffCriteria(5_000L, JobRequest.BackoffPolicy.EXPONENTIAL)
-                .setExtras(extras)
-                .setExact(20_000L)
-                .setPersisted(true)
-                .setUpdateCurrent(true)
-                .build()
-                .schedule();
-    }
-
-    private void testCancelLast() {
-        mJobManager.cancel(mLastJobId);
-    }
-
-    private void testCancelAll() {
-        mJobManager.cancelAll();
     }
 }

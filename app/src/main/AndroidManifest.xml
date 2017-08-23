@@ -46,34 +46,13 @@
             android:name=".signaldetails.SignalDetailsActivity"
             android:windowSoftInputMode="stateHidden" />
 
-        <receiver
-            android:name=".utils.services.WakeupAlarm"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="mypackage.START_ALARM" />
-            </intent-filter>
-        </receiver>
-        <receiver android:name=".utils.services.AutoStart">
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-            </intent-filter>
-        </receiver>
-
         <service
-            android:name=".utils.services.JobSchedulerService"
-            android:exported="true"
-            android:permission="android.permission.BIND_JOB_SERVICE" />
-        <service
-            android:name=".utils.services.WakeupService"
-            android:enabled="true" />
-
-        <receiver
-            android:name=".utils.backgroundscheduler.ScheduledCreator$AddReceiver"
-            android:exported="false">
+            android:exported="false"
+            android:name=".utils.services.BackgroundCheckJobService">
             <intent-filter>
-                <action android:name="com.evernote.android.job.ADD_JOB_CREATOR" />
+                <action android:name="com.firebase.jobdispatcher.ACTION_EXECUTE"/>
             </intent-filter>
-        </receiver>
+        </service>
 
         <activity android:name=".faq.FAQsView" />
     </application>

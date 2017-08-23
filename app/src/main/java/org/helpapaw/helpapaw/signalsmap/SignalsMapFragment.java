@@ -168,7 +168,9 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
         final Bundle mapViewSavedInstanceState = savedInstanceState != null ? savedInstanceState.getBundle(MAP_VIEW_STATE) : null;
         binding.mapSignals.onCreate(mapViewSavedInstanceState);
 
+        //noinspection SimplifiableConditionalExpression
         mVisibilityAddSignal = savedInstanceState != null ? savedInstanceState.getBoolean(VIEW_ADD_SIGNAL) : false;
+        //noinspection SimplifiableConditionalExpression
         mVisibilityFilter = savedInstanceState != null ? savedInstanceState.getBoolean(VIEW_FILTER_SIGNALS) : false;
 
 //        setAddSignalViewVisibility(mVisibilityAddSignal);
@@ -181,10 +183,6 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
         } else {
             signalsMapPresenter = PresenterManager.getInstance().getPresenter(getScreenId());
             signalsMapPresenter.setView(this);
-        }
-        actionsListener = signalsMapPresenter;
-        if (actionsListener != null) {
-             actionsListener.onSetupSchedulerService(getContext());
         }
         initLocationApi();
 
@@ -264,7 +262,7 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
 
     private TapTarget createTargetSideNav(){
 
-        Drawable drawableFocus = null;
+        Drawable drawableFocus;
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             drawableFocus = ContextCompat.getDrawable(getActivity(),R.drawable.ic_menu);
@@ -505,12 +503,9 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
 
     @Override
     public void onConnected(Bundle bundle) {
-        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
-                .addLocationRequest(new LocationRequest());
+        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder().addLocationRequest(new LocationRequest());
 
-        PendingResult<LocationSettingsResult> result =
-                LocationServices.SettingsApi.checkLocationSettings(googleApiClient,
-                        builder.build());
+        PendingResult<LocationSettingsResult> result = LocationServices.SettingsApi.checkLocationSettings(googleApiClient, builder.build());
 
         result.setResultCallback(new ResultCallback<LocationSettingsResult>() {
             @Override
@@ -529,9 +524,7 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
                         try {
                             // Show the dialog by calling startResolutionForResult(),
                             // and check the result in onActivityResult().
-                            status.startResolutionForResult(
-                                    getActivity(),
-                                    REQUEST_CHECK_SETTINGS);
+                            status.startResolutionForResult(getActivity(), REQUEST_CHECK_SETTINGS);
                         } catch (IntentSender.SendIntentException e) {
                             // Ignore the error.
                         }
@@ -544,10 +537,8 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
                 }
             }
         });
-        if (ContextCompat.checkSelfPermission(getContext(),
-                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            showPermissionDialog(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION,
-                    LOCATION_PERMISSIONS_REQUEST);
+        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            showPermissionDialog(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION, LOCATION_PERMISSIONS_REQUEST);
         } else {
             setAddSignalViewVisibility(mVisibilityAddSignal);
             signalsGoogleMap.setMyLocationEnabled(true);

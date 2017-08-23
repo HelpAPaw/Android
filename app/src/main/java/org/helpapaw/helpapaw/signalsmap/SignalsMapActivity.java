@@ -8,9 +8,17 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v7.widget.Toolbar;
 
+import com.firebase.jobdispatcher.Constraint;
+import com.firebase.jobdispatcher.FirebaseJobDispatcher;
+import com.firebase.jobdispatcher.GooglePlayDriver;
+import com.firebase.jobdispatcher.Job;
+import com.firebase.jobdispatcher.RetryStrategy;
+import com.firebase.jobdispatcher.Trigger;
+
 import org.helpapaw.helpapaw.R;
 import org.helpapaw.helpapaw.base.BaseActivity;
 import org.helpapaw.helpapaw.data.models.Signal;
+import org.helpapaw.helpapaw.utils.services.BackgroundCheckJobService;
 
 import java.util.List;
 
@@ -21,13 +29,14 @@ public class SignalsMapActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
 
         if (null == savedInstanceState) {
-            if(getIntent().hasExtra(Signal.KEY_SIGNAL)){
+            if (getIntent().hasExtra(Signal.KEY_SIGNAL)) {
                 initFragment(SignalsMapFragment.newInstance((Signal) getIntent().getParcelableExtra(Signal.KEY_SIGNAL)));
-            }else {
+            } else {
                 initFragment(SignalsMapFragment.newInstance());
             }
         }
 
+        scheduleBackgroundChecks();
     }
 
     @Override
@@ -65,8 +74,29 @@ public class SignalsMapActivity extends BaseActivity {
         }
     }
 
-
     public Toolbar getToolbar(){
         return binding.toolbar;
+    }
+
+    private void scheduleBackgroundChecks() {
+        FirebaseJobDispatcher dispatcher = new FirebaseJobDispatcher(new GooglePlayDriver(this));
+
+        Job backgroundCheckJob = dispatcher.newJobBuilder()
+                // the JobService that will be called
+                .setService(BackgroundCheckJobService.class)
+                // uniquely identifies the job
+                .setTag("BackgroundCheckJobService")
+                .setRecurring(true)
+                // start between 30 and 60 minutes from now
+                .setTrigger(Trigger.executionWindow(30 * 60, 60 * 60))
+                // overwrite an existing job with the same tag
+                .setReplaceCurrent(true)
+                // retry with exponential backoff
+                .setRetryStrategy(RetryStrategy.DEFAULT_EXPONENTIAL)
+                // constraints that need to be satisfied for the job to run
+                .setConstraints(Constraint.ON_ANY_NETWORK)
+                .build();
+
+        dispatcher.mustSchedule(backgroundCheckJob);
     }
 }
