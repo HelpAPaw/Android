@@ -3,12 +3,10 @@ package org.helpapaw.helpapaw.base;
 import android.app.Application;
 
 import com.backendless.Backendless;
-import com.evernote.android.job.JobManager;
 import com.facebook.stetho.Stetho;
 
 import org.helpapaw.helpapaw.data.user.UserManager;
 import org.helpapaw.helpapaw.utils.Injection;
-import org.helpapaw.helpapaw.utils.backgroundscheduler.ScheduledCreator;
 
 /**
  * Created by iliyan on 7/25/16
@@ -24,7 +22,6 @@ public class PawApplication extends Application {
     public void onCreate() {
         super.onCreate();
         Stetho.initializeWithDefaults(this);
-        JobManager.create(this).addJobCreator(new ScheduledCreator());
         pawApplication = this;
         Backendless.initApp(this, YOUR_APP_ID, YOUR_SECRET_KEY, YOUR_APP_VERSION);
 

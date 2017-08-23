@@ -1,7 +1,5 @@
 package org.helpapaw.helpapaw.signalsmap;
 
-import android.content.Context;
-
 import org.helpapaw.helpapaw.data.models.Signal;
 
 import java.util.List;
@@ -9,7 +7,7 @@ import java.util.List;
 /**
  * Created by iliyan on 7/28/16
  */
-public interface SignalsMapContract {
+interface SignalsMapContract {
 
     interface View {
 
@@ -103,10 +101,6 @@ public interface SignalsMapContract {
         void onAuthenticationAction();
 
         void onLoginAction();
-
-        void onSetupSchedulerService(Context context);
-
-        void onCancelSchedulerService(Context context);
 
 
     }

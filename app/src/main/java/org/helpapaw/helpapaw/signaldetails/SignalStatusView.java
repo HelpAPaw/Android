@@ -61,8 +61,7 @@ public class SignalStatusView extends FrameLayout implements SignalStatusViewCon
     }
 
     private void initViews(Context context) {
-        LayoutInflater inflater = (LayoutInflater) context
-                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         inflater.inflate(R.layout.view_signal_status, this);
     }
 
@@ -72,7 +71,6 @@ public class SignalStatusView extends FrameLayout implements SignalStatusViewCon
         initUi();
         initData();
         setStatusClickListeners(statusList);
-
     }
 
     private void initUi() {
@@ -303,7 +301,7 @@ class ResizeAnimation extends Animation {
     private float toHeight;
     private float fromHeight;
 
-    public ResizeAnimation(View v, float fromHeight, float toHeight) {
+    ResizeAnimation(View v, float fromHeight, float toHeight) {
         this.toHeight = toHeight;
         this.fromHeight = fromHeight;
         view = v;

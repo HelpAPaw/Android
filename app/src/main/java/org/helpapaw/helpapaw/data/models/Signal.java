@@ -10,6 +10,11 @@ import java.util.Date;
  */
 public class Signal implements Parcelable{
     public static String KEY_SIGNAL ="signal";
+
+    public enum SignalStatus {
+        HELP_IS_NEEDED, SOMEBODY_ON_THE_WAY, SOLVED
+    }
+
     private String id;
     private String title;
     private Date   dateSubmitted;
