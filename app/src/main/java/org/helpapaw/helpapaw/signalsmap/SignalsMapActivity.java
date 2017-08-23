@@ -22,6 +22,8 @@ import org.helpapaw.helpapaw.utils.services.BackgroundCheckJobService;
 
 import java.util.List;
 
+import static org.helpapaw.helpapaw.base.PawApplication.TEST_VERSION;
+
 public class SignalsMapActivity extends BaseActivity {
 
     @Override
@@ -41,7 +43,13 @@ public class SignalsMapActivity extends BaseActivity {
 
     @Override
     protected String getToolbarTitle() {
-        return getString(R.string.app_name);
+        String title = getString(R.string.app_name);
+
+        if (TEST_VERSION) {
+            title += " (TEST VERSION)";
+        }
+
+        return title;
     }
 
     private void initFragment(Fragment signalsMapFragment) {

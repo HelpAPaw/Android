@@ -184,6 +184,7 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
             signalsMapPresenter = PresenterManager.getInstance().getPresenter(getScreenId());
             signalsMapPresenter.setView(this);
         }
+        actionsListener = signalsMapPresenter;
         initLocationApi();
 
         setHasOptionsMenu(true);

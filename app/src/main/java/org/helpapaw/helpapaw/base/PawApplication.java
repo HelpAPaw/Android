@@ -16,6 +16,8 @@ public class PawApplication extends Application {
     private static final String YOUR_SECRET_KEY = "FF1687C9-961B-4388-FFF2-0C8BDC5DFB00";
     public static final String YOUR_APP_VERSION = "v1";
 
+    public static final Boolean TEST_VERSION = false;
+
     private static PawApplication pawApplication;
 
     @Override
