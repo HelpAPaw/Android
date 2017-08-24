@@ -103,7 +103,6 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
     private static final String MARKER_LATITUDE = "marker_latitude";
     private static final String MARKER_LONGITUDE = "marker_longitude";
 
-    private  MenuInflater mMenuInflater;
     private GoogleApiClient googleApiClient;
     private LocationRequest locationRequest;
     private GoogleMap signalsGoogleMap;
@@ -120,12 +119,10 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
 
     UserManager userManager;
     private Marker mMarker;
-    private LocationRequest mLocationRequest;
     private boolean mVisibilityAddSignal = false;
     private boolean mVisibilityFilter = false;
-    private double mLatitude= 0.0;
-    private double mLongitude = 0.0;
-    private Signal mNotificationSignal;
+    private String mFocusedSignalId;
+
     public SignalsMapFragment() {
         // Required empty public constructor
     }
@@ -134,10 +131,10 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
         return new SignalsMapFragment();
     }
 
-    public static SignalsMapFragment newInstance(Signal signal) {
+    public static SignalsMapFragment newInstance(String focusedSignalId) {
         SignalsMapFragment signalsMapFragment = new SignalsMapFragment();
         Bundle args = new Bundle();
-        args.putParcelable(Signal.KEY_SIGNAL, signal);
+        args.putString(Signal.KEY_FOCUSED_SIGNAL_ID, focusedSignalId);
         signalsMapFragment.setArguments(args);
         return signalsMapFragment;
     }
@@ -145,9 +142,10 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if(getArguments() !=null && getArguments().containsKey(Signal.KEY_SIGNAL)){
 
-            mNotificationSignal = getArguments().getParcelable(Signal.KEY_SIGNAL);
+        if( (getArguments() !=null) && getArguments().containsKey(Signal.KEY_FOCUSED_SIGNAL_ID) ) {
+
+            mFocusedSignalId = getArguments().getString(Signal.KEY_FOCUSED_SIGNAL_ID);
         }
     }
 
@@ -155,13 +153,10 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        mLatitude = savedInstanceState != null ? savedInstanceState.getDouble(MARKER_LATITUDE) : 0.0 ;
-        mLongitude = savedInstanceState != null ? savedInstanceState.getDouble(MARKER_LONGITUDE): 0.0 ;
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_signals_map, container, false);
         userManager = Injection.getUserManagerInstance();
@@ -267,7 +262,8 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             drawableFocus = ContextCompat.getDrawable(getActivity(),R.drawable.ic_menu);
-        }else{
+        }
+        else {
             drawableFocus = ContextCompat.getDrawable(getActivity(),R.drawable.ic_menu_white_24dp);
         }
 
@@ -312,7 +308,6 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        mMenuInflater = inflater;
         inflater.inflate(R.menu.menu_signals_map, menu);
 
         this.optionsMenu = menu;
@@ -416,8 +411,7 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
 
     @Override
     public void updateMapCameraPosition(double latitude, double longitude, float zoom) {
-        CameraUpdate center =
-                CameraUpdateFactory.newLatLng(new LatLng(latitude, longitude));
+        CameraUpdate center = CameraUpdateFactory.newLatLng(new LatLng(latitude, longitude));
         CameraUpdate cameraZoom = CameraUpdateFactory.zoomTo(zoom);
 
         signalsGoogleMap.moveCamera(center);
@@ -428,48 +422,47 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
     public void displaySignals(List<Signal> signals, boolean showPopup) {
 
         Signal signal;
-        Marker marker = null;
+        Marker markerToFocus = null;
+        Signal signalToFocus = null;
 
-            final Map<String, Signal> signalMarkers = new HashMap<>();
-            if (signalsGoogleMap != null) {
-                signalsGoogleMap.clear();
-                signalsGoogleMap.setPadding(0, PADDING_TOP, 0, PADDING_BOTTOM);
-                for (int i = 0; i < signals.size(); i++) {
-                    signal = signals.get(i);
-                    MarkerOptions markerOptions = new MarkerOptions()
-                            .position(new LatLng(signal.getLatitude(), signal.getLongitude()))
-                            .title(signal.getTitle());
+        final Map<String, Signal> signalMarkers = new HashMap<>();
+        if (signalsGoogleMap != null) {
+            signalsGoogleMap.clear();
+            signalsGoogleMap.setPadding(0, PADDING_TOP, 0, PADDING_BOTTOM);
+            for (int i = 0; i < signals.size(); i++) {
+                signal = signals.get(i);
+                MarkerOptions markerOptions = new MarkerOptions()
+                        .position(new LatLng(signal.getLatitude(), signal.getLongitude()))
+                        .title(signal.getTitle());
 
-                    markerOptions.icon(BitmapDescriptorFactory.fromResource(getDrawableFromStatus(signal.getStatus())));
+                markerOptions.icon(BitmapDescriptorFactory.fromResource(getDrawableFromStatus(signal.getStatus())));
 
-                    marker = signalsGoogleMap.addMarker(markerOptions);
-                    signalMarkers.put(marker.getId(), signal);
-                    if (mNotificationSignal != null) {
-                        // TODO: change title comparison to ID comparison
-                        if (signal.getTitle().equalsIgnoreCase(mNotificationSignal.getTitle())) {
-                            showPopup = true;
-                            updateMapCameraPosition(mNotificationSignal.getLatitude(), mNotificationSignal.getLongitude(), DEFAULT_MAP_ZOOM);
-                            if (showPopup && marker != null) {
-                                if (marker.getTitle().equalsIgnoreCase(mNotificationSignal.getTitle())) {
-                                    marker.showInfoWindow();
-                                }
-                            }
-                        }
+                Marker marker = signalsGoogleMap.addMarker(markerOptions);
+                signalMarkers.put(marker.getId(), signal);
+
+                if (mFocusedSignalId != null) {
+                    if (signal.getId().equalsIgnoreCase(mFocusedSignalId)) {
+                        showPopup = true;
+                        markerToFocus = marker;
+                        signalToFocus = signal;
                     }
-                }
-                SignalInfoWindowAdapter infoWindowAdapter = new SignalInfoWindowAdapter(signalMarkers, getActivity().getLayoutInflater());
-                signalsGoogleMap.setInfoWindowAdapter(infoWindowAdapter);
-
-                signalsGoogleMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
-                    @Override
-                    public void onInfoWindowClick(Marker marker) {
-                        actionsListener.onSignalInfoWindowClicked(signalMarkers.get(marker.getId()));
-                    }
-                });
-                if (showPopup && marker != null) {
-                    marker.showInfoWindow();
                 }
             }
+
+            SignalInfoWindowAdapter infoWindowAdapter = new SignalInfoWindowAdapter(signalMarkers, getActivity().getLayoutInflater());
+            signalsGoogleMap.setInfoWindowAdapter(infoWindowAdapter);
+
+            signalsGoogleMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+                @Override
+                public void onInfoWindowClick(Marker marker) {
+                    actionsListener.onSignalInfoWindowClicked(signalMarkers.get(marker.getId()));
+                }
+            });
+            if (showPopup && (markerToFocus != null)) {
+                markerToFocus.showInfoWindow();
+                updateMapCameraPosition(signalToFocus.getLatitude(), signalToFocus.getLongitude(), DEFAULT_MAP_ZOOM);
+            }
+        }
     }
 
     private int getDrawableFromStatus(int status) {
@@ -544,7 +537,7 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
             setAddSignalViewVisibility(mVisibilityAddSignal);
             signalsGoogleMap.setMyLocationEnabled(true);
 
-            if(!mVisibilityAddSignal){
+            if (!mVisibilityAddSignal) {
 
                 Location location = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
                 if (location == null) {
