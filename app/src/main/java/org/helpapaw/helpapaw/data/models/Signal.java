@@ -8,8 +8,9 @@ import java.util.Date;
 /**
  * Created by iliyan on 7/28/16
  */
-public class Signal implements Parcelable{
-    public static String KEY_SIGNAL ="signal";
+public class Signal implements Parcelable {
+    // The key used to keep the Id of the signal that should be focused
+    public static String KEY_FOCUSED_SIGNAL_ID ="FocusSignalId";
 
     public enum SignalStatus {
         HELP_IS_NEEDED, SOMEBODY_ON_THE_WAY, SOLVED

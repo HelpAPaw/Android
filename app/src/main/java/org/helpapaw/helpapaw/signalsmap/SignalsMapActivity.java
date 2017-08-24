@@ -31,8 +31,8 @@ public class SignalsMapActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
 
         if (null == savedInstanceState) {
-            if (getIntent().hasExtra(Signal.KEY_SIGNAL)) {
-                initFragment(SignalsMapFragment.newInstance((Signal) getIntent().getParcelableExtra(Signal.KEY_SIGNAL)));
+            if (getIntent().hasExtra(Signal.KEY_FOCUSED_SIGNAL_ID)) {
+                initFragment(SignalsMapFragment.newInstance(getIntent().getStringExtra(Signal.KEY_FOCUSED_SIGNAL_ID)));
             } else {
                 initFragment(SignalsMapFragment.newInstance());
             }
