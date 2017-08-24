@@ -13,6 +13,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.location.Location;
+import android.support.annotation.NonNull;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.NotificationCompat;
@@ -22,6 +23,7 @@ import com.firebase.jobdispatcher.JobParameters;
 import com.firebase.jobdispatcher.JobService;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 
 import org.helpapaw.helpapaw.R;
@@ -46,23 +48,32 @@ public class BackgroundCheckJobService extends JobService {
     public static final String TAG = BackgroundCheckJobService.class.getSimpleName();
 
     @Override
-    public boolean onStartJob(JobParameters job) {
+    public boolean onStartJob(final JobParameters job) {
 
         Log.d(TAG, "onStartJob called");
 
         // Do some work here
         if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             FusedLocationProviderClient mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-            mFusedLocationClient.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
+            mFusedLocationClient.getLastLocation()
+            .addOnSuccessListener(new OnSuccessListener<Location>() {
                 @Override
                 public void onSuccess(Location location) {
                     //Got last known location. In some rare situations this can be null.
                     if (location != null) {
-                        getSignalsForLastKnownLocation(location);
+                        getSignalsForLastKnownLocation(location, job);
                     }
                     else {
                         Log.d(TAG, "got callback but last location is null");
+                        jobFinished(job, true);
                     }
+                }
+            })
+            .addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Log.d(TAG, "failed to get location");
+                    jobFinished(job, true);
                 }
             });
         }
@@ -70,16 +81,15 @@ public class BackgroundCheckJobService extends JobService {
             Log.d(TAG, "No location permission");
         }
 
-        //TODO: probably this should be returned after the callbacks are received!?
-        return false; // Answers the question: "Is there still work going on?"
+        return true; // Answers the question: "Is there still work going on?"
     }
 
     @Override
     public boolean onStopJob(JobParameters job) {
-        return false; // Answers the question: "Should this job be retried?"
+        return true; // Answers the question: "Should this job be retried?"
     }
 
-    private void getSignalsForLastKnownLocation(Location location) {
+    private void getSignalsForLastKnownLocation(Location location, final JobParameters job) {
 
         Injection.getSignalRepositoryInstance().getAllSignals(location.getLatitude(), location.getLongitude(), DEFAULT_SEARCH_RADIUS, new SignalRepository.LoadSignalsCallback() {
                 @Override
@@ -90,16 +100,21 @@ public class BackgroundCheckJobService extends JobService {
                     if (signals != null && !signals.isEmpty()) {
                         for (Signal signal : signals) {
 
+                            //TODO: check if author is not the currently logged user, too
                             if (signal.getStatus() < SOLVED.ordinal()) {
+
                                 showNotificationForSignal(signal);
                             }
                         }
                     }
+
+                    jobFinished(job, false);
                 }
 
                 @Override
                 public void onSignalsFailure(String message) {
                     Log.d(TAG, "there was a problem obtaining signals: " + message);
+                    jobFinished(job, true);
                 }
             });
 
@@ -113,25 +128,25 @@ public class BackgroundCheckJobService extends JobService {
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(getApplicationContext());
         mBuilder.setSmallIcon(R.drawable.ic_paw_notif);
         mBuilder.setTicker(getString(R.string.txt_new_signal));
-        mBuilder.setContentText(signal.getTitle());
+        mBuilder.setContentTitle(signal.getTitle());
         mBuilder.setDefaults(Notification.DEFAULT_ALL);
         mBuilder.setAutoCancel(true);
         mBuilder.setWhen(signal.getDateSubmitted().getTime());
 
-        String title;
+        String status = "Status: ";
         Bitmap pin;
         if (signal.getStatus() == SOMEBODY_ON_THE_WAY.ordinal()) {
-            title = getString(R.string.txt_somebody_is_on_the_way);
+            status += getString(R.string.txt_somebody_is_on_the_way);
             pin = BitmapFactory.decodeResource(getResources(), R.drawable.pin_orange);
         }
         else {
-            title = getString(R.string.txt_you_help_is_needed);
+            status += getString(R.string.txt_you_help_is_needed);
             pin = BitmapFactory.decodeResource(getResources(), R.drawable.pin_red);
         }
 
         Bitmap largeIcon = scaleBitmapForLargeIcon(pin);
 
-        mBuilder.setContentTitle(title);
+        mBuilder.setContentText(status);
         mBuilder.setLargeIcon(largeIcon);
 
         Intent resultIntent = new Intent(context, SignalsMapActivity.class);
