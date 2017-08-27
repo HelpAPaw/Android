@@ -3,7 +3,6 @@ package org.helpapaw.helpapaw.base;
 import android.app.Application;
 
 import com.backendless.Backendless;
-import com.facebook.stetho.Stetho;
 
 import org.helpapaw.helpapaw.data.user.UserManager;
 import org.helpapaw.helpapaw.utils.Injection;
@@ -16,14 +15,13 @@ public class PawApplication extends Application {
     private static final String YOUR_SECRET_KEY = "FF1687C9-961B-4388-FFF2-0C8BDC5DFB00";
     public static final String YOUR_APP_VERSION = "v1";
 
-    public static final Boolean TEST_VERSION = false;
+    public static final Boolean TEST_VERSION = true;
 
     private static PawApplication pawApplication;
 
     @Override
     public void onCreate() {
         super.onCreate();
-        Stetho.initializeWithDefaults(this);
         pawApplication = this;
         Backendless.initApp(this, YOUR_APP_ID, YOUR_SECRET_KEY, YOUR_APP_VERSION);
 
