@@ -10,10 +10,8 @@ import android.content.res.Resources;
 import android.databinding.DataBindingUtil;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
-import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
@@ -34,8 +32,6 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.getkeepsafe.taptargetview.TapTarget;
-import com.getkeepsafe.taptargetview.TapTargetSequence;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
@@ -102,7 +98,6 @@ public class SignalsMapFragment extends BaseFragment
     private static final String VIEW_ADD_SIGNAL = "view_add_signal";
     private static final int PADDING_TOP = 190;
     private static final int PADDING_BOTTOM = 160;
-    private static final String VIEW_FILTER_SIGNALS = "view_filter_signal";
     private static final String MARKER_LATITUDE = "marker_latitude";
     private static final String MARKER_LONGITUDE = "marker_longitude";
 
@@ -123,7 +118,6 @@ public class SignalsMapFragment extends BaseFragment
     UserManager userManager;
     private Marker mMarker;
     private boolean mVisibilityAddSignal = false;
-    private boolean mVisibilityFilter = false;
     private String mFocusedSignalId;
 
     public SignalsMapFragment() {
@@ -169,8 +163,6 @@ public class SignalsMapFragment extends BaseFragment
 
         //noinspection SimplifiableConditionalExpression
         mVisibilityAddSignal = savedInstanceState != null ? savedInstanceState.getBoolean(VIEW_ADD_SIGNAL) : false;
-        //noinspection SimplifiableConditionalExpression
-        mVisibilityFilter = savedInstanceState != null ? savedInstanceState.getBoolean(VIEW_FILTER_SIGNALS) : false;
 
 //        setAddSignalViewVisibility(mVisibilityAddSignal);
         if (binding.mapSignals != null) {
@@ -191,10 +183,6 @@ public class SignalsMapFragment extends BaseFragment
         binding.fabAddSignal.setOnClickListener(getFabAddSignalClickListener());
         binding.viewSendSignal.setOnSignalSendClickListener(getOnSignalSendClickListener());
         binding.viewSendSignal.setOnSignalPhotoClickListener(getOnSignalPhotoClickListener());
-
-        binding.viewFilterSignals.setOnEmergencyClickListener(getOnEmergencyClickListener());
-        binding.viewFilterSignals.setOnInProgessClickListener(getOnInProgressClickListener());
-        binding.viewFilterSignals.setOnSolvedClickListener(getOnSolvedClickListener());
 
         return binding.getRoot();
     }
@@ -233,76 +221,8 @@ public class SignalsMapFragment extends BaseFragment
             outState.putDouble(MARKER_LONGITUDE, mMarker.getPosition().longitude);
         }
         outState.putBoolean(VIEW_ADD_SIGNAL, mVisibilityAddSignal);
-        outState.putBoolean(VIEW_FILTER_SIGNALS, mVisibilityFilter);
         super.onSaveInstanceState(outState);
     }
-
-
-    private TapTarget createTargetRefresh(){
-
-        Drawable drawableFocus = ContextCompat.getDrawable(getActivity(),R.drawable.ic_refresh);
-        return TapTarget.forView(((SignalsMapActivity)getActivity()).getToolbar().getChildAt(2),getString(R.string.overflow_prompt_title_filter),getString(R.string.overflow_prompt_description_filter))
-                .dimColor(android.R.color.darker_gray)
-                .outerCircleColor(R.color.color_primary_dark)
-                .targetCircleColor(R.color.color_emergency)
-                .textColor(android.R.color.white)
-                .cancelable(true)
-                .icon(drawableFocus);
-    }
-
-    private TapTarget createTargetAddSignal(){
-
-        return TapTarget.forView(getView().findViewById(R.id.fab_add_signal),getString(R.string.text_tutorial_send_signal),getString(R.string.text_fab_add_signal))
-                .dimColor(android.R.color.darker_gray)
-                .outerCircleColor(R.color.color_primary_dark)
-                .targetCircleColor(R.color.color_emergency)
-                .textColor(android.R.color.white)
-                .cancelable(true);
-    }
-
-    private TapTarget createTargetSideNav(){
-
-        Drawable drawableFocus;
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            drawableFocus = ContextCompat.getDrawable(getActivity(),R.drawable.ic_menu);
-        }
-        else {
-            drawableFocus = ContextCompat.getDrawable(getActivity(),R.drawable.ic_menu_white_24dp);
-        }
-
-        return TapTarget.forView(((SignalsMapActivity) getActivity()).getToolbar().getChildAt(1),getString(R.string.text_tutorial_navigation),getString(R.string.menu_prompt_description))
-                .dimColor(android.R.color.darker_gray)
-                .outerCircleColor(R.color.color_primary_dark)
-                .targetCircleColor(R.color.color_emergency)
-                .textColor(android.R.color.white)
-                .cancelable(true)
-                .icon(drawableFocus);
-    }
-
-    public void showTutorial() {
-        new TapTargetSequence(getActivity())
-                .targets(
-                        createTargetSideNav(),
-                        createTargetRefresh(),
-//                        createTargetFilter(),
-                        createTargetAddSignal()
-                )
-                .listener(new TapTargetSequence.Listener() {
-                    // This listener will tell us when interesting(tm) events happen in regards
-                    // to the sequence
-                    @Override
-                    public void onSequenceFinish() {
-                        // Yay
-                    }
-
-                    @Override
-                    public void onSequenceCanceled(TapTarget lastTarget) {
-                        // Boo
-                    }
-                }).continueOnCancel(true).start();
-    }
-
 
     @Override
     public void onLowMemory() {
@@ -315,15 +235,7 @@ public class SignalsMapFragment extends BaseFragment
         inflater.inflate(R.menu.menu_signals_map, menu);
 
         this.optionsMenu = menu;
-//        showTutorial();
-//
-//        if(userManager.getUserToken()!=null && !userManager.getUserToken().isEmpty()){
-//
-//
-//            optionsMenu.findItem(R.id.menu_item_filter).setTitle(getString(R.string.txt_logout));
-//        }else{
-//            optionsMenu.findItem(R.id.menu_item_filter).setTitle(getString(R.string.txt_login));
-//        }
+
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -334,18 +246,6 @@ public class SignalsMapFragment extends BaseFragment
             actionsListener.onRefreshButtonClicked();
             return true;
         }
-//        if (item.getItemId() == R.id.menu_item_filter) {
-//            Log.d(TAG, "Filter clicked");
-//            if(!mVisibilityFilter) {
-//                mVisibilityFilter = true;
-//                setAddSignalViewVisibility(mVisibilityAddSignal);
-//            }else{
-//                mVisibilityFilter = false;
-//                setAddSignalViewVisibility(mVisibilityAddSignal);
-//            }
-//            //  actionsListener.onAuthenticationAction();
-//            return true;
-//        }
         return super.onOptionsItemSelected(item);
     }
 
@@ -609,75 +509,15 @@ public class SignalsMapFragment extends BaseFragment
         if (visibility) {
             mVisibilityAddSignal = visibility;
 
-            if (mVisibilityFilter) {
-                hideFilterSignalsView();
-            }
             showAddSignalView();
             binding.fabAddSignal.setImageResource(R.drawable.ic_close);
         } else {
             mVisibilityAddSignal = visibility;
             hideAddSignalView();
-            if (mVisibilityFilter) {
-                showFilterSignalsView();
-            }else{
-                hideFilterSignalsView();
-            }
+
             binding.fabAddSignal.setImageResource(R.drawable.fab_add);
         }
     }
-
-    private void showFilterSignalsView() {
-        binding.viewFilterSignals.setVisibility(View.VISIBLE);
-        binding.viewFilterSignals.setAlpha(0.0f);
-        if (binding.viewSendSignal.getHeight() > 0) {
-            binding.viewFilterSignals
-                    .animate()
-                    .setInterpolator(new AccelerateDecelerateInterpolator())
-                    .setDuration(300)
-                    .translationY((binding.viewSendSignal.getHeight() * 1.2f))
-                    .alpha(1.0f);
-            Log.d(TAG, "Height : " + binding.viewSendSignal.getHeight() + "");
-        } else {
-            binding.viewFilterSignals
-                    .animate()
-                    .setInterpolator(new AccelerateDecelerateInterpolator())
-                    .setDuration(300)
-                    .translationY((90 * 1.2f))
-                    .alpha(1.0f);
-            Log.d(TAG, "Height : " + binding.viewSendSignal.getHeight() + "");
-        }
-    }
-
-    private void hideFilterSignalsView() {
-
-        if (binding.viewSendSignal.getHeight() > 0) {
-            binding.viewFilterSignals
-                    .animate()
-                    .setInterpolator(new AccelerateDecelerateInterpolator())
-                    .setDuration(300)
-                    .translationY(-(binding.viewSendSignal.getHeight() * 1.2f)).withEndAction(new Runnable() {
-                @Override
-                public void run() {
-                    binding.viewFilterSignals.setVisibility(View.INVISIBLE);
-                    Log.d(TAG, "Height : " + binding.viewSendSignal.getHeight() + "");
-                }
-            });
-        } else {
-            binding.viewFilterSignals
-                    .animate()
-                    .setInterpolator(new AccelerateDecelerateInterpolator())
-                    .setDuration(300)
-                    .translationY(-(200 * 1.2f)).withEndAction(new Runnable() {
-                @Override
-                public void run() {
-                    binding.viewFilterSignals.setVisibility(View.INVISIBLE);
-                }
-            });
-            Log.d(TAG, "Height : " + binding.viewSendSignal.getHeight() + "");
-
-        }
-    }
-
 
     private void showAddSignalView() {
         binding.viewSendSignal.setVisibility(View.VISIBLE);
@@ -952,43 +792,11 @@ public class SignalsMapFragment extends BaseFragment
         };
     }
 
-
     public View.OnClickListener getOnSignalPhotoClickListener() {
         return new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 actionsListener.onChoosePhotoIconClicked();
-            }
-        };
-    }
-
-    public View.OnClickListener getOnEmergencyClickListener() {
-        return new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                actionsListener.onFilterEmergency();
-               binding.viewFilterSignals.setStateActiveEmergency();
-            }
-        };
-    }
-
-    public View.OnClickListener getOnInProgressClickListener() {
-        return new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                actionsListener.onFilterInProgress();
-                binding.viewFilterSignals.setStateActiveInProgess();
-
-            }
-        };
-    }
-
-    public View.OnClickListener getOnSolvedClickListener() {
-        return new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                actionsListener.onFilterSolved();
-                binding.viewFilterSignals.setStateActiveResolved();
             }
         };
     }
