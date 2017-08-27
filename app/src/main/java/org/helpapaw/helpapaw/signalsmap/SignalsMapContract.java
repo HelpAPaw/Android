@@ -15,6 +15,8 @@ interface SignalsMapContract {
 
         void displaySignals(List<Signal> signals, boolean showPopup);
 
+        void displaySignals(List<Signal> signals, boolean showPopup, String focusedSignalId);
+
         void updateMapCameraPosition(double latitude, double longitude, float zoom);
 
         void setAddSignalViewVisibility(boolean visibility);

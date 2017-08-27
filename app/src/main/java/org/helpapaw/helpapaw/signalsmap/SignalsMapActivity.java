@@ -96,7 +96,7 @@ public class SignalsMapActivity extends BaseActivity {
                 .setTag("BackgroundCheckJobService")
                 .setRecurring(true)
                 // start between 30 and 60 minutes from now
-                .setTrigger(Trigger.executionWindow(30 * 60, 60 * 60))
+                .setTrigger(Trigger.executionWindow(15 * 60, 30 * 60))
                 // overwrite an existing job with the same tag
                 .setReplaceCurrent(true)
                 // retry with exponential backoff

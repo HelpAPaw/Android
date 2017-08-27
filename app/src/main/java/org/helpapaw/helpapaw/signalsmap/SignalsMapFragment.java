@@ -79,8 +79,11 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-public class SignalsMapFragment extends BaseFragment implements SignalsMapContract.View, GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener, LocationListener {
+public class SignalsMapFragment extends BaseFragment
+        implements SignalsMapContract.View,
+        GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener,
+        LocationListener {
 
     public static final String TAG = SignalsMapFragment.class.getSimpleName();
     private static final String MAP_VIEW_STATE = "mapViewSaveState";
@@ -143,16 +146,17 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if( (getArguments() !=null) && getArguments().containsKey(Signal.KEY_FOCUSED_SIGNAL_ID) ) {
+        Bundle arguments = getArguments();
+        if( (arguments != null) && arguments.containsKey(Signal.KEY_FOCUSED_SIGNAL_ID) ) {
 
-            mFocusedSignalId = getArguments().getString(Signal.KEY_FOCUSED_SIGNAL_ID);
+            mFocusedSignalId = arguments.getString(Signal.KEY_FOCUSED_SIGNAL_ID);
+            arguments.remove(Signal.KEY_FOCUSED_SIGNAL_ID);
         }
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
     }
 
     @Override
@@ -419,6 +423,12 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
     }
 
     @Override
+    public void displaySignals(List<Signal> signals, boolean showPopup, String focusedSignalId) {
+        mFocusedSignalId = focusedSignalId;
+        displaySignals(signals, showPopup);
+    }
+
+    @Override
     public void displaySignals(List<Signal> signals, boolean showPopup) {
 
         Signal signal;
@@ -445,6 +455,7 @@ public class SignalsMapFragment extends BaseFragment implements SignalsMapContra
                         showPopup = true;
                         markerToFocus = marker;
                         signalToFocus = signal;
+                        mFocusedSignalId = null;
                     }
                 }
             }
