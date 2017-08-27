@@ -6,6 +6,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -32,8 +33,9 @@ import org.helpapaw.helpapaw.data.repositories.SignalRepository;
 import org.helpapaw.helpapaw.signalsmap.SignalsMapActivity;
 import org.helpapaw.helpapaw.utils.Injection;
 
+import java.util.HashSet;
 import java.util.List;
-import java.util.UUID;
+import java.util.Set;
 
 import static org.helpapaw.helpapaw.data.models.Signal.SignalStatus.SOLVED;
 import static org.helpapaw.helpapaw.data.models.Signal.SignalStatus.SOMEBODY_ON_THE_WAY;
@@ -46,11 +48,19 @@ import static org.helpapaw.helpapaw.signalsmap.SignalsMapPresenter.DEFAULT_SEARC
 public class BackgroundCheckJobService extends JobService {
 
     public static final String TAG = BackgroundCheckJobService.class.getSimpleName();
+    static final String CURRENT_NOTIFICATION_IDS = "CurrentNotificationIds";
+
+    HashSet<String>     mCurrentNotificationIds = new HashSet<>();
+    NotificationManager mNotificationManager;
+    SharedPreferences   mSharedPreferences;
 
     @Override
     public boolean onStartJob(final JobParameters job) {
 
         Log.d(TAG, "onStartJob called");
+
+        mNotificationManager    = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
+        mSharedPreferences      = getApplicationContext().getSharedPreferences(TAG, Context.MODE_PRIVATE);
 
         // Do some work here
         if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
@@ -98,15 +108,32 @@ public class BackgroundCheckJobService extends JobService {
                     Log.d(TAG, "got signals");
 
                     if (signals != null && !signals.isEmpty()) {
+
                         for (Signal signal : signals) {
 
                             //TODO: check if author is not the currently logged user, too
                             if (signal.getStatus() < SOLVED.ordinal()) {
 
                                 showNotificationForSignal(signal);
+                                mCurrentNotificationIds.add(signal.getId());
                             }
                         }
                     }
+
+                    // Cancel all previous notifications that are not currently present
+                    Set<String> oldNotificationIds = mSharedPreferences.getStringSet(CURRENT_NOTIFICATION_IDS, null);
+                    if (oldNotificationIds != null) {
+                        for (String id : oldNotificationIds) {
+                            if (!mCurrentNotificationIds.contains(id)) {
+                                mNotificationManager.cancel(id.hashCode());
+                            }
+                        }
+                    }
+
+                    // Save ids of current notifications
+                    SharedPreferences.Editor editor = mSharedPreferences.edit();
+                    editor.putStringSet(CURRENT_NOTIFICATION_IDS, mCurrentNotificationIds);
+                    editor.apply();
 
                     jobFinished(job, false);
                 }
@@ -123,15 +150,17 @@ public class BackgroundCheckJobService extends JobService {
     private void showNotificationForSignal(Signal signal) {
 
         Context context = getApplicationContext();
-        int signalCode = UUID.fromString(signal.getId()).hashCode();
+        Integer signalCode = signal.getId().hashCode();
 
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(getApplicationContext());
         mBuilder.setSmallIcon(R.drawable.ic_paw_notif);
         mBuilder.setTicker(getString(R.string.txt_new_signal));
         mBuilder.setContentTitle(signal.getTitle());
         mBuilder.setDefaults(Notification.DEFAULT_ALL);
-        mBuilder.setAutoCancel(true);
         mBuilder.setWhen(signal.getDateSubmitted().getTime());
+        mBuilder.setOngoing(true);
+        mBuilder.setAutoCancel(false);
+        mBuilder.setOnlyAlertOnce(true);
 
         String status = "Status: ";
         Bitmap pin;
@@ -155,11 +184,9 @@ public class BackgroundCheckJobService extends JobService {
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
         stackBuilder.addNextIntent(resultIntent);
 
-        PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(signalCode, PendingIntent.FLAG_ONE_SHOT);
+        PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(signalCode, PendingIntent.FLAG_UPDATE_CURRENT);
 
         mBuilder.setContentIntent(resultPendingIntent);
-
-        NotificationManager mNotificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
 
         mNotificationManager.notify(signalCode, mBuilder.build());
     }
