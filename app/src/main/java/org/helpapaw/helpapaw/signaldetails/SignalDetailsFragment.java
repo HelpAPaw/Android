@@ -204,14 +204,6 @@ public class SignalDetailsFragment extends BaseFragment implements SignalDetails
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
-//        if(item.getItemId()== R.id.menu_item_share){
-//          if(SharingUtils.verifyPackageInstalled(getActivity(), SharingUtils.PACKAGE_FACEBOOK)) {
-//              startActivity(SharingUtils.shareFacebook(getActivity(), binding.txtSignalTitle.getText().toString()));
-//          }else{
-//              Snackbar.make(getView(), getString(R.string.error_facebook_not_installed), Snackbar.LENGTH_LONG).show();
-//          }
-//        }
-
         return super.onOptionsItemSelected(item);
     }
 

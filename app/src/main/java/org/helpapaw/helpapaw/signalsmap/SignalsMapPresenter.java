@@ -1,7 +1,5 @@
 package org.helpapaw.helpapaw.signalsmap;
 
-import com.evernote.android.job.JobManager;
-
 import org.helpapaw.helpapaw.base.Presenter;
 import org.helpapaw.helpapaw.data.models.Signal;
 import org.helpapaw.helpapaw.data.repositories.PhotoRepository;
@@ -33,14 +31,6 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
     private String photoUri;
     private boolean sendSignalViewVisibility;
     private List<Signal> signalsList;
-
-    private JobManager mJobManager;
-    private static final String LAST_JOB_ID = "LAST_JOB_ID";
-    private static final boolean REQUIRES_CHARGING = false;
-    private static final boolean REQUIRES_NETWORK = false;
-    private static final boolean REQUIRES_IDLE = false;
-
-    private int mLastJobId ;
 
     SignalsMapPresenter(SignalsMapContract.View view) {
         super(view);

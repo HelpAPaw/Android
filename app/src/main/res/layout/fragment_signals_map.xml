@@ -29,18 +29,6 @@
                 app:cardCornerRadius="8dp"
                 app:cardElevation="4dp" />
 
-            <org.helpapaw.helpapaw.signalsmap.FilterSignalView
-                android:id="@+id/view_filter_signals"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:layout_marginTop="-50dp"
-                android:visibility="invisible"
-                android:layout_gravity="center_horizontal"
-                app:cardCornerRadius="8dp"
-                app:cardElevation="4dp" />
-
         </FrameLayout>
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/fab_add_signal"
