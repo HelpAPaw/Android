@@ -160,8 +160,7 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
 
 
 
-    private void saveSignal(String description, Date dateSubmitted, int status,
-                            final double latitude, final double longitude) {
+    private void saveSignal(String description, Date dateSubmitted, int status, final double latitude, final double longitude) {
         signalRepository.saveSignal(new Signal(description, dateSubmitted, status, latitude, longitude), new SignalRepository.SaveSignalCallback() {
             @Override
             public void onSignalSaved(Signal signal) {
@@ -170,7 +169,8 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
                     savePhoto(photoUri, signal);
                 } else {
                     signalsList.add(signal);
-                    getView().displaySignals(signalsList, true);
+
+                    getView().displaySignals(signalsList, true, signal.getId());
                     getView().setAddSignalViewVisibility(false);
                     clearSignalViewData();
                 }
@@ -190,7 +190,7 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
             public void onPhotoSaved() {
                 if (!isViewAvailable()) return;
                 signalsList.add(signal);
-                getView().displaySignals(signalsList, true);
+                getView().displaySignals(signalsList, true, signal.getId());
                 getView().setAddSignalViewVisibility(false);
                 clearSignalViewData();
                 getView().showAddedSignalMessage();
