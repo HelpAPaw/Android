@@ -110,8 +110,6 @@ public class BackgroundCheckJobService extends JobService {
                     if (signals != null && !signals.isEmpty()) {
 
                         for (Signal signal : signals) {
-
-                            //TODO: check if author is not the currently logged user, too
                             if (signal.getStatus() < SOLVED.ordinal()) {
 
                                 showNotificationForSignal(signal);
