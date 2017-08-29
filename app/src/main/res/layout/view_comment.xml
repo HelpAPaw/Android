@@ -30,7 +30,8 @@
         android:padding="5dp"
         android:textColor="@color/comments_gray"
         android:textSize="15sp"
-        android:textStyle="italic" />
+        android:textStyle="italic"
+        tools:text="Milen Marinov"/>
 
     <TextView
         android:id="@+id/txt_comment_date"
@@ -43,6 +44,7 @@
         android:padding="5dp"
         android:textColor="@color/comments_gray"
         android:textSize="15sp"
-        android:textStyle="italic" />
+        android:textStyle="italic"
+        tools:text="2017.08.29, 12:34 pm"/>
 
 </RelativeLayout>

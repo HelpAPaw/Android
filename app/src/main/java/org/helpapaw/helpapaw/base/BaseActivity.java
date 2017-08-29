@@ -1,5 +1,6 @@
 package org.helpapaw.helpapaw.base;
 
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
@@ -12,12 +13,18 @@ import android.support.v4.view.GravityCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.ContextMenu;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 
 import org.helpapaw.helpapaw.R;
 import org.helpapaw.helpapaw.data.user.UserManager;
 import org.helpapaw.helpapaw.databinding.ActivityBaseBinding;
+import org.helpapaw.helpapaw.faq.FAQsView;
 import org.helpapaw.helpapaw.utils.Injection;
+import org.helpapaw.helpapaw.utils.SharingUtils;
 import org.helpapaw.helpapaw.utils.Utils;
 
 /**
@@ -61,10 +68,23 @@ public abstract class BaseActivity extends AppCompatActivity {
             @Override
             public boolean onNavigationItemSelected(MenuItem menuItem) {
                 // Set item in checked state
-                menuItem.setChecked(true);
-
                 // TODO: handle navigation
                 switch (menuItem.getItemId()) {
+                    case R.id.nav_item_faqs:
+                        menuItem.setChecked(false);
+                        navigateFAQsSection();
+                        break;
+
+                    case R.id.nav_item_feedback:
+//                        startActivity(SharingUtils.sendFeedback());
+                        SharingUtils.sendFeedbackUsingCompat(BaseActivity.this);
+                        menuItem.setChecked(false);
+                        break;
+
+                    case R.id.nav_item_about:
+                        menuItem.setChecked(true);
+                        break;
+
                     case R.id.nav_item_sign_out:
                         signOut();
                         break;
@@ -95,6 +115,12 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
     }
 
+
+    private void navigateFAQsSection(){
+        Intent intent = new Intent(this, FAQsView.class);
+        startActivity(intent);
+
+    }
     private ActionBarDrawerToggle setupDrawerToggle() {
         return new ActionBarDrawerToggle(this,
                 binding.drawer,
@@ -148,6 +174,9 @@ public abstract class BaseActivity extends AppCompatActivity {
             super.onBackPressed();
         }
     }
+
+
+
 
     protected abstract String getToolbarTitle();
 

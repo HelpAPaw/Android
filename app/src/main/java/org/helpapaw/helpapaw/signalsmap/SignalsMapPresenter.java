@@ -8,11 +8,9 @@ import org.helpapaw.helpapaw.data.user.UserManager;
 import org.helpapaw.helpapaw.utils.Injection;
 import org.helpapaw.helpapaw.utils.Utils;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * Created by iliyan on 7/28/16
@@ -20,7 +18,7 @@ import java.util.Locale;
 public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> implements SignalsMapContract.UserActionsListener {
 
     private static final float DEFAULT_MAP_ZOOM = 14.5f;
-    private static final int DEFAULT_SEARCH_RADIUS = 4000;
+    public static final int DEFAULT_SEARCH_RADIUS = 4000;
     private static final String DATE_TIME_FORMAT = "MM/dd/yyyy hh:mm:ss";
 
     private UserManager userManager;
@@ -29,11 +27,12 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
 
     private double latitude;
     private double longitude;
+
     private String photoUri;
     private boolean sendSignalViewVisibility;
     private List<Signal> signalsList;
 
-    public SignalsMapPresenter(SignalsMapContract.View view) {
+    SignalsMapPresenter(SignalsMapContract.View view) {
         super(view);
         signalRepository = Injection.getSignalRepositoryInstance();
         userManager = Injection.getUserManagerInstance();
@@ -78,6 +77,10 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
         }
     }
 
+    public static void getAllSignalsWithoutViewUpate(){
+
+    }
+
     @Override
     public void onLocationChanged(double latitude, double longitude) {
 
@@ -87,6 +90,7 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
             }
         } else {
             getAllSignals(latitude, longitude, false);
+
             getView().updateMapCameraPosition(latitude, longitude, DEFAULT_MAP_ZOOM);
         }
 
@@ -99,10 +103,24 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
     @Override
     public void onAddSignalClicked(boolean visibility) {
         setSendSignalViewVisibility(!visibility);
+        if(!visibility){
+            getView().addMapMarker(latitude,longitude);
+        }else{
+            getView().displaySignals(signalsList,false);
+            //onRefreshButtonClicked();
+        }
     }
 
-    SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_TIME_FORMAT, Locale.getDefault());
-    String currentDate = dateFormat.format(new Date());
+    @Override
+    public void onMarkerMoved(double latitude, double longitude) {
+        this.latitude = latitude;
+        this.longitude = longitude;
+    }
+
+    @Override
+    public void onCancelAddSignal() {
+       getView().displaySignals(signalsList,false);
+    }
 
     @Override
     public void onSendSignalClicked(final String description) {
@@ -117,7 +135,7 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
                 if (isEmpty(description)) {
                     getView().showDescriptionErrorMessage();
                 } else {
-                    saveSignal(description, currentDate, 0, latitude, longitude);
+                    saveSignal(description, new Date(), 0, latitude, longitude);
                 }
             }
 
@@ -130,8 +148,9 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
         });
     }
 
-    private void saveSignal(String description, String dateSubmitted, int status,
-                            final double latitude, final double longitude) {
+
+
+    private void saveSignal(String description, Date dateSubmitted, int status, final double latitude, final double longitude) {
         signalRepository.saveSignal(new Signal(description, dateSubmitted, status, latitude, longitude), new SignalRepository.SaveSignalCallback() {
             @Override
             public void onSignalSaved(Signal signal) {
@@ -140,7 +159,8 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
                     savePhoto(photoUri, signal);
                 } else {
                     signalsList.add(signal);
-                    getView().displaySignals(signalsList, true);
+
+                    getView().displaySignals(signalsList, true, signal.getId());
                     getView().setAddSignalViewVisibility(false);
                     clearSignalViewData();
                 }
@@ -160,7 +180,7 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
             public void onPhotoSaved() {
                 if (!isViewAvailable()) return;
                 signalsList.add(signal);
-                getView().displaySignals(signalsList, true);
+                getView().displaySignals(signalsList, true, signal.getId());
                 getView().setAddSignalViewVisibility(false);
                 clearSignalViewData();
                 getView().showAddedSignalMessage();
@@ -236,6 +256,81 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
                 break;
             }
         }
+    }
+
+    @Override
+    public void onFilterEmergency() {
+        List<Signal> emergencyList = new ArrayList<>();
+        for (int i = 0; i < signalsList.size(); i++) {
+            Signal currentSignal = signalsList.get(i);
+
+            if(currentSignal.getStatus() == 0){
+                emergencyList.add(currentSignal);
+            }
+        }
+        getView().displaySignals(emergencyList, true);
+    }
+
+    @Override
+    public void onFilterInProgress() {
+        List<Signal> emergencyList = new ArrayList<>();
+        for (int i = 0; i < signalsList.size(); i++) {
+            Signal currentSignal = signalsList.get(i);
+
+            if(currentSignal.getStatus() == 1){
+                emergencyList.add(currentSignal);
+
+            }
+        }
+        getView().displaySignals(emergencyList, true);
+    }
+
+    @Override
+    public void onFilterSolved() {
+        List<Signal> emergencyList = new ArrayList<>();
+        for (int i = 0; i < signalsList.size(); i++) {
+            Signal currentSignal = signalsList.get(i);
+
+            if(currentSignal.getStatus() == 2){
+                emergencyList.add(currentSignal);
+
+            }
+        }
+        getView().displaySignals(emergencyList, true);
+    }
+
+    @Override
+    public void onAuthenticationAction() {
+        getView().hideKeyboard();
+        String userToken = userManager.getUserToken();
+
+        if(userToken!=null && !userToken.isEmpty()){
+            logoutUser();
+        }else{
+            getView().openLoginScreen();
+        }
+    }
+
+    private void logoutUser(){
+        if (Utils.getInstance().hasNetworkConnection()) {
+            userManager.logout(new UserManager.LogoutCallback() {
+                @Override
+                public void onLogoutSuccess() {
+                    getView().onLogoutSuccess();
+                }
+
+                @Override
+                public void onLogoutFailure(String message) {
+                    getView().onLogoutFailure(message);
+                }
+            });
+        }else{
+            getView().onLogoutFailure("No connection.");
+        }
+    }
+    @Override
+    public void onLoginAction() {
+
     }
 
     private boolean isViewAvailable() {

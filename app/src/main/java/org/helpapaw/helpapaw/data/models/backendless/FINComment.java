@@ -6,28 +6,23 @@ import com.backendless.BackendlessUser;
  * Created by iliyan on 8/4/16
  */
 public class FINComment {
+
     private String objectId;
     private String signalID;
     private String text;
     private String created;
+    private String type;
     private BackendlessUser author;
 
     public FINComment() {
     }
 
-    public FINComment(String text, String created, String signalID, BackendlessUser author) {
+    public FINComment(String text, String created, String signalID, String type, BackendlessUser author) {
         this.text = text;
         this.created = created;
         this.author = author;
         this.signalID = signalID;
-    }
-
-    public FINComment(String objectId, String text, String created, String signalID, BackendlessUser author) {
-        this.objectId = objectId;
-        this.signalID = signalID;
-        this.text = text;
-        this.created = created;
-        this.author = author;
+        this.type = type;
     }
 
     public String getObjectId() {
@@ -68,5 +63,9 @@ public class FINComment {
 
     public void setSignalID(String signalID) {
         this.signalID = signalID;
+    }
+
+    public String getType() {
+        return type;
     }
 }

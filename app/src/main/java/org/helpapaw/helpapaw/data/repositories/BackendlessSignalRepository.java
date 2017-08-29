@@ -1,5 +1,7 @@
 package org.helpapaw.helpapaw.data.repositories;
 
+import android.util.Log;
+
 import com.backendless.Backendless;
 import com.backendless.BackendlessCollection;
 import com.backendless.BackendlessUser;
@@ -12,9 +14,12 @@ import com.backendless.geo.Units;
 import org.helpapaw.helpapaw.data.models.Signal;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static org.helpapaw.helpapaw.base.PawApplication.TEST_VERSION;
 
 /**
  * Created by iliyan on 7/28/16
@@ -29,11 +34,14 @@ public class BackendlessSignalRepository implements SignalRepository {
     private static final String PHONE_FIELD = "phoneNumber";
 
     @Override
-    public void getAllSignals(double latitude, double longitude,
-                              double radius, final LoadSignalsCallback callback) {
-        BackendlessGeoQuery query =
-                new BackendlessGeoQuery(latitude, longitude, radius, Units.KILOMETERS);
+    public void getAllSignals(double latitude, double longitude, double radius, final LoadSignalsCallback callback) {
+        BackendlessGeoQuery query = new BackendlessGeoQuery(latitude, longitude, radius, Units.METERS);
         query.setIncludeMeta(true);
+
+        String category = getCategory();
+        if (category != null) {
+            query.addCategory(category);
+        }
 
         Backendless.Geo.getPoints(query, new AsyncCallback<BackendlessCollection<GeoPoint>>() {
             @Override
@@ -43,8 +51,16 @@ public class BackendlessSignalRepository implements SignalRepository {
                     GeoPoint geoPoint = response.getData().get(i);
 
                     String signalTitle = getToStringOrNull(geoPoint.getMetadata(SIGNAL_TITLE));
-                    String dateSubmitted = getToStringOrNull(geoPoint.getMetadata(SIGNAL_DATE_SUBMITTED));
+                    String dateSubmittedString = getToStringOrNull(geoPoint.getMetadata(SIGNAL_DATE_SUBMITTED));
                     String signalStatus = getToStringOrNull(geoPoint.getMetadata(SIGNAL_STATUS));
+
+                    Date dateSubmitted = null;
+                    try {
+                        dateSubmitted = new Date(Long.valueOf(dateSubmittedString));
+                    }
+                    catch (Exception ex){
+                        Log.d(BackendlessSignalRepository.class.getName(), "Failed to parse signal date.");
+                    }
 
                     String signalAuthorName = null;
                     String signalAuthorPhone = null;
@@ -77,18 +93,23 @@ public class BackendlessSignalRepository implements SignalRepository {
 
         Map<String, Object> meta = new HashMap<>();
         meta.put(SIGNAL_TITLE, signal.getTitle());
-        meta.put(SIGNAL_DATE_SUBMITTED, signal.getDateSubmitted());
+        meta.put(SIGNAL_DATE_SUBMITTED, signal.getDateSubmitted().getTime());
         meta.put(SIGNAL_STATUS, signal.getStatus());
         meta.put(SIGNAL_AUTHOR, Backendless.UserService.CurrentUser());
 
-        Backendless.Geo.savePoint(signal.getLatitude(),
-                signal.getLongitude(), meta, new AsyncCallback<GeoPoint>() {
+        List<String> categories = new ArrayList<>();
+        String category = getCategory();
+        if (category != null) {
+            categories.add(category);
+        }
+
+        Backendless.Geo.savePoint(signal.getLatitude(), signal.getLongitude(), categories, meta, new AsyncCallback<GeoPoint>() {
                     @Override
                     public void handleResponse(GeoPoint geoPoint) {
                         String signalTitle = getToStringOrNull(geoPoint.getMetadata(SIGNAL_TITLE));
 
-                        String dateSubmitted = getToStringOrNull(geoPoint.getMetadata(SIGNAL_DATE_SUBMITTED));
-
+                        String dateSubmittedString = getToStringOrNull(geoPoint.getMetadata(SIGNAL_DATE_SUBMITTED));
+                        Date   dateSubmitted = new Date(Long.valueOf(dateSubmittedString));
                         String signalStatus = getToStringOrNull(geoPoint.getMetadata(SIGNAL_STATUS));
 
                         String signalAuthorName = null;
@@ -124,9 +145,15 @@ public class BackendlessSignalRepository implements SignalRepository {
         geoQuery.setWhereClause(whereClause);
         geoQuery.setIncludeMeta(true);
 
+        String category = getCategory();
+        if (category != null) {
+            geoQuery.addCategory(category);
+        }
+
         Backendless.Geo.getPoints(geoQuery, new AsyncCallback<BackendlessCollection<GeoPoint>>() {
             @Override
             public void handleResponse(BackendlessCollection<GeoPoint> response) {
+                //TODO: Add protection for empty array
                 GeoPoint signalPoint = response.getData().get(0);
                 if (signalPoint != null) {
                     Map<String, Object> meta = signalPoint.getMetadata();
@@ -153,6 +180,16 @@ public class BackendlessSignalRepository implements SignalRepository {
                 callback.onStatusFailure(fault.getMessage());
             }
         });
+    }
+
+    private String getCategory() {
+        if (TEST_VERSION) {
+            return "Debug";
+        }
+        else {
+            // Category should only be added if it's not Default
+            return null;
+        }
     }
 
     private String getToStringOrNull(Object object) {
