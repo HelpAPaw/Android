@@ -62,7 +62,7 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
         }
     }
 
-    private void loadCommentsForSignal(String signalId) {
+    public void loadCommentsForSignal(String signalId) {
         if(Utils.getInstance().hasNetworkConnection()) {
             commentRepository.getAllCommentsBySignalId(signalId, new CommentRepository.LoadCommentsCallback() {
                 @Override

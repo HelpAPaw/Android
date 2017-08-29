@@ -13,6 +13,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
@@ -25,18 +26,24 @@ import org.helpapaw.helpapaw.data.models.Comment;
 import org.helpapaw.helpapaw.data.models.Signal;
 import org.helpapaw.helpapaw.databinding.FragmentSignalDetailsBinding;
 import org.helpapaw.helpapaw.utils.Injection;
+import org.helpapaw.helpapaw.utils.StatusUtils;
 import org.helpapaw.helpapaw.utils.Utils;
 
 import java.util.List;
 
+import static org.helpapaw.helpapaw.data.models.Comment.COMMENT_TYPE_STATUS_CHANGE;
+
 public class SignalDetailsFragment extends BaseFragment implements SignalDetailsContract.View {
 
     private final static String SIGNAL_DETAILS = "signalDetails";
+    private final static String TAG = SignalDetailsFragment.class.getSimpleName();
 
     SignalDetailsPresenter signalDetailsPresenter;
     SignalDetailsContract.UserActionsListener actionsListener;
 
     FragmentSignalDetailsBinding binding;
+
+    private Signal mSignal;
 
     public SignalDetailsFragment() {
         // Required empty public constructor
@@ -51,8 +58,7 @@ public class SignalDetailsFragment extends BaseFragment implements SignalDetails
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_signal_details, container, false);
 
@@ -65,12 +71,12 @@ public class SignalDetailsFragment extends BaseFragment implements SignalDetails
 
         actionsListener = signalDetailsPresenter;
         setHasOptionsMenu(true);
-        Signal signal = null;
+        mSignal = null;
         if (getArguments() != null) {
-            signal = getArguments().getParcelable(SIGNAL_DETAILS);
+            mSignal = getArguments().getParcelable(SIGNAL_DETAILS);
         }
 
-        actionsListener.onInitDetailsScreen(signal);
+        actionsListener.onInitDetailsScreen(mSignal);
 
         binding.btnAddComment.setOnClickListener(getOnAddCommentClickListener());
         binding.imgCall.setOnClickListener(getOnCallButtonClickListener());
@@ -124,15 +130,42 @@ public class SignalDetailsFragment extends BaseFragment implements SignalDetails
     public void displayComments(List<Comment> comments) {
         LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
+        binding.grpComments.removeAllViews();
+
         for (int i = 0; i < comments.size(); i++) {
-            View inflatedCommentView = inflater.inflate(R.layout.view_comment, binding.grpComments, false);
+            Comment comment = comments.get(i);
+
+            View inflatedCommentView;
+            String commentText;
+
+            if (comment.getType().equals(COMMENT_TYPE_STATUS_CHANGE)) {
+                inflatedCommentView = inflater.inflate(R.layout.view_comment_status_change, binding.grpComments, false);
+
+                // First try to get the new status code
+                int newStatus = Comment.getNewStatusFromStatusChangeComment(comment);
+                // Then get the string for that status
+                String statusString = StatusUtils.getStatusStringForCode(newStatus);
+                // Finally form the string to be displayed as comment
+                commentText = String.format(getString(R.string.txt_user_changed_status_to), comment.getOwnerName(), statusString);
+
+                // Set the icon for the new status
+                ImageView imgNewStatusIcon = (ImageView) inflatedCommentView.findViewById((R.id.img_new_status_icon));
+                imgNewStatusIcon.setImageResource(StatusUtils.getPinResourceForCode(newStatus));
+            }
+            else {
+                inflatedCommentView = inflater.inflate(R.layout.view_comment, binding.grpComments, false);
+
+                TextView txtCommentAuthor = (TextView) inflatedCommentView.findViewById(R.id.txt_comment_author);
+                txtCommentAuthor.setText(comment.getOwnerName());
+
+                commentText = comment.getText();
+            }
+
+            // text and date elements are common for both type of comments so they are set in common code
             TextView txtCommentText = (TextView) inflatedCommentView.findViewById(R.id.txt_comment_text);
-            TextView txtCommentAuthor = (TextView) inflatedCommentView.findViewById(R.id.txt_comment_author);
             TextView txtCommentDate = (TextView) inflatedCommentView.findViewById(R.id.txt_comment_date);
 
-            Comment comment = comments.get(i);
-            txtCommentText.setText(comment.getText());
-            txtCommentAuthor.setText(comment.getOwnerName());
+            txtCommentText.setText(commentText);
 
             String formattedDate = Utils.getInstance().getFormattedDate(comment.getDateCreated());
             txtCommentDate.setText(formattedDate);
@@ -256,6 +289,11 @@ public class SignalDetailsFragment extends BaseFragment implements SignalDetails
 
     @Override
     public void onStatusChangeRequestFinished(boolean success, int newStatus) {
+
+        if (success) {
+            actionsListener.loadCommentsForSignal(mSignal.getId());
+        }
+
         binding.viewSignalStatus.onStatusChangeRequestFinished(success, newStatus);
     }
 

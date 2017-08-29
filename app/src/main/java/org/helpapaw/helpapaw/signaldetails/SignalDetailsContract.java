@@ -51,6 +51,8 @@ public interface SignalDetailsContract {
 
         void onInitDetailsScreen(Signal signal);
 
+        void loadCommentsForSignal(String signalId);
+
         void onAddCommentButtonClicked(String comment);
 
         void onRequestStatusChange(int status);
