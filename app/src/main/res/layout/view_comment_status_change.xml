@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:layout_marginTop="10dp"
+    android:layout_marginBottom="10dp">
+
+        <android.support.v7.widget.LinearLayoutCompat
+            android:id="@+id/view_status_change"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <ImageView
+                android:id="@+id/img_new_status_icon"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/pin_orange"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="10dp"
+                android:layout_marginStart="10dp"
+                android:contentDescription="@string/txt_new_status_icon"/>
+            <TextView
+                android:id="@+id/txt_comment_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="15dp"
+                android:paddingTop="5dp"
+                android:paddingRight="15dp"
+                android:paddingBottom="5dp"
+                android:textSize="18sp"
+                android:textAlignment="center"
+                tools:text="Milen Marinov changed the status to\n'Somebody on the way'" />
+        </android.support.v7.widget.LinearLayoutCompat>
+
+    <TextView
+        android:id="@+id/txt_comment_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@id/view_status_change"
+        android:gravity="start"
+        android:padding="5dp"
+        android:textColor="@color/comments_gray"
+        android:textSize="15sp"
+        android:textStyle="italic"
+        tools:text="2017.08.29, 12:34 pm"/>
+
+</RelativeLayout>

@@ -4,11 +4,11 @@ import android.content.Context;
 import android.location.Location;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.util.Log;
 
 import org.helpapaw.helpapaw.base.PawApplication;
 
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -73,17 +73,18 @@ public class Utils {
     }
 
     //Dates
-    public String getFormattedDate(String date) throws ParseException {
-        if(date!=null) {
-            Date newDate;
-            String SERVER_DATE_FORMAT = "MM/dd/yyyy hh:mm:ss";
-            String DETAILS_DATE_FORMAT = "dd.MM.yyyy, hh:mm a";
-            DateFormat originalFormat = new SimpleDateFormat(SERVER_DATE_FORMAT, Locale.getDefault());
-            DateFormat targetFormat = new SimpleDateFormat(DETAILS_DATE_FORMAT, Locale.getDefault());
-            newDate = originalFormat.parse(date);
-            return targetFormat.format(newDate);
-        }
-        else return "";
-    }
+    public String getFormattedDate(Date date) {
+        String formattedDate = "";
 
+        try {
+            String     DETAILS_DATE_FORMAT = "dd.MM.yyyy, hh:mm a";
+            DateFormat targetFormat = new SimpleDateFormat(DETAILS_DATE_FORMAT, Locale.getDefault());
+            formattedDate = targetFormat.format(date);
+        }
+        catch (Exception ex) {
+            Log.d(Utils.class.getName(), "Failed to parse date.");
+        }
+
+        return formattedDate;
+    }
 }

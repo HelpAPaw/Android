@@ -3,55 +3,59 @@ package org.helpapaw.helpapaw.data.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.Date;
+
 /**
  * Created by iliyan on 7/28/16
  */
-public class Signal implements Parcelable{
+public class Signal implements Parcelable {
+    // The key used to keep the Id of the signal that should be focused
+    public static String KEY_FOCUSED_SIGNAL_ID ="FocusSignalId";
+
+    public static final int SOLVED = 2;
+    public static final int SOMEBODY_ON_THE_WAY = 1;
+    public static final int HELP_IS_NEEDED = 0;
 
     private String id;
     private String title;
-    private String dateSubmitted;
+    private Date   dateSubmitted;
     private String authorName;
     private String authorPhone;
     private String photoUrl;
-    private int status;
+    private int    status;
     private double latitude;
     private double longitude;
 
-    public Signal(String id, String title, String dateSubmitted, int status, String authorName, String authorPhone, double latitude, double longitude) {
+    public Signal(String id, String title, Date dateSubmitted, int status, String authorName, String authorPhone, double latitude, double longitude) {
+        this(title, dateSubmitted, status, authorName, authorPhone, latitude, longitude);
         this.id = id;
-        this.title = title;
-        this.dateSubmitted = dateSubmitted;
-        this.authorName = authorName;
-        this.status = status;
-        this.latitude = latitude;
-        this.longitude = longitude;
-        this.authorPhone = authorPhone;
     }
 
 
-    public Signal(String title, String dateSubmitted, int status, double latitude, double longitude) {
+    public Signal(String title, Date dateSubmitted, int status, double latitude, double longitude) {
         this.title = title;
-        this.dateSubmitted = dateSubmitted;
         this.status = status;
         this.latitude = latitude;
         this.longitude = longitude;
+
+        if (dateSubmitted != null) {
+            this.dateSubmitted = dateSubmitted;
+        }
+        else {
+            this.dateSubmitted = new Date(0);
+        }
     }
 
-    public Signal(String title, String dateSubmitted, int status, String authorName, String authorPhone, double latitude, double longitude) {
-        this.title = title;
-        this.dateSubmitted = dateSubmitted;
-        this.status = status;
+    public Signal(String title, Date dateSubmitted, int status, String authorName, String authorPhone, double latitude, double longitude) {
+        this(title, dateSubmitted, status, latitude, longitude);
         this.authorName = authorName;
-        this.latitude = latitude;
-        this.longitude = longitude;
         this.authorPhone = authorPhone;
     }
 
     protected Signal(Parcel in) {
         id = in.readString();
         title = in.readString();
-        dateSubmitted = in.readString();
+        dateSubmitted = new Date(in.readLong());
         authorName = in.readString();
         authorPhone = in.readString();
         photoUrl = in.readString();
@@ -76,7 +80,7 @@ public class Signal implements Parcelable{
         return title;
     }
 
-    public String getDateSubmitted() {
+    public Date getDateSubmitted() {
         return dateSubmitted;
     }
 
@@ -125,7 +129,7 @@ public class Signal implements Parcelable{
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(id);
         dest.writeString(title);
-        dest.writeString(dateSubmitted);
+        dest.writeLong(dateSubmitted.getTime());
         dest.writeString(authorName);
         dest.writeString(authorPhone);
         dest.writeString(photoUrl);

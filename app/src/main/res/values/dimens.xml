@@ -7,6 +7,8 @@
     <dimen name="bottom_sheet_horizontal_margin">16dp</dimen>
     <dimen name="bottom_sheet_vertical_margin">8dp</dimen>
 
-    <dimen tools:override="true" name="design_fab_image_size">30dp</dimen>
+    <dimen name="design_fab_image_size" tools:override="true">30dp</dimen>
     <dimen name="thumbnail_size">40dp</dimen>
+    <dimen name="tap_target_menu_max_width">300dp</dimen>
+    <dimen name="font_size_faqs">16sp</dimen>
 </resources>

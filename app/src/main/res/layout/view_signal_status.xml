@@ -100,6 +100,11 @@
             android:padding="10dp"
             android:src="@drawable/ic_done" />
     </LinearLayout>
-
-
+    <ProgressBar
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/grp_progress_bar"
+        android:layout_gravity="center"
+        android:visibility="gone"/>
 </FrameLayout>

@@ -7,13 +7,15 @@ import java.util.List;
 /**
  * Created by iliyan on 7/28/16
  */
-public interface SignalsMapContract {
+interface SignalsMapContract {
 
     interface View {
 
         void showMessage(String message);
 
         void displaySignals(List<Signal> signals, boolean showPopup);
+
+        void displaySignals(List<Signal> signals, boolean showPopup, String focusedSignalId);
 
         void updateMapCameraPosition(double latitude, double longitude, float zoom);
 
@@ -48,6 +50,14 @@ public interface SignalsMapContract {
         void setProgressVisibility(boolean visibility);
 
         boolean isActive();
+
+        void addMapMarker(double latitude, double longitude);
+
+        void clearMapMarker();
+
+        void onLogoutSuccess();
+        void onLogoutFailure(String message);
+
     }
 
     interface UserActionsListener {
@@ -57,6 +67,10 @@ public interface SignalsMapContract {
         void onLocationChanged(double latitude, double longitude);
 
         void onAddSignalClicked(boolean visibility);
+
+        void onMarkerMoved(double latitude, double longitude);
+
+        void onCancelAddSignal();
 
         void onSendSignalClicked(String description);
 
@@ -79,5 +93,17 @@ public interface SignalsMapContract {
         void onRefreshButtonClicked();
 
         void onSignalStatusUpdated(Signal signal);
+
+        void onFilterEmergency();
+
+        void onFilterInProgress();
+
+        void onFilterSolved();
+
+        void onAuthenticationAction();
+
+        void onLoginAction();
+
+
     }
 }

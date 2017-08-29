@@ -62,7 +62,7 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
         }
     }
 
-    private void loadCommentsForSignal(String signalId) {
+    public void loadCommentsForSignal(String signalId) {
         if(Utils.getInstance().hasNetworkConnection()) {
             commentRepository.getAllCommentsBySignalId(signalId, new CommentRepository.LoadCommentsCallback() {
                 @Override
@@ -94,47 +94,66 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
 
     @Override
     public void onAddCommentButtonClicked(final String comment) {
-        if (comment != null && comment.trim().length() > 0) {
-            getView().hideKeyboard();
-            setProgressIndicator(true);
-            getView().scrollToBottom();
+        if (Utils.getInstance().hasNetworkConnection()) {
+            if (comment != null && comment.trim().length() > 0) {
+                getView().hideKeyboard();
+                setProgressIndicator(true);
+                getView().scrollToBottom();
+
+                userManager.isLoggedIn(new UserManager.LoginCallback() {
+                    @Override
+                    public void onLoginSuccess() {
+                        if (!isViewAvailable()) return;
+                        getView().clearSendCommentView();
+                        saveComment(comment, signal.getId());
+                    }
+
+                    @Override
+                    public void onLoginFailure(String message) {
+                        if (!isViewAvailable()) return;
+                        setProgressIndicator(false);
+                        getView().openLoginScreen();
+                    }
+                });
+
+            } else {
+                getView().showCommentErrorMessage();
+            }
+        } else {
+            getView().showNoInternetMessage();
+        }
+    }
+
+    @Override
+    public void onRequestStatusChange(final int status) {
+        if (Utils.getInstance().hasNetworkConnection()) {
 
             userManager.isLoggedIn(new UserManager.LoginCallback() {
                 @Override
                 public void onLoginSuccess() {
-                    if (!isViewAvailable()) return;
-                    getView().clearSendCommentView();
-                    saveComment(comment, signal.getId());
+                    signalRepository.updateSignalStatus(signal.getId(), status, new SignalRepository.UpdateStatusCallback() {
+                        @Override
+                        public void onStatusUpdated(int status) {
+                            if(!isViewAvailable()) return;
+                            setSignalStatus(status);
+                            getView().showStatusUpdatedMessage();
+                            getView().onStatusChangeRequestFinished(true, status);
+                        }
+
+                        @Override
+                        public void onStatusFailure(String message) {
+                            if (!isViewAvailable()) return;
+                            getView().showMessage(message);
+                            getView().onStatusChangeRequestFinished(false, 0);
+                        }
+                    });
                 }
 
                 @Override
                 public void onLoginFailure(String message) {
                     if (!isViewAvailable()) return;
-                    setProgressIndicator(false);
+                    getView().onStatusChangeRequestFinished(false, 0);
                     getView().openLoginScreen();
-                }
-            });
-
-        } else {
-            getView().showCommentErrorMessage();
-        }
-    }
-
-    @Override
-    public void onStatusChanged(int status) {
-        if (Utils.getInstance().hasNetworkConnection()) {
-            signalRepository.updateSignalStatus(signal.getId(), status, new SignalRepository.UpdateStatusCallback() {
-                @Override
-                public void onStatusUpdated(int status) {
-                    if(!isViewAvailable()) return;
-                    setSignalStatus(status);
-                    getView().showStatusUpdatedMessage();
-                }
-
-                @Override
-                public void onStatusFailure(String message) {
-                    if (!isViewAvailable()) return;
-                    getView().showMessage(message);
                 }
             });
         } else {
