@@ -12,9 +12,9 @@ public class Signal implements Parcelable {
     // The key used to keep the Id of the signal that should be focused
     public static String KEY_FOCUSED_SIGNAL_ID ="FocusSignalId";
 
-    public enum SignalStatus {
-        HELP_IS_NEEDED, SOMEBODY_ON_THE_WAY, SOLVED
-    }
+    public static final int SOLVED = 2;
+    public static final int SOMEBODY_ON_THE_WAY = 1;
+    public static final int HELP_IS_NEEDED = 0;
 
     private String id;
     private String title;

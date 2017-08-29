@@ -65,6 +65,7 @@ import org.helpapaw.helpapaw.databinding.FragmentSignalsMapBinding;
 import org.helpapaw.helpapaw.sendsignal.SendPhotoBottomSheet;
 import org.helpapaw.helpapaw.signaldetails.SignalDetailsActivity;
 import org.helpapaw.helpapaw.utils.Injection;
+import org.helpapaw.helpapaw.utils.StatusUtils;
 import org.helpapaw.helpapaw.utils.images.ImageUtils;
 
 import java.io.File;
@@ -264,7 +265,6 @@ public class SignalsMapFragment extends BaseFragment
         };
     }
 
-
     private GoogleMap.OnMapClickListener mapClickListener = new GoogleMap.OnMapClickListener() {
         @Override
         public void onMapClick(LatLng latLng) {
@@ -287,17 +287,12 @@ public class SignalsMapFragment extends BaseFragment
         }
     };
 
-
     private GoogleMap.OnMarkerDragListener mapDragListener = new GoogleMap.OnMarkerDragListener() {
         @Override
-        public void onMarkerDragStart(Marker marker) {
-
-        }
+        public void onMarkerDragStart(Marker marker) {}
 
         @Override
-        public void onMarkerDrag(Marker marker) {
-
-        }
+        public void onMarkerDrag(Marker marker) {}
 
         @Override
         public void onMarkerDragEnd(Marker marker) {
@@ -345,7 +340,7 @@ public class SignalsMapFragment extends BaseFragment
                         .position(new LatLng(signal.getLatitude(), signal.getLongitude()))
                         .title(signal.getTitle());
 
-                markerOptions.icon(BitmapDescriptorFactory.fromResource(getDrawableFromStatus(signal.getStatus())));
+                markerOptions.icon(BitmapDescriptorFactory.fromResource(StatusUtils.getPinResourceForCode(signal.getStatus())));
 
                 Marker marker = signalsGoogleMap.addMarker(markerOptions);
                 signalMarkers.put(marker.getId(), signal);
@@ -373,19 +368,6 @@ public class SignalsMapFragment extends BaseFragment
                 markerToFocus.showInfoWindow();
                 updateMapCameraPosition(signalToFocus.getLatitude(), signalToFocus.getLongitude(), DEFAULT_MAP_ZOOM);
             }
-        }
-    }
-
-    private int getDrawableFromStatus(int status) {
-        switch (status) {
-            case 0:
-                return R.drawable.pin_red;
-            case 1:
-                return R.drawable.pin_orange;
-            case 2:
-                return R.drawable.pin_green;
-            default:
-                return R.drawable.pin_red;
         }
     }
 
@@ -506,13 +488,14 @@ public class SignalsMapFragment extends BaseFragment
 
     @Override
     public void setAddSignalViewVisibility(boolean visibility) {
-        if (visibility) {
-            mVisibilityAddSignal = visibility;
 
+        mVisibilityAddSignal = visibility;
+
+        if (visibility) {
             showAddSignalView();
+
             binding.fabAddSignal.setImageResource(R.drawable.ic_close);
         } else {
-            mVisibilityAddSignal = visibility;
             hideAddSignalView();
 
             binding.fabAddSignal.setImageResource(R.drawable.fab_add);
@@ -570,10 +553,8 @@ public class SignalsMapFragment extends BaseFragment
 
     @Override
     public void openCamera() {
-        if (ContextCompat.checkSelfPermission(getContext(),
-                Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            showPermissionDialog(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE,
-                    READ_EXTERNAL_STORAGE_FOR_CAMERA);
+        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            showPermissionDialog(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE, READ_EXTERNAL_STORAGE_FOR_CAMERA);
         } else {
             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             if (intent.resolveActivity(getContext().getPackageManager()) != null) {
@@ -587,14 +568,10 @@ public class SignalsMapFragment extends BaseFragment
 
     @Override
     public void openGallery() {
-        if (ContextCompat.checkSelfPermission(getContext(),
-                Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            showPermissionDialog(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE,
-                    READ_EXTERNAL_STORAGE_FOR_GALLERY);
+        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            showPermissionDialog(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE, READ_EXTERNAL_STORAGE_FOR_GALLERY);
         } else {
-            Intent intent = new Intent(
-                    Intent.ACTION_PICK,
-                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+            Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
             if (intent.resolveActivity(getContext().getPackageManager()) != null) {
                 startActivityForResult(intent, REQUEST_GALLERY);
             }

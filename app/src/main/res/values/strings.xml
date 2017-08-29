@@ -76,5 +76,7 @@
     <string name="text_fab_add_signal">Tap to start composing your first signal.</string>
     <string name="txt_faqs_view_title">FAQs</string>
     <string name="text_tutorial_navigation">Side Navigation</string>
+    <string name="txt_user_changed_status_to">%1$s changed the status to \'%2$s\'</string>
+    <string name="txt_new_status_icon">New status icon</string>
 
 </resources>

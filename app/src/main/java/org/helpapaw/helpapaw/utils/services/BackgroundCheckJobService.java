@@ -32,13 +32,14 @@ import org.helpapaw.helpapaw.data.models.Signal;
 import org.helpapaw.helpapaw.data.repositories.SignalRepository;
 import org.helpapaw.helpapaw.signalsmap.SignalsMapActivity;
 import org.helpapaw.helpapaw.utils.Injection;
+import org.helpapaw.helpapaw.utils.StatusUtils;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static org.helpapaw.helpapaw.data.models.Signal.SignalStatus.SOLVED;
-import static org.helpapaw.helpapaw.data.models.Signal.SignalStatus.SOMEBODY_ON_THE_WAY;
+import static org.helpapaw.helpapaw.data.models.Signal.SOLVED;
+import static org.helpapaw.helpapaw.data.models.Signal.SOMEBODY_ON_THE_WAY;
 import static org.helpapaw.helpapaw.signalsmap.SignalsMapPresenter.DEFAULT_SEARCH_RADIUS;
 
 /**
@@ -110,7 +111,7 @@ public class BackgroundCheckJobService extends JobService {
                     if (signals != null && !signals.isEmpty()) {
 
                         for (Signal signal : signals) {
-                            if (signal.getStatus() < SOLVED.ordinal()) {
+                            if (signal.getStatus() < SOLVED) {
 
                                 showNotificationForSignal(signal);
                                 mCurrentNotificationIds.add(signal.getId());
@@ -161,16 +162,14 @@ public class BackgroundCheckJobService extends JobService {
         mBuilder.setOnlyAlertOnce(true);
 
         String status = "Status: ";
-        Bitmap pin;
-        if (signal.getStatus() == SOMEBODY_ON_THE_WAY.ordinal()) {
+        if (signal.getStatus() == SOMEBODY_ON_THE_WAY) {
             status += getString(R.string.txt_somebody_is_on_the_way);
-            pin = BitmapFactory.decodeResource(getResources(), R.drawable.pin_orange);
         }
         else {
             status += getString(R.string.txt_you_help_is_needed);
-            pin = BitmapFactory.decodeResource(getResources(), R.drawable.pin_red);
         }
 
+        Bitmap pin = BitmapFactory.decodeResource(getResources(), StatusUtils.getPinResourceForCode(signal.getStatus()));
         Bitmap largeIcon = scaleBitmapForLargeIcon(pin);
 
         mBuilder.setContentText(status);
