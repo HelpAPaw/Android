@@ -8,8 +8,8 @@ android {
         applicationId "org.helpapaw.helpapaw"
         minSdkVersion 16
         targetSdkVersion 23
-        versionCode 10
-        versionName "1.0.10"
+        versionCode 11
+        versionName "1.0.11"
         vectorDrawables.useSupportLibrary = true
     }
     buildTypes {
