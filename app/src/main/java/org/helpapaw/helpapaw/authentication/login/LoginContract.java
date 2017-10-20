@@ -1,5 +1,9 @@
 package org.helpapaw.helpapaw.authentication.login;
 
+import android.app.Activity;
+
+import com.facebook.CallbackManager;
+
 /**
  * Created by iliyan on 7/25/16
  */
@@ -37,5 +41,6 @@ public interface LoginContract {
 
         void onRegisterButtonClicked();
 
+        void onLoginFbButtonClicked(Activity activity, CallbackManager callbackManager);
     }
 }

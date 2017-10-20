@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import org.helpapaw.helpapaw.R;
+import org.helpapaw.helpapaw.authentication.AuthenticationActivity;
 import org.helpapaw.helpapaw.authentication.register.RegisterFragment;
 import org.helpapaw.helpapaw.base.BaseFragment;
 import org.helpapaw.helpapaw.base.Presenter;
@@ -30,8 +31,7 @@ public class LoginFragment extends BaseFragment implements LoginContract.View {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_login, container, false);
 
@@ -46,6 +46,9 @@ public class LoginFragment extends BaseFragment implements LoginContract.View {
 
         binding.btnLogin.setOnClickListener(getBtnLoginClickListener());
         binding.txtSignup.setOnClickListener(getTxtSignUpClickListener());
+        binding.btnLoginFb.setOnClickListener(getBtnLoginFbClickListener());
+        binding.btnLoginFb.setReadPermissions("email");
+        binding.btnLoginFb.setFragment(this);
 
         actionsListener.onInitLoginScreen();
 
@@ -130,6 +133,16 @@ public class LoginFragment extends BaseFragment implements LoginContract.View {
             @Override
             public void onClick(View v) {
                 actionsListener.onRegisterButtonClicked();
+            }
+        };
+    }
+
+    public View.OnClickListener getBtnLoginFbClickListener() {
+        return new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AuthenticationActivity activity = (AuthenticationActivity)getActivity();
+                actionsListener.onLoginFbButtonClicked(activity, activity.callbackManager);
             }
         };
     }

@@ -78,5 +78,9 @@
     <string name="text_tutorial_navigation">Side Navigation</string>
     <string name="txt_user_changed_status_to">%1$s changed the status to \'%2$s\'</string>
     <string name="txt_new_status_icon">New status icon</string>
+    <string name="txt_or">or</string>
+
+    <string name="facebook_app_id">***REMOVED***</string>
+    <string name="fb_login_protocol_scheme">fb***REMOVED***</string>
 
 </resources>

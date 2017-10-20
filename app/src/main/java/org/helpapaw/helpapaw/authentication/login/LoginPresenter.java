@@ -1,5 +1,13 @@
 package org.helpapaw.helpapaw.authentication.login;
 
+import android.app.Activity;
+
+import com.backendless.Backendless;
+import com.backendless.BackendlessUser;
+import com.backendless.async.callback.AsyncCallback;
+import com.backendless.exceptions.BackendlessFault;
+import com.facebook.CallbackManager;
+
 import org.helpapaw.helpapaw.base.Presenter;
 import org.helpapaw.helpapaw.data.user.UserManager;
 import org.helpapaw.helpapaw.utils.Injection;
@@ -82,5 +90,29 @@ public class LoginPresenter extends Presenter<LoginContract.View> implements Log
 
     private boolean isEmpty(String value) {
         return !(value != null && value.length() > 0);
+    }
+
+    @Override
+    public void onLoginFbButtonClicked(Activity activity, CallbackManager callbackManager) {
+        //TODO: inject this so the presenter doesn't know about Backendless
+        Backendless.UserService.loginWithFacebookSdk(activity,
+            callbackManager,
+            new AsyncCallback<BackendlessUser>()
+            {
+                @Override
+                public void handleResponse( BackendlessUser loggedInUser )
+                {
+                    // user logged in successfully
+                    getView().closeLoginScreen();
+                }
+
+                @Override
+                public void handleFault( BackendlessFault fault )
+                {
+                    // failed to log in
+                    getView().showMessage(fault.getMessage());
+                }
+            },
+            true);
     }
 }
