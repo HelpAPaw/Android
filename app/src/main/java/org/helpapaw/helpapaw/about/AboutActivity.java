@@ -1,10 +1,13 @@
 package org.helpapaw.helpapaw.about;
 
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 
 import org.helpapaw.helpapaw.R;
 import org.helpapaw.helpapaw.databinding.ActivityAboutBinding;
@@ -30,6 +33,14 @@ public class AboutActivity extends AppCompatActivity {
             supportActionBar.setDisplayShowTitleEnabled(false);
             binding.toolbarTitle.setText(getString(R.string.string_about_title));
         }
+
+        binding.tvAboutContacts.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts("mailto", getString(R.string.string_support_email), null));
+                startActivity(Intent.createChooser(emailIntent,getString(R.string.string_mail_chooser_title)));
+            }
+        });
     }
 
     @Override
