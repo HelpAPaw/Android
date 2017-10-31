@@ -81,7 +81,7 @@
 
     <string name="string_about_title">About</string>
     <string name="string_about_contact">Contact us</string>
-    <string name="string_about_milen">\u00a9 Mieln Marinov 2017</string>
+    <string name="string_about_milen">\u00a9 Milen Marinov 2017</string>
     <string name="string_support_email">help.a.paw.app@gmail.com</string>
     <string name="string_mail_chooser_title">help.a.paw.app@gmail.com</string>
 </resources>

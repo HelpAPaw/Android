@@ -65,20 +65,19 @@
                 android:layout_below="@+id/tv_title_text"
                 android:layout_marginTop="10dp"
                 android:gravity="center"
-                android:text="v 1.2"
+                tools:text="v1.2"
                 android:textColor="@color/color_accent"/>
 
-            <TextView
-                android:id="@+id/tv_about_contacts"
-                android:layout_width="match_parent"
+            <Button
+                android:id="@+id/btn_about_contacts"
+                android:layout_width="200dp"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/tv_about_version"
+                android:layout_below="@id/tv_about_version"
                 android:layout_marginTop="50dp"
-                android:clickable="true"
-                android:gravity="center"
-                android:text="@string/string_about_contact"
-                android:textColor="@color/color_accent"
-                android:textSize="20sp"/>
+                android:layout_centerHorizontal="true"
+                android:background="@color/color_accent"
+                android:textColor="@android:color/white"
+                android:text="@string/string_about_contact"/>
 
             <TextView
                 android:layout_width="match_parent"
