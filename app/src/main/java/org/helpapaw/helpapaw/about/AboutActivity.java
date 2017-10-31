@@ -11,6 +11,7 @@ import android.view.View;
 
 import org.helpapaw.helpapaw.R;
 import org.helpapaw.helpapaw.databinding.ActivityAboutBinding;
+import org.helpapaw.helpapaw.BuildConfig;
 
 /**
  * Created by Alex on 10/29/2017.
@@ -34,7 +35,9 @@ public class AboutActivity extends AppCompatActivity {
             binding.toolbarTitle.setText(getString(R.string.string_about_title));
         }
 
-        binding.tvAboutContacts.setOnClickListener(new View.OnClickListener() {
+        binding.tvAboutVersion.setText(BuildConfig.VERSION_NAME);
+
+        binding.btnAboutContacts.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts("mailto", getString(R.string.string_support_email), null));
