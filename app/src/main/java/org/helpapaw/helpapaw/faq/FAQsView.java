@@ -11,18 +11,16 @@ import org.helpapaw.helpapaw.R;
 import org.helpapaw.helpapaw.databinding.ActivityFaqsViewBinding;
 
 public class FAQsView extends AppCompatActivity {
-
-
-
     ActivityFaqsViewBinding binding;
     TextView mTextFaqs;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         initViews();
     }
 
-    private void initViews(){
+    private void initViews() {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_faqs_view);
         setSupportActionBar(binding.toolbar);
 
@@ -47,8 +45,6 @@ public class FAQsView extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -58,8 +54,7 @@ public class FAQsView extends AppCompatActivity {
         return false;
     }
 
-
-    private StringBuilder generateText(){
+    private StringBuilder generateText() {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("\'Q1\'");
         stringBuilder.append("\t");
@@ -111,5 +106,4 @@ public class FAQsView extends AppCompatActivity {
 
         return stringBuilder;
     }
-
 }

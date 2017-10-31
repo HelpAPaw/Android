@@ -79,4 +79,9 @@
     <string name="txt_user_changed_status_to">%1$s changed the status to \'%2$s\'</string>
     <string name="txt_new_status_icon">New status icon</string>
 
+    <string name="string_about_title">About</string>
+    <string name="string_about_contact">Contact us</string>
+    <string name="string_about_milen">\u00a9 Mieln Marinov 2017</string>
+    <string name="string_support_email">help.a.paw.app@gmail.com</string>
+    <string name="string_mail_chooser_title">help.a.paw.app@gmail.com</string>
 </resources>

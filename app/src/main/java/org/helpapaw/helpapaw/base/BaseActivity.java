@@ -13,13 +13,10 @@ import android.support.v4.view.GravityCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.view.ContextMenu;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 
 import org.helpapaw.helpapaw.R;
+import org.helpapaw.helpapaw.about.AboutActivity;
 import org.helpapaw.helpapaw.data.user.UserManager;
 import org.helpapaw.helpapaw.databinding.ActivityBaseBinding;
 import org.helpapaw.helpapaw.faq.FAQsView;
@@ -83,6 +80,8 @@ public abstract class BaseActivity extends AppCompatActivity {
 
                     case R.id.nav_item_about:
                         menuItem.setChecked(true);
+                        Intent intent = new Intent(BaseActivity.this, AboutActivity.class);
+                        startActivity(intent);
                         break;
 
                     case R.id.nav_item_sign_out:
@@ -115,12 +114,11 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
     }
 
-
-    private void navigateFAQsSection(){
+    private void navigateFAQsSection() {
         Intent intent = new Intent(this, FAQsView.class);
         startActivity(intent);
-
     }
+
     private ActionBarDrawerToggle setupDrawerToggle() {
         return new ActionBarDrawerToggle(this,
                 binding.drawer,
@@ -175,11 +173,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
     }
 
-
-
-
     protected abstract String getToolbarTitle();
 
     protected abstract int getLayoutId();
-
 }
