@@ -37,4 +37,5 @@ dependencies {
     compile 'de.hdodenhof:circleimageview:2.1.0'
     compile 'com.backendless:anroid:3.0.25'
     compile 'com.firebase:firebase-jobdispatcher:0.7.0'
+    compile 'com.android.support.constraint:constraint-layout:1.0.2'
 }
