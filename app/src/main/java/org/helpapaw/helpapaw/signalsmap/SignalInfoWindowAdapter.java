@@ -11,9 +11,10 @@ import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import org.helpapaw.helpapaw.R;
-import org.helpapaw.helpapaw.base.PawApplication;
 import org.helpapaw.helpapaw.data.models.Signal;
+import org.helpapaw.helpapaw.data.repositories.PhotoRepository;
 import org.helpapaw.helpapaw.databinding.InfoWindowSignalBinding;
+import org.helpapaw.helpapaw.utils.Injection;
 import org.helpapaw.helpapaw.utils.images.RoundedTransformation;
 
 import java.util.Map;
@@ -22,11 +23,6 @@ import java.util.Map;
  * Created by iliyan on 8/2/16
  */
 public class SignalInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
-
-    private final static String PHOTO_EXTENSION = ".jpg";
-    private final static String PHOTOS_DIRECTORY = "signal_photos";
-    private static final String BACKENDLESS_API_URL = "https://api.backendless.com/";
-    private static final String FILES_FOLDER = "/files/";
 
     private Map<String, Signal> signalMarkers;
     private LayoutInflater inflater;
@@ -50,7 +46,8 @@ public class SignalInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
 
         Signal signal = signalMarkers.get(marker.getId());
         if (signal != null) {
-            String photoUrl = getPhotoUrl(signal.getId());
+            PhotoRepository photoRepository = Injection.getPhotoRepositoryInstance();
+            String          photoUrl        = photoRepository.getPhotoUrl(signal.getId());
 
             if (lastShownMarker == null || !lastShownMarker.getId().equals(marker.getId())) {
                 lastShownMarker = marker;
@@ -102,12 +99,5 @@ public class SignalInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
             default:
                 return inflater.getContext().getString(R.string.txt_status_help_needed);
         }
-    }
-
-    private String getPhotoUrl(String signalId) {
-        return BACKENDLESS_API_URL +
-                PawApplication.YOUR_APP_ID + "/" +
-                PawApplication.YOUR_APP_VERSION + FILES_FOLDER +
-                PHOTOS_DIRECTORY + "/" + signalId + PHOTO_EXTENSION;
     }
 }

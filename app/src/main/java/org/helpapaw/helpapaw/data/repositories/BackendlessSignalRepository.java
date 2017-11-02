@@ -3,7 +3,6 @@ package org.helpapaw.helpapaw.data.repositories;
 import android.util.Log;
 
 import com.backendless.Backendless;
-import com.backendless.BackendlessCollection;
 import com.backendless.BackendlessUser;
 import com.backendless.async.callback.AsyncCallback;
 import com.backendless.exceptions.BackendlessFault;
@@ -11,6 +10,8 @@ import com.backendless.geo.BackendlessGeoQuery;
 import com.backendless.geo.GeoPoint;
 import com.backendless.geo.Units;
 
+import org.helpapaw.helpapaw.R;
+import org.helpapaw.helpapaw.base.PawApplication;
 import org.helpapaw.helpapaw.data.models.Signal;
 
 import java.util.ArrayList;
@@ -43,12 +44,12 @@ public class BackendlessSignalRepository implements SignalRepository {
             query.addCategory(category);
         }
 
-        Backendless.Geo.getPoints(query, new AsyncCallback<BackendlessCollection<GeoPoint>>() {
+        Backendless.Geo.getPoints(query, new AsyncCallback<List<GeoPoint>>() {
             @Override
-            public void handleResponse(BackendlessCollection<GeoPoint> response) {
+            public void handleResponse(List<GeoPoint> response) {
                 List<Signal> signals = new ArrayList<>();
-                for (int i = 0; i < response.getData().size(); i++) {
-                    GeoPoint geoPoint = response.getData().get(i);
+                for (int i = 0; i < response.size(); i++) {
+                    GeoPoint geoPoint = response.get(i);
 
                     String signalTitle = getToStringOrNull(geoPoint.getMetadata(SIGNAL_TITLE));
                     String dateSubmittedString = getToStringOrNull(geoPoint.getMetadata(SIGNAL_DATE_SUBMITTED));
@@ -104,38 +105,38 @@ public class BackendlessSignalRepository implements SignalRepository {
         }
 
         Backendless.Geo.savePoint(signal.getLatitude(), signal.getLongitude(), categories, meta, new AsyncCallback<GeoPoint>() {
-                    @Override
-                    public void handleResponse(GeoPoint geoPoint) {
-                        String signalTitle = getToStringOrNull(geoPoint.getMetadata(SIGNAL_TITLE));
+            @Override
+            public void handleResponse(GeoPoint geoPoint) {
+                String signalTitle = getToStringOrNull(geoPoint.getMetadata(SIGNAL_TITLE));
 
-                        String dateSubmittedString = getToStringOrNull(geoPoint.getMetadata(SIGNAL_DATE_SUBMITTED));
-                        Date   dateSubmitted = new Date(Long.valueOf(dateSubmittedString));
-                        String signalStatus = getToStringOrNull(geoPoint.getMetadata(SIGNAL_STATUS));
+                String dateSubmittedString = getToStringOrNull(geoPoint.getMetadata(SIGNAL_DATE_SUBMITTED));
+                Date   dateSubmitted = new Date(Long.valueOf(dateSubmittedString));
+                String signalStatus = getToStringOrNull(geoPoint.getMetadata(SIGNAL_STATUS));
 
-                        String signalAuthorName = null;
-                        String signalAuthorPhone = null;
+                String signalAuthorName = null;
+                String signalAuthorPhone = null;
 
-                        if ((geoPoint.getMetadata(SIGNAL_AUTHOR)) != null) {
-                            signalAuthorName = getToStringOrNull(((BackendlessUser) geoPoint.getMetadata(SIGNAL_AUTHOR)).getProperty(NAME_FIELD));
-                        }
+                if ((geoPoint.getMetadata(SIGNAL_AUTHOR)) != null) {
+                    signalAuthorName = getToStringOrNull(((BackendlessUser) geoPoint.getMetadata(SIGNAL_AUTHOR)).getProperty(NAME_FIELD));
+                }
 
-                        if ((geoPoint.getMetadata(SIGNAL_AUTHOR)) != null) {
-                            signalAuthorPhone = getToStringOrNull(((BackendlessUser) geoPoint.getMetadata(SIGNAL_AUTHOR)).getProperty(PHONE_FIELD));
-                        }
+                if ((geoPoint.getMetadata(SIGNAL_AUTHOR)) != null) {
+                    signalAuthorPhone = getToStringOrNull(((BackendlessUser) geoPoint.getMetadata(SIGNAL_AUTHOR)).getProperty(PHONE_FIELD));
+                }
 
-                        Signal savedSignal = new Signal(geoPoint.getObjectId(), signalTitle,
-                                dateSubmitted, Integer.parseInt(signalStatus),
-                                signalAuthorName, signalAuthorPhone,
-                                geoPoint.getLatitude(), geoPoint.getLongitude());
+                Signal savedSignal = new Signal(geoPoint.getObjectId(), signalTitle,
+                        dateSubmitted, Integer.parseInt(signalStatus),
+                        signalAuthorName, signalAuthorPhone,
+                        geoPoint.getLatitude(), geoPoint.getLongitude());
 
-                        callback.onSignalSaved(savedSignal);
-                    }
+                callback.onSignalSaved(savedSignal);
+            }
 
-                    @Override
-                    public void handleFault(BackendlessFault backendlessFault) {
-                        callback.onSignalFailure(backendlessFault.getMessage());
-                    }
-                });
+            @Override
+            public void handleFault(BackendlessFault backendlessFault) {
+                callback.onSignalFailure(backendlessFault.getMessage());
+            }
+        });
     }
 
     @Override
@@ -150,11 +151,15 @@ public class BackendlessSignalRepository implements SignalRepository {
             geoQuery.addCategory(category);
         }
 
-        Backendless.Geo.getPoints(geoQuery, new AsyncCallback<BackendlessCollection<GeoPoint>>() {
+        Backendless.Geo.getPoints(geoQuery, new AsyncCallback<List<GeoPoint>>() {
             @Override
-            public void handleResponse(BackendlessCollection<GeoPoint> response) {
-                //TODO: Add protection for empty array
-                GeoPoint signalPoint = response.getData().get(0);
+            public void handleResponse(List<GeoPoint> response) {
+                if (response.size() < 1) {
+                    callback.onStatusFailure(PawApplication.getContext().getString(R.string.error_empty_signal_response));
+                    return;
+                }
+
+                GeoPoint signalPoint = response.get(0);
                 if (signalPoint != null) {
                     Map<String, Object> meta = signalPoint.getMetadata();
                     meta.put(SIGNAL_STATUS, status);

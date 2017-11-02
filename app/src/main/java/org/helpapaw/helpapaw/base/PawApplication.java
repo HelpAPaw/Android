@@ -11,9 +11,9 @@ import org.helpapaw.helpapaw.utils.Injection;
  * Created by iliyan on 7/25/16
  */
 public class PawApplication extends Application {
-    public static final String YOUR_APP_ID = "7381F40A-5BA6-6CB5-FF82-1F0334A63B00";
-    private static final String YOUR_SECRET_KEY = "FF1687C9-961B-4388-FFF2-0C8BDC5DFB00";
-    public static final String YOUR_APP_VERSION = "v1";
+    public static final String  BACKENDLESS_APP_ID          = "BDCD56B9-351A-E067-FFA4-9EA9CF2F4000";
+    private static final String BACKENDLESS_ANDROID_API_KEY = "FF1687C9-961B-4388-FFF2-0C8BDC5DFB00";
+    public static final String BACKENDLESS_REST_API_KEY    = "FF1687C9-961B-4388-FFF2-0C8BDC5DFB00";
 
     public static final Boolean TEST_VERSION = true;
 
@@ -23,7 +23,7 @@ public class PawApplication extends Application {
     public void onCreate() {
         super.onCreate();
         pawApplication = this;
-        Backendless.initApp(this, YOUR_APP_ID, YOUR_SECRET_KEY, YOUR_APP_VERSION);
+        Backendless.initApp(this, BACKENDLESS_APP_ID, BACKENDLESS_ANDROID_API_KEY);
 
         // This is done in order to handle the situation where user token is saved on the device but is invalidated on the server
         final UserManager userManager = Injection.getUserManagerInstance();

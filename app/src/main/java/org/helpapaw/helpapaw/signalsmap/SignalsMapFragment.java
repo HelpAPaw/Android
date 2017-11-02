@@ -352,17 +352,18 @@ public class SignalsMapFragment extends BaseFragment
 
         // Add new signals to the currently displayed ones
         for (Signal newSignal : signals) {
-            boolean alreadyPresent = false;
+            Signal alreadyPresent = null;
             for (Signal presentSignal : mDisplayedSignals) {
                 if (newSignal.getId().equals(presentSignal.getId())) {
-                    alreadyPresent = true;
+                    alreadyPresent = presentSignal;
                     break;
                 }
             }
 
-            if (!alreadyPresent) {
-                mDisplayedSignals.add(newSignal);
+            if (alreadyPresent != null) {
+                mDisplayedSignals.remove(alreadyPresent);
             }
+            mDisplayedSignals.add(newSignal);
         }
 
         if (signalsGoogleMap != null) {
