@@ -84,4 +84,5 @@
     <string name="string_about_milen">\u00a9 Milen Marinov 2017</string>
     <string name="string_support_email">help.a.paw.app@gmail.com</string>
     <string name="string_mail_chooser_title">help.a.paw.app@gmail.com</string>
+    <string name="error_empty_signal_response">Got empty response! Signal not present anymore!?</string>
 </resources>

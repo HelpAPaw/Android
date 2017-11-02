@@ -10,7 +10,6 @@ import org.helpapaw.helpapaw.data.user.UserManager;
 import org.helpapaw.helpapaw.utils.Injection;
 import org.helpapaw.helpapaw.utils.Utils;
 
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -185,7 +184,7 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
                 setProgressIndicator(false);
                 commentList.add(comment);
                 getView().setNoCommentsTextVisibility(false);
-                getView().displayComments(Collections.singletonList(comment));
+                getView().displayComments(commentList);
             }
 
             @Override
