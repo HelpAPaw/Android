@@ -40,7 +40,8 @@
     <string name="txt_status_solved">Status: Solved</string>
     <string name="txt_description_required">Signal description is required!</string>
     <string name="txt_signal_added_successfully">Signal successfully added!</string>
-    <string name="txt_logout_successfully">You successfully logged out.</string>
+    <string name="txt_logout_succeeded">You successfully logged out.</string>
+    <string name="txt_logout_failed">Logout failed because: \'%1$s\'.</string>
 
     <!-- Strings related to Signal Details screen -->
     <string name="txt_signal_details_title">Signal Details</string>

@@ -5,6 +5,7 @@ import com.backendless.BackendlessUser;
 import com.backendless.async.callback.AsyncCallback;
 import com.backendless.exceptions.BackendlessFault;
 import com.backendless.persistence.local.UserTokenStorageFactory;
+import com.facebook.login.LoginManager;
 
 /**
  * Created by iliyan on 7/25/16
@@ -51,6 +52,7 @@ public class BackendlessUserManager implements UserManager {
     public void logout(final LogoutCallback logoutCallback) {
         Backendless.UserService.logout(new AsyncCallback<Void>() {
             public void handleResponse(Void response) {
+                LoginManager.getInstance().logOut();
                 logoutCallback.onLogoutSuccess();
             }
 

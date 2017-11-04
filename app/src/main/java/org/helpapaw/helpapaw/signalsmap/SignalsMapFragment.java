@@ -755,12 +755,12 @@ public class SignalsMapFragment extends BaseFragment
 
     @Override
     public void onLogoutSuccess() {
-        Snackbar.make(binding.getRoot().findViewById(R.id.fab_add_signal), R.string.txt_logout_successfully, Snackbar.LENGTH_LONG).show();
+        Snackbar.make(binding.getRoot().findViewById(R.id.fab_add_signal), R.string.txt_logout_succeeded, Snackbar.LENGTH_LONG).show();
     }
 
     @Override
     public void onLogoutFailure(String message) {
-        Snackbar.make(binding.getRoot().findViewById(R.id.fab_add_signal), message, Snackbar.LENGTH_LONG).show();
+        Snackbar.make(binding.getRoot().findViewById(R.id.fab_add_signal), String.format(getString(R.string.txt_logout_failed), message), Snackbar.LENGTH_LONG).show();
     }
 
     @Override
