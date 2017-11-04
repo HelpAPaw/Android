@@ -4,6 +4,7 @@ import android.databinding.DataBindingUtil;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Html;
 import android.view.MenuItem;
 import android.widget.TextView;
 
@@ -32,7 +33,7 @@ public class FAQsView extends AppCompatActivity {
             supportActionBar.setDisplayShowTitleEnabled(false);
             binding.toolbarTitle.setText(getString(R.string.txt_faqs_view_title));
         }
-        binding.tvFaqsText.setText(generateText());
+        binding.tvFaqsText.setText(Html.fromHtml(getString(R.string.string_faq)));
     }
 //    "Q1" = "How does this app work?";
 //    "A1" = "If you see a stray animal that needs help but for some reason cannot provide the help yourself you can submit a signal that marks the place and describes the situation. Other people that are nearby will receive a notification about it. Hopefully someone will react to the signal and help the animal.";
