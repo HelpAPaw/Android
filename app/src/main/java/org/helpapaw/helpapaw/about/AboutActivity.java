@@ -8,10 +8,11 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.TextView;
 
+import org.helpapaw.helpapaw.BuildConfig;
 import org.helpapaw.helpapaw.R;
 import org.helpapaw.helpapaw.databinding.ActivityAboutBinding;
-import org.helpapaw.helpapaw.BuildConfig;
 
 /**
  * Created by Alex on 10/29/2017.
@@ -41,7 +42,7 @@ public class AboutActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts("mailto", getString(R.string.string_support_email), null));
-                startActivity(Intent.createChooser(emailIntent,getString(R.string.string_mail_chooser_title)));
+                startActivity(Intent.createChooser(emailIntent, getString(R.string.string_mail_chooser_title)));
             }
         });
     }
