@@ -1,20 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    tools:context="org.helpapaw.helpapaw.faq.FAQsView">
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        tools:context="org.helpapaw.helpapaw.faq.FAQsView">
 
     <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#f2f2f2">
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="?attr/actionBarSize">
+
+            <ImageView
+                android:layout_width="300dp"
+                android:layout_height="300dp"
+                android:layout_centerInParent="true"
+                android:background="@drawable/logo"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:background="@android:color/white"
+                android:alpha="0.9"
+                android:layout_height="match_parent"/>
+        </RelativeLayout>
 
         <android.support.design.widget.AppBarLayout
             android:id="@+id/app_bar"
             android:layout_width="match_parent"
             android:layout_height="?actionBarSize"
             android:fitsSystemWindows="true"
-
             android:theme="@style/AppTheme.AppBarOverlay">
 
             <android.support.v7.widget.Toolbar
@@ -29,14 +45,15 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:textColor="@android:color/white"
-                    android:textSize="20sp" />
+                    android:textSize="20sp"/>
             </android.support.v7.widget.Toolbar>
-
         </android.support.design.widget.AppBarLayout>
+
         <android.support.v4.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginTop="?actionBarSize">
+
             <FrameLayout
                 android:id="@+id/grp_content_frame"
                 android:layout_width="match_parent"
@@ -45,14 +62,15 @@
                 android:paddingLeft="@dimen/activity_horizontal_margin"
                 android:paddingRight="@dimen/activity_horizontal_margin"
                 android:paddingTop="@dimen/activity_vertical_margin"
-                app:layout_behavior="@string/appbar_scrolling_view_behavior" >
+                app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
                 <TextView
                     android:id="@+id/tv_faqs_text"
-                    android:textSize="@dimen/font_size_faqs"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
-
+                    android:layout_height="match_parent"
+                    android:textSize="@dimen/font_size_faqs"/>
             </FrameLayout>
+
         </android.support.v4.widget.NestedScrollView>
     </android.support.design.widget.CoordinatorLayout>
 </layout>
