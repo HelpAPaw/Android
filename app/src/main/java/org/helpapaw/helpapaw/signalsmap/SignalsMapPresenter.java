@@ -87,17 +87,18 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
         if (this.latitude != 0 && this.longitude != 0) {
             if (Utils.getInstance().getDistanceBetween(latitude, longitude, this.latitude, this.longitude) > 300) {
                 getAllSignals(latitude, longitude, false);
+
+                this.latitude = latitude;
+                this.longitude = longitude;
             }
         } else {
             getAllSignals(latitude, longitude, false);
 
+            this.latitude = latitude;
+            this.longitude = longitude;
+
             getView().updateMapCameraPosition(latitude, longitude, DEFAULT_MAP_ZOOM);
         }
-
-        this.latitude = latitude;
-        this.longitude = longitude;
-
-
     }
 
     @Override
@@ -147,8 +148,6 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
             }
         });
     }
-
-
 
     private void saveSignal(String description, Date dateSubmitted, int status, final double latitude, final double longitude) {
         signalRepository.saveSignal(new Signal(description, dateSubmitted, status, latitude, longitude), new SignalRepository.SaveSignalCallback() {

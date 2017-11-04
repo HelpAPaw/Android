@@ -78,8 +78,15 @@
     <string name="text_tutorial_navigation">Side Navigation</string>
     <string name="txt_user_changed_status_to">%1$s changed the status to \'%2$s\'</string>
     <string name="txt_new_status_icon">New status icon</string>
+    <string name="string_about_title">About</string>
+    <string name="string_about_contact">Contact us</string>
+    <string name="string_about_milen">\u00a9 Milen Marinov 2017</string>
+    <string name="string_support_email">help.a.paw.app@gmail.com</string>
+    <string name="string_mail_chooser_title">help.a.paw.app@gmail.com</string>
+    <string name="error_empty_signal_response">Got empty response! Signal not present anymore!?</string>
+    <string name="txt_channel_description_help_needed">"Shows signals for animals near you that are in (urgent) need of help"</string>
+    <string name="txt_channel_description_somebody_on_the_way">"Shows signals for which help is on the way but are still not solved"</string>
     <string name="txt_or">or</string>
-
     <string name="facebook_app_id">***REMOVED***</string>
     <string name="fb_login_protocol_scheme">fb***REMOVED***</string>
 
