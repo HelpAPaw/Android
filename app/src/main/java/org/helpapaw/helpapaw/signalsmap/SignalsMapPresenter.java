@@ -323,14 +323,13 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
                     getView().onLogoutFailure(message);
                 }
             });
-        }else{
+        }
+        else {
             getView().onLogoutFailure("No connection.");
         }
     }
     @Override
-    public void onLoginAction() {
-
-    }
+    public void onLoginAction() {}
 
     private boolean isViewAvailable() {
         return getView() != null && getView().isActive();
