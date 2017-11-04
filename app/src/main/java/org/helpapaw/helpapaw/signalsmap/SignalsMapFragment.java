@@ -70,6 +70,7 @@ import org.helpapaw.helpapaw.utils.images.ImageUtils;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -105,6 +106,9 @@ public class SignalsMapFragment extends BaseFragment
     private GoogleApiClient googleApiClient;
     private LocationRequest locationRequest;
     private GoogleMap signalsGoogleMap;
+    private ArrayList<Signal> mDisplayedSignals = new ArrayList<>();
+    private Map<String, Signal> mSignalMarkers = new HashMap<>();
+    private Signal mCurrentlyShownInfoWindowSignal;
 
     private double mCurrentLat;
     private double mCurrentLong;
@@ -260,7 +264,9 @@ public class SignalsMapFragment extends BaseFragment
                 actionsListener.onInitSignalsMap();
                 signalsGoogleMap.setPadding(0, PADDING_TOP, 0, PADDING_BOTTOM);
                 signalsGoogleMap.setOnMapClickListener(mapClickListener);
+                signalsGoogleMap.setOnMarkerClickListener(mapMarkerClickListener);
                 signalsGoogleMap.setOnMarkerDragListener(mapDragListener);
+                signalsGoogleMap.setOnCameraIdleListener(mapCameraIdleListener);
             }
         };
     }
@@ -277,12 +283,17 @@ public class SignalsMapFragment extends BaseFragment
                 actionsListener.onMarkerMoved(latLng.latitude, latLng.longitude);
                 mMarkerAdded = true;
             }
+
+            // Clicking on the map closes any open info window
+            mCurrentlyShownInfoWindowSignal = null;
         }
     };
 
-    private GoogleMap.OnMarkerClickListener mMarkerClick = new GoogleMap.OnMarkerClickListener() {
+    private GoogleMap.OnMarkerClickListener mapMarkerClickListener = new GoogleMap.OnMarkerClickListener() {
         @Override
         public boolean onMarkerClick(Marker marker) {
+            // Save the signal for the currently shown info window in case it should be reopen
+            mCurrentlyShownInfoWindowSignal = mSignalMarkers.get(marker.getId());
             return false;
         }
     };
@@ -307,6 +318,14 @@ public class SignalsMapFragment extends BaseFragment
         }
     };
 
+    private GoogleMap.OnCameraIdleListener mapCameraIdleListener = new GoogleMap.OnCameraIdleListener() {
+        @Override
+        public void onCameraIdle() {
+            // Get signals for new camera location
+            LatLng cameraTarget = signalsGoogleMap.getCameraPosition().target;
+            actionsListener.onLocationChanged(cameraTarget.latitude, cameraTarget.longitude);
+        }
+    };
 
     @Override
     public void updateMapCameraPosition(double latitude, double longitude, float zoom) {
@@ -329,13 +348,30 @@ public class SignalsMapFragment extends BaseFragment
         Signal signal;
         Marker markerToFocus = null;
         Signal signalToFocus = null;
+        Marker markerToReShow = null;
 
-        final Map<String, Signal> signalMarkers = new HashMap<>();
+        // Add new signals to the currently displayed ones
+        for (Signal newSignal : signals) {
+            Signal alreadyPresent = null;
+            for (Signal presentSignal : mDisplayedSignals) {
+                if (newSignal.getId().equals(presentSignal.getId())) {
+                    alreadyPresent = presentSignal;
+                    break;
+                }
+            }
+
+            if (alreadyPresent != null) {
+                mDisplayedSignals.remove(alreadyPresent);
+            }
+            mDisplayedSignals.add(newSignal);
+        }
+
         if (signalsGoogleMap != null) {
             signalsGoogleMap.clear();
             signalsGoogleMap.setPadding(0, PADDING_TOP, 0, PADDING_BOTTOM);
-            for (int i = 0; i < signals.size(); i++) {
-                signal = signals.get(i);
+            for (int i = 0; i < mDisplayedSignals.size(); i++) {
+                signal = mDisplayedSignals.get(i);
+
                 MarkerOptions markerOptions = new MarkerOptions()
                         .position(new LatLng(signal.getLatitude(), signal.getLongitude()))
                         .title(signal.getTitle());
@@ -343,7 +379,7 @@ public class SignalsMapFragment extends BaseFragment
                 markerOptions.icon(BitmapDescriptorFactory.fromResource(StatusUtils.getPinResourceForCode(signal.getStatus())));
 
                 Marker marker = signalsGoogleMap.addMarker(markerOptions);
-                signalMarkers.put(marker.getId(), signal);
+                mSignalMarkers.put(marker.getId(), signal);
 
                 if (mFocusedSignalId != null) {
                     if (signal.getId().equalsIgnoreCase(mFocusedSignalId)) {
@@ -353,20 +389,30 @@ public class SignalsMapFragment extends BaseFragment
                         mFocusedSignalId = null;
                     }
                 }
+                // If an info window was open before signals refresh - reopen it
+                if (mCurrentlyShownInfoWindowSignal != null) {
+                    if (signal.getId().equalsIgnoreCase(mCurrentlyShownInfoWindowSignal.getId())) {
+                        markerToReShow = marker;
+                    }
+                }
             }
 
-            SignalInfoWindowAdapter infoWindowAdapter = new SignalInfoWindowAdapter(signalMarkers, getActivity().getLayoutInflater());
+            SignalInfoWindowAdapter infoWindowAdapter = new SignalInfoWindowAdapter(mSignalMarkers, getActivity().getLayoutInflater());
             signalsGoogleMap.setInfoWindowAdapter(infoWindowAdapter);
 
             signalsGoogleMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
                 @Override
                 public void onInfoWindowClick(Marker marker) {
-                    actionsListener.onSignalInfoWindowClicked(signalMarkers.get(marker.getId()));
+                    actionsListener.onSignalInfoWindowClicked(mSignalMarkers.get(marker.getId()));
                 }
             });
+
             if (showPopup && (markerToFocus != null)) {
                 markerToFocus.showInfoWindow();
                 updateMapCameraPosition(signalToFocus.getLatitude(), signalToFocus.getLongitude(), DEFAULT_MAP_ZOOM);
+            }
+            else if (markerToReShow != null) {
+                markerToReShow.showInfoWindow();
             }
         }
     }
@@ -459,6 +505,7 @@ public class SignalsMapFragment extends BaseFragment
     }
 
     private void handleNewLocation(Location location) {
+
         Log.d(TAG, location.toString());
         mCurrentLat = location.getLatitude();
         mCurrentLong = location.getLongitude();
@@ -663,8 +710,7 @@ public class SignalsMapFragment extends BaseFragment
     @Override
     public void setProgressVisibility(boolean visibility) {
         if (optionsMenu != null) {
-            final MenuItem refreshItem = optionsMenu
-                    .findItem(R.id.menu_item_refresh);
+            final MenuItem refreshItem = optionsMenu.findItem(R.id.menu_item_refresh);
 
             if (refreshItem != null) {
                 if (visibility) {
@@ -698,7 +744,6 @@ public class SignalsMapFragment extends BaseFragment
         } else {
             Log.d(TAG, "Marker already added");
         }
-
     }
 
     @Override
