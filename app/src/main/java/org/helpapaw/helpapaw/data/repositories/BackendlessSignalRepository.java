@@ -15,6 +15,7 @@ import org.helpapaw.helpapaw.base.PawApplication;
 import org.helpapaw.helpapaw.data.models.Signal;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -38,6 +39,12 @@ public class BackendlessSignalRepository implements SignalRepository {
     public void getAllSignals(double latitude, double longitude, double radius, final LoadSignalsCallback callback) {
         BackendlessGeoQuery query = new BackendlessGeoQuery(latitude, longitude, radius, Units.METERS);
         query.setIncludeMeta(true);
+
+        // Only get signals that were created in the last 3 days
+        final Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DATE, -3);
+        Date dateSubmitted = calendar.getTime();
+        query.setWhereClause( String.format( "dateSubmitted > %d", dateSubmitted.getTime() ) );
 
         String category = getCategory();
         if (category != null) {
