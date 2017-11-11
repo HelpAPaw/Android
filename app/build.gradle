@@ -23,8 +23,11 @@ android {
     }
 }
 
-ext.support_version = '27.0.0'
-ext.play_services_version = '11.4.2'
+ext {
+    support_version = '27.0.0'
+    play_services_version = '11.4.2'
+    roomVersion = '1.0.0'
+}
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
@@ -42,4 +45,6 @@ dependencies {
     compile 'com.firebase:firebase-jobdispatcher:0.7.0'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'com.facebook.android:facebook-android-sdk:4.26.0'
+    implementation "android.arch.persistence.room:runtime:$roomVersion"
+    annotationProcessor "android.arch.persistence.room:compiler:$roomVersion"
 }
