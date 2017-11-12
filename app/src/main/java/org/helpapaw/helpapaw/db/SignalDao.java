@@ -12,6 +12,7 @@ import java.util.List;
 
 /**
  * Created by Alex on 11/11/2017.
+ * This class is used to access the 'signals' table from the database
  */
 @Dao
 public interface SignalDao {
@@ -19,7 +20,7 @@ public interface SignalDao {
     List<Signal> getAll();
 
     @Query("SELECT * FROM signals where signal_id = :signal_id")
-    public List<Signal> getSignal(long signal_id);
+    List<Signal> getSignal(String signal_id);
 
     @Insert
     void insertAll(Signal... signals);

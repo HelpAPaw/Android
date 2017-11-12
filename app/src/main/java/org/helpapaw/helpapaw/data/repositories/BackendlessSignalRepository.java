@@ -81,9 +81,7 @@ public class BackendlessSignalRepository implements SignalRepository {
                         signalAuthorPhone = getToStringOrNull(((BackendlessUser) geoPoint.getMetadata(SIGNAL_AUTHOR)).getProperty(PHONE_FIELD));
                     }
 
-                    signals.add(new Signal(geoPoint.getObjectId(), signalTitle,
-                            dateSubmitted, Integer.parseInt(signalStatus),
-                            signalAuthorName, signalAuthorPhone,
+                    signals.add(new Signal(geoPoint.getObjectId(), signalTitle, dateSubmitted, Integer.parseInt(signalStatus), signalAuthorName, signalAuthorPhone,
                             geoPoint.getLatitude(), geoPoint.getLongitude()));
                 }
                 callback.onSignalsLoaded(signals);
