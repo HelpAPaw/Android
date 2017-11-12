@@ -29,7 +29,6 @@ public class SignalsMapActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         if (null == savedInstanceState) {
             if (getIntent().hasExtra(Signal.KEY_FOCUSED_SIGNAL_ID)) {
                 initFragment(SignalsMapFragment.newInstance(getIntent().getStringExtra(Signal.KEY_FOCUSED_SIGNAL_ID)));
@@ -37,7 +36,6 @@ public class SignalsMapActivity extends BaseActivity {
                 initFragment(SignalsMapFragment.newInstance());
             }
         }
-
         scheduleBackgroundChecks();
     }
 
@@ -82,7 +80,7 @@ public class SignalsMapActivity extends BaseActivity {
         }
     }
 
-    public Toolbar getToolbar(){
+    public Toolbar getToolbar() {
         return binding.toolbar;
     }
 

@@ -19,6 +19,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 
 import org.helpapaw.helpapaw.data.models.Signal;
 import org.helpapaw.helpapaw.data.repositories.SignalRepository;
+import org.helpapaw.helpapaw.db.SignalsDatabase;
 import org.helpapaw.helpapaw.utils.Injection;
 import org.helpapaw.helpapaw.utils.NotificationUtils;
 
@@ -35,48 +36,47 @@ import static org.helpapaw.helpapaw.signalsmap.SignalsMapPresenter.DEFAULT_SEARC
  */
 
 public class BackgroundCheckJobService extends JobService {
-
+    private SignalsDatabase database;
     public static final String TAG = BackgroundCheckJobService.class.getSimpleName();
     static final String CURRENT_NOTIFICATION_IDS = "CurrentNotificationIds";
 
-    HashSet<String>     mCurrentNotificationIds = new HashSet<>();
+    HashSet<String> mCurrentNotificationIds = new HashSet<>();
     NotificationManager mNotificationManager;
-    SharedPreferences   mSharedPreferences;
+    SharedPreferences mSharedPreferences;
 
     @Override
     public boolean onStartJob(final JobParameters job) {
+        database = SignalsDatabase.getDatabase(this);
 
         Log.d(TAG, "onStartJob called");
 
-        mNotificationManager    = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
-        mSharedPreferences      = getApplicationContext().getSharedPreferences(TAG, Context.MODE_PRIVATE);
+        mNotificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
+        mSharedPreferences = getApplicationContext().getSharedPreferences(TAG, Context.MODE_PRIVATE);
 
         // Do some work here
         if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             FusedLocationProviderClient mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
             mFusedLocationClient.getLastLocation()
-            .addOnSuccessListener(new OnSuccessListener<Location>() {
-                @Override
-                public void onSuccess(Location location) {
-                    //Got last known location. In some rare situations this can be null.
-                    if (location != null) {
-                        getSignalsForLastKnownLocation(location, job);
-                    }
-                    else {
-                        Log.d(TAG, "got callback but last location is null");
-                        jobFinished(job, true);
-                    }
-                }
-            })
-            .addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    Log.d(TAG, "failed to get location");
-                    jobFinished(job, true);
-                }
-            });
-        }
-        else {
+                    .addOnSuccessListener(new OnSuccessListener<Location>() {
+                        @Override
+                        public void onSuccess(Location location) {
+                            //Got last known location. In some rare situations this can be null.
+                            if (location != null) {
+                                getSignalsForLastKnownLocation(location, job);
+                            } else {
+                                Log.d(TAG, "got callback but last location is null");
+                                jobFinished(job, true);
+                            }
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.d(TAG, "failed to get location");
+                            jobFinished(job, true);
+                        }
+                    });
+        } else {
             Log.d(TAG, "No location permission");
         }
 
@@ -85,52 +85,56 @@ public class BackgroundCheckJobService extends JobService {
 
     @Override
     public boolean onStopJob(JobParameters job) {
+        SignalsDatabase.destroyInstance();
         return true; // Answers the question: "Should this job be retried?"
     }
 
     private void getSignalsForLastKnownLocation(Location location, final JobParameters job) {
 
         Injection.getSignalRepositoryInstance().getAllSignals(location.getLatitude(), location.getLongitude(), DEFAULT_SEARCH_RADIUS, new SignalRepository.LoadSignalsCallback() {
-                @Override
-                public void onSignalsLoaded(List<Signal> signals) {
+            @Override
+            public void onSignalsLoaded(List<Signal> signals) {
 
-                    Log.d(TAG, "got signals");
+                Log.d(TAG, "got signals");
 
-                    if (signals != null && !signals.isEmpty()) {
+                if (signals != null && !signals.isEmpty()) {
 
-                        for (Signal signal : signals) {
-                            if (signal.getStatus() < SOLVED) {
-
+                    for (Signal signal : signals) {
+                        if (signal.getStatus() < SOLVED) {
+                            List<Signal> signalsFromDB = database.userDao().getSignal(Long.parseLong(signal.getId()));
+                            if (signalsFromDB.size() == 0) {
                                 NotificationUtils.showNotificationForSignal(signal, getApplicationContext());
                                 mCurrentNotificationIds.add(signal.getId());
+                                database.userDao().addSignal(signal);
                             }
                         }
                     }
+                }
 
-                    // Cancel all previous notifications that are not currently present
-                    Set<String> oldNotificationIds = mSharedPreferences.getStringSet(CURRENT_NOTIFICATION_IDS, null);
-                    if (oldNotificationIds != null) {
-                        for (String id : oldNotificationIds) {
-                            if (!mCurrentNotificationIds.contains(id)) {
-                                mNotificationManager.cancel(id.hashCode());
-                            }
+                // Cancel all previous notifications that are not currently present
+                Set<String> oldNotificationIds = mSharedPreferences.getStringSet(CURRENT_NOTIFICATION_IDS, null);
+                if (oldNotificationIds != null) {
+                    for (String id : oldNotificationIds) {
+                        if (!mCurrentNotificationIds.contains(id)) {
+                            mNotificationManager.cancel(id.hashCode());
                         }
                     }
-
-                    // Save ids of current notifications
-                    SharedPreferences.Editor editor = mSharedPreferences.edit();
-                    editor.putStringSet(CURRENT_NOTIFICATION_IDS, mCurrentNotificationIds);
-                    editor.apply();
-
-                    jobFinished(job, false);
                 }
 
-                @Override
-                public void onSignalsFailure(String message) {
-                    Log.d(TAG, "there was a problem obtaining signals: " + message);
-                    jobFinished(job, true);
-                }
-            });
+                // Save ids of current notifications
+                SharedPreferences.Editor editor = mSharedPreferences.edit();
+                editor.putStringSet(CURRENT_NOTIFICATION_IDS, mCurrentNotificationIds);
+                editor.apply();
+
+                jobFinished(job, false);
+            }
+
+            @Override
+            public void onSignalsFailure(String message) {
+                Log.d(TAG, "there was a problem obtaining signals: " + message);
+                jobFinished(job, true);
+            }
+        });
 
     }
 }
