@@ -101,7 +101,7 @@ public class BackgroundCheckJobService extends JobService {
 
                     for (Signal signal : signals) {
                         if (signal.getStatus() < SOLVED) {
-                            List<Signal> signalsFromDB = database.userDao().getSignal(Long.parseLong(signal.getId()));
+                            List<Signal> signalsFromDB = database.userDao().getSignal(signal.getId());
                             if (signalsFromDB.size() == 0) {
                                 NotificationUtils.showNotificationForSignal(signal, getApplicationContext());
                                 mCurrentNotificationIds.add(signal.getId());
