@@ -22,6 +22,9 @@ public interface SignalDao {
     @Query("SELECT * FROM signals where signal_id = :signal_id")
     List<Signal> getSignal(String signal_id);
 
+    @Query("SELECT * FROM signals WHERE signal_id IN (:signal_ids)")
+    List<Signal> getSignals(String[] signal_ids);
+
     @Insert
     void insertAll(Signal... signals);
 
@@ -29,5 +32,5 @@ public interface SignalDao {
     void delete(Signal signal);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void addSignal(Signal signal);
+    void saveSignal(Signal signal);
 }

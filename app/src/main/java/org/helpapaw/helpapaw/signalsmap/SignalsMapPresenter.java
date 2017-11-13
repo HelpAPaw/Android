@@ -61,6 +61,7 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
                         public void onSignalsLoaded(List<Signal> signals) {
                             if (!isViewAvailable()) return;
                             signalsList = signals;
+                            signalRepository.markSignalsAsSeen(signals);
                             getView().displaySignals(signals, showPopup);
                             getView().setProgressVisibility(false);
                         }

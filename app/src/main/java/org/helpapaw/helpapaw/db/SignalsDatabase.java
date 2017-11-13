@@ -9,13 +9,14 @@ import org.helpapaw.helpapaw.data.models.Signal;
 
 /**
  * Created by Alex on 11/11/2017.
+ *
  */
 
 @Database(entities = {Signal.class}, version = 1)
 public abstract class SignalsDatabase extends RoomDatabase {
     private static SignalsDatabase INSTANCE;
 
-    public abstract SignalDao userDao();
+    public abstract SignalDao signalDao();
 
     public static SignalsDatabase getDatabase(Context context) {
         if (INSTANCE == null) {

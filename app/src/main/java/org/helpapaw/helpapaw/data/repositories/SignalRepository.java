@@ -15,6 +15,8 @@ public interface SignalRepository {
 
     void updateSignalStatus(String signalId, int status, UpdateStatusCallback callback);
 
+    void markSignalsAsSeen(List<Signal> signals);
+
 
     interface LoadSignalsCallback {
 
