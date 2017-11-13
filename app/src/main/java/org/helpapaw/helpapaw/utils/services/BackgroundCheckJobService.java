@@ -3,7 +3,6 @@ package org.helpapaw.helpapaw.utils.services;
 import android.Manifest;
 import android.app.NotificationManager;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.support.annotation.NonNull;
@@ -25,7 +24,6 @@ import org.helpapaw.helpapaw.utils.NotificationUtils;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import static org.helpapaw.helpapaw.data.models.Signal.SOLVED;
 import static org.helpapaw.helpapaw.signalsmap.SignalsMapPresenter.DEFAULT_SEARCH_RADIUS;
@@ -42,7 +40,7 @@ public class BackgroundCheckJobService extends JobService {
 
     HashSet<String> mCurrentNotificationIds = new HashSet<>();
     NotificationManager mNotificationManager;
-    SharedPreferences mSharedPreferences;
+//    SharedPreferences mSharedPreferences;
 
     @Override
     public boolean onStartJob(final JobParameters job) {
@@ -51,7 +49,7 @@ public class BackgroundCheckJobService extends JobService {
         Log.d(TAG, "onStartJob called");
 
         mNotificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
-        mSharedPreferences = getApplicationContext().getSharedPreferences(TAG, Context.MODE_PRIVATE);
+//        mSharedPreferences = getApplicationContext().getSharedPreferences(TAG, Context.MODE_PRIVATE);
 
         // Do some work here
         if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
@@ -85,7 +83,7 @@ public class BackgroundCheckJobService extends JobService {
 
     @Override
     public boolean onStopJob(JobParameters job) {
-        SignalsDatabase.destroyInstance();
+        database = null;
         return true; // Answers the question: "Should this job be retried?"
     }
 
@@ -101,30 +99,34 @@ public class BackgroundCheckJobService extends JobService {
 
                     for (Signal signal : signals) {
                         if (signal.getStatus() < SOLVED) {
-                            List<Signal> signalsFromDB = database.userDao().getSignal(signal.getId());
-                            if (signalsFromDB.size() == 0) {
-                                NotificationUtils.showNotificationForSignal(signal, getApplicationContext());
-                                mCurrentNotificationIds.add(signal.getId());
-                                database.userDao().addSignal(signal);
+                            List<Signal> signalsFromDB = database.signalDao().getSignal(signal.getId());
+                            if (signalsFromDB.size() > 0) {
+                                Signal signalFromDb = signalsFromDB.get(0);
+                                if (!signalFromDb.getSeen()) {
+                                    NotificationUtils.showNotificationForSignal(signal, getApplicationContext());
+                                    mCurrentNotificationIds.add(signal.getId());
+                                    signalFromDb.setSeen(true);
+                                    database.signalDao().saveSignal(signalFromDb);
+                                }
                             }
                         }
                     }
                 }
 
                 // Cancel all previous notifications that are not currently present
-                Set<String> oldNotificationIds = mSharedPreferences.getStringSet(CURRENT_NOTIFICATION_IDS, null);
-                if (oldNotificationIds != null) {
-                    for (String id : oldNotificationIds) {
-                        if (!mCurrentNotificationIds.contains(id)) {
-                            mNotificationManager.cancel(id.hashCode());
-                        }
-                    }
-                }
+//                Set<String> oldNotificationIds = mSharedPreferences.getStringSet(CURRENT_NOTIFICATION_IDS, null);
+//                if (oldNotificationIds != null) {
+//                    for (String id : oldNotificationIds) {
+//                        if (!mCurrentNotificationIds.contains(id)) {
+//                            mNotificationManager.cancel(id.hashCode());
+//                        }
+//                    }
+//                }
 
                 // Save ids of current notifications
-                SharedPreferences.Editor editor = mSharedPreferences.edit();
-                editor.putStringSet(CURRENT_NOTIFICATION_IDS, mCurrentNotificationIds);
-                editor.apply();
+//                SharedPreferences.Editor editor = mSharedPreferences.edit();
+//                editor.putStringSet(CURRENT_NOTIFICATION_IDS, mCurrentNotificationIds);
+//                editor.apply();
 
                 jobFinished(job, false);
             }

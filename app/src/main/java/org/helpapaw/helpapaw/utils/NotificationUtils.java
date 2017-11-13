@@ -81,7 +81,7 @@ public class NotificationUtils {
         mBuilder.setContentTitle(signal.getTitle());
         mBuilder.setDefaults(Notification.DEFAULT_ALL);
         mBuilder.setWhen(signal.getDateSubmitted().getTime());
-        mBuilder.setAutoCancel(false);
+        mBuilder.setAutoCancel(true);
         mBuilder.setOnlyAlertOnce(true);
 
         Bitmap pin       = BitmapFactory.decodeResource(context.getResources(), StatusUtils.getPinResourceForCode(signal.getStatus()));

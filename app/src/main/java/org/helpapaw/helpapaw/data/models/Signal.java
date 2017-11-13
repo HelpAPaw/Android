@@ -47,14 +47,17 @@ public class Signal implements Parcelable {
     private double latitude;
     @ColumnInfo(name = "longitude")
     private double longitude;
+    @ColumnInfo(name = "seen")
+    private boolean seen;
 
     public Signal() {
     }
 
     @Ignore
-    public Signal(String id, String title, Date dateSubmitted, int status, String authorName, String authorPhone, double latitude, double longitude) {
+    public Signal(String id, String title, Date dateSubmitted, int status, String authorName, String authorPhone, double latitude, double longitude, boolean seen) {
         this(title, dateSubmitted, status, authorName, authorPhone, latitude, longitude);
         this.id = id;
+        this.seen = seen;
     }
 
     @Ignore
@@ -89,6 +92,7 @@ public class Signal implements Parcelable {
         status = in.readInt();
         latitude = in.readDouble();
         longitude = in.readDouble();
+        seen = in.readByte() != 0;
     }
 
     public static final Creator<Signal> CREATOR = new Creator<Signal>() {
@@ -175,6 +179,10 @@ public class Signal implements Parcelable {
         this.status = status;
     }
 
+    public boolean getSeen() { return seen; }
+
+    public void setSeen(boolean seen) { this.seen = seen; }
+
     @Override
     public int describeContents() {
         return 0;
@@ -191,5 +199,6 @@ public class Signal implements Parcelable {
         dest.writeInt(status);
         dest.writeDouble(latitude);
         dest.writeDouble(longitude);
+        dest.writeByte((byte) (seen ? 1 : 0));
     }
 }
