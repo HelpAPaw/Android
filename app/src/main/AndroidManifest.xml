@@ -11,8 +11,7 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
 
-    <uses-feature android:name="android.location.gps"/>
-    <uses-feature android:name="android.location.network"/>
+    <uses-feature android:name="android.hardware.location"/>
     <uses-feature
         android:glEsVersion="0x00020000"
         android:required="true"/>
