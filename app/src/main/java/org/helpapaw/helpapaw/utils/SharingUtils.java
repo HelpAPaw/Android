@@ -1,24 +1,17 @@
 package org.helpapaw.helpapaw.utils;
 
 import android.app.Activity;
-import android.support.v4.app.ShareCompat;
+import android.content.Intent;
+import android.net.Uri;
 
-/**
- * Created by Emil Ivanov on 10/15/2016.
- */
+import org.helpapaw.helpapaw.R;
 
 public class SharingUtils {
 
-    public static final String EMAIL = "help.a.paw.app@gmail.com";
-    public static final String SUBJECT ="[Help A Paw] Feedback";
-    public static final String CHOOSER_TITLE = "Send Feedback";
-
-    public static void sendFeedbackUsingCompat(Activity activity) {
-        ShareCompat.IntentBuilder.from(activity)
-                .setType("message/rfc822")
-                .addEmailTo(EMAIL)
-                .setSubject(SUBJECT)
-                .setChooserTitle(CHOOSER_TITLE)
-                .startChooser();
+    public static void contactSupport(Activity activity) {
+        Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts("mailto", activity.getString(R.string.string_support_email), null));
+        emailIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        Intent chooserIntent = Intent.createChooser(emailIntent, activity.getString(R.string.string_support_email));
+        activity.startActivity(chooserIntent);
     }
 }

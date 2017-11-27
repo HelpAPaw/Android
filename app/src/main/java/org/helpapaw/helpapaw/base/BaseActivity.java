@@ -73,8 +73,7 @@ public abstract class BaseActivity extends AppCompatActivity {
                         break;
 
                     case R.id.nav_item_feedback:
-//                        startActivity(SharingUtils.sendFeedback());
-                        SharingUtils.sendFeedbackUsingCompat(BaseActivity.this);
+                        SharingUtils.contactSupport(BaseActivity.this);
                         menuItem.setChecked(false);
                         break;
 

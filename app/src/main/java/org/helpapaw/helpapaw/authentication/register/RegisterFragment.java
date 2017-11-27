@@ -4,7 +4,6 @@ package org.helpapaw.helpapaw.authentication.register;
 import android.app.DialogFragment;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +13,7 @@ import org.helpapaw.helpapaw.base.BaseFragment;
 import org.helpapaw.helpapaw.base.Presenter;
 import org.helpapaw.helpapaw.base.PresenterManager;
 import org.helpapaw.helpapaw.databinding.FragmentRegisterBinding;
+import org.helpapaw.helpapaw.reusable.AlertDialogFragment;
 
 public class RegisterFragment extends BaseFragment implements RegisterContract.View {
 
@@ -56,7 +56,8 @@ public class RegisterFragment extends BaseFragment implements RegisterContract.V
 
     @Override
     public void showMessage(String message) {
-        Snackbar.make(binding.getRoot(), message, Snackbar.LENGTH_LONG).show();
+//        Snackbar.make(binding.getRoot(), message, Snackbar.LENGTH_LONG).show();
+        AlertDialogFragment.showAlert("Error", message, true, this);
     }
 
     @Override
