@@ -62,6 +62,7 @@ import org.helpapaw.helpapaw.base.PresenterManager;
 import org.helpapaw.helpapaw.data.models.Signal;
 import org.helpapaw.helpapaw.data.user.UserManager;
 import org.helpapaw.helpapaw.databinding.FragmentSignalsMapBinding;
+import org.helpapaw.helpapaw.reusable.AlertDialogFragment;
 import org.helpapaw.helpapaw.sendsignal.SendPhotoBottomSheet;
 import org.helpapaw.helpapaw.signaldetails.SignalDetailsActivity;
 import org.helpapaw.helpapaw.utils.Injection;
@@ -760,7 +761,7 @@ public class SignalsMapFragment extends BaseFragment
 
     @Override
     public void onLogoutFailure(String message) {
-        Snackbar.make(binding.getRoot().findViewById(R.id.fab_add_signal), String.format(getString(R.string.txt_logout_failed), message), Snackbar.LENGTH_LONG).show();
+        AlertDialogFragment.showAlert(getString(R.string.txt_logout_failed), message, true, this.getFragmentManager());
     }
 
     @Override

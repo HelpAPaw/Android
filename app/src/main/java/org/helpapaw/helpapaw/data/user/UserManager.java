@@ -13,6 +13,8 @@ public interface UserManager {
 
     void isLoggedIn(LoginCallback loginCallback);
 
+    boolean isLoggedIn();
+
     String getUserToken();
 
     interface LoginCallback {

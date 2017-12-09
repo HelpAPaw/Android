@@ -1,12 +1,12 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <group>
+        <item android:id="@+id/nav_item_sign_in_out"
+              android:title="@string/txt_log_out"/>
         <item android:id="@+id/nav_item_faqs"
               android:title="@string/text_faqs"/>
         <item android:id="@+id/nav_item_feedback"
               android:title="@string/text_feedback"/>
         <item android:id="@+id/nav_item_about"
               android:title="@string/text_about"/>
-        <item android:id="@+id/nav_item_sign_out"
-              android:title="@string/txt_sign_out"/>
     </group>
 </menu>

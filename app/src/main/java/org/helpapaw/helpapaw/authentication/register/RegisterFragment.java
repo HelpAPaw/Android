@@ -31,8 +31,7 @@ public class RegisterFragment extends BaseFragment implements RegisterContract.V
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_register, container, false);
 
@@ -56,8 +55,7 @@ public class RegisterFragment extends BaseFragment implements RegisterContract.V
 
     @Override
     public void showMessage(String message) {
-//        Snackbar.make(binding.getRoot(), message, Snackbar.LENGTH_LONG).show();
-        AlertDialogFragment.showAlert("Error", message, true, this);
+        AlertDialogFragment.showAlert("Error", message, true, this.getFragmentManager());
     }
 
     @Override
