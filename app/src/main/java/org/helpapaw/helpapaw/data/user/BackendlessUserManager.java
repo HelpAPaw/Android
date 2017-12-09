@@ -103,4 +103,11 @@ public class BackendlessUserManager implements UserManager {
     public String getUserToken() {
        return UserTokenStorageFactory.instance().getStorage().get();
     }
+
+    @Override
+    public boolean isLoggedIn() {
+        String userToken = getUserToken();
+
+        return userToken != null && !userToken.equals("");
+    }
 }

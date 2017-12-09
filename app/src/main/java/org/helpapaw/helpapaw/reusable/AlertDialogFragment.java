@@ -4,7 +4,6 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
@@ -20,15 +19,13 @@ public class AlertDialogFragment extends DialogFragment {
     public static final String ARG_MESSAGE = "AlertDialog.Message";
     public static final String ARG_SHOW_SUPPORT = "AlertDialog.ShowSupport";
 
-    public static void showAlert(String title, String message, boolean showSupportButton, Fragment targetFragment) {
+    public static void showAlert(String title, String message, boolean showSupportButton, FragmentManager fm) {
         DialogFragment dialog = new AlertDialogFragment();
         Bundle args = new Bundle();
         args.putString(ARG_TITLE, title);
         args.putString(ARG_MESSAGE, message);
         args.putBoolean(ARG_SHOW_SUPPORT, showSupportButton);
         dialog.setArguments(args);
-        dialog.setTargetFragment(targetFragment, 0);
-        FragmentManager fm = targetFragment.getFragmentManager();
         if (fm != null) {
             dialog.show(fm, "tag");
         }

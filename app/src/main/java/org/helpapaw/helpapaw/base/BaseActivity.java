@@ -17,9 +17,11 @@ import android.view.MenuItem;
 
 import org.helpapaw.helpapaw.R;
 import org.helpapaw.helpapaw.about.AboutActivity;
+import org.helpapaw.helpapaw.authentication.AuthenticationActivity;
 import org.helpapaw.helpapaw.data.user.UserManager;
 import org.helpapaw.helpapaw.databinding.ActivityBaseBinding;
 import org.helpapaw.helpapaw.faq.FAQsView;
+import org.helpapaw.helpapaw.reusable.AlertDialogFragment;
 import org.helpapaw.helpapaw.utils.Injection;
 import org.helpapaw.helpapaw.utils.SharingUtils;
 import org.helpapaw.helpapaw.utils.Utils;
@@ -83,8 +85,12 @@ public abstract class BaseActivity extends AppCompatActivity {
                         startActivity(intent);
                         break;
 
-                    case R.id.nav_item_sign_out:
-                        signOut();
+                    case R.id.nav_item_sign_in_out:
+                        if (userManager.isLoggedIn()) {
+                            logOut();
+                        } else {
+                            logIn();
+                        }
                         break;
                 }
 
@@ -95,22 +101,27 @@ public abstract class BaseActivity extends AppCompatActivity {
         };
     }
 
-    private void signOut() {
+    private void logIn() {
+        Intent intent = new Intent(PawApplication.getContext(), AuthenticationActivity.class);
+        startActivity(intent);
+    }
+
+    private void logOut() {
         if (Utils.getInstance().hasNetworkConnection()) {
             userManager.logout(new UserManager.LogoutCallback() {
                 @Override
                 public void onLogoutSuccess() {
                     Snackbar.make(binding.getRoot().findViewById(R.id.fab_add_signal), R.string.txt_logout_succeeded, Snackbar.LENGTH_LONG).show();
-                    binding.navView.getMenu().findItem(R.id.nav_item_sign_out).setVisible(false);
+                    binding.navView.getMenu().findItem(R.id.nav_item_sign_in_out).setTitle(R.string.txt_log_in);
                 }
 
                 @Override
                 public void onLogoutFailure(String message) {
-                    Snackbar.make(binding.getRoot().findViewById(R.id.fab_add_signal), String.format(getString(R.string.txt_logout_failed), message), Snackbar.LENGTH_LONG).show();
+                    AlertDialogFragment.showAlert(getString(R.string.txt_logout_failed), message, true, BaseActivity.this.getSupportFragmentManager());
                 }
             });
         } else {
-            Snackbar.make(binding.getRoot().findViewById(R.id.fab_add_signal), R.string.txt_no_internet, Snackbar.LENGTH_LONG).show();
+            AlertDialogFragment.showAlert(getString(R.string.txt_logout_failed), getResources().getString(R.string.txt_no_internet), false, BaseActivity.this.getSupportFragmentManager());
         }
     }
 
@@ -153,14 +164,12 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        String userToken = userManager.getUserToken();
+        binding.navView.getMenu().findItem(R.id.nav_item_sign_in_out).setChecked(false);
 
-        binding.navView.getMenu().findItem(R.id.nav_item_sign_out).setChecked(false);
-
-        if (userToken != null && !userToken.equals("")) {
-            binding.navView.getMenu().findItem(R.id.nav_item_sign_out).setVisible(true);
+        if (userManager.isLoggedIn()) {
+            binding.navView.getMenu().findItem(R.id.nav_item_sign_in_out).setTitle(R.string.txt_log_out);
         } else {
-            binding.navView.getMenu().findItem(R.id.nav_item_sign_out).setVisible(false);
+            binding.navView.getMenu().findItem(R.id.nav_item_sign_in_out).setTitle(R.string.txt_log_in);
         }
     }
 

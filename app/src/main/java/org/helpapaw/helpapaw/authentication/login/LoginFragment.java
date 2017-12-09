@@ -2,7 +2,6 @@ package org.helpapaw.helpapaw.authentication.login;
 
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +13,7 @@ import org.helpapaw.helpapaw.base.BaseFragment;
 import org.helpapaw.helpapaw.base.Presenter;
 import org.helpapaw.helpapaw.base.PresenterManager;
 import org.helpapaw.helpapaw.databinding.FragmentLoginBinding;
+import org.helpapaw.helpapaw.reusable.AlertDialogFragment;
 
 public class LoginFragment extends BaseFragment implements LoginContract.View {
 
@@ -57,7 +57,7 @@ public class LoginFragment extends BaseFragment implements LoginContract.View {
 
     @Override
     public void showMessage(String message) {
-        Snackbar.make(binding.getRoot(), message, Snackbar.LENGTH_LONG).show();
+        AlertDialogFragment.showAlert("Error", message, true, this.getFragmentManager());
     }
 
     @Override

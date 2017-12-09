@@ -19,7 +19,8 @@
     <!-- Strings related to Navigation Drawer -->
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>
-    <string name="txt_sign_out">Sign Out</string>
+    <string name="txt_log_in">Log In</string>
+    <string name="txt_log_out">Log Out</string>
 
     <!-- Strings related to Signals Map screen -->
     <string name="txt_no_internet">No Internet connection!</string>
@@ -41,7 +42,8 @@
     <string name="txt_description_required">Signal description is required!</string>
     <string name="txt_signal_added_successfully">Signal successfully added!</string>
     <string name="txt_logout_succeeded">You successfully logged out.</string>
-    <string name="txt_logout_failed">Logout failed because: \'%1$s\'.</string>
+    <string name="txt_logout_failed_because">Logout failed because: \'%1$s\'.</string>
+    <string name="txt_logout_failed">Logout failed</string>
 
     <!-- Strings related to Signal Details screen -->
     <string name="txt_signal_details_title">Signal Details</string>
@@ -57,7 +59,6 @@
     <string name="txt_status">Status</string>
     <string name="txt_refresh">Refresh</string>
     <string name="txt_status_updated">Status successfully updated!</string>
-    <string name="txt_logout">Log out</string>
     <string name="txt_you_help_is_needed">Your help is needed!</string>
     <string name="txt_somebody_is_on_the_way">Somebody is on the way</string>
     <string name="txt_new_signal">New signal</string>
