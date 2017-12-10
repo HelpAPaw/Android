@@ -69,6 +69,11 @@ public class RegisterFragment extends BaseFragment implements RegisterContract.V
     }
 
     @Override
+    public void showPasswordConfirmationErrorMessage() {
+        binding.editPasswordConfirmation.setError(getString(R.string.txt_invalid_password_confirmation));
+    }
+
+    @Override
     public void showNameErrorMessage() {
         binding.editName.setError(getString(R.string.txt_name_required));
     }
@@ -135,10 +140,11 @@ public class RegisterFragment extends BaseFragment implements RegisterContract.V
             public void onClick(View v) {
                 String email = binding.editEmail.getText().toString().trim();
                 String password = binding.editPassword.getText().toString();
+                String passwordConfirmation = binding.editPasswordConfirmation.getText().toString();
                 String name = binding.editName.getText().toString();
                 String phoneNumber = binding.editPhone.getText().toString();
 
-                actionsListener.onRegisterButtonClicked(email, password, name, phoneNumber);
+                actionsListener.onRegisterButtonClicked(email, password, passwordConfirmation, name, phoneNumber);
             }
         };
     }

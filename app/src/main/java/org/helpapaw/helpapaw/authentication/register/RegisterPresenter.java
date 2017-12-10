@@ -28,7 +28,7 @@ public class RegisterPresenter extends Presenter<RegisterContract.View> implemen
     }
 
     @Override
-    public void onRegisterButtonClicked(String email, String password, String name, String phoneNumber) {
+    public void onRegisterButtonClicked(String email, String password, String passwordConfirmation, String name, String phoneNumber) {
         getView().clearErrorMessages();
 
         if (isEmpty(email) || !Utils.getInstance().isEmailValid(email)) {
@@ -38,6 +38,11 @@ public class RegisterPresenter extends Presenter<RegisterContract.View> implemen
 
         if (isEmpty(password) || password.length() < MIN_PASS_LENGTH) {
             getView().showPasswordErrorMessage();
+            return;
+        }
+
+        if (!password.equals(passwordConfirmation)) {
+            getView().showPasswordConfirmationErrorMessage();
             return;
         }
 
