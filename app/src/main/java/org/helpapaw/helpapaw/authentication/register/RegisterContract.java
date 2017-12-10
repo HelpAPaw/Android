@@ -13,6 +13,8 @@ public interface RegisterContract {
 
         void showPasswordErrorMessage();
 
+        void showPasswordConfirmationErrorMessage();
+
         void showNameErrorMessage();
 
         void showWhyPhoneDialog();
@@ -34,7 +36,7 @@ public interface RegisterContract {
 
         void onInitRegisterScreen();
 
-        void onRegisterButtonClicked(String email, String password, String name, String phoneNumber);
+        void onRegisterButtonClicked(String email, String password, String passwordConfirmation, String name, String phoneNumber);
 
         void onLoginButtonClicked();
 

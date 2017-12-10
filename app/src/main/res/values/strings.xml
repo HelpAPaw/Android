@@ -5,8 +5,10 @@
     <!-- Strings related to Login and Register screens -->
     <string name="txt_invalid_email">Invalid email.</string>
     <string name="txt_invalid_password">The password is too short.</string>
+    <string name="txt_invalid_password_confirmation">The two entered passwords are not the same.</string>
     <string name="txt_email_hint">Email</string>
     <string name="txt_password_hint">Password</string>
+    <string name="txt_password_confirmation_hint">Confirm Password</string>
     <string name="txt_login">Login</string>
     <string name="txt_no_account_yet">No account yet?</string>
     <string name="txt_register">Register</string>
