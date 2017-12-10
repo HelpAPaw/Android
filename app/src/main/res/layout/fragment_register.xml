@@ -91,10 +91,22 @@
                     android:id="@+id/txt_login"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="24dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="0dp"
                     android:gravity="center"
                     android:text="@string/txt_already_a_member"
                     android:textSize="16sp" />
+
+                <android.support.v7.widget.AppCompatButton
+                    android:id="@+id/btn_show_login"
+                    style="@style/Widget.AppCompat.Button.Borderless.Colored"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginBottom="24dp"
+                    android:layout_marginTop="4dp"
+                    android:padding="18dp"
+                    android:text="@string/txt_login" />
 
             </LinearLayout>
 

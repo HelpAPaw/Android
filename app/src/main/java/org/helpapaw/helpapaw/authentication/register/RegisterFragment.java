@@ -45,7 +45,7 @@ public class RegisterFragment extends BaseFragment implements RegisterContract.V
         actionsListener = registerPresenter;
 
         binding.btnSignup.setOnClickListener(getBtnSignUpListener());
-        binding.txtLogin.setOnClickListener(getTxtLoginClickListener());
+        binding.btnShowLogin.setOnClickListener(getBtnShowLoginClickListener());
         binding.txtWhyPhone.setOnClickListener(getTxtWhyPhoneClickListener());
 
         actionsListener.onInitRegisterScreen();
@@ -120,7 +120,7 @@ public class RegisterFragment extends BaseFragment implements RegisterContract.V
 
     /* OnClick Listeners */
 
-    public View.OnClickListener getTxtLoginClickListener() {
+    public View.OnClickListener getBtnShowLoginClickListener() {
         return new View.OnClickListener() {
             @Override
             public void onClick(View v) {

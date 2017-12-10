@@ -45,7 +45,7 @@ public class LoginFragment extends BaseFragment implements LoginContract.View {
         actionsListener = loginPresenter;
 
         binding.btnLogin.setOnClickListener(getBtnLoginClickListener());
-        binding.txtSignup.setOnClickListener(getTxtSignUpClickListener());
+        binding.btnShowRegister.setOnClickListener(getBtnShowRegisterClickListener());
         binding.btnLoginFb.setOnClickListener(getBtnLoginFbClickListener());
         binding.btnLoginFb.setReadPermissions("email");
         binding.btnLoginFb.setFragment(this);
@@ -128,7 +128,7 @@ public class LoginFragment extends BaseFragment implements LoginContract.View {
         };
     }
 
-    public View.OnClickListener getTxtSignUpClickListener() {
+    public View.OnClickListener getBtnShowRegisterClickListener() {
         return new View.OnClickListener() {
             @Override
             public void onClick(View v) {
