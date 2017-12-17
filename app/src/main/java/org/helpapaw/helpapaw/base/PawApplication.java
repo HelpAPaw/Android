@@ -1,6 +1,7 @@
 package org.helpapaw.helpapaw.base;
 
 import android.app.Application;
+import android.os.StrictMode;
 
 import com.backendless.Backendless;
 
@@ -16,7 +17,7 @@ public class PawApplication extends Application {
     public static final String  BACKENDLESS_REST_API_KEY    = "***REMOVED***";
     private static final String BACKENDLESS_ANDROID_API_KEY = "***REMOVED***";
 
-    public static final Boolean TEST_VERSION = true;
+    public static final Boolean TEST_VERSION = false;
 
     private static PawApplication pawApplication;
 
@@ -46,6 +47,11 @@ public class PawApplication extends Application {
                 });
             }
         });
+
+        // Prevent android.os.FileUriExposedException on API 24+
+        // https://stackoverflow.com/a/45569709/2781218
+        StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+        StrictMode.setVmPolicy(builder.build());
     }
 
     public static PawApplication getContext() {
