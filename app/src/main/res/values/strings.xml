@@ -1,7 +1,7 @@
 <resources>
-    <string name="app_name">Help A Paw</string>
-    <string name="google_android_map_api_key">***REMOVED***</string>
-    <string name="google_places_api_key">***REMOVED***</string>
+    <string name="app_name" translatable="false">Help A Paw</string>
+    <string name="google_android_map_api_key" translatable="false">***REMOVED***</string>
+    <string name="google_places_api_key" translatable="false">***REMOVED***</string>
     <!-- Strings related to Login and Register screens -->
     <string name="txt_invalid_email">Invalid email.</string>
     <string name="txt_invalid_password">The password is too short.</string>
@@ -64,14 +64,9 @@
     <string name="txt_you_help_is_needed">Your help is needed!</string>
     <string name="txt_somebody_is_on_the_way">Somebody is on the way</string>
     <string name="txt_new_signal">New signal</string>
-    <string name="error_facebook_not_installed">Facebook not installed</string>
-    <string name="text_show_shelters">Animal Shelters</string>
-    <string name="text_vets_near_me">Vets near me</string>
     <string name="text_faqs">FAQs</string>
     <string name="text_about">About</string>
     <string name="text_feedback">Feedback</string>
-    <string name="overflow_prompt_title">Filter the signals</string>
-    <string name="overflow_prompt_description">High, In-progress, Resolved</string>
     <string name="menu_prompt_title">More settings</string>
     <string name="menu_prompt_description">Expolore more settings</string>
     <string name="text_tutorial_send_signal">Send your first signal</string>
@@ -79,7 +74,6 @@
     <string name="overflow_prompt_description_refresh">Get all current signals in the area</string>
     <string name="text_fab_add_signal">Tap to start composing your first signal.</string>
     <string name="txt_faqs_view_title">FAQs</string>
-    <string name="text_tutorial_navigation">Side Navigation</string>
     <string name="txt_user_changed_status_to">%1$s changed the status to \'%2$s\'</string>
     <string name="txt_new_status_icon">New status icon</string>
     <string name="string_about_title">About</string>r
