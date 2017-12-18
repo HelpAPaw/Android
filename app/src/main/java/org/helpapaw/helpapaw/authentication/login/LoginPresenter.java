@@ -22,7 +22,7 @@ public class LoginPresenter extends Presenter<LoginContract.View> implements Log
     private UserManager userManager;
     private boolean showProgressBar;
 
-    public LoginPresenter(LoginContract.View view) {
+    LoginPresenter(LoginContract.View view) {
         super(view);
         userManager = Injection.getUserManagerInstance();
         showProgressBar = false;
@@ -57,21 +57,29 @@ public class LoginPresenter extends Presenter<LoginContract.View> implements Log
             userManager.login(email, password, new UserManager.LoginCallback() {
                 @Override
                 public void onLoginSuccess() {
-                    if (!isViewAvailable()) return;
-                    getView().closeLoginScreen();
+                    LoginPresenter.this.onLoginSuccess();
                 }
 
                 @Override
                 public void onLoginFailure(String message) {
-                    if (!isViewAvailable()) return;
-                    setProgressIndicator(false);
-                    getView().showMessage(message);
+                    LoginPresenter.this.onLoginFailure(message);
                 }
             });
         } else {
             getView().showNoInternetMessage();
             setProgressIndicator(false);
         }
+    }
+
+    private void onLoginSuccess() {
+        if (!isViewAvailable()) return;
+        getView().closeLoginScreen();
+    }
+
+    private void onLoginFailure(String message) {
+        if (!isViewAvailable()) return;
+        setProgressIndicator(false);
+        getView().showMessage(message);
     }
 
     private void setProgressIndicator(boolean active) {
@@ -94,6 +102,9 @@ public class LoginPresenter extends Presenter<LoginContract.View> implements Log
 
     @Override
     public void onLoginFbButtonClicked(Activity activity, CallbackManager callbackManager) {
+
+        setProgressIndicator(true);
+
         //TODO: inject this so the presenter doesn't know about Backendless
         Backendless.UserService.loginWithFacebookSdk(activity,
             callbackManager,
@@ -103,14 +114,14 @@ public class LoginPresenter extends Presenter<LoginContract.View> implements Log
                 public void handleResponse( BackendlessUser loggedInUser )
                 {
                     // user logged in successfully
-                    getView().closeLoginScreen();
+                    LoginPresenter.this.onLoginSuccess();
                 }
 
                 @Override
                 public void handleFault( BackendlessFault fault )
                 {
                     // failed to log in
-                    getView().showMessage(fault.getMessage());
+                    LoginPresenter.this.onLoginFailure(fault.getMessage());
                 }
             },
             true);
