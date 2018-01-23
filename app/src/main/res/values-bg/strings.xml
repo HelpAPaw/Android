@@ -1,0 +1,98 @@
+<resources>
+    <!-- Strings related to Login and Register screens -->
+    <string name="txt_invalid_email">Невалидна имейл.</string>
+    <string name="txt_invalid_password">Паролата е прекалено къса.</string>
+    <string name="txt_invalid_password_confirmation">Двете въведени пароли не съвпадат.</string>
+    <string name="txt_email_hint">Имейл</string>
+    <string name="txt_password_hint">Парола</string>
+    <string name="txt_password_confirmation_hint">Потвърдете паролата</string>
+    <string name="txt_login">Вписване</string>
+    <string name="txt_no_account_yet">Нямате акаунт?</string>
+    <string name="txt_register">Регистрация</string>
+    <string name="txt_already_a_member">Вече сте регистриран?</string>
+    <string name="txt_phone_number">Телефонен номер</string>
+    <string name="txt_name">Име</string>
+    <string name="txt_name_required">Името е задължително!</string>
+    <string name="txt_why">Защо?</string>
+
+    <!-- Strings related to Navigation Drawer -->
+    <string name="drawer_open">Отвори страничното меню</string>
+    <string name="drawer_close">Затвори страничното меню</string>
+    <string name="txt_log_in">Вписване</string>
+    <string name="txt_log_out">Отписване</string>
+
+    <!-- Strings related to Signals Map screen -->
+    <string name="txt_no_internet">Нямате интернет връзка!</string>
+    <string name="txt_signals_map">Карта за подадени сигнали</string>
+    <string name="txt_why_want_phone">За какво е необходим телефонният ми номер?</string>
+    <string name="txt_why_phone_description">Въвеждането на телефонен номер не е задължително. Въпреки това горещо препоръчваме да го въведете, за да бъдете лесно достъпен, ако доброволец има нужда от повече информация за подаден от Вас сигнал.</string>
+    <string name="txt_i_see">Ясно</string>
+    <string name="txt_location_permission_not_granted">Разрешението за ползване местоположението не е предоставено!</string>
+    <string name="txt_signal_description">Описание на сигнала</string>
+    <string name="txt_send">Изпрати</string>
+    <string name="txt_take_photo">Направи снимка</string>
+    <string name="txt_choose_existing">Избери съществуваща</string>
+    <string name="permission_not_granted">Разрешението не бе предоставено!</string>
+    <string name="txt_storage_permissions_for_camera">Упс… Не можем да отворим камерата без Ваше разрешение.</string>
+    <string name="txt_storage_permissions_for_gallery">Упс… не можем да отворим галерията без Ваше разрешение.</string>
+    <string name="txt_status_help_needed">Статус: Нужна е помощ</string>
+    <string name="txt_status_somebody_on_the_way">Статус: Някой е на път</string>
+    <string name="txt_status_solved">Статус: Приключен</string>
+    <string name="txt_description_required">Нужно е описание на сигнала!</string>
+    <string name="txt_signal_added_successfully">Успешно подаден сигнал!</string>
+    <string name="txt_logout_succeeded">Успешно отписване.</string>
+    <string name="txt_logout_failed_because">Отписването се провали, защото: \'%1$s\'.</string>
+    <string name="txt_logout_failed">Отписването се провали</string>
+
+    <!-- Strings related to Signal Details screen -->
+    <string name="txt_signal_details_title">Подробности за сигнала</string>
+    <string name="txt_comments">Коментари</string>
+    <string name="txt_signal_from">Сигналът е подаден от %1$s</string>
+    <string name="txt_comment_hint">Напиши коментар</string>
+    <string name="txt_error_empty_comment">Коментара не може да бъде празен!</string>
+    <string name="txt_no_comments">Все още няма коментари.</string>
+    <string name="txt_signal_photo_description">Снимка на сигнала</string>
+    <string name="txt_somebody_on_the_way">Някой е на път</string>
+    <string name="txt_solved">Приключен</string>
+    <string name="txt_help_needed">Нужна е помощ</string>
+    <string name="txt_status">Статус</string>
+    <string name="txt_refresh">Обнови</string>
+    <string name="txt_status_updated">Успешно обновен статус!</string>
+    <string name="txt_you_help_is_needed">Помощта Ви е необходима!</string>
+    <string name="txt_somebody_is_on_the_way">Някой е на път</string>
+    <string name="txt_new_signal">Нов сигнал</string>
+    <string name="text_faqs">Често задавани въпроси</string>
+    <string name="text_about">Относно</string>
+    <string name="text_feedback">Обратна връзка</string>
+    <string name="txt_faqs_view_title">Често задавани въпроси</string>
+    <string name="txt_user_changed_status_to">%1$s промени статуса на \'%2$s\'</string>
+    <string name="txt_new_status_icon">Икона на новия статус</string>
+    <string name="string_about_title">Относно</string>r
+    <string name="string_about_contact">Свържете се с нас</string>
+    <string name="string_about_milen">© Милен Маринов 2018</string>
+    <string name="string_support_email">help.a.paw.app@gmail.com</string>
+    <string name="string_mail_chooser_title">help.a.paw.app@gmail.com</string>
+    <string name="error_empty_signal_response">Получихме празен отговор! Може би сигналът не същестува вече!?</string>
+    <string name="txt_channel_description_help_needed">Показва сигналите за животни в близост до мен, които се нуждаят от спешна помощ</string>
+    <string name="txt_channel_description_somebody_on_the_way">Показва сигналите, на които някой вече се е отзовал, но са все още неразрешени</string>
+    <string name="txt_or">или</string>
+    <string name="string_faq"><![CDATA[ <font color=\'#ff9700\'>
+        <b>&emsp;Как работи това приложение?</b>
+        <br>
+        Aко видите бездомно животно, което се нуждае от помощ, но поради една или друга причина не можете да помогнете, изпратете сигнал, който показва мястото и опиши ситуацията. Други хора, които са в близост ще получат известие за него. Надяваме се някой да се отзове и да помогне на животното.
+        <br><br>
+        <b>&emsp;Кои са хората които ще помогнат на животните?</b>
+        <br>
+        Help A Paw свързва мрежа от доброволци, които се грижат за животните - също като Вас!
+        <br><br>
+        <b>&emsp;Как се променя статуса на сигнала?</b>
+        <br>
+        Когато се подаде сигнал, той започва с \'Нужна е помощ\'. Когато някой реши да се отзове на сигнала той/тя променя статуса на \'Някой е на път\' за да може другите хора да знаят. Ако например доброволец е на даденото място, но се нуждае от помощ статуса може да се промени отново на \'Нужна е помощ\'. Когато животното получи необходимата помощ сигналът се маркира като \'Приключен\'. Сигналите са оцветени в червено, оранжево и зелено в зависимост от техния статус.
+        <br><br>
+        <b>&emsp;Tова приложение следи ли местоположението ми?</b>
+        <br>
+        Не. Местоположението Ви се използва само при подаване на сигнал. Местоположението Ви няма да бъде записано на сървър и няма да се използва за друго предназначение, освен за да Ви информира за животни близо до Вас, които се нуждаят от помощ .</font>]]>
+     </string>
+    <string name="error_facebook_not_installed">Фейсбуук не е инсталиран</string>
+
+</resources>
