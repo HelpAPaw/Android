@@ -69,6 +69,8 @@ public class BackendlessSignalRepository implements SignalRepository {
         Backendless.Geo.getPoints(query, new AsyncCallback<List<GeoPoint>>() {
             @Override
             public void handleResponse(List<GeoPoint> response) {
+                if (response == null) { return; }
+
                 List<Signal> signals = new ArrayList<>();
                 for (int i = 0; i < response.size(); i++) {
                     GeoPoint geoPoint = response.get(i);

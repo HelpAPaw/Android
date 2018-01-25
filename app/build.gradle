@@ -1,15 +1,14 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 27
+    compileSdkVersion 26
     buildToolsVersion '26.0.2'
-
     defaultConfig {
         applicationId "org.helpapaw.helpapaw"
         minSdkVersion 19
-        targetSdkVersion 27
-        versionCode 21
-        versionName "1.0.21"
+        targetSdkVersion 26
+        versionCode 26
+        versionName "1.0.26"
         vectorDrawables.useSupportLibrary = true
 
         javaCompileOptions {
@@ -30,8 +29,8 @@ android {
 }
 
 ext {
-    support_version = '27.0.2'
-    play_services_version = '11.6.2'
+    support_version = '26.1.0'
+    play_services_version = '11.8.0'
     roomVersion = '1.0.0'
 }
 
@@ -47,10 +46,10 @@ dependencies {
     compile "com.google.android.gms:play-services-places:$play_services_version"
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'de.hdodenhof:circleimageview:2.2.0'
-    compile 'com.backendless:backendless:4.0.4'
-    compile 'com.firebase:firebase-jobdispatcher:0.7.0'
+    compile 'com.backendless:backendless:4.4.0'
+    compile 'com.firebase:firebase-jobdispatcher:0.8.5'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
-    compile 'com.facebook.android:facebook-android-sdk:4.26.0'
+    compile 'com.facebook.android:facebook-android-sdk:4.28.0'
     implementation "android.arch.persistence.room:runtime:$roomVersion"
     annotationProcessor "android.arch.persistence.room:compiler:$roomVersion"
 }
