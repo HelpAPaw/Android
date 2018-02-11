@@ -511,6 +511,7 @@ public class SignalsMapFragment extends BaseFragment
         mCurrentLat = location.getLatitude();
         mCurrentLong = location.getLongitude();
 
+        updateMapCameraPosition(mCurrentLat, mCurrentLong, DEFAULT_MAP_ZOOM);
         actionsListener.onLocationChanged(mCurrentLat, mCurrentLong);
     }
 
