@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.android.com/tools">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -40,11 +41,14 @@
                         <TextView
                             android:id="@+id/txt_signal_title"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
+                            android:layout_height="200dp"
                             android:layout_above="@+id/txt_signal_author"
                             android:layout_alignParentTop="true"
                             android:gravity="center_vertical"
-                            android:textSize="22sp" />
+                            android:padding="4dp"
+                            android:textSize="22sp"
+                            app:autoSizeTextType="uniform"
+                            tools:text="This is a title"/>
 
                         <TextView
                             android:id="@+id/txt_signal_author"
@@ -56,7 +60,10 @@
                             android:layout_toLeftOf="@+id/img_call"
                             android:layout_toStartOf="@+id/img_call"
                             android:padding="4dp"
-                            android:textSize="16sp" />
+                            android:textSize="15sp"
+                            android:textStyle="italic"
+                            android:textColor="@color/comments_gray"
+                            tools:text="Milen Marinov"/>
 
                         <TextView
                             android:id="@+id/txt_submitted_date"
@@ -68,7 +75,10 @@
                             android:layout_alignParentRight="true"
                             android:layout_alignParentStart="true"
                             android:padding="4dp"
-                            android:textSize="16sp" />
+                            android:textSize="15sp"
+                            android:textStyle="italic"
+                            android:textColor="@color/comments_gray"
+                            tools:text="12.01.2018 12:34 pm"/>
 
 
                         <ImageView
