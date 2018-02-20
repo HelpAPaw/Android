@@ -7,8 +7,8 @@ android {
         applicationId "org.helpapaw.helpapaw"
         minSdkVersion 19
         targetSdkVersion 26
-        versionCode 27
-        versionName "1.0.27"
+        versionCode 28
+        versionName "1.0.28"
         vectorDrawables.useSupportLibrary = true
 
         javaCompileOptions {

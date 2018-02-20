@@ -7,6 +7,7 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 
 import org.helpapaw.helpapaw.utils.SharingUtils;
 
@@ -27,7 +28,12 @@ public class AlertDialogFragment extends DialogFragment {
         args.putBoolean(ARG_SHOW_SUPPORT, showSupportButton);
         dialog.setArguments(args);
         if (fm != null) {
-            dialog.show(fm, "tag");
+            try {
+                dialog.show(fm, "tag");
+            }
+            catch (Exception ex) {
+                Log.e(AlertDialogFragment.class.getSimpleName(), "Could not show alert");
+            }
         }
     }
 
