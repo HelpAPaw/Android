@@ -3,6 +3,7 @@ package org.helpapaw.helpapaw.signalsmap;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
@@ -194,16 +195,28 @@ public class SignalsMapFragment extends BaseFragment
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        binding.mapSignals.onStart();
+        googleApiClient.connect();
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
         binding.mapSignals.onResume();
-        googleApiClient.connect();
     }
 
     @Override
     public void onPause() {
         super.onPause();
         binding.mapSignals.onPause();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        binding.mapSignals.onStop();
 
         if (googleApiClient.isConnected()) {
             LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, this);
@@ -471,7 +484,14 @@ public class SignalsMapFragment extends BaseFragment
                 }
             }
         });
-        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        Context cont = getContext();
+        //Protection for the case when activity is destroyed (e.g. when rotating)
+        //Probably there is a better fix in the actual workflow but we need a quick fix as users experience a lot of crashes
+        if (cont == null) {
+            Log.e(TAG, "Context is null, exiting...");
+            return;
+        }
+        if (ContextCompat.checkSelfPermission(cont, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             showPermissionDialog(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION, LOCATION_PERMISSIONS_REQUEST);
         } else {
             setAddSignalViewVisibility(mVisibilityAddSignal);
