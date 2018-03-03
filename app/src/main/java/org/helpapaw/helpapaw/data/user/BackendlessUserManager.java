@@ -74,8 +74,13 @@ public class BackendlessUserManager implements UserManager {
                             Backendless.UserService.findById(currentUserId, new AsyncCallback<BackendlessUser>() {
                                 @Override
                                 public void handleResponse(BackendlessUser currentUser) {
-                                    Backendless.UserService.setCurrentUser(currentUser);
-                                    loginCallback.onLoginSuccess();
+                                    if (currentUser != null) {
+                                        Backendless.UserService.setCurrentUser(currentUser);
+                                        loginCallback.onLoginSuccess();
+                                    }
+                                    else {
+                                        loginCallback.onLoginFailure(null);
+                                    }
                                 }
 
                                 @Override
