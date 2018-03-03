@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'io.fabric'
 
 android {
     compileSdkVersion 26
@@ -7,8 +8,8 @@ android {
         applicationId "org.helpapaw.helpapaw"
         minSdkVersion 19
         targetSdkVersion 26
-        versionCode 28
-        versionName "1.0.28"
+        versionCode 29
+        versionName "1.0.29"
         vectorDrawables.useSupportLibrary = true
 
         javaCompileOptions {
@@ -52,4 +53,10 @@ dependencies {
     compile 'com.facebook.android:facebook-android-sdk:4.28.0'
     implementation "android.arch.persistence.room:runtime:$roomVersion"
     annotationProcessor "android.arch.persistence.room:compiler:$roomVersion"
+    compile('com.crashlytics.sdk.android:crashlytics:2.9.1@aar') {
+        transitive = true
+    }
+    compile 'com.google.firebase:firebase-core:11.8.0'
 }
+
+apply plugin: 'com.google.gms.google-services'
