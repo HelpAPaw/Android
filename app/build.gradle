@@ -46,7 +46,7 @@ dependencies {
     compile "com.google.android.gms:play-services-places:$play_services_version"
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'de.hdodenhof:circleimageview:2.2.0'
-    compile 'com.backendless:backendless:4.4.0'
+    compile 'com.backendless:backendless:4.4.1'
     compile 'com.firebase:firebase-jobdispatcher:0.8.5'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'com.facebook.android:facebook-android-sdk:4.28.0'
