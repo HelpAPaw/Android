@@ -238,9 +238,11 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
 
     @Override
     public void onSignalStatusUpdated(Signal signal) {
+        if (signal == null) return;
+
         for (int i = 0; i < signalsList.size(); i++) {
             Signal currentSignal = signalsList.get(i);
-            if(currentSignal.getId().equals(signal.getId())){
+            if(currentSignal.getId().equals(signal.getId())) {
                 signalsList.remove(i);
                 signalsList.add(signal);
                 getView().displaySignals(signalsList, true);

@@ -95,7 +95,7 @@ public class BackgroundCheckJobService extends JobService {
 
                 Log.d(TAG, "got signals");
 
-                if (signals != null && !signals.isEmpty()) {
+                if (signals != null && !signals.isEmpty() && database != null) {
 
                     for (Signal signal : signals) {
                         if (signal.getStatus() < SOLVED) {
