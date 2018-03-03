@@ -67,7 +67,7 @@ public class BackendlessUserManager implements UserManager {
         Backendless.UserService.isValidLogin(new AsyncCallback<Boolean>() {
             @Override
             public void handleResponse(Boolean isValidLogin) {
-                if (isValidLogin) {
+                if ((isValidLogin != null) && (isValidLogin)) {
                     if (Backendless.UserService.CurrentUser() == null) {
                         String currentUserId = Backendless.UserService.loggedInUser();
                         if (!currentUserId.equals("")) {
