@@ -676,7 +676,9 @@ public class SignalsMapFragment extends BaseFragment
         if (requestCode == REQUEST_SIGNAL_DETAILS) {
             if (resultCode == Activity.RESULT_OK) {
                 Signal signal = data.getParcelableExtra("signal");
-                actionsListener.onSignalStatusUpdated(signal);
+                if (signal != null) {
+                    actionsListener.onSignalStatusUpdated(signal);
+                }
             }
         }
     }
