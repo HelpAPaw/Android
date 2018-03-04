@@ -17,82 +17,92 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-
                 android:orientation="vertical"
                 android:padding="10dp">
 
-                <LinearLayout
+                <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:layout_height="wrap_content">
 
-                    <ImageView
-                        android:id="@+id/img_signal_photo"
-                        android:layout_width="150dp"
-                        android:layout_height="150dp"
-                        android:background="@drawable/ic_paw"
-                        android:contentDescription="@string/txt_signal_photo_description" />
-
-                    <RelativeLayout
+                    <LinearLayout
+                        android:id="@+id/photo_title_layout"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:paddingLeft="15dp">
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <ImageView
+                            android:id="@+id/img_signal_photo"
+                            android:layout_width="150dp"
+                            android:layout_height="150dp"
+                            android:layout_marginTop="8dp"
+                            android:layout_marginBottom="8dp"
+                            android:layout_gravity="center"
+                            android:background="@drawable/ic_paw"
+                            android:contentDescription="@string/txt_signal_photo_description" />
 
                         <TextView
                             android:id="@+id/txt_signal_title"
                             android:layout_width="match_parent"
-                            android:layout_height="200dp"
-                            android:layout_above="@+id/txt_signal_author"
-                            android:layout_alignParentTop="true"
-                            android:gravity="center_vertical"
-                            android:padding="4dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="4dp"
+                            android:padding="0dp"
                             android:textSize="22sp"
-                            app:autoSizeTextType="uniform"
-                            tools:text="This is a title"/>
+                            android:textAlignment="center"
+                            tools:text="This is a title but it is very, very, very, VERY long and expands way much more that it should. However the important thing is that it is fully displayed and no part of it is hidden or hard to read! Right!?"/>
 
-                        <TextView
-                            android:id="@+id/txt_signal_author"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_above="@+id/txt_submitted_date"
-                            android:layout_alignParentLeft="true"
-                            android:layout_alignParentStart="true"
-                            android:layout_toLeftOf="@+id/img_call"
-                            android:layout_toStartOf="@+id/img_call"
-                            android:padding="4dp"
-                            android:textSize="15sp"
-                            android:textStyle="italic"
-                            android:textColor="@color/comments_gray"
-                            tools:text="Milen Marinov"/>
+                    </LinearLayout>
 
-                        <TextView
-                            android:id="@+id/txt_submitted_date"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentBottom="true"
-                            android:layout_alignParentEnd="true"
-                            android:layout_alignParentLeft="true"
-                            android:layout_alignParentRight="true"
-                            android:layout_alignParentStart="true"
-                            android:padding="4dp"
-                            android:textSize="15sp"
-                            android:textStyle="italic"
-                            android:textColor="@color/comments_gray"
-                            tools:text="12.01.2018 12:34 pm"/>
+                    <TextView
+                        android:id="@+id/txt_signal_author"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/photo_title_layout"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginEnd="4dp"
+                        android:textSize="15sp"
+                        android:textStyle="italic"
+                        android:textAlignment="textEnd"
+                        android:textColor="@color/comments_gray"
+                        tools:text="Milen Marinov"/>
 
+                    <TextView
+                        android:id="@+id/txt_submitted_date"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignBottom="@id/txt_signal_author"
+                        android:layout_toStartOf="@id/txt_signal_author"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginStart="4dp"
+                        android:textSize="15sp"
+                        android:textStyle="italic"
+                        android:textAlignment="textStart"
+                        android:textColor="@color/comments_gray"
+                        tools:text="12.01.2018 12:34 pm"/>
 
-                        <ImageView
-                            android:id="@+id/img_call"
-                            android:layout_width="30dp"
-                            android:layout_height="30dp"
-                            android:layout_alignParentEnd="true"
-                            android:layout_alignParentRight="true"
-                            android:layout_below="@+id/txt_signal_title"
-                            android:src="@drawable/ic_call"
-                            android:visibility="visible" />
-                    </RelativeLayout>
+                    <Button
+                        android:id="@+id/btn_call"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_below="@id/txt_submitted_date"
+                        android:layout_marginStart="4dp"
+                        android:layout_marginTop="4dp"
+                        style="@style/Widget.AppCompat.Button.Colored"
+                        tools:text="0881234567"/>
 
-                </LinearLayout>
+                    <ImageView
+                        android:id="@+id/img_call"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_toStartOf="@id/btn_call"
+                        android:layout_alignTop="@id/btn_call"
+                        android:layout_marginTop="16dp"
+                        android:src="@drawable/ic_call"
+                        android:tint="@color/comments_gray"
+                        android:visibility="visible" />
+
+                </RelativeLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
