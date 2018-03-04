@@ -80,6 +80,7 @@ public class SignalDetailsFragment extends BaseFragment implements SignalDetails
 
         binding.btnAddComment.setOnClickListener(getOnAddCommentClickListener());
         binding.imgCall.setOnClickListener(getOnCallButtonClickListener());
+        binding.btnCall.setOnClickListener(getOnCallButtonClickListener());
         binding.scrollSignalDetails.setOnBottomReachedListener(getOnBottomReachedListener());
         binding.viewSignalStatus.setStatusCallback(getStatusViewCallback());
 
@@ -119,8 +120,11 @@ public class SignalDetailsFragment extends BaseFragment implements SignalDetails
 
         if (signal.getAuthorPhone() == null) {
             binding.imgCall.setVisibility(View.GONE);
+            binding.btnCall.setVisibility(View.GONE);
         } else {
             binding.imgCall.setVisibility(View.VISIBLE);
+            binding.btnCall.setText(signal.getAuthorPhone());
+            binding.btnCall.setVisibility(View.VISIBLE);
         }
 
         Injection.getImageLoader().loadWithRoundedCorners(getContext(), signal.getPhotoUrl(), binding.imgSignalPhoto, R.drawable.ic_paw);

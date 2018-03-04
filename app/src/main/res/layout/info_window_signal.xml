@@ -23,7 +23,6 @@
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_toEndOf="@+id/img_signal_photo"
-            android:layout_toRightOf="@+id/img_signal_photo"
             android:ellipsize="end"
             android:singleLine="true"
             android:textColor="@android:color/black"
@@ -35,7 +34,6 @@
             android:layout_width="190dp"
             android:layout_height="wrap_content"
             android:layout_alignBottom="@+id/img_signal_photo"
-            android:layout_alignLeft="@+id/txt_signal_title"
             android:layout_alignStart="@+id/txt_signal_title"
             android:singleLine="true"
             android:textColor="@android:color/black"
@@ -48,7 +46,6 @@
             android:layout_height="20dp"
             android:layout_centerVertical="true"
             android:layout_toEndOf="@+id/txt_signal_title"
-            android:layout_toRightOf="@+id/txt_signal_title"
             android:src="@android:drawable/ic_dialog_info"
             android:tint="@color/blue" />
 
