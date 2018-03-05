@@ -167,6 +167,11 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
     }
 
     @Override
+    public void onSignalPhotoClicked() {
+        getView().openSignalPhotoScreen();
+    }
+
+    @Override
     public void onSignalDetailsClosing() {
         getView().closeScreenWithResult(signal);
     }

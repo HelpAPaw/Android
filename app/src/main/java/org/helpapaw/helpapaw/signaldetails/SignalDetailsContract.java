@@ -45,6 +45,8 @@ public interface SignalDetailsContract {
         boolean isActive();
 
         void onStatusChangeRequestFinished(boolean success, int newStatus);
+
+        void openSignalPhotoScreen();
     }
 
     interface UserActionsListener {
@@ -62,5 +64,7 @@ public interface SignalDetailsContract {
         void onSignalDetailsClosing();
 
         void onBottomReached(boolean isBottomReached);
+
+        void onSignalPhotoClicked();
     }
 }

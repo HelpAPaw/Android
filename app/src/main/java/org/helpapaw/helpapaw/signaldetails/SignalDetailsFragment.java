@@ -25,6 +25,7 @@ import org.helpapaw.helpapaw.base.PresenterManager;
 import org.helpapaw.helpapaw.data.models.Comment;
 import org.helpapaw.helpapaw.data.models.Signal;
 import org.helpapaw.helpapaw.databinding.FragmentSignalDetailsBinding;
+import org.helpapaw.helpapaw.signalphoto.SignalPhotoActivity;
 import org.helpapaw.helpapaw.utils.Injection;
 import org.helpapaw.helpapaw.utils.StatusUtils;
 import org.helpapaw.helpapaw.utils.Utils;
@@ -81,6 +82,7 @@ public class SignalDetailsFragment extends BaseFragment implements SignalDetails
         binding.btnAddComment.setOnClickListener(getOnAddCommentClickListener());
         binding.imgCall.setOnClickListener(getOnCallButtonClickListener());
         binding.btnCall.setOnClickListener(getOnCallButtonClickListener());
+        binding.imgSignalPhoto.setOnClickListener(getOnSignalPhotoClickListener());
         binding.scrollSignalDetails.setOnBottomReachedListener(getOnBottomReachedListener());
         binding.viewSignalStatus.setStatusCallback(getStatusViewCallback());
 
@@ -267,6 +269,13 @@ public class SignalDetailsFragment extends BaseFragment implements SignalDetails
         }
     }
 
+    @Override
+    public void openSignalPhotoScreen() {
+        Intent intent = new Intent(getContext(), SignalPhotoActivity.class);
+        intent.putExtra(SignalDetailsActivity.SIGNAL_KEY, mSignal);
+        startActivity(intent);
+    }
+
     public void onBackPressed() {
         actionsListener.onSignalDetailsClosing();
     }
@@ -315,6 +324,15 @@ public class SignalDetailsFragment extends BaseFragment implements SignalDetails
             @Override
             public void onBottomReached(boolean isBottomReached) {
                 actionsListener.onBottomReached(isBottomReached);
+            }
+        };
+    }
+
+    public View.OnClickListener getOnSignalPhotoClickListener() {
+        return new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                actionsListener.onSignalPhotoClicked();
             }
         };
     }
