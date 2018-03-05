@@ -7,15 +7,11 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import org.helpapaw.helpapaw.R;
 import org.helpapaw.helpapaw.data.models.Signal;
 import org.helpapaw.helpapaw.databinding.ActivitySignalDetailsBinding;
-import org.helpapaw.helpapaw.utils.SharingUtils;
-import org.helpapaw.helpapaw.utils.Utils;
 
 import java.util.List;
 
@@ -49,8 +45,6 @@ public class SignalDetailsActivity extends AppCompatActivity {
             }
         }
     }
-
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

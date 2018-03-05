@@ -11,12 +11,12 @@ import com.squareup.picasso.Picasso;
  */
 public class PicassoImageLoader implements ImageLoader {
     @Override
-    public void load(Context context, String url, ImageView imageView, @DrawableRes int placeholder) {
+    public void load(Context context, String url, ImageView imageView, @DrawableRes int error) {
         Picasso.with(context)
                 .load(url)
-                .placeholder(placeholder)
+                .error(error)
                 .fit()
-                .centerCrop()
+                .centerInside()
                 .into(imageView);
     }
 

@@ -59,6 +59,9 @@
         <activity
             android:name=".signaldetails.SignalDetailsActivity"
             android:windowSoftInputMode="stateHidden"/>
+        <activity
+            android:name=".signalphoto.SignalPhotoActivity"
+            android:windowSoftInputMode="stateHidden"/>
 
         <service
             android:name=".utils.services.BackgroundCheckJobService"
