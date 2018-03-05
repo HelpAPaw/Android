@@ -52,6 +52,7 @@
     <string name="txt_error_empty_comment">Коментара не може да бъде празен!</string>
     <string name="txt_no_comments">Все още няма коментари.</string>
     <string name="txt_signal_photo_description">Снимка на сигнала</string>
+    <string name="txt_progress_indicator_description">Индикатор за прогрес</string>
     <string name="txt_somebody_on_the_way">Някой е на път</string>
     <string name="txt_solved">Приключен</string>
     <string name="txt_help_needed">Нужна е помощ</string>
