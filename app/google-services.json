@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "960611584456",
+    "firebase_url": "https://help-a-paw-android.firebaseio.com",
+    "project_id": "help-a-paw-android",
+    "storage_bucket": "help-a-paw-android.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:960611584456:android:2db4b01480d699b3",
+        "android_client_info": {
+          "package_name": "org.helpapaw.helpapaw"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "960611584456-38oirrft9m53qa3c4h2f7q1ldei2madp.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "org.helpapaw.helpapaw",
+            "certificate_hash": "667b068edf59035d2f73770ac4699eec16d15283"
+          }
+        },
+        {
+          "client_id": "960611584456-ofmhs9rgv2mm43vn0kos3gc3msgru8q3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDl8A9TLw954FtQEgzPLRgTjoOodWSjGoE"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "960611584456-ofmhs9rgv2mm43vn0kos3gc3msgru8q3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
