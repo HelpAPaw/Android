@@ -14,7 +14,7 @@
             android:src="@drawable/progress_animation"
             android:contentDescription="@string/txt_progress_indicator_description"/>
 
-        <ImageView
+        <com.github.chrisbanes.photoview.PhotoView
             android:id="@+id/img_signal_photo"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
