@@ -117,12 +117,10 @@ public class SignalsMapFragment extends BaseFragment
     private SignalsMapPresenter signalsMapPresenter;
     private SignalsMapContract.UserActionsListener actionsListener;
 
-    private boolean mMarkerAdded = false;
     FragmentSignalsMapBinding binding;
     private Menu optionsMenu;
 
     UserManager userManager;
-    private Marker mMarker;
     private boolean mVisibilityAddSignal = false;
     private String mFocusedSignalId;
 
@@ -234,10 +232,6 @@ public class SignalsMapFragment extends BaseFragment
         final Bundle mapViewSaveState = new Bundle(outState);
         binding.mapSignals.onSaveInstanceState(mapViewSaveState);
         outState.putBundle(MAP_VIEW_STATE, mapViewSaveState);
-        if(mMarker!=null) {
-            outState.putDouble(MARKER_LATITUDE, mMarker.getPosition().latitude);
-            outState.putDouble(MARKER_LONGITUDE, mMarker.getPosition().longitude);
-        }
         outState.putBoolean(VIEW_ADD_SIGNAL, mVisibilityAddSignal);
         super.onSaveInstanceState(outState);
     }
@@ -278,7 +272,6 @@ public class SignalsMapFragment extends BaseFragment
                 signalsGoogleMap.setPadding(0, PADDING_TOP, 0, PADDING_BOTTOM);
                 signalsGoogleMap.setOnMapClickListener(mapClickListener);
                 signalsGoogleMap.setOnMarkerClickListener(mapMarkerClickListener);
-                signalsGoogleMap.setOnMarkerDragListener(mapDragListener);
                 signalsGoogleMap.setOnCameraIdleListener(mapCameraIdleListener);
             }
         };
@@ -287,15 +280,6 @@ public class SignalsMapFragment extends BaseFragment
     private GoogleMap.OnMapClickListener mapClickListener = new GoogleMap.OnMapClickListener() {
         @Override
         public void onMapClick(LatLng latLng) {
-
-            if (binding.viewSendSignal.getVisibility() == View.VISIBLE && !mMarkerAdded) {
-                signalsGoogleMap.clear();
-                signalsGoogleMap.setPadding(0, PADDING_TOP, 0, PADDING_BOTTOM);
-                mMarker = signalsGoogleMap.addMarker(new MarkerOptions().position(latLng).draggable(true));
-
-                actionsListener.onMarkerMoved(latLng.latitude, latLng.longitude);
-                mMarkerAdded = true;
-            }
 
             // Clicking on the map closes any open info window
             mCurrentlyShownInfoWindowSignal = null;
@@ -311,42 +295,24 @@ public class SignalsMapFragment extends BaseFragment
         }
     };
 
-    private GoogleMap.OnMarkerDragListener mapDragListener = new GoogleMap.OnMarkerDragListener() {
-        @Override
-        public void onMarkerDragStart(Marker marker) {}
-
-        @Override
-        public void onMarkerDrag(Marker marker) {}
-
-        @Override
-        public void onMarkerDragEnd(Marker marker) {
-            double latitude = marker.getPosition().latitude;
-            double longitude = marker.getPosition().longitude;
-            if (mMarker != null) {
-                mMarker.remove();
-            }
-
-            mMarker = signalsGoogleMap.addMarker(new MarkerOptions().position(marker.getPosition()).draggable(true));
-            actionsListener.onMarkerMoved(latitude, longitude);
-        }
-    };
-
     private GoogleMap.OnCameraIdleListener mapCameraIdleListener = new GoogleMap.OnCameraIdleListener() {
         @Override
         public void onCameraIdle() {
-            // Get signals for new camera location
             LatLng cameraTarget = signalsGoogleMap.getCameraPosition().target;
+
             actionsListener.onLocationChanged(cameraTarget.latitude, cameraTarget.longitude);
         }
     };
 
     @Override
-    public void updateMapCameraPosition(double latitude, double longitude, float zoom) {
+    public void updateMapCameraPosition(double latitude, double longitude, Float zoom) {
         CameraUpdate center = CameraUpdateFactory.newLatLng(new LatLng(latitude, longitude));
-        CameraUpdate cameraZoom = CameraUpdateFactory.zoomTo(zoom);
-
         signalsGoogleMap.moveCamera(center);
-        signalsGoogleMap.animateCamera(cameraZoom);
+
+        if (zoom != null) {
+            CameraUpdate cameraZoom = CameraUpdateFactory.zoomTo(zoom);
+            signalsGoogleMap.animateCamera(cameraZoom);
+        }
     }
 
     @Override
@@ -422,7 +388,7 @@ public class SignalsMapFragment extends BaseFragment
 
             if (showPopup && (markerToFocus != null)) {
                 markerToFocus.showInfoWindow();
-                updateMapCameraPosition(signalToFocus.getLatitude(), signalToFocus.getLongitude(), DEFAULT_MAP_ZOOM);
+                updateMapCameraPosition(signalToFocus.getLatitude(), signalToFocus.getLongitude(), null);
             }
             else if (markerToReShow != null) {
                 markerToReShow.showInfoWindow();
@@ -545,10 +511,6 @@ public class SignalsMapFragment extends BaseFragment
             @Override
             public void onClick(View v) {
                 boolean visibility = binding.viewSendSignal.getVisibility() == View.VISIBLE;
-                signalsGoogleMap.clear();
-                mMarker = null;
-//                signalsGoogleMap.animateCamera();
-                updateMapCameraPosition(mCurrentLat, mCurrentLong, DEFAULT_MAP_ZOOM);
                 actionsListener.onAddSignalClicked(visibility);
             }
         };
@@ -561,10 +523,12 @@ public class SignalsMapFragment extends BaseFragment
 
         if (visibility) {
             showAddSignalView();
+            showAddSignalPin();
 
             binding.fabAddSignal.setImageResource(R.drawable.ic_close);
         } else {
             hideAddSignalView();
+            hideAddSignalPin();
 
             binding.fabAddSignal.setImageResource(R.drawable.fab_add);
         }
@@ -588,13 +552,42 @@ public class SignalsMapFragment extends BaseFragment
                 .animate()
                 .setInterpolator(new AccelerateDecelerateInterpolator())
                 .setDuration(300)
-                .translationY(-(binding.viewSendSignal.getHeight() * 1.2f)).withEndAction(new Runnable() {
+                .translationY(-(binding.viewSendSignal.getHeight() * 1.2f))
+                .withEndAction(new Runnable() {
             @Override
             public void run() {
                 binding.viewSendSignal.setVisibility(View.INVISIBLE);
             }
         });
     }
+
+    private void showAddSignalPin() {
+        binding.addSignalPin.setVisibility(View.VISIBLE);
+        binding.addSignalPin.setAlpha(0.0f);
+
+        binding.addSignalPin
+                .animate()
+                .setInterpolator(new AccelerateDecelerateInterpolator())
+                .setDuration(200)
+                .translationY(0)
+                .alpha(1.0f);
+    }
+
+    private void hideAddSignalPin() {
+
+        binding.addSignalPin
+                .animate()
+                .setInterpolator(new AccelerateDecelerateInterpolator())
+                .setDuration(200)
+                .alpha(0.0f)
+                .withEndAction(new Runnable() {
+            @Override
+            public void run() {
+                binding.addSignalPin.setVisibility(View.INVISIBLE);
+            }
+        });
+    }
+
 
     @Override
     public void hideKeyboard() {
@@ -758,25 +751,6 @@ public class SignalsMapFragment extends BaseFragment
     }
 
     @Override
-    public void addMapMarker(double latitude, double longitude) {
-        LatLng latLng = new LatLng(latitude, longitude);
-
-        if (mMarker == null) {
-            mMarker = signalsGoogleMap.addMarker(new MarkerOptions().position(latLng).draggable(true));
-            mMarkerAdded = true;
-        } else {
-            Log.d(TAG, "Marker already added");
-        }
-    }
-
-    @Override
-    public void clearMapMarker() {
-        signalsGoogleMap.clear();
-        mMarkerAdded = false;
-        actionsListener.onCancelAddSignal();
-    }
-
-    @Override
     public void onLogoutSuccess() {
         Snackbar.make(binding.getRoot().findViewById(R.id.fab_add_signal), R.string.txt_logout_succeeded, Snackbar.LENGTH_LONG).show();
     }
@@ -830,7 +804,6 @@ public class SignalsMapFragment extends BaseFragment
             @Override
             public void onClick(View v) {
                 String description = binding.viewSendSignal.getSignalDescription();
-                mMarkerAdded = false;
 
                 actionsListener.onSendSignalClicked(description);
             }

@@ -28,6 +28,9 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
     private double latitude;
     private double longitude;
 
+    private double currentMapLatitude;
+    private double currentMapLongitude;
+
     private String photoUri;
     private boolean sendSignalViewVisibility;
     private List<Signal> signalsList;
@@ -84,6 +87,8 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
 
     @Override
     public void onLocationChanged(double latitude, double longitude) {
+        currentMapLatitude = latitude;
+        currentMapLongitude = longitude;
 
         if (Utils.getInstance().getDistanceBetween(latitude, longitude, this.latitude, this.longitude) > 300) {
             getAllSignals(latitude, longitude, false);
@@ -96,18 +101,6 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
     @Override
     public void onAddSignalClicked(boolean visibility) {
         setSendSignalViewVisibility(!visibility);
-        if(!visibility){
-            getView().addMapMarker(latitude,longitude);
-        }else{
-            getView().displaySignals(signalsList,false);
-            //onRefreshButtonClicked();
-        }
-    }
-
-    @Override
-    public void onMarkerMoved(double latitude, double longitude) {
-        this.latitude = latitude;
-        this.longitude = longitude;
     }
 
     @Override
@@ -128,7 +121,7 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
                 if (isEmpty(description)) {
                     getView().showDescriptionErrorMessage();
                 } else {
-                    saveSignal(description, new Date(), 0, latitude, longitude);
+                    saveSignal(description, new Date(), 0, currentMapLatitude, currentMapLongitude);
                 }
             }
 
@@ -249,47 +242,6 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
                 break;
             }
         }
-    }
-
-    @Override
-    public void onFilterEmergency() {
-        List<Signal> emergencyList = new ArrayList<>();
-        for (int i = 0; i < signalsList.size(); i++) {
-            Signal currentSignal = signalsList.get(i);
-
-            if(currentSignal.getStatus() == 0){
-                emergencyList.add(currentSignal);
-            }
-        }
-        getView().displaySignals(emergencyList, true);
-    }
-
-    @Override
-    public void onFilterInProgress() {
-        List<Signal> emergencyList = new ArrayList<>();
-        for (int i = 0; i < signalsList.size(); i++) {
-            Signal currentSignal = signalsList.get(i);
-
-            if(currentSignal.getStatus() == 1){
-                emergencyList.add(currentSignal);
-
-            }
-        }
-        getView().displaySignals(emergencyList, true);
-    }
-
-    @Override
-    public void onFilterSolved() {
-        List<Signal> emergencyList = new ArrayList<>();
-        for (int i = 0; i < signalsList.size(); i++) {
-            Signal currentSignal = signalsList.get(i);
-
-            if(currentSignal.getStatus() == 2){
-                emergencyList.add(currentSignal);
-
-            }
-        }
-        getView().displaySignals(emergencyList, true);
     }
 
     @Override
