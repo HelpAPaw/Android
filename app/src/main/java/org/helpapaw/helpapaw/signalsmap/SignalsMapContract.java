@@ -17,7 +17,7 @@ interface SignalsMapContract {
 
         void displaySignals(List<Signal> signals, boolean showPopup, String focusedSignalId);
 
-        void updateMapCameraPosition(double latitude, double longitude, float zoom);
+        void updateMapCameraPosition(double latitude, double longitude, Float zoom);
 
         void setAddSignalViewVisibility(boolean visibility);
 
@@ -51,10 +51,6 @@ interface SignalsMapContract {
 
         boolean isActive();
 
-        void addMapMarker(double latitude, double longitude);
-
-        void clearMapMarker();
-
         void onLogoutSuccess();
         void onLogoutFailure(String message);
 
@@ -67,8 +63,6 @@ interface SignalsMapContract {
         void onLocationChanged(double latitude, double longitude);
 
         void onAddSignalClicked(boolean visibility);
-
-        void onMarkerMoved(double latitude, double longitude);
 
         void onCancelAddSignal();
 
@@ -93,12 +87,6 @@ interface SignalsMapContract {
         void onRefreshButtonClicked();
 
         void onSignalStatusUpdated(Signal signal);
-
-        void onFilterEmergency();
-
-        void onFilterInProgress();
-
-        void onFilterSolved();
 
         void onAuthenticationAction();
 

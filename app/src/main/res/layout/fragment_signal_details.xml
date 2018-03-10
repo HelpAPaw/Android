@@ -193,9 +193,11 @@
             <android.support.v7.widget.AppCompatButton
                 android:id="@+id/btn_add_comment"
                 style="@style/Widget.AppCompat.Button.Colored"
-                android:layout_width="wrap_content"
+                android:layout_width="80dp"
                 android:layout_height="match_parent"
-                android:text="@string/txt_send"/>
+                android:layout_marginRight="5dp"
+                android:text="@string/txt_send"
+                android:textSize="12sp"/>
         </LinearLayout>
     </RelativeLayout>
 </layout>
