@@ -46,7 +46,7 @@ public class SignalsMapActivity extends BaseActivity {
 
         mSharedPreferences = getApplicationContext().getSharedPreferences(this.getClass().getSimpleName(), MODE_PRIVATE);
 
-        if (mSharedPreferences.getBoolean(ACCEPTED_TERMS_CONDITIONS, false) || userManager.isLoggedIn()) {
+        if (mSharedPreferences.getBoolean(ACCEPTED_TERMS_CONDITIONS, false) || !userManager.isLoggedIn()) {
             if (null == savedInstanceState) {
                 if (getIntent().hasExtra(Signal.KEY_FOCUSED_SIGNAL_ID)) {
                     initFragment(SignalsMapFragment.newInstance(getIntent().getStringExtra(Signal.KEY_FOCUSED_SIGNAL_ID)));
