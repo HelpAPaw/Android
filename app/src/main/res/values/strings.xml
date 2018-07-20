@@ -100,5 +100,8 @@
         <br>
         No. Your location is obtained and used only locally on your device. It will not be recorded on a server or used with any other purpose beside notifying you of animals in need in your area.</font>]]>
      </string>
-
+    <string name="privacy_policy_dialog_title">Privacy Policy</string>
+    <string name="accept">Accept</string>
+    <string name="decline">Decline</string>
+    <string name="privacy_policy_url">Go to <![CDATA[https://develop.backendless.com/BDCD56B9-351A-E067-FFA4-9EA9CF2F4000/console/fcfdrgddsebccdkjfamuhppaasnowqluooks/files/view/web/privacypolicy.htm]]> to review the Privacy Policy</string>
 </resources>
