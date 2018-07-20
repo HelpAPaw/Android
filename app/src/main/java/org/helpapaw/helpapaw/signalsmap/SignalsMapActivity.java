@@ -3,6 +3,7 @@ package org.helpapaw.helpapaw.signalsmap;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -23,6 +24,7 @@ import com.firebase.jobdispatcher.RetryStrategy;
 import com.firebase.jobdispatcher.Trigger;
 
 import org.helpapaw.helpapaw.R;
+import org.helpapaw.helpapaw.authentication.AuthenticationActivity;
 import org.helpapaw.helpapaw.base.BaseActivity;
 import org.helpapaw.helpapaw.data.models.Signal;
 import org.helpapaw.helpapaw.data.user.UserManager;
@@ -75,6 +77,7 @@ public class SignalsMapActivity extends BaseActivity {
             .setPositiveButton("Accept", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
+                    mSharedPreferences.edit().putBoolean(ACCEPTED_TERMS_CONDITIONS, true).apply();
                     if (null == savedInstanceState) {
                         if (getIntent().hasExtra(Signal.KEY_FOCUSED_SIGNAL_ID)) {
                             initFragment(SignalsMapFragment.newInstance(getIntent().getStringExtra(Signal.KEY_FOCUSED_SIGNAL_ID)));
@@ -87,22 +90,24 @@ public class SignalsMapActivity extends BaseActivity {
             })
             .setNegativeButton("Decline", new DialogInterface.OnClickListener() {
                 @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
+                public void onClick(DialogInterface dialogInterface, final int i) {
+                    mSharedPreferences.edit().putBoolean(ACCEPTED_TERMS_CONDITIONS, false).commit();
                     userManager.logout(new UserManager.LogoutCallback() {
                         @Override
                         public void onLogoutSuccess() {
-
+                            Intent intent = new Intent(getApplicationContext(), AuthenticationActivity.class);
+                            startActivity(intent);
+                            SignalsMapActivity.this.finish();
                         }
 
                         @Override
                         public void onLogoutFailure(String message) {
-
+                            System.exit(0);
                         }
                     });
                 }
             })
             .show();
-
         }
 
     }
