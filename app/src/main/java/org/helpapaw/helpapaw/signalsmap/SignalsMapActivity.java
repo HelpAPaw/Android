@@ -39,17 +39,14 @@ public class SignalsMapActivity extends BaseActivity {
 
     private SharedPreferences mSharedPreferences;
     private final static String ACCEPTED_TERMS_CONDITIONS = "ACCEPTED_TERMS_CONDITIONS";
-    UserManager userManager;
-    private final static String URL = "https://develop.backendless.com/***REMOVED***/console/fcfdrgddsebccdkjfamuhppaasnowqluooks/files/view/web/privacypolicy.htm";
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         mSharedPreferences = getApplicationContext().getSharedPreferences(this.getClass().getSimpleName(), MODE_PRIVATE);
-        userManager = Injection.getUserManagerInstance();
 
-        if (mSharedPreferences.getBoolean(ACCEPTED_TERMS_CONDITIONS, false) ){// || !userManager.isLoggedIn()) {
+        if (mSharedPreferences.getBoolean(ACCEPTED_TERMS_CONDITIONS, false) || userManager.isLoggedIn()) {
             if (null == savedInstanceState) {
                 if (getIntent().hasExtra(Signal.KEY_FOCUSED_SIGNAL_ID)) {
                     initFragment(SignalsMapFragment.newInstance(getIntent().getStringExtra(Signal.KEY_FOCUSED_SIGNAL_ID)));
@@ -65,16 +62,15 @@ public class SignalsMapActivity extends BaseActivity {
             // i.e.: R.string.dialog_message =>
             // "Test this dialog following the link to dtmilano.blogspot.com"
             final SpannableString s =
-                    new SpannableString("go to " + URL + " to read our Privacy Policy");
+                    new SpannableString(getString(R.string.privacy_policy_url));
             Linkify.addLinks(s, Linkify.WEB_URLS);
             message.setText(s);
             message.setMovementMethod(LinkMovementMethod.getInstance());
 
-
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("Terms and Conditions")
+            builder.setTitle(R.string.privacy_policy_dialog_title)
                     .setView(message)
-            .setPositiveButton("Accept", new DialogInterface.OnClickListener() {
+            .setPositiveButton(R.string.accept, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
                     mSharedPreferences.edit().putBoolean(ACCEPTED_TERMS_CONDITIONS, true).apply();
@@ -88,23 +84,11 @@ public class SignalsMapActivity extends BaseActivity {
                     scheduleBackgroundChecks();
                 }
             })
-            .setNegativeButton("Decline", new DialogInterface.OnClickListener() {
+            .setNegativeButton(R.string.decline, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, final int i) {
                     mSharedPreferences.edit().putBoolean(ACCEPTED_TERMS_CONDITIONS, false).commit();
-                    userManager.logout(new UserManager.LogoutCallback() {
-                        @Override
-                        public void onLogoutSuccess() {
-                            Intent intent = new Intent(getApplicationContext(), AuthenticationActivity.class);
-                            startActivity(intent);
-                            SignalsMapActivity.this.finish();
-                        }
-
-                        @Override
-                        public void onLogoutFailure(String message) {
-                            System.exit(0);
-                        }
-                    });
+                    SignalsMapActivity.this.logOut();
                 }
             })
             .show();

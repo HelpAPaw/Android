@@ -32,7 +32,7 @@ import org.helpapaw.helpapaw.utils.Utils;
 public abstract class BaseActivity extends AppCompatActivity {
     protected ActivityBaseBinding binding;
     private ActionBarDrawerToggle drawerToggle;
-    private UserManager userManager;
+    protected UserManager userManager;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -106,7 +106,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    private void logOut() {
+    protected void logOut() {
         if (Utils.getInstance().hasNetworkConnection()) {
             userManager.logout(new UserManager.LogoutCallback() {
                 @Override
