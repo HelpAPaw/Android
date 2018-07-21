@@ -83,6 +83,7 @@ public abstract class BaseActivity extends AppCompatActivity {
                         menuItem.setChecked(true);
                         Intent intent = new Intent(BaseActivity.this, AboutActivity.class);
                         startActivity(intent);
+                        finish();
                         break;
 
                     case R.id.nav_item_sign_in_out:
@@ -104,6 +105,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     private void logIn() {
         Intent intent = new Intent(PawApplication.getContext(), AuthenticationActivity.class);
         startActivity(intent);
+        finish();
     }
 
     protected void logOut() {
@@ -128,6 +130,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     private void navigateFAQsSection() {
         Intent intent = new Intent(this, FAQsView.class);
         startActivity(intent);
+        finish();
     }
 
     private ActionBarDrawerToggle setupDrawerToggle() {
