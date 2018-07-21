@@ -59,8 +59,6 @@ public class SignalsMapActivity extends BaseActivity {
 
             final TextView message = new TextView(getApplicationContext());
             message.setPadding(50,1,1,1);
-            // i.e.: R.string.dialog_message =>
-            // "Test this dialog following the link to dtmilano.blogspot.com"
             final SpannableString s =
                     new SpannableString(getString(R.string.privacy_policy_url));
             Linkify.addLinks(s, Linkify.WEB_URLS);
