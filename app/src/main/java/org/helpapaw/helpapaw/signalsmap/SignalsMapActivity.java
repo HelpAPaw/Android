@@ -89,9 +89,14 @@ public class SignalsMapActivity extends BaseActivity {
                     SignalsMapActivity.this.logOut();
                 }
             })
+                    .setCancelable(false)
             .show();
         }
+    }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
     }
 
     @Override
