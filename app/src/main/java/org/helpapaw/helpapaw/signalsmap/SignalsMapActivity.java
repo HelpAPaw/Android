@@ -95,11 +95,6 @@ public class SignalsMapActivity extends BaseActivity {
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-    }
-
-    @Override
     protected String getToolbarTitle() {
         String title = getString(R.string.app_name);
 
