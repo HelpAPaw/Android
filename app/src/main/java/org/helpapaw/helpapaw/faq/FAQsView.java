@@ -29,7 +29,6 @@ public class FAQsView extends AppCompatActivity {
         ActionBar supportActionBar = getSupportActionBar();
         if (supportActionBar != null) {
             supportActionBar.setDisplayHomeAsUpEnabled(true);
-//            supportActionBar.setHomeAsUpIndicator(R.drawable.ic_close);
             supportActionBar.setDisplayShowTitleEnabled(false);
             binding.toolbarTitle.setText(getString(R.string.txt_faqs_view_title));
         }
@@ -43,17 +42,6 @@ public class FAQsView extends AppCompatActivity {
 //    "A3" = "When a signal is submitted it starts with status 'Help needed'. When somebody decides to answer the signal he/she changes the status to 'Somebody on the way' so that other people know. If for example the person arrives at the place but needs some assistance the status can be changed back to 'Help needed'. When the animal finally receives the needed help the signal is marked as 'Solved'. Signals are color-coded in red, orange and green according to their status.";
 //    "Q4" = "Does this app track my location?";
 //    "A4" = "No. Your location is obtained and used only locally on your device. It will not be recorded on a server or used with any other purpose beside notifying you of animals in need in your area.";
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public boolean onSupportNavigateUp() {
-        finish();
-        return false;
-    }
 
     private StringBuilder generateText() {
         StringBuilder stringBuilder = new StringBuilder();

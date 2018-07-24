@@ -37,22 +37,27 @@ import static org.helpapaw.helpapaw.base.PawApplication.TEST_VERSION;
 
 public class SignalsMapActivity extends BaseActivity {
 
+    private SignalsMapFragment mSignalsMapFragment;
     private SharedPreferences mSharedPreferences;
     private final static String ACCEPTED_TERMS_CONDITIONS = "ACCEPTED_TERMS_CONDITIONS";
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         mSharedPreferences = getApplicationContext().getSharedPreferences(this.getClass().getSimpleName(), MODE_PRIVATE);
+    }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
         if (mSharedPreferences.getBoolean(ACCEPTED_TERMS_CONDITIONS, false) || !userManager.isLoggedIn()) {
-            if (null == savedInstanceState) {
+            if (null == mSignalsMapFragment) {
                 if (getIntent().hasExtra(Signal.KEY_FOCUSED_SIGNAL_ID)) {
-                    initFragment(SignalsMapFragment.newInstance(getIntent().getStringExtra(Signal.KEY_FOCUSED_SIGNAL_ID)));
+                    mSignalsMapFragment = SignalsMapFragment.newInstance(getIntent().getStringExtra(Signal.KEY_FOCUSED_SIGNAL_ID));
                 } else {
-                    initFragment(SignalsMapFragment.newInstance());
+                    mSignalsMapFragment = SignalsMapFragment.newInstance();
                 }
+                initFragment(mSignalsMapFragment);
             }
             scheduleBackgroundChecks();
         } else {
@@ -68,29 +73,30 @@ public class SignalsMapActivity extends BaseActivity {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle(R.string.privacy_policy_dialog_title)
                     .setView(message)
-            .setPositiveButton(R.string.accept, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    mSharedPreferences.edit().putBoolean(ACCEPTED_TERMS_CONDITIONS, true).apply();
-                    if (null == savedInstanceState) {
-                        if (getIntent().hasExtra(Signal.KEY_FOCUSED_SIGNAL_ID)) {
-                            initFragment(SignalsMapFragment.newInstance(getIntent().getStringExtra(Signal.KEY_FOCUSED_SIGNAL_ID)));
-                        } else {
-                            initFragment(SignalsMapFragment.newInstance());
+                    .setPositiveButton(R.string.accept, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            mSharedPreferences.edit().putBoolean(ACCEPTED_TERMS_CONDITIONS, true).apply();
+                            if (null == mSignalsMapFragment) {
+                                if (getIntent().hasExtra(Signal.KEY_FOCUSED_SIGNAL_ID)) {
+                                    mSignalsMapFragment = SignalsMapFragment.newInstance(getIntent().getStringExtra(Signal.KEY_FOCUSED_SIGNAL_ID));
+                                } else {
+                                    mSignalsMapFragment = SignalsMapFragment.newInstance();
+                                }
+                                initFragment(mSignalsMapFragment);
+                            }
+                            scheduleBackgroundChecks();
                         }
-                    }
-                    scheduleBackgroundChecks();
-                }
-            })
-            .setNegativeButton(R.string.decline, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, final int i) {
-                    mSharedPreferences.edit().putBoolean(ACCEPTED_TERMS_CONDITIONS, false).commit();
-                    SignalsMapActivity.this.logOut();
-                }
-            })
+                    })
+                    .setNegativeButton(R.string.decline, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, final int i) {
+                            mSharedPreferences.edit().putBoolean(ACCEPTED_TERMS_CONDITIONS, false).commit();
+                            logOut();
+                        }
+                    })
                     .setCancelable(false)
-            .show();
+                    .show();
         }
     }
 
