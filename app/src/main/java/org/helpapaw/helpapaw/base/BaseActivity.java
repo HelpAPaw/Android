@@ -83,7 +83,6 @@ public abstract class BaseActivity extends AppCompatActivity {
                         menuItem.setChecked(true);
                         Intent intent = new Intent(BaseActivity.this, AboutActivity.class);
                         startActivity(intent);
-                        finish();
                         break;
 
                     case R.id.nav_item_sign_in_out:
@@ -96,7 +95,7 @@ public abstract class BaseActivity extends AppCompatActivity {
                 }
 
                 // Closing drawer on item click
-                binding.drawer.closeDrawers();
+            //    binding.drawer.closeDrawers();
                 return true;
             }
         };
@@ -105,7 +104,6 @@ public abstract class BaseActivity extends AppCompatActivity {
     private void logIn() {
         Intent intent = new Intent(PawApplication.getContext(), AuthenticationActivity.class);
         startActivity(intent);
-        finish();
     }
 
     protected void logOut() {
@@ -113,7 +111,7 @@ public abstract class BaseActivity extends AppCompatActivity {
             userManager.logout(new UserManager.LogoutCallback() {
                 @Override
                 public void onLogoutSuccess() {
-                    Snackbar.make(binding.getRoot().findViewById(R.id.fab_add_signal), R.string.txt_logout_succeeded, Snackbar.LENGTH_LONG).show();
+                    Snackbar.make(binding.getRoot(), R.string.txt_logout_succeeded, Snackbar.LENGTH_LONG).show();
                     binding.navView.getMenu().findItem(R.id.nav_item_sign_in_out).setTitle(R.string.txt_log_in);
                 }
 
@@ -130,7 +128,6 @@ public abstract class BaseActivity extends AppCompatActivity {
     private void navigateFAQsSection() {
         Intent intent = new Intent(this, FAQsView.class);
         startActivity(intent);
-        finish();
     }
 
     private ActionBarDrawerToggle setupDrawerToggle() {
@@ -145,6 +142,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == android.R.id.home) {
+
             binding.drawer.openDrawer(GravityCompat.START);
         }
         return drawerToggle.onOptionsItemSelected(item) || super.onOptionsItemSelected(item);

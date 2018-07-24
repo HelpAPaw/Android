@@ -143,7 +143,7 @@ public class SignalsMapFragment extends BaseFragment
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        setRetainInstance(true);
         Bundle arguments = getArguments();
         if( (arguments != null) && arguments.containsKey(Signal.KEY_FOCUSED_SIGNAL_ID) ) {
 

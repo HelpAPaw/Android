@@ -55,6 +55,7 @@
         </activity>
         <activity
             android:name=".authentication.AuthenticationActivity"
+            android:noHistory="true"
             android:windowSoftInputMode="stateHidden"/>
         <activity
             android:name=".signaldetails.SignalDetailsActivity"
@@ -72,10 +73,14 @@
             </intent-filter>
         </service>
 
-        <activity android:name=".faq.FAQsView"/>
+        <activity android:name=".faq.FAQsView"
+            android:parentActivityName=".signalsmap.SignalsMapActivity"
+            android:noHistory="true"/>
         <activity
             android:name=".about.AboutActivity"
-            android:screenOrientation="portrait"/>
+            android:noHistory="true"
+            android:screenOrientation="portrait"
+            android:parentActivityName=".signalsmap.SignalsMapActivity"/>
     </application>
 
 </manifest>
