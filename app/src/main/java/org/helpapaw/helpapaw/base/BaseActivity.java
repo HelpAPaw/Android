@@ -113,6 +113,9 @@ public abstract class BaseActivity extends AppCompatActivity {
                 public void onLogoutSuccess() {
                     Snackbar.make(binding.getRoot(), R.string.txt_logout_succeeded, Snackbar.LENGTH_LONG).show();
                     binding.navView.getMenu().findItem(R.id.nav_item_sign_in_out).setTitle(R.string.txt_log_in);
+                    Intent intent = new Intent(getApplicationContext(), AuthenticationActivity.class);
+                    startActivity(intent);
+                    finish();
                 }
 
                 @Override
