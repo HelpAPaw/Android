@@ -51,19 +51,11 @@ public class SignalsMapActivity extends BaseActivity {
     protected void onStart() {
         super.onStart();
         if (mSharedPreferences.getBoolean(ACCEPTED_TERMS_CONDITIONS, false) || !userManager.isLoggedIn()) {
-            if (null == mSignalsMapFragment) {
-                if (getIntent().hasExtra(Signal.KEY_FOCUSED_SIGNAL_ID)) {
-                    mSignalsMapFragment = SignalsMapFragment.newInstance(getIntent().getStringExtra(Signal.KEY_FOCUSED_SIGNAL_ID));
-                } else {
-                    mSignalsMapFragment = SignalsMapFragment.newInstance();
-                }
-                initFragment(mSignalsMapFragment);
-            }
+            initFragment(mSignalsMapFragment);
             scheduleBackgroundChecks();
         } else {
-
             final TextView message = new TextView(getApplicationContext());
-            message.setPadding(50,1,1,1);
+            message.setPadding(50, 1, 1, 1);
             final SpannableString s =
                     new SpannableString(getString(R.string.privacy_policy_url));
             Linkify.addLinks(s, Linkify.WEB_URLS);
@@ -77,14 +69,7 @@ public class SignalsMapActivity extends BaseActivity {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             mSharedPreferences.edit().putBoolean(ACCEPTED_TERMS_CONDITIONS, true).apply();
-                            if (null == mSignalsMapFragment) {
-                                if (getIntent().hasExtra(Signal.KEY_FOCUSED_SIGNAL_ID)) {
-                                    mSignalsMapFragment = SignalsMapFragment.newInstance(getIntent().getStringExtra(Signal.KEY_FOCUSED_SIGNAL_ID));
-                                } else {
-                                    mSignalsMapFragment = SignalsMapFragment.newInstance();
-                                }
-                                initFragment(mSignalsMapFragment);
-                            }
+                            initFragment(mSignalsMapFragment);
                             scheduleBackgroundChecks();
                         }
                     })
@@ -112,10 +97,17 @@ public class SignalsMapActivity extends BaseActivity {
     }
 
     private void initFragment(Fragment signalsMapFragment) {
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction transaction = fragmentManager.beginTransaction();
-        transaction.add(R.id.grp_content_frame, signalsMapFragment);
-        transaction.commit();
+        if (mSignalsMapFragment == null) {
+            if (getIntent().hasExtra(Signal.KEY_FOCUSED_SIGNAL_ID)) {
+                mSignalsMapFragment = SignalsMapFragment.newInstance(getIntent().getStringExtra(Signal.KEY_FOCUSED_SIGNAL_ID));
+            } else {
+                mSignalsMapFragment = SignalsMapFragment.newInstance();
+            }
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            FragmentTransaction transaction = fragmentManager.beginTransaction();
+            transaction.add(R.id.grp_content_frame, signalsMapFragment);
+            transaction.commit();
+        }
     }
 
     @Override
