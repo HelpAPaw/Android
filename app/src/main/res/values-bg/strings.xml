@@ -97,7 +97,7 @@
     <string name="error_facebook_not_installed">Фейсбуук не е инсталиран</string>
 
     <string name="privacy_policy_dialog_title">Правила за поверителност</string>
-    <string name="accept">приемам</string>
-    <string name="decline">упадък</string>
+    <string name="accept">Приемам</string>
+    <string name="decline">Отхвърлям</string>
 
 </resources>
