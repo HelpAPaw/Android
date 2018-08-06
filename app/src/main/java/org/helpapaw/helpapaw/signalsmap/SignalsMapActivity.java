@@ -5,12 +5,14 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
 import android.text.SpannableString;
 import android.text.method.LinkMovementMethod;
 import android.text.util.Linkify;
@@ -31,6 +33,12 @@ import org.helpapaw.helpapaw.data.user.UserManager;
 import org.helpapaw.helpapaw.utils.Injection;
 import org.helpapaw.helpapaw.utils.services.BackgroundCheckJobService;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.List;
 
 import static org.helpapaw.helpapaw.base.PawApplication.TEST_VERSION;
@@ -55,34 +63,38 @@ public class SignalsMapActivity extends BaseActivity {
             scheduleBackgroundChecks();
         } else {
             final TextView message = new TextView(getApplicationContext());
-            message.setPadding(50, 1, 1, 1);
+          //  message.setPadding(50, 1, 1, 1);
             final SpannableString s =
-                    new SpannableString(getString(R.string.privacy_policy_url));
+                    new SpannableString("https://develop.backendless.com/***REMOVED***/console/fcfdrgddsebccdkjfamuhppaasnowqluooks/files/view/web/privacypolicy.htm");
             Linkify.addLinks(s, Linkify.WEB_URLS);
-            message.setText(s);
-            message.setMovementMethod(LinkMovementMethod.getInstance());
+//            try {
+//                message.setText(getHtml("https://develop.backendless.com/***REMOVED***/console/fcfdrgddsebccdkjfamuhppaasnowqluooks/files/view/web/privacypolicy.htm"));
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+           // message.setMovementMethod(LinkMovementMethod.getInstance());
 
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle(R.string.privacy_policy_dialog_title)
-                    .setView(message)
-                    .setPositiveButton(R.string.accept, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            mSharedPreferences.edit().putBoolean(ACCEPTED_TERMS_CONDITIONS, true).apply();
-                            initFragment();
-                            scheduleBackgroundChecks();
-                        }
-                    })
-                    .setNegativeButton(R.string.decline, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, final int i) {
-                            mSharedPreferences.edit().putBoolean(ACCEPTED_TERMS_CONDITIONS, false).commit();
-                            logOut();
-                        }
-                    })
-                    .setCancelable(false)
-                    .show();
+           new RetrieveSiteData().execute();
         }
+    }
+
+    public static String getHtml(String url) throws IOException {
+        // Build and set timeout values for the request.
+        URLConnection connection = (new URL(url)).openConnection();
+        connection.setConnectTimeout(5000);
+        connection.setReadTimeout(5000);
+        connection.connect();
+
+        // Read and store the result line by line then return the entire string.
+        InputStream in = connection.getInputStream();
+        BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+        StringBuilder html = new StringBuilder();
+        for (String line; (line = reader.readLine()) != null; ) {
+            html.append(line);
+        }
+        in.close();
+
+        return html.toString();
     }
 
     @Override
@@ -157,5 +169,54 @@ public class SignalsMapActivity extends BaseActivity {
                 .build();
 
         dispatcher.mustSchedule(backgroundCheckJob);
+    }
+
+
+
+    public class RetrieveSiteData extends AsyncTask<String, Void, String> {
+        @Override
+        protected String doInBackground(String... urls) {
+            String str = null;
+            try {
+                str = getHtml("https://develop.backendless.com/***REMOVED***/console/fcfdrgddsebccdkjfamuhppaasnowqluooks/files/view/web/privacypolicy.htm");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            return str;
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            // this is the end of the css being displayed that needs to be removed to display the
+            // Html properly
+            String pattern = "none;}";
+            //get the index of the pattern
+            int end = result.lastIndexOf(pattern);
+            // add the length to get the end of it
+            end = end + pattern.length();
+            // make a sub string without it
+            result = result.substring(end, result.length());
+            AlertDialog.Builder builder = new AlertDialog.Builder(SignalsMapActivity.this);
+            builder.setTitle(R.string.privacy_policy_dialog_title)
+                    .setMessage(Html.fromHtml(result))
+                    .setPositiveButton(R.string.accept, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            mSharedPreferences.edit().putBoolean(ACCEPTED_TERMS_CONDITIONS, true).apply();
+                            initFragment();
+                            scheduleBackgroundChecks();
+                        }
+                    })
+                    .setNegativeButton(R.string.decline, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, final int i) {
+                            mSharedPreferences.edit().putBoolean(ACCEPTED_TERMS_CONDITIONS, false).commit();
+                            logOut();
+                        }
+                    })
+                    .setCancelable(false)
+                    .show();
+        }
     }
 }
