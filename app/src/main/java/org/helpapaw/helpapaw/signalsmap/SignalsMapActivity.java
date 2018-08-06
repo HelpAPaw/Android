@@ -51,7 +51,7 @@ public class SignalsMapActivity extends BaseActivity {
     protected void onStart() {
         super.onStart();
         if (mSharedPreferences.getBoolean(ACCEPTED_TERMS_CONDITIONS, false) || !userManager.isLoggedIn()) {
-            initFragment(mSignalsMapFragment);
+            initFragment();
             scheduleBackgroundChecks();
         } else {
             final TextView message = new TextView(getApplicationContext());
@@ -69,7 +69,7 @@ public class SignalsMapActivity extends BaseActivity {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             mSharedPreferences.edit().putBoolean(ACCEPTED_TERMS_CONDITIONS, true).apply();
-                            initFragment(mSignalsMapFragment);
+                            initFragment();
                             scheduleBackgroundChecks();
                         }
                     })
@@ -96,7 +96,7 @@ public class SignalsMapActivity extends BaseActivity {
         return title;
     }
 
-    private void initFragment(Fragment signalsMapFragment) {
+    private void initFragment() {
         if (mSignalsMapFragment == null) {
             if (getIntent().hasExtra(Signal.KEY_FOCUSED_SIGNAL_ID)) {
                 mSignalsMapFragment = SignalsMapFragment.newInstance(getIntent().getStringExtra(Signal.KEY_FOCUSED_SIGNAL_ID));
@@ -105,7 +105,7 @@ public class SignalsMapActivity extends BaseActivity {
             }
             FragmentManager fragmentManager = getSupportFragmentManager();
             FragmentTransaction transaction = fragmentManager.beginTransaction();
-            transaction.add(R.id.grp_content_frame, signalsMapFragment);
+            transaction.add(R.id.grp_content_frame, mSignalsMapFragment);
             transaction.commit();
         }
     }
