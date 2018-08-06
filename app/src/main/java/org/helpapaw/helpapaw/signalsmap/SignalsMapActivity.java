@@ -62,18 +62,6 @@ public class SignalsMapActivity extends BaseActivity {
             initFragment();
             scheduleBackgroundChecks();
         } else {
-            final TextView message = new TextView(getApplicationContext());
-          //  message.setPadding(50, 1, 1, 1);
-            final SpannableString s =
-                    new SpannableString("https://develop.backendless.com/***REMOVED***/console/fcfdrgddsebccdkjfamuhppaasnowqluooks/files/view/web/privacypolicy.htm");
-            Linkify.addLinks(s, Linkify.WEB_URLS);
-//            try {
-//                message.setText(getHtml("https://develop.backendless.com/***REMOVED***/console/fcfdrgddsebccdkjfamuhppaasnowqluooks/files/view/web/privacypolicy.htm"));
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-           // message.setMovementMethod(LinkMovementMethod.getInstance());
-
            new RetrieveSiteData().execute();
         }
     }
