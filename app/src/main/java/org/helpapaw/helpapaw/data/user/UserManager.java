@@ -17,24 +17,26 @@ public interface UserManager {
 
     String getUserToken();
 
+    void getHasAcceptedPrivacyPolicy(GetUserPropertyCallback getUserPropertyCallback);
+    void setHasAcceptedPrivacyPolicy(boolean value);
+
     interface LoginCallback {
-
         void onLoginSuccess();
-
         void onLoginFailure(String message);
     }
 
     interface RegistrationCallback {
-
         void onRegistrationSuccess();
-
         void onRegistrationFailure(String message);
     }
 
     interface LogoutCallback {
-
         void onLogoutSuccess();
-
         void onLogoutFailure(String message);
+    }
+
+    interface GetUserPropertyCallback {
+        void onSuccess(Object value);
+        void onFailure(String message);
     }
 }

@@ -1,8 +1,11 @@
 package org.helpapaw.helpapaw.data.user;
 
+import android.util.Log;
+
 import com.backendless.Backendless;
 import com.backendless.BackendlessUser;
 import com.backendless.async.callback.AsyncCallback;
+import com.backendless.exceptions.BackendlessException;
 import com.backendless.exceptions.BackendlessFault;
 import com.backendless.persistence.local.UserTokenStorageFactory;
 import com.facebook.login.LoginManager;
@@ -114,5 +117,47 @@ public class BackendlessUserManager implements UserManager {
         String userToken = getUserToken();
 
         return userToken != null && !userToken.equals("");
+    }
+
+    @Override
+    public void setHasAcceptedPrivacyPolicy(boolean value) {
+        try
+        {
+            Backendless.UserService.CurrentUser().setProperty("acceptedPolicyVersion", true);
+            Backendless.UserService.update(Backendless.UserService.CurrentUser(), new AsyncCallback<BackendlessUser>() {
+                @Override
+                public void handleResponse(BackendlessUser response) {}
+
+                @Override
+                public void handleFault(BackendlessFault fault) {}
+            });
+        }
+        catch( BackendlessException exception )
+        {
+            // update failed, to get the error code, call exception.getFault().getCode()
+            Log.e(BackendlessUserManager.class.getSimpleName(), exception.getMessage());
+        }
+    }
+
+    @Override
+    public void getHasAcceptedPrivacyPolicy(final GetUserPropertyCallback getUserPropertyCallback) {
+
+        String currentUserId = Backendless.UserService.loggedInUser();
+        if (!currentUserId.equals("")) {
+            Backendless.UserService.findById(currentUserId, new AsyncCallback<BackendlessUser>() {
+                @Override
+                public void handleResponse(BackendlessUser currentUser) {
+                    getUserPropertyCallback.onSuccess(currentUser.getProperty("acceptedPolicyVersion"));
+                }
+
+                @Override
+                public void handleFault(BackendlessFault fault) {
+                    getUserPropertyCallback.onFailure(fault.getMessage());
+                }
+            });
+        }
+        else {
+            getUserPropertyCallback.onFailure("User not logged in!");
+        }
     }
 }
