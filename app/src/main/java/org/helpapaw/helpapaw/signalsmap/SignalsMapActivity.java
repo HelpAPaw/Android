@@ -3,8 +3,6 @@ package org.helpapaw.helpapaw.signalsmap;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -13,10 +11,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
-import android.text.SpannableString;
-import android.text.method.LinkMovementMethod;
-import android.text.util.Linkify;
-import android.widget.TextView;
 
 import com.firebase.jobdispatcher.Constraint;
 import com.firebase.jobdispatcher.FirebaseJobDispatcher;
@@ -26,11 +20,9 @@ import com.firebase.jobdispatcher.RetryStrategy;
 import com.firebase.jobdispatcher.Trigger;
 
 import org.helpapaw.helpapaw.R;
-import org.helpapaw.helpapaw.authentication.AuthenticationActivity;
 import org.helpapaw.helpapaw.base.BaseActivity;
 import org.helpapaw.helpapaw.data.models.Signal;
 import org.helpapaw.helpapaw.data.user.UserManager;
-import org.helpapaw.helpapaw.utils.Injection;
 import org.helpapaw.helpapaw.utils.services.BackgroundCheckJobService;
 
 import java.io.BufferedReader;
@@ -46,23 +38,33 @@ import static org.helpapaw.helpapaw.base.PawApplication.TEST_VERSION;
 public class SignalsMapActivity extends BaseActivity {
 
     private SignalsMapFragment mSignalsMapFragment;
-    private SharedPreferences mSharedPreferences;
-    private final static String ACCEPTED_TERMS_CONDITIONS = "ACCEPTED_TERMS_CONDITIONS";
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mSharedPreferences = getApplicationContext().getSharedPreferences(this.getClass().getSimpleName(), MODE_PRIVATE);
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        if (mSharedPreferences.getBoolean(ACCEPTED_TERMS_CONDITIONS, false) || !userManager.isLoggedIn()) {
-            initFragment();
-            scheduleBackgroundChecks();
-        } else {
-           new RetrieveSiteData().execute();
+
+        initFragment();
+        scheduleBackgroundChecks();
+
+        if (userManager.isLoggedIn()) {
+            userManager.getHasAcceptedPrivacyPolicy(new UserManager.GetUserPropertyCallback() {
+                @Override
+                public void onSuccess(Object hasAcceptedPrivacyPolicy) {
+                    if (!((Boolean) hasAcceptedPrivacyPolicy)) {
+                        new ShowPrivacyPolicy().execute();
+                    }
+                }
+
+                @Override
+                public void onFailure(String message) {
+                    // Do nothing
+                }
+            });
         }
     }
 
@@ -159,9 +161,7 @@ public class SignalsMapActivity extends BaseActivity {
         dispatcher.mustSchedule(backgroundCheckJob);
     }
 
-
-
-    public class RetrieveSiteData extends AsyncTask<String, Void, String> {
+    public class ShowPrivacyPolicy extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... urls) {
             String str = null;
@@ -176,30 +176,19 @@ public class SignalsMapActivity extends BaseActivity {
 
         @Override
         protected void onPostExecute(String result) {
-            // this is the end of the css being displayed that needs to be removed to display the
-            // Html properly
-            String pattern = "none;}";
-            //get the index of the pattern
-            int end = result.lastIndexOf(pattern);
-            // add the length to get the end of it
-            end = end + pattern.length();
-            // make a sub string without it
-            result = result.substring(end, result.length());
+
             AlertDialog.Builder builder = new AlertDialog.Builder(SignalsMapActivity.this);
             builder.setTitle(R.string.privacy_policy_dialog_title)
                     .setMessage(Html.fromHtml(result))
                     .setPositiveButton(R.string.accept, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            mSharedPreferences.edit().putBoolean(ACCEPTED_TERMS_CONDITIONS, true).apply();
-                            initFragment();
-                            scheduleBackgroundChecks();
+                            userManager.setHasAcceptedPrivacyPolicy(true);
                         }
                     })
                     .setNegativeButton(R.string.decline, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, final int i) {
-                            mSharedPreferences.edit().putBoolean(ACCEPTED_TERMS_CONDITIONS, false).commit();
                             logOut();
                         }
                     })
