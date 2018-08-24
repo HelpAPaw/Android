@@ -72,6 +72,7 @@ public class BackendlessUserManager implements UserManager {
             public void handleResponse(Boolean isValidLogin) {
                 if ((isValidLogin != null) && (isValidLogin)) {
                     if (Backendless.UserService.CurrentUser() == null) {
+                        //https://support.backendless.com/t/userservice-currentuser-is-null-even-if-usertokenstoragefactory-retruns-token/3239
                         String currentUserId = Backendless.UserService.loggedInUser();
                         if (!currentUserId.equals("")) {
                             Backendless.UserService.findById(currentUserId, new AsyncCallback<BackendlessUser>() {
@@ -142,6 +143,7 @@ public class BackendlessUserManager implements UserManager {
     @Override
     public void getHasAcceptedPrivacyPolicy(final GetUserPropertyCallback getUserPropertyCallback) {
 
+        //https://support.backendless.com/t/userservice-currentuser-is-null-even-if-usertokenstoragefactory-retruns-token/3239
         String currentUserId = Backendless.UserService.loggedInUser();
         if (!currentUserId.equals("")) {
             Backendless.UserService.findById(currentUserId, new AsyncCallback<BackendlessUser>() {
