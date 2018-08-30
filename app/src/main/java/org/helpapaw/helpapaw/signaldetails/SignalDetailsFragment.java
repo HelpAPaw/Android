@@ -120,12 +120,13 @@ public class SignalDetailsFragment extends BaseFragment implements SignalDetails
         binding.txtSubmittedDate.setText(formattedDate);
         binding.viewSignalStatus.updateStatus(signal.getStatus());
 
-        if (signal.getAuthorPhone() == null) {
+        String authorPhone = signal.getAuthorPhone();
+        if (authorPhone == null || authorPhone.trim().isEmpty()) {
             binding.imgCall.setVisibility(View.GONE);
             binding.btnCall.setVisibility(View.GONE);
         } else {
             binding.imgCall.setVisibility(View.VISIBLE);
-            binding.btnCall.setText(signal.getAuthorPhone());
+            binding.btnCall.setText(authorPhone);
             binding.btnCall.setVisibility(View.VISIBLE);
         }
 
