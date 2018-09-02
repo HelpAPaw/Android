@@ -7,6 +7,8 @@ public interface UserManager {
 
     void login(String email, String password, LoginCallback loginCallback);
 
+    void loginWithFacebook(String accessToken, LoginCallback loginCallback);
+
     void register(String email, String password, String name, String phoneNumber, RegistrationCallback registrationCallback);
 
     void logout(LogoutCallback logoutCallback);

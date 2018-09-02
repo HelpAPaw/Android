@@ -1,13 +1,5 @@
 package org.helpapaw.helpapaw.authentication.login;
 
-import android.app.Activity;
-
-import com.backendless.Backendless;
-import com.backendless.BackendlessUser;
-import com.backendless.async.callback.AsyncCallback;
-import com.backendless.exceptions.BackendlessFault;
-import com.facebook.CallbackManager;
-
 import org.helpapaw.helpapaw.base.Presenter;
 import org.helpapaw.helpapaw.data.user.UserManager;
 import org.helpapaw.helpapaw.utils.Injection;
@@ -101,29 +93,24 @@ public class LoginPresenter extends Presenter<LoginContract.View> implements Log
     }
 
     @Override
-    public void onLoginFbButtonClicked(Activity activity, CallbackManager callbackManager) {
-
-        setProgressIndicator(true);
-
-        //TODO: inject this so the presenter doesn't know about Backendless
-        Backendless.UserService.loginWithFacebookSdk(activity,
-            callbackManager,
-            new AsyncCallback<BackendlessUser>()
-            {
+    public void onLoginFbSuccess(String accessToken) {
+        if (Utils.getInstance().hasNetworkConnection()) {
+            setProgressIndicator(true);
+            userManager.loginWithFacebook(accessToken, new UserManager.LoginCallback() {
                 @Override
-                public void handleResponse( BackendlessUser loggedInUser )
-                {
-                    // user logged in successfully
+                public void onLoginSuccess() {
+                    setProgressIndicator(false);
                     LoginPresenter.this.onLoginSuccess();
                 }
 
                 @Override
-                public void handleFault( BackendlessFault fault )
-                {
-                    // failed to log in
-                    LoginPresenter.this.onLoginFailure(fault.getMessage());
+                public void onLoginFailure(String message) {
+                    setProgressIndicator(false);
+                    LoginPresenter.this.onLoginFailure(message);
                 }
-            },
-            true);
+            });
+        } else {
+            getView().showNoInternetMessage();
+        }
     }
 }
