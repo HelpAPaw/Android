@@ -33,6 +33,22 @@ public class BackendlessUserManager implements UserManager {
     }
 
     @Override
+    public  void loginWithFacebook(String accessToken, final LoginCallback loginCallback) {
+        Backendless.UserService.loginWithFacebookSdk(accessToken, new AsyncCallback<BackendlessUser>() {
+            @Override
+            public void handleResponse(BackendlessUser response) {
+                loginCallback.onLoginSuccess();
+            }
+
+            @Override
+            public void handleFault(BackendlessFault fault) {
+                loginCallback.onLoginFailure(fault.getMessage());
+            }
+        },
+        true);
+    }
+
+    @Override
     public void register(String email, String password, String name, String phoneNumber, final RegistrationCallback registrationCallback) {
         BackendlessUser user = new BackendlessUser();
         user.setProperty(USER_EMAIL_FIELD, email);

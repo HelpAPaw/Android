@@ -7,6 +7,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.login.LoginResult;
+
 import org.helpapaw.helpapaw.R;
 import org.helpapaw.helpapaw.authentication.AuthenticationActivity;
 import org.helpapaw.helpapaw.authentication.register.RegisterFragment;
@@ -16,6 +20,8 @@ import org.helpapaw.helpapaw.base.PresenterManager;
 import org.helpapaw.helpapaw.databinding.FragmentLoginBinding;
 import org.helpapaw.helpapaw.reusable.AlertDialogFragment;
 import org.helpapaw.helpapaw.signalsmap.SignalsMapActivity;
+
+import java.util.Arrays;
 
 public class LoginFragment extends BaseFragment implements LoginContract.View {
 
@@ -48,9 +54,27 @@ public class LoginFragment extends BaseFragment implements LoginContract.View {
 
         binding.btnLogin.setOnClickListener(getBtnLoginClickListener());
         binding.btnShowRegister.setOnClickListener(getBtnShowRegisterClickListener());
-        binding.btnLoginFb.setOnClickListener(getBtnLoginFbClickListener());
-        binding.btnLoginFb.setReadPermissions("email");
-        binding.btnLoginFb.setFragment(this);
+
+        binding.btnLoginFb.setReadPermissions(Arrays.asList("email"));
+        // Callback registration
+        AuthenticationActivity activity = (AuthenticationActivity)getActivity();
+        binding.btnLoginFb.registerCallback(activity.callbackManager, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+                actionsListener.onLoginFbSuccess(loginResult.getAccessToken().getToken());
+            }
+
+            @Override
+            public void onCancel() {
+                // Do nothing
+            }
+
+            @Override
+            public void onError(FacebookException exception) {
+                // App code
+                showMessage(exception.getMessage());
+            }
+        });
 
         actionsListener.onInitLoginScreen();
 
@@ -137,16 +161,6 @@ public class LoginFragment extends BaseFragment implements LoginContract.View {
             @Override
             public void onClick(View v) {
                 actionsListener.onRegisterButtonClicked();
-            }
-        };
-    }
-
-    public View.OnClickListener getBtnLoginFbClickListener() {
-        return new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                AuthenticationActivity activity = (AuthenticationActivity)getActivity();
-                actionsListener.onLoginFbButtonClicked(activity, activity.callbackManager);
             }
         };
     }
