@@ -103,5 +103,5 @@
     <string name="privacy_policy_dialog_title">Privacy Policy</string>
     <string name="accept">Accept</string>
     <string name="decline">Decline</string>
-    <string name="privacy_policy_url">Go to <![CDATA[https://develop.backendless.com/***REMOVED***/console/fcfdrgddsebccdkjfamuhppaasnowqluooks/files/view/web/privacypolicy.htm]]> to review the Privacy Policy</string>
+    <string name="privacy_policy_url" translatable="false">Go to <![CDATA[https://develop.backendless.com/***REMOVED***/console/fcfdrgddsebccdkjfamuhppaasnowqluooks/files/view/web/privacypolicy.htm]]> to review the Privacy Policy</string>
 </resources>
