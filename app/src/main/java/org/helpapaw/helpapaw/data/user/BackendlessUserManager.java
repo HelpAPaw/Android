@@ -18,6 +18,7 @@ public class BackendlessUserManager implements UserManager {
     private static final String USER_EMAIL_FIELD = "email";
     private static final String USER_NAME_FIELD = "name";
     private static final String USER_PHONE_NUMBER_FIELD = "phoneNumber";
+    private static final String USER_ACCEPTED_PRIVACY_POLICY_FIELD = "acceptedPrivacyPolicy";
 
     @Override
     public void login(String email, String password, final LoginCallback loginCallback) {
@@ -140,7 +141,7 @@ public class BackendlessUserManager implements UserManager {
     public void setHasAcceptedPrivacyPolicy(boolean value) {
         try
         {
-            Backendless.UserService.CurrentUser().setProperty("acceptedPolicyVersion", true);
+            Backendless.UserService.CurrentUser().setProperty(USER_ACCEPTED_PRIVACY_POLICY_FIELD, true);
             Backendless.UserService.update(Backendless.UserService.CurrentUser(), new AsyncCallback<BackendlessUser>() {
                 @Override
                 public void handleResponse(BackendlessUser response) {}
@@ -165,7 +166,7 @@ public class BackendlessUserManager implements UserManager {
             Backendless.UserService.findById(currentUserId, new AsyncCallback<BackendlessUser>() {
                 @Override
                 public void handleResponse(BackendlessUser currentUser) {
-                    getUserPropertyCallback.onSuccess(currentUser.getProperty("acceptedPolicyVersion"));
+                    getUserPropertyCallback.onSuccess(currentUser.getProperty(USER_ACCEPTED_PRIVACY_POLICY_FIELD));
                 }
 
                 @Override
