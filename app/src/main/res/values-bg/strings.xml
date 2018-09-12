@@ -35,6 +35,7 @@
     <string name="permission_not_granted">Разрешението не бе предоставено!</string>
     <string name="txt_storage_permissions_for_camera">Упс… Не можем да отворим камерата без Ваше разрешение.</string>
     <string name="txt_storage_permissions_for_gallery">Упс… не можем да отворим галерията без Ваше разрешение.</string>
+    <string name="txt_location_permissions_for_map">Упс… не можем да получим местоположението Ви без Ваше разрешение.</string>
     <string name="txt_status_help_needed">Статус: Нужна е помощ</string>
     <string name="txt_status_somebody_on_the_way">Статус: Някой е на път</string>
     <string name="txt_status_solved">Статус: Приключен</string>

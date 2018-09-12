@@ -2,6 +2,7 @@ package org.helpapaw.helpapaw.signalsmap;
 
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -461,15 +462,18 @@ public class SignalsMapFragment extends BaseFragment
         } else {
             setAddSignalViewVisibility(mVisibilityAddSignal);
             signalsGoogleMap.setMyLocationEnabled(true);
+            setLastLocation();
+        }
+    }
 
-            if (!mVisibilityAddSignal) {
-
-                Location location = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
-                if (location == null) {
-                    LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, this);
-                } else {
-                    handleNewLocation(location);
-                }
+    @SuppressLint("MissingPermission")
+    private void setLastLocation() {
+        if (!mVisibilityAddSignal) {
+            Location location = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
+            if (location == null) {
+                LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, this);
+            } else {
+                handleNewLocation(location);
             }
         }
     }
@@ -760,9 +764,20 @@ public class SignalsMapFragment extends BaseFragment
         AlertDialogFragment.showAlert(getString(R.string.txt_logout_failed), message, true, this.getFragmentManager());
     }
 
+    @SuppressLint("MissingPermission")
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode) {
+            case LOCATION_PERMISSIONS_REQUEST:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    signalsGoogleMap.setMyLocationEnabled(true);
+                    setLastLocation();
+                } else {
+                    // Permission Denied
+                    Toast.makeText(getContext(), R.string.txt_location_permissions_for_map, Toast.LENGTH_SHORT)
+                            .show();
+                }
+                break;
             case READ_EXTERNAL_STORAGE_FOR_CAMERA:
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     actionsListener.onStoragePermissionForCameraGranted();
