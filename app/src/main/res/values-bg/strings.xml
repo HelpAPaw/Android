@@ -65,6 +65,7 @@
     <string name="txt_new_signal">Нов сигнал</string>
     <string name="text_faqs">Често задавани въпроси</string>
     <string name="text_about">Относно</string>
+    <string name="text_privacy_policy">Политика за поверителност</string>
     <string name="text_feedback">Обратна връзка</string>
     <string name="txt_faqs_view_title">Често задавани въпроси</string>
     <string name="txt_user_changed_status_to">%1$s промени статуса на \'%2$s\'</string>
@@ -103,5 +104,6 @@
     <string name="txt_success">Успех</string>
     <string name="txt_error">Грешка</string>
     <string name="txt_registration_successful">Линк за потвърждение е изпратен на имейла Ви. Моля кликнете на него за да завършите регистрацията си.</string>
+    <string name="content_description_app_logo">Лого на приложението</string>
 
 </resources>

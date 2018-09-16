@@ -21,6 +21,7 @@ import org.helpapaw.helpapaw.authentication.AuthenticationActivity;
 import org.helpapaw.helpapaw.data.user.UserManager;
 import org.helpapaw.helpapaw.databinding.ActivityBaseBinding;
 import org.helpapaw.helpapaw.faq.FAQsView;
+import org.helpapaw.helpapaw.privacypolicy.PrivacyPolicyActivity;
 import org.helpapaw.helpapaw.reusable.AlertDialogFragment;
 import org.helpapaw.helpapaw.utils.Injection;
 import org.helpapaw.helpapaw.utils.SharingUtils;
@@ -66,9 +67,16 @@ public abstract class BaseActivity extends AppCompatActivity {
             // This method will trigger on item Click of navigation menu
             @Override
             public boolean onNavigationItemSelected(MenuItem menuItem) {
-                // Set item in checked state
-                // TODO: handle navigation
                 switch (menuItem.getItemId()) {
+
+                    case R.id.nav_item_sign_in_out:
+                        if (userManager.isLoggedIn()) {
+                            logOut();
+                        } else {
+                            logIn();
+                        }
+                        break;
+
                     case R.id.nav_item_faqs:
                         menuItem.setChecked(false);
                         navigateFAQsSection();
@@ -81,16 +89,14 @@ public abstract class BaseActivity extends AppCompatActivity {
 
                     case R.id.nav_item_about:
                         menuItem.setChecked(true);
-                        Intent intent = new Intent(BaseActivity.this, AboutActivity.class);
-                        startActivity(intent);
+                        Intent aboutIntent = new Intent(BaseActivity.this, AboutActivity.class);
+                        startActivity(aboutIntent);
                         break;
 
-                    case R.id.nav_item_sign_in_out:
-                        if (userManager.isLoggedIn()) {
-                            logOut();
-                        } else {
-                            logIn();
-                        }
+                    case R.id.nav_item_privacy_policy:
+                        menuItem.setChecked(true);
+                        Intent ppIntent = new Intent(BaseActivity.this, PrivacyPolicyActivity.class);
+                        startActivity(ppIntent);
                         break;
                 }
 
