@@ -1,16 +1,12 @@
 package org.helpapaw.helpapaw.signalsmap;
 
 import android.annotation.SuppressLint;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v7.widget.Toolbar;
-import android.text.Html;
 
 import com.firebase.jobdispatcher.Constraint;
 import com.firebase.jobdispatcher.FirebaseJobDispatcher;
@@ -25,12 +21,6 @@ import org.helpapaw.helpapaw.data.models.Signal;
 import org.helpapaw.helpapaw.data.user.UserManager;
 import org.helpapaw.helpapaw.utils.services.BackgroundCheckJobService;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.List;
 
 import static org.helpapaw.helpapaw.base.PawApplication.TEST_VERSION;
@@ -56,7 +46,7 @@ public class SignalsMapActivity extends BaseActivity {
                 @Override
                 public void onSuccess(Object hasAcceptedPrivacyPolicy) {
                     if (!((Boolean) hasAcceptedPrivacyPolicy)) {
-                        new ShowPrivacyPolicy().execute();
+                        logOut();
                     }
                 }
 
@@ -66,25 +56,6 @@ public class SignalsMapActivity extends BaseActivity {
                 }
             });
         }
-    }
-
-    public static String getHtml(String url) throws IOException {
-        // Build and set timeout values for the request.
-        URLConnection connection = (new URL(url)).openConnection();
-        connection.setConnectTimeout(5000);
-        connection.setReadTimeout(5000);
-        connection.connect();
-
-        // Read and store the result line by line then return the entire string.
-        InputStream in = connection.getInputStream();
-        BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-        StringBuilder html = new StringBuilder();
-        for (String line; (line = reader.readLine()) != null; ) {
-            html.append(line);
-        }
-        in.close();
-
-        return html.toString();
     }
 
     @Override
@@ -159,41 +130,5 @@ public class SignalsMapActivity extends BaseActivity {
                 .build();
 
         dispatcher.mustSchedule(backgroundCheckJob);
-    }
-
-    public class ShowPrivacyPolicy extends AsyncTask<String, Void, String> {
-        @Override
-        protected String doInBackground(String... urls) {
-            String str = null;
-            try {
-                str = getHtml("https://develop.backendless.com/***REMOVED***/console/fcfdrgddsebccdkjfamuhppaasnowqluooks/files/view/web/privacypolicy.htm");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            return str;
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-
-            AlertDialog.Builder builder = new AlertDialog.Builder(SignalsMapActivity.this);
-            builder.setTitle(R.string.privacy_policy_dialog_title)
-                    .setMessage(Html.fromHtml(result))
-                    .setPositiveButton(R.string.accept, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            userManager.setHasAcceptedPrivacyPolicy(true);
-                        }
-                    })
-                    .setNegativeButton(R.string.decline, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, final int i) {
-                            logOut();
-                        }
-                    })
-                    .setCancelable(false)
-                    .show();
-        }
     }
 }

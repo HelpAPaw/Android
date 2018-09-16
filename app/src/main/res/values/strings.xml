@@ -105,4 +105,7 @@
     <string name="accept">Accept</string>
     <string name="decline">Decline</string>
     <string name="privacy_policy_url" translatable="false">Go to <![CDATA[https://develop.backendless.com/***REMOVED***/console/fcfdrgddsebccdkjfamuhppaasnowqluooks/files/view/web/privacypolicy.htm]]> to review the Privacy Policy</string>
+    <string name="txt_success">Success</string>
+    <string name="txt_error">Error</string>
+    <string name="txt_registration_successful">A confirmation link has been sent on your email. Please click it to complete your registration.</string>
 </resources>
