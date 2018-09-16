@@ -23,27 +23,29 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar"
         tools:ignore="UnusedAttribute">
-
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="@string/google_android_map_api_key" />
-        <meta-data android:name="com.facebook.sdk.ApplicationId"
-                   android:value="@string/facebook_app_id"/>
+            android:value="@string/google_android_map_api_key"/>
+        <meta-data
+            android:name="com.facebook.sdk.ApplicationId"
+            android:value="@string/facebook_app_id"/>
 
-        <activity android:name="com.facebook.FacebookActivity"
-                  android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
-                  android:label="@string/app_name" />
+        <activity
+            android:name="com.facebook.FacebookActivity"
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:label="@string/app_name"/>
         <activity
             android:name="com.facebook.CustomTabActivity"
             android:exported="true">
             <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="@string/fb_login_protocol_scheme" />
+                <action android:name="android.intent.action.VIEW"/>
+
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+
+                <data android:scheme="@string/fb_login_protocol_scheme"/>
             </intent-filter>
         </activity>
-
         <activity
             android:name=".signalsmap.SignalsMapActivity"
             android:windowSoftInputMode="stateHidden">
@@ -66,20 +68,25 @@
 
         <service
             android:name=".utils.services.BackgroundCheckJobService"
-            android:permission="android.permission.BIND_JOB_SERVICE"
-            android:exported="false">
+            android:exported="false"
+            android:permission="android.permission.BIND_JOB_SERVICE">
             <intent-filter>
                 <action android:name="com.firebase.jobdispatcher.ACTION_EXECUTE"/>
             </intent-filter>
         </service>
 
-        <activity android:name=".faq.FAQsView"
-            android:parentActivityName=".signalsmap.SignalsMapActivity"
-            android:noHistory="true"/>
+        <activity
+            android:name=".faq.FAQsView"
+            android:noHistory="true"
+            android:parentActivityName=".signalsmap.SignalsMapActivity"/>
         <activity
             android:name=".about.AboutActivity"
             android:noHistory="true"
-            android:screenOrientation="portrait"
+            android:parentActivityName=".signalsmap.SignalsMapActivity"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".privacypolicy.PrivacyPolicyActivity"
+            android:noHistory="true"
             android:parentActivityName=".signalsmap.SignalsMapActivity"/>
     </application>
 

@@ -1,7 +1,9 @@
 package org.helpapaw.helpapaw.authentication;
 
+import android.content.res.Resources;
 import android.os.AsyncTask;
 
+import org.helpapaw.helpapaw.R;
 import org.helpapaw.helpapaw.utils.Utils;
 
 import java.io.IOException;
@@ -20,7 +22,7 @@ public class PrivacyPolicyConfirmationGetter extends AsyncTask<Void, Void, Strin
 
         String str = null;
         try {
-            str = Utils.getHtml("https://develop.backendless.com/BDCD56B9-351A-E067-FFA4-9EA9CF2F4000/console/fcfdrgddsebccdkjfamuhppaasnowqluooks/files/view/web/privacypolicy.htm");
+            str = Utils.getHtml(Resources.getSystem().getString(R.string.url_privacy_policy));
         } catch (IOException e) {
             e.printStackTrace();
         }
