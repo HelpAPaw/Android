@@ -55,6 +55,7 @@ public class BackendlessUserManager implements UserManager {
         user.setProperty(USER_EMAIL_FIELD, email);
         user.setProperty(USER_NAME_FIELD, name);
         user.setProperty(USER_PHONE_NUMBER_FIELD, phoneNumber);
+        user.setProperty(USER_ACCEPTED_PRIVACY_POLICY_FIELD, true);
         user.setPassword(password);
 
         Backendless.UserService.register(user, new AsyncCallback<BackendlessUser>() {
@@ -138,16 +139,20 @@ public class BackendlessUserManager implements UserManager {
     }
 
     @Override
-    public void setHasAcceptedPrivacyPolicy(boolean value) {
+    public void setHasAcceptedPrivacyPolicy(boolean value, final SetUserPropertyCallback setUserPropertyCallback) {
         try
         {
             Backendless.UserService.CurrentUser().setProperty(USER_ACCEPTED_PRIVACY_POLICY_FIELD, true);
             Backendless.UserService.update(Backendless.UserService.CurrentUser(), new AsyncCallback<BackendlessUser>() {
                 @Override
-                public void handleResponse(BackendlessUser response) {}
+                public void handleResponse(BackendlessUser response) {
+                    setUserPropertyCallback.onSuccess();
+                }
 
                 @Override
-                public void handleFault(BackendlessFault fault) {}
+                public void handleFault(BackendlessFault fault) {
+                    setUserPropertyCallback.onFailure(fault.getMessage());
+                }
             });
         }
         catch( BackendlessException exception )
@@ -166,7 +171,12 @@ public class BackendlessUserManager implements UserManager {
             Backendless.UserService.findById(currentUserId, new AsyncCallback<BackendlessUser>() {
                 @Override
                 public void handleResponse(BackendlessUser currentUser) {
-                    getUserPropertyCallback.onSuccess(currentUser.getProperty(USER_ACCEPTED_PRIVACY_POLICY_FIELD));
+                    Object result = false;
+                    Object value = currentUser.getProperty(USER_ACCEPTED_PRIVACY_POLICY_FIELD);
+                    if (value != null) {
+                        result = value;
+                    }
+                    getUserPropertyCallback.onSuccess(result);
                 }
 
                 @Override

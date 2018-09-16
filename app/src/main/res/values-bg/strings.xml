@@ -100,5 +100,8 @@
     <string name="privacy_policy_dialog_title">Правила за поверителност</string>
     <string name="accept">Приемам</string>
     <string name="decline">Отхвърлям</string>
+    <string name="txt_success">Успех</string>
+    <string name="txt_error">Грешка</string>
+    <string name="txt_registration_successful">Линк за потвърждение е изпратен на имейла Ви. Моля кликнете на него за да завършите регистрацията си.</string>
 
 </resources>

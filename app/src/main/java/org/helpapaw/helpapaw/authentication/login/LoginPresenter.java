@@ -1,5 +1,7 @@
 package org.helpapaw.helpapaw.authentication.login;
 
+import org.helpapaw.helpapaw.authentication.PrivacyPolicyConfirmationContract;
+import org.helpapaw.helpapaw.authentication.PrivacyPolicyConfirmationGetter;
 import org.helpapaw.helpapaw.base.Presenter;
 import org.helpapaw.helpapaw.data.user.UserManager;
 import org.helpapaw.helpapaw.utils.Injection;
@@ -8,7 +10,10 @@ import org.helpapaw.helpapaw.utils.Utils;
 /**
  * Created by iliyan on 7/25/16
  */
-public class LoginPresenter extends Presenter<LoginContract.View> implements LoginContract.UserActionsListener {
+public class LoginPresenter extends Presenter<LoginContract.View>
+        implements LoginContract.UserActionsListener,
+        PrivacyPolicyConfirmationContract.Obtain,
+        PrivacyPolicyConfirmationContract.UserResponse {
     private static final int MIN_PASS_LENGTH = 6;
 
     private UserManager userManager;
@@ -64,14 +69,34 @@ public class LoginPresenter extends Presenter<LoginContract.View> implements Log
     }
 
     private void onLoginSuccess() {
-        if (!isViewAvailable()) return;
-        getView().closeLoginScreen();
+        setProgressIndicator(true);
+        userManager.getHasAcceptedPrivacyPolicy(new UserManager.GetUserPropertyCallback() {
+            @Override
+            public void onSuccess(Object hasAcceptedPrivacyPolicy) {
+
+                if (!((Boolean) hasAcceptedPrivacyPolicy)) {
+                    PrivacyPolicyConfirmationGetter privacyPolicyConfirmationGetter = new PrivacyPolicyConfirmationGetter(LoginPresenter.this);
+                    privacyPolicyConfirmationGetter.execute();
+                }
+                else {
+                    if (!isViewAvailable()) return;
+                    getView().closeLoginScreen();
+                }
+            }
+
+            @Override
+            public void onFailure(String message) {
+                if (!isViewAvailable()) return;
+                setProgressIndicator(false);
+                getView().showErrorMessage(message);
+            }
+        });
     }
 
     private void onLoginFailure(String message) {
         if (!isViewAvailable()) return;
         setProgressIndicator(false);
-        getView().showMessage(message);
+        getView().showErrorMessage(message);
     }
 
     private void setProgressIndicator(boolean active) {
@@ -112,5 +137,47 @@ public class LoginPresenter extends Presenter<LoginContract.View> implements Log
         } else {
             getView().showNoInternetMessage();
         }
+    }
+
+    @Override
+    public void onPrivacyPolicyObtained(String privacyPolicy) {
+        if (!isViewAvailable()) return;
+        setProgressIndicator(false);
+        getView().showPrivacyPolicyDialog(privacyPolicy);
+    }
+
+    @Override
+    public void onUserAcceptedPrivacyPolicy() {
+        setProgressIndicator(true);
+        userManager.setHasAcceptedPrivacyPolicy(true, new UserManager.SetUserPropertyCallback() {
+            @Override
+            public void onSuccess() {
+                if (!isViewAvailable()) return;
+                getView().closeLoginScreen();
+            }
+
+            @Override
+            public void onFailure(String message) {
+                if (!isViewAvailable()) return;
+                setProgressIndicator(false);
+                getView().showErrorMessage(message);
+            }
+        });
+    }
+
+    @Override
+    public void onUserDeclinedPrivacyPolicy() {
+        setProgressIndicator(true);
+        userManager.logout(new UserManager.LogoutCallback() {
+            @Override
+            public void onLogoutSuccess() {
+                setProgressIndicator(false);
+            }
+
+            @Override
+            public void onLogoutFailure(String message) {
+                setProgressIndicator(false);
+            }
+        });
     }
 }
