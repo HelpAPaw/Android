@@ -17,7 +17,7 @@ public class PawApplication extends Application {
     public static final String  BACKENDLESS_REST_API_KEY    = "FF1687C9-961B-4388-FFF2-0C8BDC5DFB00";
     private static final String BACKENDLESS_ANDROID_API_KEY = "FF1687C9-961B-4388-FFF2-0C8BDC5DFB00";
 
-    public static final Boolean TEST_VERSION = true;
+    public static final Boolean TEST_VERSION = false;
 
     private static PawApplication pawApplication;
 
