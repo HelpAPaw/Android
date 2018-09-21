@@ -7,6 +7,8 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
+import android.widget.Toast;
 
 import com.firebase.jobdispatcher.Constraint;
 import com.firebase.jobdispatcher.FirebaseJobDispatcher;
@@ -17,17 +19,17 @@ import com.firebase.jobdispatcher.Trigger;
 
 import org.helpapaw.helpapaw.R;
 import org.helpapaw.helpapaw.base.BaseActivity;
+import org.helpapaw.helpapaw.base.PawApplication;
 import org.helpapaw.helpapaw.data.models.Signal;
 import org.helpapaw.helpapaw.data.user.UserManager;
 import org.helpapaw.helpapaw.utils.services.BackgroundCheckJobService;
 
 import java.util.List;
 
-import static org.helpapaw.helpapaw.base.PawApplication.TEST_VERSION;
-
 public class SignalsMapActivity extends BaseActivity {
 
     private SignalsMapFragment mSignalsMapFragment;
+    private int numberOfTitleClicks = 0;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -40,6 +42,8 @@ public class SignalsMapActivity extends BaseActivity {
 
         initFragment();
         scheduleBackgroundChecks();
+
+        setupEnvironmentSwitching();
 
         if (userManager.isLoggedIn()) {
             userManager.getHasAcceptedPrivacyPolicy(new UserManager.GetUserPropertyCallback() {
@@ -58,12 +62,25 @@ public class SignalsMapActivity extends BaseActivity {
         }
     }
 
+    private void setupEnvironmentSwitching() {
+        binding.toolbarTitle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                numberOfTitleClicks++;
+                if (numberOfTitleClicks >= 7) {
+                    switchEnvironment();
+                    numberOfTitleClicks = 0;
+                }
+            }
+        });
+    }
+
     @Override
     protected String getToolbarTitle() {
         String title = getString(R.string.app_name);
 
-        if (TEST_VERSION) {
-            title += " (TEST VERSION)";
+        if (PawApplication.getIsTestEnvironment()) {
+            title += " (TEST)";
         }
 
         return title;
@@ -81,6 +98,14 @@ public class SignalsMapActivity extends BaseActivity {
             transaction.add(R.id.grp_content_frame, mSignalsMapFragment);
             transaction.commit();
         }
+    }
+
+    private void reinitFragment() {
+        mSignalsMapFragment = SignalsMapFragment.newInstance();
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        transaction.replace(R.id.grp_content_frame, mSignalsMapFragment);
+        transaction.commit();
     }
 
     @Override
@@ -130,5 +155,12 @@ public class SignalsMapActivity extends BaseActivity {
                 .build();
 
         dispatcher.mustSchedule(backgroundCheckJob);
+    }
+
+    private void switchEnvironment() {
+        PawApplication.setIsTestEnvironment(!PawApplication.getIsTestEnvironment());
+        binding.toolbarTitle.setText(getToolbarTitle());
+        reinitFragment();
+        Toast.makeText(this, "Environment switched", Toast.LENGTH_LONG).show();
     }
 }
