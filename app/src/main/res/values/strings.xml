@@ -107,10 +107,6 @@
     <string name="privacy_policy_dialog_title">Privacy Policy</string>
     <string name="accept">Accept</string>
     <string name="decline">Decline</string>
-    <string name="privacy_policy_url" translatable="false">Go to
-        <![CDATA[https://develop.backendless.com/***REMOVED***/console/fcfdrgddsebccdkjfamuhppaasnowqluooks/files/view/web/privacypolicy.htm]]> to review the
-        Privacy Policy
-    </string>
     <string name="txt_success">Success</string>
     <string name="txt_error">Error</string>
     <string name="txt_registration_successful">A confirmation link has been sent on your email. Please click it to complete your registration.</string>
@@ -118,4 +114,5 @@
         https://develop.backendless.com/***REMOVED***/console/fcfdrgddsebccdkjfamuhppaasnowqluooks/files/view/web/privacypolicy.htm
     </string>
     <string name="content_description_app_logo">App logo</string>
+    <string name="txt_error_getting_privacy_policy">Could not get Privacy Policy!</string>
 </resources>

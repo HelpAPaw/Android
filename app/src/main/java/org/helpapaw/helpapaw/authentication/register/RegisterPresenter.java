@@ -1,7 +1,9 @@
 package org.helpapaw.helpapaw.authentication.register;
 
+import org.helpapaw.helpapaw.R;
 import org.helpapaw.helpapaw.authentication.PrivacyPolicyConfirmationContract;
 import org.helpapaw.helpapaw.authentication.PrivacyPolicyConfirmationGetter;
+import org.helpapaw.helpapaw.base.PawApplication;
 import org.helpapaw.helpapaw.base.Presenter;
 import org.helpapaw.helpapaw.data.user.UserManager;
 import org.helpapaw.helpapaw.utils.Injection;
@@ -70,7 +72,7 @@ public class RegisterPresenter extends Presenter<RegisterContract.View>
         this.name = name;
         this.phoneNumber = phoneNumber;
 
-        PrivacyPolicyConfirmationGetter privacyPolicyConfirmationGetter = new PrivacyPolicyConfirmationGetter(this);
+        PrivacyPolicyConfirmationGetter privacyPolicyConfirmationGetter = new PrivacyPolicyConfirmationGetter(this, PawApplication.getContext());
         privacyPolicyConfirmationGetter.execute();
     }
 
@@ -123,7 +125,14 @@ public class RegisterPresenter extends Presenter<RegisterContract.View>
     @Override
     public void onPrivacyPolicyObtained(String privacyPolicy) {
         if (!isViewAvailable()) return;
-        getView().showPrivacyPolicyDialog(privacyPolicy);
+
+        if (privacyPolicy != null) {
+            getView().showPrivacyPolicyDialog(privacyPolicy);
+        }
+        else {
+            setProgressIndicator(false);
+            getView().showErrorMessage(PawApplication.getContext().getString(R.string.txt_error_getting_privacy_policy));
+        }
     }
 
     @Override

@@ -1,6 +1,6 @@
 package org.helpapaw.helpapaw.authentication;
 
-import android.content.res.Resources;
+import android.content.Context;
 import android.os.AsyncTask;
 
 import org.helpapaw.helpapaw.R;
@@ -12,9 +12,11 @@ import java.lang.ref.WeakReference;
 public class PrivacyPolicyConfirmationGetter extends AsyncTask<Void, Void, String> {
 
     private WeakReference<PrivacyPolicyConfirmationContract.Obtain> weakAsker;
+    private WeakReference<Context>                                  weakContext;
 
-    public PrivacyPolicyConfirmationGetter(PrivacyPolicyConfirmationContract.Obtain asker) {
+    public PrivacyPolicyConfirmationGetter(PrivacyPolicyConfirmationContract.Obtain asker, Context context) {
         weakAsker = new WeakReference<>(asker);
+        weakContext = new WeakReference<>(context);
     }
 
     @Override
@@ -22,7 +24,10 @@ public class PrivacyPolicyConfirmationGetter extends AsyncTask<Void, Void, Strin
 
         String str = null;
         try {
-            str = Utils.getHtml(Resources.getSystem().getString(R.string.url_privacy_policy));
+            Context context = weakContext.get();
+            if (context != null) {
+                str = Utils.getHtml(context.getString(R.string.url_privacy_policy));
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
