@@ -105,5 +105,6 @@
     <string name="txt_error">Грешка</string>
     <string name="txt_registration_successful">Линк за потвърждение е изпратен на имейла Ви. Моля кликнете на него за да завършите регистрацията си.</string>
     <string name="content_description_app_logo">Лого на приложението</string>
+    <string name="txt_error_getting_privacy_policy">Грешка при изтеглянето на Политиката за поверителност!</string>
 
 </resources>

@@ -1,7 +1,9 @@
 package org.helpapaw.helpapaw.authentication.login;
 
+import org.helpapaw.helpapaw.R;
 import org.helpapaw.helpapaw.authentication.PrivacyPolicyConfirmationContract;
 import org.helpapaw.helpapaw.authentication.PrivacyPolicyConfirmationGetter;
+import org.helpapaw.helpapaw.base.PawApplication;
 import org.helpapaw.helpapaw.base.Presenter;
 import org.helpapaw.helpapaw.data.user.UserManager;
 import org.helpapaw.helpapaw.utils.Injection;
@@ -75,7 +77,7 @@ public class LoginPresenter extends Presenter<LoginContract.View>
             public void onSuccess(Object hasAcceptedPrivacyPolicy) {
 
                 if (!((Boolean) hasAcceptedPrivacyPolicy)) {
-                    PrivacyPolicyConfirmationGetter privacyPolicyConfirmationGetter = new PrivacyPolicyConfirmationGetter(LoginPresenter.this);
+                    PrivacyPolicyConfirmationGetter privacyPolicyConfirmationGetter = new PrivacyPolicyConfirmationGetter(LoginPresenter.this, PawApplication.getContext());
                     privacyPolicyConfirmationGetter.execute();
                 }
                 else {
@@ -143,7 +145,13 @@ public class LoginPresenter extends Presenter<LoginContract.View>
     public void onPrivacyPolicyObtained(String privacyPolicy) {
         if (!isViewAvailable()) return;
         setProgressIndicator(false);
-        getView().showPrivacyPolicyDialog(privacyPolicy);
+
+        if (privacyPolicy != null) {
+            getView().showPrivacyPolicyDialog(privacyPolicy);
+        }
+        else {
+            getView().showErrorMessage(PawApplication.getContext().getString(R.string.txt_error_getting_privacy_policy));
+        }
     }
 
     @Override

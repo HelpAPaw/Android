@@ -28,7 +28,6 @@ public interface LoginContract {
         void showNoInternetMessage();
 
         boolean isActive();
-
     }
 
     interface UserActionsListener {
