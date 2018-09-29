@@ -120,6 +120,7 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
 
                 if (isEmpty(description)) {
                     getView().showDescriptionErrorMessage();
+                    getView().setSignalViewProgressVisibility(false);
                 } else {
                     saveSignal(description, new Date(), 0, currentMapLatitude, currentMapLongitude);
                 }
