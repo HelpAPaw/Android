@@ -146,7 +146,7 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
                     signalsList.add(signal);
 
                     getView().displaySignals(signalsList, true, signal.getId());
-                    getView().setAddSignalViewVisibility(false);
+                    setSendSignalViewVisibility(false);
                     clearSignalViewData();
                 }
             }
@@ -166,7 +166,7 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
                 if (!isViewAvailable()) return;
                 signalsList.add(signal);
                 getView().displaySignals(signalsList, true, signal.getId());
-                getView().setAddSignalViewVisibility(false);
+                setSendSignalViewVisibility(false);
                 clearSignalViewData();
                 getView().showAddedSignalMessage();
             }
