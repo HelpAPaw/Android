@@ -30,17 +30,24 @@ public class SignalsMapActivity extends BaseActivity {
 
     private SignalsMapFragment mSignalsMapFragment;
     private int numberOfTitleClicks = 0;
+    private boolean restoringActivity = false;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (savedInstanceState != null) {
+            restoringActivity = true;
+        }
     }
 
     @Override
     protected void onStart() {
         super.onStart();
 
-        initFragment();
+        if (!restoringActivity) {
+            initFragment();
+        }
         scheduleBackgroundChecks();
 
         setupEnvironmentSwitching();
