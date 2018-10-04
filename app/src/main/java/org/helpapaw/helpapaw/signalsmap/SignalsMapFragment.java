@@ -461,7 +461,9 @@ public class SignalsMapFragment extends BaseFragment
             showPermissionDialog(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION, LOCATION_PERMISSIONS_REQUEST);
         } else {
             setAddSignalViewVisibility(mVisibilityAddSignal);
-            signalsGoogleMap.setMyLocationEnabled(true);
+            if (signalsGoogleMap != null) {
+                signalsGoogleMap.setMyLocationEnabled(true);
+            }
             setLastLocation();
         }
     }

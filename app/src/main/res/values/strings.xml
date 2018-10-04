@@ -115,4 +115,5 @@
     </string>
     <string name="content_description_app_logo">App logo</string>
     <string name="txt_error_getting_privacy_policy">Could not get Privacy Policy!</string>
+    <string name="txt_login_successful">Login successful!</string>
 </resources>
