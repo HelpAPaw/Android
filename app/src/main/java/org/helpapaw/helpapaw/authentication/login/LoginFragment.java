@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
@@ -127,7 +128,8 @@ public class LoginFragment extends AuthenticationFragment implements LoginContra
 
     @Override
     public void closeLoginScreen() {
-        if(getActivity()!=null) {
+        if (getActivity() != null) {
+            Toast.makeText(getActivity(), R.string.txt_login_successful, Toast.LENGTH_LONG).show();
             Intent intent = new Intent(getContext(), SignalsMapActivity.class);
             startActivity(intent);
             getActivity().finish();
