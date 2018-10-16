@@ -3,13 +3,13 @@ apply plugin: 'io.fabric'
 
 android {
     compileSdkVersion 27
-    buildToolsVersion '28.0.2'
+    buildToolsVersion '28.0.3'
     defaultConfig {
         applicationId "org.helpapaw.helpapaw"
         minSdkVersion 19
         targetSdkVersion 27
-        versionCode 41
-        versionName "1.0.41"
+        versionCode 42
+        versionName "1.0.42"
         vectorDrawables.useSupportLibrary = true
 
         javaCompileOptions {
@@ -30,7 +30,7 @@ android {
 }
 
 ext {
-    support_version = '27.0.2'
+    support_version = '27.1.1'
     play_services_version = '15.0.1'
     roomVersion = '1.1.1'
 }
