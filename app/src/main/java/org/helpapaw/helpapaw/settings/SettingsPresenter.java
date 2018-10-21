@@ -1,4 +1,10 @@
 package org.helpapaw.helpapaw.settings;
 
-public class SettingsPresenter {
+import org.helpapaw.helpapaw.base.Presenter;
+
+public class SettingsPresenter extends Presenter<SettingsContract.View> {
+
+    public SettingsPresenter(SettingsContract.View view) {
+        super(view);
+    }
 }

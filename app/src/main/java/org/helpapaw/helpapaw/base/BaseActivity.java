@@ -22,6 +22,7 @@ import org.helpapaw.helpapaw.data.user.UserManager;
 import org.helpapaw.helpapaw.databinding.ActivityBaseBinding;
 import org.helpapaw.helpapaw.faq.FAQsView;
 import org.helpapaw.helpapaw.reusable.AlertDialogFragment;
+import org.helpapaw.helpapaw.settings.SettingsActivity;
 import org.helpapaw.helpapaw.utils.Injection;
 import org.helpapaw.helpapaw.utils.SharingUtils;
 import org.helpapaw.helpapaw.utils.Utils;
@@ -92,6 +93,11 @@ public abstract class BaseActivity extends AppCompatActivity {
                             logIn();
                         }
                         break;
+
+                    case R.id.nav_item_settings:
+                        menuItem.setChecked(false);
+                        navigateSettingsSection();
+                        break;
                 }
 
                 // Closing drawer on item click
@@ -126,6 +132,11 @@ public abstract class BaseActivity extends AppCompatActivity {
         } else {
             AlertDialogFragment.showAlert(getString(R.string.txt_logout_failed), getResources().getString(R.string.txt_no_internet), false, BaseActivity.this.getSupportFragmentManager());
         }
+    }
+
+    private void navigateSettingsSection() {
+        Intent intent = new Intent(BaseActivity.this, SettingsActivity.class);
+        startActivity(intent);
     }
 
     private void navigateFAQsSection() {
