@@ -1,25 +1,32 @@
 package org.helpapaw.helpapaw.settings;
 
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AppCompatActivity;
 
 import org.helpapaw.helpapaw.R;
-import org.helpapaw.helpapaw.base.BaseActivity;
+import org.helpapaw.helpapaw.databinding.ActivitySettingsBinding;
 
-import static org.helpapaw.helpapaw.base.PawApplication.TEST_VERSION;
+public class SettingsActivity extends AppCompatActivity {
 
-public class SettingsActivity extends BaseActivity {
+    ActivitySettingsBinding binding;
+    SettingsFragment mSettingsFragment;
 
-    private SettingsFragment mSettingsFragment;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_settings);
+    }
 
     @Override
     protected void onStart() {
         super.onStart();
-        initFragment();
+        initialize();
     }
 
-    private void initFragment() {
+    private void initialize() {
         if (mSettingsFragment == null) {
             mSettingsFragment = SettingsFragment.newInstance();
             FragmentManager fragmentManager = getSupportFragmentManager();
@@ -27,26 +34,5 @@ public class SettingsActivity extends BaseActivity {
             transaction.add(R.id.grp_content_frame, mSettingsFragment);
             transaction.commit();
         }
-    }
-
-    @Override
-    protected void onCreate(final Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
-    @Override
-    protected String getToolbarTitle() {
-        String title = getString(R.string.text_settings);
-
-        if (TEST_VERSION) {
-            title += " (TEST VERSION)";
-        }
-
-        return title;
-    }
-
-    @Override
-    protected int getLayoutId() {
-        return R.layout.activity_base;
     }
 }
