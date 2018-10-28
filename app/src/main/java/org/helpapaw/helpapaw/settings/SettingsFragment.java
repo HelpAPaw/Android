@@ -7,8 +7,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
-import android.view.DragEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,8 +20,6 @@ import org.helpapaw.helpapaw.databinding.FragmentSettingsBinding;
 import java.util.Locale;
 
 public class SettingsFragment extends BaseFragment implements SettingsContract.View {
-
-    private static String TAG = SettingsFragment.class.getSimpleName();
 
     FragmentSettingsBinding binding;
     SettingsPresenter settingsPresenter;
@@ -52,11 +48,14 @@ public class SettingsFragment extends BaseFragment implements SettingsContract.V
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_settings, container, false);
 
         settingsPresenter = new SettingsPresenter(this, getActivity().getPreferences(Context.MODE_PRIVATE));
+        settingsPresenter.setView(this);
         actionsListener = settingsPresenter;
+
+        actionsListener.initialize();
+
         return binding.getRoot();
     }
 
@@ -84,20 +83,16 @@ public class SettingsFragment extends BaseFragment implements SettingsContract.V
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 actionsListener.onRadiusChange(progress);
-                if (progress == 1) {
-                    String result = String.format(Locale.getDefault(), getString(R.string.radius_output_single), progress);
-                    binding.radiusOutput.setText(result);
-                } else {
-                    String result = String.format(Locale.getDefault(), getString(R.string.radius_output), progress);
-                    binding.radiusOutput.setText(result);
-                }
+                updateRadius(progress);
             }
 
             @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {}
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
 
             @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {}
+            public void onStopTrackingTouch(SeekBar seekBar) {
+            }
         };
     }
 
@@ -106,20 +101,48 @@ public class SettingsFragment extends BaseFragment implements SettingsContract.V
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 actionsListener.onTimeoutChange(progress);
-                if (progress == 1) {
-                    String result = String.format(Locale.getDefault(), getString(R.string.timeout_output_single), progress);
-                    binding.timeoutOutput.setText(result);
-                } else {
-                    String result = String.format(Locale.getDefault(), getString(R.string.timeout_output), progress);
-                    binding.timeoutOutput.setText(result);
-                }
+                updateTimeout(progress);
             }
 
             @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {}
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
 
             @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {}
+            public void onStopTrackingTouch(SeekBar seekBar) {
+            }
         };
+    }
+
+    @Override
+    public void setRadius(int radius) {
+        binding.radiusValue.setProgress(radius);
+        updateRadius(radius);
+    }
+
+    @Override
+    public void setTimeout(int timeout) {
+        binding.timeoutValue.setProgress(timeout);
+        updateTimeout(timeout);
+    }
+
+    private void updateRadius(int value) {
+        if (value == 1) {
+            String result = String.format(Locale.getDefault(), getString(R.string.radius_output_single), value);
+            binding.radiusOutput.setText(result);
+        } else {
+            String result = String.format(Locale.getDefault(), getString(R.string.radius_output), value);
+            binding.radiusOutput.setText(result);
+        }
+    }
+
+    private void updateTimeout(int value) {
+        if (value == 1) {
+            String result = String.format(Locale.getDefault(), getString(R.string.timeout_output_single), value);
+            binding.timeoutOutput.setText(result);
+        } else {
+            String result = String.format(Locale.getDefault(), getString(R.string.timeout_output), value);
+            binding.timeoutOutput.setText(result);
+        }
     }
 }

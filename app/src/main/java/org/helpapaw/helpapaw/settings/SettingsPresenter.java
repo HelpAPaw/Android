@@ -16,6 +16,12 @@ public class SettingsPresenter extends Presenter<SettingsContract.View> implemen
     }
 
     @Override
+    public void initialize() {
+        getView().setRadius(settingsRepository.getRadius());
+        getView().setTimeout(settingsRepository.getTimeout());
+    }
+
+    @Override
     public void onRadiusChange(int radius) {
         settingsRepository.saveRadius(radius);
     }

@@ -1,11 +1,8 @@
 package org.helpapaw.helpapaw.data.repositories;
 
 import android.content.SharedPreferences;
-import android.util.Log;
 
 public class SettingsRepository implements ISettingsRepository {
-
-    private static String TAG = SettingsRepository.class.getSimpleName();
 
     private SharedPreferences preferences;
 
@@ -23,7 +20,7 @@ public class SettingsRepository implements ISettingsRepository {
     @Override
     public void saveTimeout(int timeout) {
         SharedPreferences.Editor editor = preferences.edit();
-        editor.putInt("radius", timeout);
+        editor.putInt("timeout", timeout);
         editor.apply();
     }
 
