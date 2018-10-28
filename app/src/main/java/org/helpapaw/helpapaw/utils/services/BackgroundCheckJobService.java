@@ -27,6 +27,7 @@ import java.util.List;
 
 import static org.helpapaw.helpapaw.data.models.Signal.SOLVED;
 import static org.helpapaw.helpapaw.signalsmap.SignalsMapPresenter.DEFAULT_SEARCH_RADIUS;
+import static org.helpapaw.helpapaw.signalsmap.SignalsMapPresenter.DEFAULT_SEARCH_TIMEOUT;
 
 /**
  * Created by milen on 20/08/17.
@@ -89,7 +90,7 @@ public class BackgroundCheckJobService extends JobService {
 
     private void getSignalsForLastKnownLocation(Location location, final JobParameters job) {
 
-        Injection.getSignalRepositoryInstance().getAllSignals(location.getLatitude(), location.getLongitude(), DEFAULT_SEARCH_RADIUS, new SignalRepository.LoadSignalsCallback() {
+        Injection.getSignalRepositoryInstance().getAllSignals(location.getLatitude(), location.getLongitude(), DEFAULT_SEARCH_RADIUS, DEFAULT_SEARCH_TIMEOUT, new SignalRepository.LoadSignalsCallback() {
             @Override
             public void onSignalsLoaded(List<Signal> signals) {
 

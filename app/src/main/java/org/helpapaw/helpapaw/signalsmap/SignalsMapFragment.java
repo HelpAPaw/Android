@@ -1,6 +1,5 @@
 package org.helpapaw.helpapaw.signalsmap;
 
-
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -146,7 +145,7 @@ public class SignalsMapFragment extends BaseFragment
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
         Bundle arguments = getArguments();
-        if( (arguments != null) && arguments.containsKey(Signal.KEY_FOCUSED_SIGNAL_ID) ) {
+        if ((arguments != null) && arguments.containsKey(Signal.KEY_FOCUSED_SIGNAL_ID)) {
 
             mFocusedSignalId = arguments.getString(Signal.KEY_FOCUSED_SIGNAL_ID);
             arguments.remove(Signal.KEY_FOCUSED_SIGNAL_ID);
@@ -175,7 +174,7 @@ public class SignalsMapFragment extends BaseFragment
         }
 
         if (savedInstanceState == null || PresenterManager.getInstance().getPresenter(getScreenId()) == null) {
-            signalsMapPresenter = new SignalsMapPresenter(this);
+            signalsMapPresenter = new SignalsMapPresenter(this, getActivity().getPreferences(Context.MODE_PRIVATE));
         } else {
             signalsMapPresenter = PresenterManager.getInstance().getPresenter(getScreenId());
             signalsMapPresenter.setView(this);
@@ -390,8 +389,7 @@ public class SignalsMapFragment extends BaseFragment
             if (showPopup && (markerToFocus != null)) {
                 markerToFocus.showInfoWindow();
                 updateMapCameraPosition(signalToFocus.getLatitude(), signalToFocus.getLongitude(), null);
-            }
-            else if (markerToReShow != null) {
+            } else if (markerToReShow != null) {
                 markerToReShow.showInfoWindow();
             }
         }
@@ -558,11 +556,11 @@ public class SignalsMapFragment extends BaseFragment
                 .setDuration(300)
                 .translationY(-(binding.viewSendSignal.getHeight() * 1.2f))
                 .withEndAction(new Runnable() {
-            @Override
-            public void run() {
-                binding.viewSendSignal.setVisibility(View.INVISIBLE);
-            }
-        });
+                    @Override
+                    public void run() {
+                        binding.viewSendSignal.setVisibility(View.INVISIBLE);
+                    }
+                });
     }
 
     private void showAddSignalPin() {
@@ -585,11 +583,11 @@ public class SignalsMapFragment extends BaseFragment
                 .setDuration(200)
                 .alpha(0.0f)
                 .withEndAction(new Runnable() {
-            @Override
-            public void run() {
-                binding.addSignalPin.setVisibility(View.INVISIBLE);
-            }
-        });
+                    @Override
+                    public void run() {
+                        binding.addSignalPin.setVisibility(View.INVISIBLE);
+                    }
+                });
     }
 
 
