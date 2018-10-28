@@ -9,7 +9,7 @@ import java.util.List;
  */
 public interface SignalRepository {
 
-    void getAllSignals(double latitude, double longitude, double radius, LoadSignalsCallback callback);
+    void getAllSignals(double latitude, double longitude, double radius, int timeout, LoadSignalsCallback callback);
 
     void saveSignal(Signal signal, SaveSignalCallback callback);
 

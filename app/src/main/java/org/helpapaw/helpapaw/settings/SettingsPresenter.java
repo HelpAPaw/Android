@@ -10,7 +10,7 @@ public class SettingsPresenter extends Presenter<SettingsContract.View> implemen
 
     private ISettingsRepository settingsRepository;
 
-    public SettingsPresenter(SettingsContract.View view, SharedPreferences preferences) {
+    SettingsPresenter(SettingsContract.View view, SharedPreferences preferences) {
         super(view);
         settingsRepository = Injection.getSettingsRepository(preferences);
     }

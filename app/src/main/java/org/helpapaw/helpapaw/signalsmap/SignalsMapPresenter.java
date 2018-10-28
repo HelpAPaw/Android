@@ -1,7 +1,10 @@
 package org.helpapaw.helpapaw.signalsmap;
 
+import android.content.SharedPreferences;
+
 import org.helpapaw.helpapaw.base.Presenter;
 import org.helpapaw.helpapaw.data.models.Signal;
+import org.helpapaw.helpapaw.data.repositories.ISettingsRepository;
 import org.helpapaw.helpapaw.data.repositories.PhotoRepository;
 import org.helpapaw.helpapaw.data.repositories.SignalRepository;
 import org.helpapaw.helpapaw.data.user.UserManager;
@@ -19,11 +22,13 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
 
     private static final float DEFAULT_MAP_ZOOM = 14.5f;
     public static final int DEFAULT_SEARCH_RADIUS = 4000;
+    public static final int DEFAULT_SEARCH_TIMEOUT = 7;
     private static final String DATE_TIME_FORMAT = "MM/dd/yyyy hh:mm:ss";
 
     private UserManager userManager;
     private SignalRepository signalRepository;
     private PhotoRepository photoRepository;
+    private ISettingsRepository settingsRepository;
 
     private double latitude;
     private double longitude;
@@ -35,11 +40,12 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
     private boolean sendSignalViewVisibility;
     private List<Signal> signalsList;
 
-    SignalsMapPresenter(SignalsMapContract.View view) {
+    SignalsMapPresenter(SignalsMapContract.View view, SharedPreferences preferences) {
         super(view);
         signalRepository = Injection.getSignalRepositoryInstance();
         userManager = Injection.getUserManagerInstance();
         photoRepository = Injection.getPhotoRepositoryInstance();
+        settingsRepository = Injection.getSettingsRepository(preferences);
         sendSignalViewVisibility = false;
         signalsList = new ArrayList<>();
     }
@@ -58,7 +64,18 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
     private void getAllSignals(double latitude, double longitude, final boolean showPopup) {
         if (Utils.getInstance().hasNetworkConnection()) {
             getView().setProgressVisibility(true);
-            signalRepository.getAllSignals(latitude, longitude, DEFAULT_SEARCH_RADIUS,
+            double radius = settingsRepository.getRadius();
+            int timeout = settingsRepository.getTimeout();
+
+            if (radius == 0) {
+                radius = DEFAULT_SEARCH_RADIUS;
+            }
+
+            if (timeout == 0) {
+                timeout = DEFAULT_SEARCH_TIMEOUT;
+            }
+
+            signalRepository.getAllSignals(latitude, longitude, radius, timeout,
                     new SignalRepository.LoadSignalsCallback() {
                         @Override
                         public void onSignalsLoaded(List<Signal> signals) {
@@ -81,7 +98,7 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
         }
     }
 
-    public static void getAllSignalsWithoutViewUpate(){
+    public static void getAllSignalsWithoutViewUpate() {
 
     }
 
@@ -105,7 +122,7 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
 
     @Override
     public void onCancelAddSignal() {
-       getView().displaySignals(signalsList,false);
+        getView().displaySignals(signalsList, false);
     }
 
     @Override
@@ -235,7 +252,7 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
 
         for (int i = 0; i < signalsList.size(); i++) {
             Signal currentSignal = signalsList.get(i);
-            if(currentSignal.getId().equals(signal.getId())) {
+            if (currentSignal.getId().equals(signal.getId())) {
                 signalsList.remove(i);
                 signalsList.add(signal);
                 getView().displaySignals(signalsList, true);
@@ -249,14 +266,14 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
         getView().hideKeyboard();
         String userToken = userManager.getUserToken();
 
-        if(userToken!=null && !userToken.isEmpty()){
+        if (userToken != null && !userToken.isEmpty()) {
             logoutUser();
-        }else{
+        } else {
             getView().openLoginScreen();
         }
     }
 
-    private void logoutUser(){
+    private void logoutUser() {
         if (Utils.getInstance().hasNetworkConnection()) {
             userManager.logout(new UserManager.LogoutCallback() {
                 @Override
@@ -269,13 +286,14 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
                     getView().onLogoutFailure(message);
                 }
             });
-        }
-        else {
+        } else {
             getView().onLogoutFailure("No connection.");
         }
     }
+
     @Override
-    public void onLoginAction() {}
+    public void onLoginAction() {
+    }
 
     private boolean isViewAvailable() {
         return getView() != null && getView().isActive();
