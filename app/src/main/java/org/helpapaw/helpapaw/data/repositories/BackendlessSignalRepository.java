@@ -22,7 +22,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.helpapaw.helpapaw.base.PawApplication.TEST_VERSION;
 import static org.helpapaw.helpapaw.base.PawApplication.getContext;
 
 /**
@@ -242,7 +241,7 @@ public class BackendlessSignalRepository implements SignalRepository {
     }
 
     private String getCategory() {
-        if (TEST_VERSION) {
+        if (PawApplication.getIsTestEnvironment()) {
             return "Debug";
         } else {
             // Category should only be added if it's not Default

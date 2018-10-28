@@ -35,6 +35,7 @@
     <string name="permission_not_granted">Разрешението не бе предоставено!</string>
     <string name="txt_storage_permissions_for_camera">Упс… Не можем да отворим камерата без Ваше разрешение.</string>
     <string name="txt_storage_permissions_for_gallery">Упс… не можем да отворим галерията без Ваше разрешение.</string>
+    <string name="txt_location_permissions_for_map">Упс… не можем да получим местоположението Ви без Ваше разрешение.</string>
     <string name="txt_status_help_needed">Статус: Нужна е помощ</string>
     <string name="txt_status_somebody_on_the_way">Статус: Някой е на път</string>
     <string name="txt_status_solved">Статус: Приключен</string>
@@ -64,6 +65,7 @@
     <string name="txt_new_signal">Нов сигнал</string>
     <string name="text_faqs">Често задавани въпроси</string>
     <string name="text_about">Относно</string>
+    <string name="text_privacy_policy">Политика за поверителност</string>
     <string name="text_feedback">Обратна връзка</string>
     <string name="txt_faqs_view_title">Често задавани въпроси</string>
     <string name="txt_user_changed_status_to">%1$s промени статуса на \'%2$s\'</string>
@@ -99,5 +101,11 @@
     <string name="privacy_policy_dialog_title">Правила за поверителност</string>
     <string name="accept">Приемам</string>
     <string name="decline">Отхвърлям</string>
+    <string name="txt_success">Успех</string>
+    <string name="txt_error">Грешка</string>
+    <string name="txt_registration_successful">Линк за потвърждение е изпратен на имейла Ви. Моля кликнете на него за да завършите регистрацията си.</string>
+    <string name="content_description_app_logo">Лого на приложението</string>
+    <string name="txt_error_getting_privacy_policy">Грешка при изтеглянето на Политиката за поверителност!</string>
+    <string name="txt_login_successful">Вписването успешно!</string>
 
 </resources>

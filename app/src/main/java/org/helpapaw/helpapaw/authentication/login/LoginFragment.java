@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
@@ -13,8 +14,8 @@ import com.facebook.login.LoginResult;
 
 import org.helpapaw.helpapaw.R;
 import org.helpapaw.helpapaw.authentication.AuthenticationActivity;
+import org.helpapaw.helpapaw.authentication.AuthenticationFragment;
 import org.helpapaw.helpapaw.authentication.register.RegisterFragment;
-import org.helpapaw.helpapaw.base.BaseFragment;
 import org.helpapaw.helpapaw.base.Presenter;
 import org.helpapaw.helpapaw.base.PresenterManager;
 import org.helpapaw.helpapaw.databinding.FragmentLoginBinding;
@@ -23,7 +24,7 @@ import org.helpapaw.helpapaw.signalsmap.SignalsMapActivity;
 
 import java.util.Arrays;
 
-public class LoginFragment extends BaseFragment implements LoginContract.View {
+public class LoginFragment extends AuthenticationFragment implements LoginContract.View {
 
     LoginPresenter loginPresenter;
     LoginContract.UserActionsListener actionsListener;
@@ -51,6 +52,7 @@ public class LoginFragment extends BaseFragment implements LoginContract.View {
         }
 
         actionsListener = loginPresenter;
+        ppResponseListener = loginPresenter;
 
         binding.btnLogin.setOnClickListener(getBtnLoginClickListener());
         binding.btnShowRegister.setOnClickListener(getBtnShowRegisterClickListener());
@@ -72,7 +74,7 @@ public class LoginFragment extends BaseFragment implements LoginContract.View {
             @Override
             public void onError(FacebookException exception) {
                 // App code
-                showMessage(exception.getMessage());
+                showErrorMessage(exception.getMessage());
             }
         });
 
@@ -82,7 +84,7 @@ public class LoginFragment extends BaseFragment implements LoginContract.View {
     }
 
     @Override
-    public void showMessage(String message) {
+    public void showErrorMessage(String message) {
         AlertDialogFragment.showAlert("Error", message, true, this.getFragmentManager());
     }
 
@@ -126,7 +128,8 @@ public class LoginFragment extends BaseFragment implements LoginContract.View {
 
     @Override
     public void closeLoginScreen() {
-        if(getActivity()!=null) {
+        if (getActivity() != null) {
+            Toast.makeText(getActivity(), R.string.txt_login_successful, Toast.LENGTH_LONG).show();
             Intent intent = new Intent(getContext(), SignalsMapActivity.class);
             startActivity(intent);
             getActivity().finish();
@@ -135,7 +138,7 @@ public class LoginFragment extends BaseFragment implements LoginContract.View {
 
     @Override
     public void showNoInternetMessage() {
-        showMessage(getString(R.string.txt_no_internet));
+        showErrorMessage(getString(R.string.txt_no_internet));
     }
 
     @Override

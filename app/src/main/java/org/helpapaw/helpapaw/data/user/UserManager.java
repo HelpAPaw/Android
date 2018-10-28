@@ -20,7 +20,7 @@ public interface UserManager {
     String getUserToken();
 
     void getHasAcceptedPrivacyPolicy(GetUserPropertyCallback getUserPropertyCallback);
-    void setHasAcceptedPrivacyPolicy(boolean value);
+    void setHasAcceptedPrivacyPolicy(boolean value, SetUserPropertyCallback setUserPropertyCallback);
 
     interface LoginCallback {
         void onLoginSuccess();
@@ -39,6 +39,11 @@ public interface UserManager {
 
     interface GetUserPropertyCallback {
         void onSuccess(Object value);
+        void onFailure(String message);
+    }
+
+    interface SetUserPropertyCallback {
+        void onSuccess();
         void onFailure(String message);
     }
 }
