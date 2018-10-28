@@ -1,9 +1,11 @@
 package org.helpapaw.helpapaw.settings;
 
 public interface SettingsContract {
-    interface View {
-        void onRadiusChange();
+    interface View {}
 
-        void onTimeoutChange();
+    interface UserActionsListener {
+        void onRadiusChange(int radius);
+
+        void onTimeoutChange(int timeout);
     }
 }

@@ -110,4 +110,8 @@
     <string name="txt_radius_description">The area around your current location at any moment that you want to be notified if new signals appear.</string>
     <string name="txt_signal_timeout">SIGNAL TIMEOUT</string>
     <string name="txt_timeout_description">How old signals you want to be notified about</string>
+    <string name="radius_output">%d kilometers</string>
+    <string name="radius_output_single">%d kilometer</string>
+    <string name="timeout_output">%d days</string>
+    <string name="timeout_output_single">%d day</string>
 </resources>
