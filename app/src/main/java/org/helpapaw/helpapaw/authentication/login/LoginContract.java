@@ -7,7 +7,7 @@ public interface LoginContract {
 
     interface View {
 
-        void showMessage(String message);
+        void showErrorMessage(String message);
 
         void showEmailErrorMessage();
 
@@ -21,12 +21,13 @@ public interface LoginContract {
 
         void hideKeyboard();
 
+        void showPrivacyPolicyDialog(String privacyPolicy);
+
         void closeLoginScreen();
 
         void showNoInternetMessage();
 
         boolean isActive();
-
     }
 
     interface UserActionsListener {

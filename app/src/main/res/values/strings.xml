@@ -28,7 +28,9 @@
     <string name="txt_no_internet">No Internet connection!</string>
     <string name="txt_signals_map">Signals Map</string>
     <string name="txt_why_want_phone">Why do you want my phone number?</string>
-    <string name="txt_why_phone_description">Entering your phone number is not required for registration. However, we strongly encourage you to fill it so you can be quickly reached if a volunteer needs information about a signal that you submitted.</string>
+    <string name="txt_why_phone_description">Entering your phone number is not required for registration. However, we strongly encourage you to fill it so you can be quickly
+        reached if a volunteer needs information about a signal that you submitted.
+    </string>
     <string name="txt_i_see">I see</string>
     <string name="txt_location_permission_not_granted">Location permissions not granted!</string>
     <string name="txt_signal_description">signal description</string>
@@ -72,6 +74,7 @@
     <string name="text_feedback">Feedback</string>
     <string name="txt_faqs_view_title">FAQs</string>
     <string name="text_settings">Settings</string>
+    <string name="text_privacy_policy">Privacy Policy</string>
     <string name="txt_user_changed_status_to">%1$s changed the status to \'%2$s\'</string>
     <string name="txt_new_status_icon">New status icon</string>
     <string name="string_about_title">About</string>r
@@ -114,4 +117,13 @@
     <string name="radius_output_single">%d kilometer</string>
     <string name="timeout_output">%d days</string>
     <string name="timeout_output_single">%d day</string>
+    <string name="txt_success">Success</string>
+    <string name="txt_error">Error</string>
+    <string name="txt_registration_successful">A confirmation link has been sent on your email. Please click it to complete your registration.</string>
+    <string name="url_privacy_policy" translatable="false">
+        https://develop.backendless.com/***REMOVED***/console/fcfdrgddsebccdkjfamuhppaasnowqluooks/files/view/web/privacypolicy.htm
+    </string>
+    <string name="content_description_app_logo">App logo</string>
+    <string name="txt_error_getting_privacy_policy">Could not get Privacy Policy!</string>
+    <string name="txt_login_successful">Login successful!</string>
 </resources>

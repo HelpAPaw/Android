@@ -7,7 +7,7 @@ public interface RegisterContract {
 
     interface View {
 
-        void showMessage(String message);
+        void showErrorMessage(String message);
 
         void showEmailErrorMessage();
 
@@ -19,11 +19,15 @@ public interface RegisterContract {
 
         void showWhyPhoneDialog();
 
+        void showPrivacyPolicyDialog(String privacyPolicy);
+
         void clearErrorMessages();
 
         void hideKeyboard();
 
         void setProgressIndicator(boolean active);
+
+        void showRegistrationSuccessfulMessage();
 
         void closeRegistrationScreen();
 

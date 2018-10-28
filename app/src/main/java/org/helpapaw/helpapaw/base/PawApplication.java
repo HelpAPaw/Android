@@ -1,6 +1,7 @@
 package org.helpapaw.helpapaw.base;
 
 import android.app.Application;
+import android.content.SharedPreferences;
 import android.os.StrictMode;
 
 import com.backendless.Backendless;
@@ -16,15 +17,16 @@ public class PawApplication extends Application {
     public static final String  BACKENDLESS_APP_ID          = "***REMOVED***";
     public static final String  BACKENDLESS_REST_API_KEY    = "***REMOVED***";
     private static final String BACKENDLESS_ANDROID_API_KEY = "***REMOVED***";
+    private static final String IS_TEST_ENVIRONMENT_KEY     = "IS_TEST_ENVIRONMENT_KEY";
 
-    public static final Boolean TEST_VERSION = false;
-
+    private static Boolean isTestEnvironment;
     private static PawApplication pawApplication;
 
     @Override
     public void onCreate() {
         super.onCreate();
         pawApplication = this;
+        isTestEnvironment = loadIsTestEnvironment();
         Backendless.initApp(this, BACKENDLESS_APP_ID, BACKENDLESS_ANDROID_API_KEY);
         NotificationUtils.registerNotificationChannels(this);
 
@@ -56,5 +58,24 @@ public class PawApplication extends Application {
 
     public static PawApplication getContext() {
         return pawApplication;
+    }
+
+    public static Boolean getIsTestEnvironment() {
+        return isTestEnvironment;
+    }
+
+    public static void setIsTestEnvironment(Boolean isTestEnvironment) {
+        PawApplication.isTestEnvironment = isTestEnvironment;
+        pawApplication.saveIsTestEnvironment(isTestEnvironment);
+    }
+
+    private Boolean loadIsTestEnvironment() {
+        SharedPreferences prefs = getSharedPreferences("HelpAPaw", MODE_PRIVATE);
+        return prefs.getBoolean(IS_TEST_ENVIRONMENT_KEY, false);
+    }
+
+    private void saveIsTestEnvironment(Boolean isTestEnvironment) {
+        SharedPreferences prefs = pawApplication.getSharedPreferences("HelpAPaw", MODE_PRIVATE);
+        prefs.edit().putBoolean(IS_TEST_ENVIRONMENT_KEY, isTestEnvironment).apply();
     }
 }

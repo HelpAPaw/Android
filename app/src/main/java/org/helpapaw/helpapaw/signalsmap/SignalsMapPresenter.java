@@ -137,6 +137,7 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
 
                 if (isEmpty(description)) {
                     getView().showDescriptionErrorMessage();
+                    getView().setSignalViewProgressVisibility(false);
                 } else {
                     saveSignal(description, new Date(), 0, currentMapLatitude, currentMapLongitude);
                 }
@@ -162,7 +163,7 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
                     signalsList.add(signal);
 
                     getView().displaySignals(signalsList, true, signal.getId());
-                    getView().setAddSignalViewVisibility(false);
+                    setSendSignalViewVisibility(false);
                     clearSignalViewData();
                 }
             }
@@ -182,7 +183,7 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
                 if (!isViewAvailable()) return;
                 signalsList.add(signal);
                 getView().displaySignals(signalsList, true, signal.getId());
-                getView().setAddSignalViewVisibility(false);
+                setSendSignalViewVisibility(false);
                 clearSignalViewData();
                 getView().showAddedSignalMessage();
             }

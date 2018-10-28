@@ -9,13 +9,13 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import org.helpapaw.helpapaw.R;
-import org.helpapaw.helpapaw.base.BaseFragment;
+import org.helpapaw.helpapaw.authentication.AuthenticationFragment;
 import org.helpapaw.helpapaw.base.Presenter;
 import org.helpapaw.helpapaw.base.PresenterManager;
 import org.helpapaw.helpapaw.databinding.FragmentRegisterBinding;
 import org.helpapaw.helpapaw.reusable.AlertDialogFragment;
 
-public class RegisterFragment extends BaseFragment implements RegisterContract.View {
+public class RegisterFragment extends AuthenticationFragment implements RegisterContract.View {
 
     RegisterPresenter registerPresenter;
     RegisterContract.UserActionsListener actionsListener;
@@ -43,6 +43,7 @@ public class RegisterFragment extends BaseFragment implements RegisterContract.V
         }
 
         actionsListener = registerPresenter;
+        ppResponseListener = registerPresenter;
 
         binding.btnSignup.setOnClickListener(getBtnSignUpListener());
         binding.btnShowLogin.setOnClickListener(getBtnShowLoginClickListener());
@@ -54,8 +55,8 @@ public class RegisterFragment extends BaseFragment implements RegisterContract.V
     }
 
     @Override
-    public void showMessage(String message) {
-        AlertDialogFragment.showAlert("Error", message, true, this.getFragmentManager());
+    public void showErrorMessage(String message) {
+        AlertDialogFragment.showAlert(getString(R.string.txt_error), message, true, this.getFragmentManager());
     }
 
     @Override
@@ -91,6 +92,11 @@ public class RegisterFragment extends BaseFragment implements RegisterContract.V
     }
 
     @Override
+    public void showRegistrationSuccessfulMessage() {
+        AlertDialogFragment.showAlert(getString(R.string.txt_success), getString(R.string.txt_registration_successful), false, this.getFragmentManager());
+    }
+
+    @Override
     public void closeRegistrationScreen() {
         if (getActivity() != null) {
             getActivity().getSupportFragmentManager().popBackStack();
@@ -99,7 +105,7 @@ public class RegisterFragment extends BaseFragment implements RegisterContract.V
 
     @Override
     public void showNoInternetMessage() {
-        showMessage(getString(R.string.txt_no_internet));
+        showErrorMessage(getString(R.string.txt_no_internet));
     }
 
     @Override

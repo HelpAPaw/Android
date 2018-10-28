@@ -3,14 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/menu_item_refresh"
-        android:icon="@drawable/ic_refresh"
+        android:icon="@drawable/ic_refresh_white_24dp"
         android:title="@string/txt_refresh"
         app:showAsAction="always" />
-
-    <!--<item-->
-        <!--android:id="@+id/menu_item_filter"-->
-        <!--android:title="Log out"-->
-        <!--android:icon="@drawable/ic_filter_list_white_24dp"-->
-        <!--app:showAsAction="always">-->
-    <!--</item>-->
 </menu>

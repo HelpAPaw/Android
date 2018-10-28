@@ -1,5 +1,9 @@
 package org.helpapaw.helpapaw.authentication.register;
 
+import org.helpapaw.helpapaw.R;
+import org.helpapaw.helpapaw.authentication.PrivacyPolicyConfirmationContract;
+import org.helpapaw.helpapaw.authentication.PrivacyPolicyConfirmationGetter;
+import org.helpapaw.helpapaw.base.PawApplication;
 import org.helpapaw.helpapaw.base.Presenter;
 import org.helpapaw.helpapaw.data.user.UserManager;
 import org.helpapaw.helpapaw.utils.Injection;
@@ -8,13 +12,21 @@ import org.helpapaw.helpapaw.utils.Utils;
 /**
  * Created by iliyan on 7/25/16
  */
-public class RegisterPresenter extends Presenter<RegisterContract.View> implements RegisterContract.UserActionsListener {
+public class RegisterPresenter extends Presenter<RegisterContract.View>
+        implements RegisterContract.UserActionsListener,
+        PrivacyPolicyConfirmationContract.Obtain,
+        PrivacyPolicyConfirmationContract.UserResponse {
 
     private static final int MIN_PASS_LENGTH = 6;
 
     private UserManager userManager;
 
     private boolean showProgressBar;
+
+    private String email;
+    private String password;
+    private String name;
+    private String phoneNumber;
 
     public RegisterPresenter(RegisterContract.View view) {
         super(view);
@@ -53,7 +65,15 @@ public class RegisterPresenter extends Presenter<RegisterContract.View> implemen
 
         getView().hideKeyboard();
         setProgressIndicator(true);
-        attemptToRegister(email, password, name, phoneNumber);
+
+        // Save values for later;
+        this.email = email;
+        this.password = password;
+        this.name = name;
+        this.phoneNumber = phoneNumber;
+
+        PrivacyPolicyConfirmationGetter privacyPolicyConfirmationGetter = new PrivacyPolicyConfirmationGetter(this, PawApplication.getContext());
+        privacyPolicyConfirmationGetter.execute();
     }
 
     private void attemptToRegister(String email, String password, String name, String phoneNumber) {
@@ -62,6 +82,7 @@ public class RegisterPresenter extends Presenter<RegisterContract.View> implemen
                 @Override
                 public void onRegistrationSuccess() {
                     if (!isViewAvailable()) return;
+                    getView().showRegistrationSuccessfulMessage();
                     getView().closeRegistrationScreen();
                 }
 
@@ -69,7 +90,7 @@ public class RegisterPresenter extends Presenter<RegisterContract.View> implemen
                 public void onRegistrationFailure(String message) {
                     if (!isViewAvailable()) return;
                     setProgressIndicator(false);
-                    getView().showMessage(message);
+                    getView().showErrorMessage(message);
                 }
             });
         } else {
@@ -99,5 +120,33 @@ public class RegisterPresenter extends Presenter<RegisterContract.View> implemen
 
     private boolean isEmpty(String value) {
         return !(value != null && value.length() > 0);
+    }
+
+    @Override
+    public void onPrivacyPolicyObtained(String privacyPolicy) {
+        if (!isViewAvailable()) return;
+
+        if (privacyPolicy != null) {
+            getView().showPrivacyPolicyDialog(privacyPolicy);
+        }
+        else {
+            setProgressIndicator(false);
+            getView().showErrorMessage(PawApplication.getContext().getString(R.string.txt_error_getting_privacy_policy));
+        }
+    }
+
+    @Override
+    public void onUserAcceptedPrivacyPolicy() {
+        attemptToRegister(email, password, name, phoneNumber);
+    }
+
+    @Override
+    public void onUserDeclinedPrivacyPolicy() {
+        email = null;
+        password = null;
+        name = null;
+        phoneNumber = null;
+
+        setProgressIndicator(false);
     }
 }
