@@ -1,26 +1,33 @@
 package org.helpapaw.helpapaw.settings;
 
+import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.view.DragEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.SeekBar;
 
 import org.helpapaw.helpapaw.R;
 import org.helpapaw.helpapaw.base.BaseFragment;
 import org.helpapaw.helpapaw.base.Presenter;
 import org.helpapaw.helpapaw.databinding.FragmentSettingsBinding;
 
+import java.util.Locale;
+
 public class SettingsFragment extends BaseFragment implements SettingsContract.View {
 
     private static String TAG = SettingsFragment.class.getSimpleName();
-    private SettingsPresenter mSettingsPresenter;
 
     FragmentSettingsBinding binding;
+    SettingsPresenter settingsPresenter;
+    SettingsContract.UserActionsListener actionsListener;
 
     public static SettingsFragment newInstance() {
         return new SettingsFragment();
@@ -30,6 +37,11 @@ public class SettingsFragment extends BaseFragment implements SettingsContract.V
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
+    }
+
+    @Override
+    protected Presenter getPresenter() {
+        return settingsPresenter;
     }
 
     @Override
@@ -43,6 +55,8 @@ public class SettingsFragment extends BaseFragment implements SettingsContract.V
         // Inflate the layout for this fragment
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_settings, container, false);
 
+        settingsPresenter = new SettingsPresenter(this, getActivity().getPreferences(Context.MODE_PRIVATE));
+        actionsListener = settingsPresenter;
         return binding.getRoot();
     }
 
@@ -60,20 +74,52 @@ public class SettingsFragment extends BaseFragment implements SettingsContract.V
                 binding.toolbarTitle.setText(getString(R.string.text_settings));
             }
         }
+
+        binding.radiusValue.setOnSeekBarChangeListener(onRadiusSeekBarChangeListener());
+        binding.timeoutValue.setOnSeekBarChangeListener(onTimeoutSeekBarChangeListener());
     }
 
-    @Override
-    protected Presenter getPresenter() {
-        return mSettingsPresenter;
+    public SeekBar.OnSeekBarChangeListener onRadiusSeekBarChangeListener() {
+        return new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                actionsListener.onRadiusChange(progress);
+                if (progress == 1) {
+                    String result = String.format(Locale.getDefault(), getString(R.string.radius_output_single), progress);
+                    binding.radiusOutput.setText(result);
+                } else {
+                    String result = String.format(Locale.getDefault(), getString(R.string.radius_output), progress);
+                    binding.radiusOutput.setText(result);
+                }
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {}
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {}
+        };
     }
 
-    @Override
-    public void onRadiusChange() {
+    public SeekBar.OnSeekBarChangeListener onTimeoutSeekBarChangeListener() {
+        return new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                actionsListener.onTimeoutChange(progress);
+                if (progress == 1) {
+                    String result = String.format(Locale.getDefault(), getString(R.string.timeout_output_single), progress);
+                    binding.timeoutOutput.setText(result);
+                } else {
+                    String result = String.format(Locale.getDefault(), getString(R.string.timeout_output), progress);
+                    binding.timeoutOutput.setText(result);
+                }
+            }
 
-    }
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {}
 
-    @Override
-    public void onTimeoutChange() {
-
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {}
+        };
     }
 }

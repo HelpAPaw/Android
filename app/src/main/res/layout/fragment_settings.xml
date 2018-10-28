@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:tools="http://schemas.android.com/tools"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <android.support.constraint.ConstraintLayout
@@ -78,7 +77,8 @@
                 <android.support.v7.widget.AppCompatSeekBar
                     android:id="@+id/radius_value"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:max="100" />
             </LinearLayout>
 
             <TableRow
@@ -135,7 +135,8 @@
                 <android.support.v7.widget.AppCompatSeekBar
                     android:id="@+id/timeout_value"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:max="30" />
             </LinearLayout>
 
             <TableRow
