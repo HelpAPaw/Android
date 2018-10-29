@@ -19,6 +19,9 @@ import org.helpapaw.helpapaw.databinding.FragmentSettingsBinding;
 
 import java.util.Locale;
 
+import static org.helpapaw.helpapaw.signalsmap.SignalsMapPresenter.DEFAULT_SEARCH_RADIUS;
+import static org.helpapaw.helpapaw.signalsmap.SignalsMapPresenter.DEFAULT_SEARCH_TIMEOUT;
+
 public class SettingsFragment extends BaseFragment implements SettingsContract.View {
 
     FragmentSettingsBinding binding;
@@ -116,14 +119,14 @@ public class SettingsFragment extends BaseFragment implements SettingsContract.V
 
     @Override
     public void setRadius(int radius) {
-        radius = radius == 0 ? 10 : radius;
+        radius = radius == 0 ? DEFAULT_SEARCH_RADIUS : radius;
         binding.radiusValue.setProgress(radius);
         updateRadius(radius);
     }
 
     @Override
     public void setTimeout(int timeout) {
-        timeout = timeout == 0 ? 7 : timeout;
+        timeout = timeout == 0 ? DEFAULT_SEARCH_TIMEOUT : timeout;
         binding.timeoutValue.setProgress(timeout);
         updateTimeout(timeout);
     }

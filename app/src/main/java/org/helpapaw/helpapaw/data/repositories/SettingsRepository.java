@@ -13,7 +13,7 @@ public class SettingsRepository implements ISettingsRepository {
     @Override
     public void saveRadius(int radius) {
         SharedPreferences.Editor editor = preferences.edit();
-        editor.putInt("radius", radius * 1000);
+        editor.putInt("radius", radius);
         editor.apply();
     }
 
