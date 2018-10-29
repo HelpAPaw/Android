@@ -116,12 +116,14 @@ public class SettingsFragment extends BaseFragment implements SettingsContract.V
 
     @Override
     public void setRadius(int radius) {
+        radius = radius == 0 ? 10 : radius;
         binding.radiusValue.setProgress(radius);
         updateRadius(radius);
     }
 
     @Override
     public void setTimeout(int timeout) {
+        timeout = timeout == 0 ? 7 : timeout;
         binding.timeoutValue.setProgress(timeout);
         updateTimeout(timeout);
     }
