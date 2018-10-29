@@ -21,7 +21,7 @@ import java.util.List;
 public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> implements SignalsMapContract.UserActionsListener {
 
     private static final float DEFAULT_MAP_ZOOM = 14.5f;
-    public static final int DEFAULT_SEARCH_RADIUS = 10000;
+    public static final int DEFAULT_SEARCH_RADIUS = 10;
     public static final int DEFAULT_SEARCH_TIMEOUT = 7;
     private static final String DATE_TIME_FORMAT = "MM/dd/yyyy hh:mm:ss";
 

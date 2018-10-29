@@ -90,7 +90,7 @@ public class BackgroundCheckJobService extends JobService {
 
     private void getSignalsForLastKnownLocation(Location location, final JobParameters job) {
 
-        Injection.getSignalRepositoryInstance().getAllSignals(location.getLatitude(), location.getLongitude(), DEFAULT_SEARCH_RADIUS, DEFAULT_SEARCH_TIMEOUT, new SignalRepository.LoadSignalsCallback() {
+        Injection.getSignalRepositoryInstance().getAllSignals(location.getLatitude(), location.getLongitude(), DEFAULT_SEARCH_RADIUS * 1000, DEFAULT_SEARCH_TIMEOUT, new SignalRepository.LoadSignalsCallback() {
             @Override
             public void onSignalsLoaded(List<Signal> signals) {
 
