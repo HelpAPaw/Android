@@ -26,11 +26,11 @@ public class SettingsRepository implements ISettingsRepository {
 
     @Override
     public int getRadius() {
-        return preferences.getInt("radius", 0);
+        return preferences.getInt("radius", 10);
     }
 
     @Override
     public int getTimeout() {
-        return preferences.getInt("timeout", 0);
+        return preferences.getInt("timeout", 7);
     }
 }
