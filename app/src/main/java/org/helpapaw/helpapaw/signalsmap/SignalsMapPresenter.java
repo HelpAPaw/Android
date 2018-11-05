@@ -1,10 +1,7 @@
 package org.helpapaw.helpapaw.signalsmap;
 
-import android.content.SharedPreferences;
-
 import org.helpapaw.helpapaw.base.Presenter;
 import org.helpapaw.helpapaw.data.models.Signal;
-import org.helpapaw.helpapaw.data.repositories.ISettingsRepository;
 import org.helpapaw.helpapaw.data.repositories.PhotoRepository;
 import org.helpapaw.helpapaw.data.repositories.SignalRepository;
 import org.helpapaw.helpapaw.data.user.UserManager;
@@ -28,10 +25,11 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
     private UserManager userManager;
     private SignalRepository signalRepository;
     private PhotoRepository photoRepository;
-    private ISettingsRepository settingsRepository;
 
     private double latitude;
     private double longitude;
+    private int radius;
+    private int timeout;
 
     private double currentMapLatitude;
     private double currentMapLongitude;
@@ -40,12 +38,11 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
     private boolean sendSignalViewVisibility;
     private List<Signal> signalsList;
 
-    SignalsMapPresenter(SignalsMapContract.View view, SharedPreferences preferences) {
+    SignalsMapPresenter(SignalsMapContract.View view) {
         super(view);
         signalRepository = Injection.getSignalRepositoryInstance();
         userManager = Injection.getUserManagerInstance();
         photoRepository = Injection.getPhotoRepositoryInstance();
-        settingsRepository = Injection.getSettingsRepository(preferences);
         sendSignalViewVisibility = false;
         signalsList = new ArrayList<>();
     }
@@ -61,19 +58,9 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
         }
     }
 
-    private void getAllSignals(double latitude, double longitude, final boolean showPopup) {
+    private void getAllSignals(double latitude, double longitude, int radius, int timeout, final boolean showPopup) {
         if (Utils.getInstance().hasNetworkConnection()) {
             getView().setProgressVisibility(true);
-            double radius = settingsRepository.getRadius();
-            int timeout = settingsRepository.getTimeout();
-
-            if (radius == 0) {
-                radius = DEFAULT_SEARCH_RADIUS;
-            }
-
-            if (timeout == 0) {
-                timeout = DEFAULT_SEARCH_TIMEOUT;
-            }
 
             signalRepository.getAllSignals(latitude, longitude, radius, timeout,
                     new SignalRepository.LoadSignalsCallback() {
@@ -98,20 +85,18 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
         }
     }
 
-    public static void getAllSignalsWithoutViewUpate() {
-
-    }
-
     @Override
-    public void onLocationChanged(double latitude, double longitude) {
+    public void onLocationChanged(double latitude, double longitude, int radius, int timeout) {
         currentMapLatitude = latitude;
         currentMapLongitude = longitude;
 
         if (Utils.getInstance().getDistanceBetween(latitude, longitude, this.latitude, this.longitude) > 300) {
-            getAllSignals(latitude, longitude, false);
+            getAllSignals(latitude, longitude, radius, timeout, false);
 
             this.latitude = latitude;
             this.longitude = longitude;
+            this.radius = radius;
+            this.timeout = timeout;
         }
     }
 
@@ -244,7 +229,7 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
 
     @Override
     public void onRefreshButtonClicked() {
-        getAllSignals(latitude, longitude, false);
+        getAllSignals(latitude, longitude, radius, timeout, false);
     }
 
     @Override

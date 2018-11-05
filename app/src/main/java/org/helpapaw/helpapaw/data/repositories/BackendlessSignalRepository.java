@@ -51,7 +51,7 @@ public class BackendlessSignalRepository implements SignalRepository {
 
     @Override
     public void getAllSignals(double latitude, double longitude, double radius, int timeout, final LoadSignalsCallback callback) {
-        BackendlessGeoQuery query = new BackendlessGeoQuery(latitude, longitude, radius, Units.KILOMETERS);
+        BackendlessGeoQuery query = new BackendlessGeoQuery(latitude, longitude, radius * 1000, Units.METERS);
         query.setIncludeMeta(true);
 
         final Calendar calendar = Calendar.getInstance();
