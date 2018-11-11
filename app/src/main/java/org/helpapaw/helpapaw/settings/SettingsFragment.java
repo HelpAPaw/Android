@@ -19,10 +19,10 @@ import org.helpapaw.helpapaw.databinding.FragmentSettingsBinding;
 
 import java.util.Locale;
 
-import static org.helpapaw.helpapaw.signalsmap.SignalsMapPresenter.DEFAULT_SEARCH_RADIUS;
-import static org.helpapaw.helpapaw.signalsmap.SignalsMapPresenter.DEFAULT_SEARCH_TIMEOUT;
-
 public class SettingsFragment extends BaseFragment implements SettingsContract.View {
+
+    private static final int RADIUS_VALUE_MIN = 1;
+    private static final int TIMEOUT_VALUE_MIN = 1;
 
     FragmentSettingsBinding binding;
     SettingsPresenter settingsPresenter;
@@ -85,8 +85,13 @@ public class SettingsFragment extends BaseFragment implements SettingsContract.V
         return new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                actionsListener.onRadiusChange(progress);
-                updateRadius(progress);
+                if (progress < RADIUS_VALUE_MIN) {
+                    seekBar.setProgress(RADIUS_VALUE_MIN);
+                }
+                else {
+                    actionsListener.onRadiusChange(progress);
+                    updateRadius(progress);
+                }
             }
 
             @Override
@@ -103,8 +108,13 @@ public class SettingsFragment extends BaseFragment implements SettingsContract.V
         return new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                actionsListener.onTimeoutChange(progress);
-                updateTimeout(progress);
+                if (progress < TIMEOUT_VALUE_MIN) {
+                    seekBar.setProgress(TIMEOUT_VALUE_MIN);
+                }
+                else {
+                    actionsListener.onTimeoutChange(progress);
+                    updateTimeout(progress);
+                }
             }
 
             @Override
