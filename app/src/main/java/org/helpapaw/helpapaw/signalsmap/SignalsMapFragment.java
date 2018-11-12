@@ -1,6 +1,5 @@
 package org.helpapaw.helpapaw.signalsmap;
 
-
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -51,9 +50,11 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.VisibleRegion;
 
 import org.helpapaw.helpapaw.R;
 import org.helpapaw.helpapaw.authentication.AuthenticationActivity;
@@ -61,6 +62,7 @@ import org.helpapaw.helpapaw.base.BaseFragment;
 import org.helpapaw.helpapaw.base.Presenter;
 import org.helpapaw.helpapaw.base.PresenterManager;
 import org.helpapaw.helpapaw.data.models.Signal;
+import org.helpapaw.helpapaw.data.repositories.ISettingsRepository;
 import org.helpapaw.helpapaw.data.user.UserManager;
 import org.helpapaw.helpapaw.databinding.FragmentSignalsMapBinding;
 import org.helpapaw.helpapaw.reusable.AlertDialogFragment;
@@ -87,7 +89,6 @@ public class SignalsMapFragment extends BaseFragment
 
     public static final String TAG = SignalsMapFragment.class.getSimpleName();
     private static final String MAP_VIEW_STATE = "mapViewSaveState";
-    private static final float DEFAULT_MAP_ZOOM = 14.5f;
     private static final String DATE_TIME_FORMAT = "yyyyMMdd_HHmmss";
     private static final String PHOTO_PREFIX = "JPEG_";
     private static final String PHOTO_EXTENSION = ".jpg";
@@ -125,6 +126,8 @@ public class SignalsMapFragment extends BaseFragment
     private boolean mVisibilityAddSignal = false;
     private String mFocusedSignalId;
 
+    private ISettingsRepository settingsRepository;
+
     public SignalsMapFragment() {
         // Required empty public constructor
     }
@@ -146,7 +149,7 @@ public class SignalsMapFragment extends BaseFragment
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
         Bundle arguments = getArguments();
-        if( (arguments != null) && arguments.containsKey(Signal.KEY_FOCUSED_SIGNAL_ID) ) {
+        if ((arguments != null) && arguments.containsKey(Signal.KEY_FOCUSED_SIGNAL_ID)) {
 
             mFocusedSignalId = arguments.getString(Signal.KEY_FOCUSED_SIGNAL_ID);
             arguments.remove(Signal.KEY_FOCUSED_SIGNAL_ID);
@@ -181,6 +184,7 @@ public class SignalsMapFragment extends BaseFragment
             signalsMapPresenter.setView(this);
         }
         actionsListener = signalsMapPresenter;
+        settingsRepository = Injection.getSettingsRepository(getActivity().getPreferences(Context.MODE_PRIVATE));
         initLocationApi();
 
         setHasOptionsMenu(true);
@@ -252,7 +256,6 @@ public class SignalsMapFragment extends BaseFragment
         super.onCreateOptionsMenu(menu, inflater);
     }
 
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.menu_item_refresh) {
@@ -299,9 +302,11 @@ public class SignalsMapFragment extends BaseFragment
     private GoogleMap.OnCameraIdleListener mapCameraIdleListener = new GoogleMap.OnCameraIdleListener() {
         @Override
         public void onCameraIdle() {
-            LatLng cameraTarget = signalsGoogleMap.getCameraPosition().target;
+            CameraPosition cameraPosition = signalsGoogleMap.getCameraPosition();
+            LatLng cameraTarget = cameraPosition.target;
 
-            actionsListener.onLocationChanged(cameraTarget.latitude, cameraTarget.longitude);
+            int radius = calculateZoomToMeters();
+            actionsListener.onLocationChanged(cameraTarget.latitude, cameraTarget.longitude, radius, settingsRepository.getTimeout());
         }
     };
 
@@ -390,14 +395,18 @@ public class SignalsMapFragment extends BaseFragment
             if (showPopup && (markerToFocus != null)) {
                 markerToFocus.showInfoWindow();
                 updateMapCameraPosition(signalToFocus.getLatitude(), signalToFocus.getLongitude(), null);
-            }
-            else if (markerToReShow != null) {
+            } else if (markerToReShow != null) {
                 markerToReShow.showInfoWindow();
             }
         }
     }
 
     /* Location API */
+
+    @Override
+    public void onLocationChanged(Location location) {
+        handleNewLocation(location);
+    }
 
     private void initLocationApi() {
         googleApiClient = new GoogleApiClient.Builder(getContext())
@@ -480,6 +489,14 @@ public class SignalsMapFragment extends BaseFragment
         }
     }
 
+    private void handleNewLocation(Location location) {
+        mCurrentLat = location.getLatitude();
+        mCurrentLong = location.getLongitude();
+        float zoom = calculateMetersToZoom();
+        updateMapCameraPosition(mCurrentLat, mCurrentLong, zoom);
+        actionsListener.onLocationChanged(mCurrentLat, mCurrentLong, settingsRepository.getRadius(), settingsRepository.getTimeout());
+    }
+
     @Override
     public void onConnectionSuspended(int i) {
         Log.i(TAG, "Connection suspended");
@@ -491,21 +508,43 @@ public class SignalsMapFragment extends BaseFragment
         Log.i(TAG, "Connection failed with error code: " + connectionResult.getErrorCode());
     }
 
-    @Override
-    public void onLocationChanged(Location location) {
-        handleNewLocation(location);
+    private int calculateZoomToMeters() {
+        VisibleRegion visibleRegion = signalsGoogleMap.getProjection().getVisibleRegion();
+        float[] distanceWidth = new float[1];
+        float[] distanceHeight = new float[1];
+
+        LatLng farRight = visibleRegion.farRight;
+        LatLng farLeft = visibleRegion.farLeft;
+        LatLng nearRight = visibleRegion.nearRight;
+        LatLng nearLeft = visibleRegion.nearLeft;
+
+        //calculate the distance width (left <-> right of map on screen)
+        Location.distanceBetween(
+                (farLeft.latitude + nearLeft.latitude) / 2,
+                farLeft.longitude,
+                (farRight.latitude + nearRight.latitude) / 2,
+                farRight.longitude,
+                distanceWidth);
+
+        //calculate the distance height (top <-> bottom of map on screen)
+        Location.distanceBetween(
+                farRight.latitude,
+                (farRight.longitude + farLeft.longitude) / 2,
+                nearRight.latitude,
+                (nearRight.longitude + nearLeft.longitude) / 2,
+                distanceHeight);
+
+        //visible radius is (smaller distance) / 2:
+        float radius = (distanceWidth[0] < distanceHeight[0]) ? distanceWidth[0] / 2 : distanceHeight[0] / 2;
+        return ((int) radius);
     }
 
-    private void handleNewLocation(Location location) {
-
-        Log.d(TAG, location.toString());
-        mCurrentLat = location.getLatitude();
-        mCurrentLong = location.getLongitude();
-
-        updateMapCameraPosition(mCurrentLat, mCurrentLong, DEFAULT_MAP_ZOOM);
-        actionsListener.onLocationChanged(mCurrentLat, mCurrentLong);
+    private float calculateMetersToZoom() {
+        double radius = settingsRepository.getRadius() * 1000;
+        double scale = radius / 500;
+        float zoomLevel = (float) (16 - Math.log(scale) / Math.log(2));
+        return zoomLevel - 0.5f;
     }
-
 
     @Override
     public void showMessage(String message) {
@@ -560,11 +599,11 @@ public class SignalsMapFragment extends BaseFragment
                 .setDuration(300)
                 .translationY(-(binding.viewSendSignal.getHeight() * 1.2f))
                 .withEndAction(new Runnable() {
-            @Override
-            public void run() {
-                binding.viewSendSignal.setVisibility(View.INVISIBLE);
-            }
-        });
+                    @Override
+                    public void run() {
+                        binding.viewSendSignal.setVisibility(View.INVISIBLE);
+                    }
+                });
     }
 
     private void showAddSignalPin() {
@@ -587,13 +626,12 @@ public class SignalsMapFragment extends BaseFragment
                 .setDuration(200)
                 .alpha(0.0f)
                 .withEndAction(new Runnable() {
-            @Override
-            public void run() {
-                binding.addSignalPin.setVisibility(View.INVISIBLE);
-            }
-        });
+                    @Override
+                    public void run() {
+                        binding.addSignalPin.setVisibility(View.INVISIBLE);
+                    }
+                });
     }
-
 
     @Override
     public void hideKeyboard() {

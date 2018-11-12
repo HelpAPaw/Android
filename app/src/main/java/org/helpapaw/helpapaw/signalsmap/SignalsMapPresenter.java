@@ -18,7 +18,8 @@ import java.util.List;
 public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> implements SignalsMapContract.UserActionsListener {
 
     private static final float DEFAULT_MAP_ZOOM = 14.5f;
-    public static final int DEFAULT_SEARCH_RADIUS = 4000;
+    public static final int DEFAULT_SEARCH_RADIUS = 10;
+    public static final int DEFAULT_SEARCH_TIMEOUT = 7;
     private static final String DATE_TIME_FORMAT = "MM/dd/yyyy hh:mm:ss";
 
     private UserManager userManager;
@@ -27,6 +28,8 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
 
     private double latitude;
     private double longitude;
+    private int radius;
+    private int timeout;
 
     private double currentMapLatitude;
     private double currentMapLongitude;
@@ -55,10 +58,11 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
         }
     }
 
-    private void getAllSignals(double latitude, double longitude, final boolean showPopup) {
+    private void getAllSignals(double latitude, double longitude, int radius, int timeout, final boolean showPopup) {
         if (Utils.getInstance().hasNetworkConnection()) {
             getView().setProgressVisibility(true);
-            signalRepository.getAllSignals(latitude, longitude, DEFAULT_SEARCH_RADIUS,
+
+            signalRepository.getAllSignals(latitude, longitude, radius, timeout,
                     new SignalRepository.LoadSignalsCallback() {
                         @Override
                         public void onSignalsLoaded(List<Signal> signals) {
@@ -81,20 +85,19 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
         }
     }
 
-    public static void getAllSignalsWithoutViewUpate(){
-
-    }
-
     @Override
-    public void onLocationChanged(double latitude, double longitude) {
+    public void onLocationChanged(double latitude, double longitude, int radius, int timeout) {
         currentMapLatitude = latitude;
         currentMapLongitude = longitude;
 
-        if (Utils.getInstance().getDistanceBetween(latitude, longitude, this.latitude, this.longitude) > 300) {
-            getAllSignals(latitude, longitude, false);
+        if (   (Utils.getInstance().getDistanceBetween(latitude, longitude, this.latitude, this.longitude) > 300)
+            || (this.radius != radius)   ) {
+            getAllSignals(latitude, longitude, radius, timeout, false);
 
             this.latitude = latitude;
             this.longitude = longitude;
+            this.radius = radius;
+            this.timeout = timeout;
         }
     }
 
@@ -105,7 +108,7 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
 
     @Override
     public void onCancelAddSignal() {
-       getView().displaySignals(signalsList,false);
+        getView().displaySignals(signalsList, false);
     }
 
     @Override
@@ -227,7 +230,7 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
 
     @Override
     public void onRefreshButtonClicked() {
-        getAllSignals(latitude, longitude, false);
+        getAllSignals(latitude, longitude, radius, timeout, false);
     }
 
     @Override
@@ -236,7 +239,7 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
 
         for (int i = 0; i < signalsList.size(); i++) {
             Signal currentSignal = signalsList.get(i);
-            if(currentSignal.getId().equals(signal.getId())) {
+            if (currentSignal.getId().equals(signal.getId())) {
                 signalsList.remove(i);
                 signalsList.add(signal);
                 getView().displaySignals(signalsList, true);
@@ -250,14 +253,14 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
         getView().hideKeyboard();
         String userToken = userManager.getUserToken();
 
-        if(userToken!=null && !userToken.isEmpty()){
+        if (userToken != null && !userToken.isEmpty()) {
             logoutUser();
-        }else{
+        } else {
             getView().openLoginScreen();
         }
     }
 
-    private void logoutUser(){
+    private void logoutUser() {
         if (Utils.getInstance().hasNetworkConnection()) {
             userManager.logout(new UserManager.LogoutCallback() {
                 @Override
@@ -270,13 +273,14 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
                     getView().onLogoutFailure(message);
                 }
             });
-        }
-        else {
+        } else {
             getView().onLogoutFailure("No connection.");
         }
     }
+
     @Override
-    public void onLoginAction() {}
+    public void onLoginAction() {
+    }
 
     private boolean isViewAvailable() {
         return getView() != null && getView().isActive();

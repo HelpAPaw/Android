@@ -50,15 +50,14 @@ public class BackendlessSignalRepository implements SignalRepository {
     }
 
     @Override
-    public void getAllSignals(double latitude, double longitude, double radius, final LoadSignalsCallback callback) {
-        BackendlessGeoQuery query = new BackendlessGeoQuery(latitude, longitude, radius, Units.METERS);
+    public void getAllSignals(double latitude, double longitude, double radius, int timeout, final LoadSignalsCallback callback) {
+        BackendlessGeoQuery query = new BackendlessGeoQuery(latitude, longitude, radius * 1000, Units.METERS);
         query.setIncludeMeta(true);
 
-        // Only get signals that were created in the last 3 days
         final Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.DATE, -3);
+        calendar.add(Calendar.DATE, -timeout);
         Date dateSubmitted = calendar.getTime();
-        query.setWhereClause( String.format( "dateSubmitted > %d", dateSubmitted.getTime() ) );
+        query.setWhereClause(String.format("dateSubmitted > %d", dateSubmitted.getTime()));
 
         String category = getCategory();
         if (category != null) {
@@ -68,7 +67,9 @@ public class BackendlessSignalRepository implements SignalRepository {
         Backendless.Geo.getPoints(query, new AsyncCallback<List<GeoPoint>>() {
             @Override
             public void handleResponse(List<GeoPoint> response) {
-                if (response == null) { return; }
+                if (response == null) {
+                    return;
+                }
 
                 List<Signal> signals = new ArrayList<>();
                 for (int i = 0; i < response.size(); i++) {
@@ -81,8 +82,7 @@ public class BackendlessSignalRepository implements SignalRepository {
                     Date dateSubmitted = null;
                     try {
                         dateSubmitted = new Date(Long.valueOf(dateSubmittedString));
-                    }
-                    catch (Exception ex){
+                    } catch (Exception ex) {
                         Log.d(BackendlessSignalRepository.class.getName(), "Failed to parse signal date.");
                     }
 
@@ -141,7 +141,7 @@ public class BackendlessSignalRepository implements SignalRepository {
                 String signalTitle = getToStringOrNull(geoPoint.getMetadata(SIGNAL_TITLE));
 
                 String dateSubmittedString = getToStringOrNull(geoPoint.getMetadata(SIGNAL_DATE_SUBMITTED));
-                Date   dateSubmitted = new Date(Long.valueOf(dateSubmittedString));
+                Date dateSubmitted = new Date(Long.valueOf(dateSubmittedString));
                 String signalStatus = getToStringOrNull(geoPoint.getMetadata(SIGNAL_STATUS));
 
                 String signalAuthorName = null;
@@ -243,8 +243,7 @@ public class BackendlessSignalRepository implements SignalRepository {
     private String getCategory() {
         if (PawApplication.getIsTestEnvironment()) {
             return "Debug";
-        }
-        else {
+        } else {
             // Category should only be added if it's not Default
             return null;
         }

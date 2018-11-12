@@ -31,7 +31,7 @@ android {
 
 ext {
     support_version = '27.0.2'
-    play_services_version = '15.0.1'
+    play_services_version = '16.0.0'
     roomVersion = '1.1.1'
 }
 
