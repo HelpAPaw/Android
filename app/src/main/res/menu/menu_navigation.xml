@@ -4,6 +4,8 @@
               android:title="@string/txt_log_out"/>
         <item android:id="@+id/nav_item_faqs"
               android:title="@string/text_faqs"/>
+        <item android:id="@+id/nav_item_settings"
+              android:title="@string/text_settings" />
         <item android:id="@+id/nav_item_feedback"
               android:title="@string/text_feedback"/>
         <item android:id="@+id/nav_item_privacy_policy"

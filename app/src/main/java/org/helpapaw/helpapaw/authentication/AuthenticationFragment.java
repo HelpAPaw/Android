@@ -12,8 +12,7 @@ public abstract class AuthenticationFragment extends BaseFragment {
 
     public void showPrivacyPolicyDialog(String privacyPolicy) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle(R.string.privacy_policy_dialog_title)
-                .setMessage(Html.fromHtml(privacyPolicy))
+        builder.setMessage(Html.fromHtml(privacyPolicy))
                 .setPositiveButton(R.string.accept, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {

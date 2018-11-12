@@ -60,7 +60,7 @@ interface SignalsMapContract {
 
         void onInitSignalsMap();
 
-        void onLocationChanged(double latitude, double longitude);
+        void onLocationChanged(double latitude, double longitude, int radius, int timeout);
 
         void onAddSignalClicked(boolean visibility);
 
