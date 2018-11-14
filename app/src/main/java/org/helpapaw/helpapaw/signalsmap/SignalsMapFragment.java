@@ -8,11 +8,14 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.databinding.DataBindingUtil;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -73,6 +76,9 @@ import org.helpapaw.helpapaw.utils.StatusUtils;
 import org.helpapaw.helpapaw.utils.images.ImageUtils;
 
 import java.io.File;
+import java.io.FileDescriptor;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -705,9 +711,27 @@ public class SignalsMapFragment extends BaseFragment
         }
 
         if (requestCode == REQUEST_GALLERY && resultCode == Activity.RESULT_OK && data != null && data.getData() != null) {
-            Uri photoMediaUri = data.getData();
-            File photoFile = ImageUtils.getInstance().getFromMediaUri(getContext(), getContext().getContentResolver(), photoMediaUri);
-            actionsListener.onSignalPhotoSelected(Uri.fromFile(photoFile).getPath());
+
+            String path = null;
+            Uri fileUri = data.getData();
+            try {
+                ParcelFileDescriptor parcelFileDesc = getActivity().getContentResolver().openFileDescriptor(fileUri, "r");
+                FileDescriptor fileDesc = parcelFileDesc.getFileDescriptor();
+                Bitmap photo = BitmapFactory.decodeFileDescriptor(fileDesc);
+                path = MediaStore.Images.Media.insertImage(getContext().getContentResolver(), photo, "Title", null);
+                parcelFileDesc.close();
+
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            File photoFile = ImageUtils.getInstance().getFromMediaUri(getContext(), getContext().getContentResolver(), Uri.parse(path));
+
+            if(photoFile != null) {
+                actionsListener.onSignalPhotoSelected(Uri.fromFile(photoFile).getPath());
+            }
         }
 
         if (requestCode == REQUEST_SIGNAL_DETAILS) {
