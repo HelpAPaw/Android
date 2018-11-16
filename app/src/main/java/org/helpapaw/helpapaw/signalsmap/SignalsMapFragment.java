@@ -20,6 +20,7 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
@@ -111,6 +112,7 @@ public class SignalsMapFragment extends BaseFragment
     private static final int PADDING_BOTTOM = 160;
     private static final String MARKER_LATITUDE = "marker_latitude";
     private static final String MARKER_LONGITUDE = "marker_longitude";
+    private static final int MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 7;
 
     private GoogleApiClient googleApiClient;
     private LocationRequest locationRequest;
@@ -714,23 +716,38 @@ public class SignalsMapFragment extends BaseFragment
 
             String path = null;
             Uri fileUri = data.getData();
-            try {
-                ParcelFileDescriptor parcelFileDesc = getActivity().getContentResolver().openFileDescriptor(fileUri, "r");
-                FileDescriptor fileDesc = parcelFileDesc.getFileDescriptor();
-                Bitmap photo = BitmapFactory.decodeFileDescriptor(fileDesc);
-                path = MediaStore.Images.Media.insertImage(getContext().getContentResolver(), photo, "Title", null);
-                parcelFileDesc.close();
 
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
+            // Permission handling
+            if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    != PackageManager.PERMISSION_GRANTED) {
+                // Permission is not granted
+                // Ask for permission
+                ActivityCompat.requestPermissions(getActivity(),
+                        new String[]{Manifest.permission.READ_CONTACTS},
+                        MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE);
+
             }
 
-            File photoFile = ImageUtils.getInstance().getFromMediaUri(getContext(), getContext().getContentResolver(), Uri.parse(path));
+            // Permission has already been granted
+            else {
+                try {
+                    ParcelFileDescriptor parcelFileDesc = getActivity().getContentResolver().openFileDescriptor(fileUri, "r");
+                    FileDescriptor fileDesc = parcelFileDesc.getFileDescriptor();
+                    Bitmap photo = BitmapFactory.decodeFileDescriptor(fileDesc);
+                    path = MediaStore.Images.Media.insertImage(getContext().getContentResolver(), photo, "Title", null);
+                    parcelFileDesc.close();
 
-            if(photoFile != null) {
-                actionsListener.onSignalPhotoSelected(Uri.fromFile(photoFile).getPath());
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                File photoFile = ImageUtils.getInstance().getFromMediaUri(getContext(), getContext().getContentResolver(), Uri.parse(path));
+
+                if(photoFile != null) {
+                    actionsListener.onSignalPhotoSelected(Uri.fromFile(photoFile).getPath());
+                }
             }
         }
 
