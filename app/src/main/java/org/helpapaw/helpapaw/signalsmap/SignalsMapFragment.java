@@ -3,9 +3,11 @@ package org.helpapaw.helpapaw.signalsmap;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.content.res.Resources;
 import android.databinding.DataBindingUtil;
 import android.graphics.Bitmap;
@@ -14,6 +16,7 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.location.Location;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
@@ -112,8 +115,9 @@ public class SignalsMapFragment extends BaseFragment
     private static final int PADDING_BOTTOM = 160;
     private static final String MARKER_LATITUDE = "marker_latitude";
     private static final String MARKER_LONGITUDE = "marker_longitude";
-    private static final int MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 7;
-
+    private static final String GOOGLE_PHOTOS_PACKAGE_NAME = "content://com.google.android.apps.photos";
+    private static final int WRITE_EXTERNAL_STORAGE_FOR_CLOUDE = 7;
+    
     private GoogleApiClient googleApiClient;
     private LocationRequest locationRequest;
     private GoogleMap signalsGoogleMap;
@@ -714,40 +718,38 @@ public class SignalsMapFragment extends BaseFragment
 
         if (requestCode == REQUEST_GALLERY && resultCode == Activity.RESULT_OK && data != null && data.getData() != null) {
 
-            String path = null;
             Uri fileUri = data.getData();
 
-            // Permission handling
-            if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                    != PackageManager.PERMISSION_GRANTED) {
-                // Permission is not granted
-                // Ask for permission
-                ActivityCompat.requestPermissions(getActivity(),
-                        new String[]{Manifest.permission.READ_CONTACTS},
-                        MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE);
+            String path = null;
+            File photoFile;
 
-            }
+            // Differentiate between SDK versions
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
 
-            // Permission has already been granted
-            else {
+                // Code for Android 6 and > goes here
+                if(getActivity().checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                    showPermissionDialog(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE, WRITE_EXTERNAL_STORAGE_FOR_CLOUDE);
+                }
                 try {
                     ParcelFileDescriptor parcelFileDesc = getActivity().getContentResolver().openFileDescriptor(fileUri, "r");
                     FileDescriptor fileDesc = parcelFileDesc.getFileDescriptor();
                     Bitmap photo = BitmapFactory.decodeFileDescriptor(fileDesc);
-                    path = MediaStore.Images.Media.insertImage(getContext().getContentResolver(), photo, "Title", null);
+                    path = MediaStore.Images.Media.insertImage(getContext().getContentResolver(), photo, "temp", null);
                     parcelFileDesc.close();
-
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-
-                File photoFile = ImageUtils.getInstance().getFromMediaUri(getContext(), getContext().getContentResolver(), Uri.parse(path));
-
-                if(photoFile != null) {
-                    actionsListener.onSignalPhotoSelected(Uri.fromFile(photoFile).getPath());
-                }
+                // DRY!!
+                photoFile = ImageUtils.getInstance().getFromMediaUri(getContext(), getContext().getContentResolver(), Uri.parse(path));
+            }
+            else {
+                // DRY!!
+                photoFile = ImageUtils.getInstance().getFromMediaUri(getContext(), getContext().getContentResolver(), data.getData());
+            }
+            if(photoFile != null) {
+                actionsListener.onSignalPhotoSelected(Uri.fromFile(photoFile).getPath());
             }
         }
 
