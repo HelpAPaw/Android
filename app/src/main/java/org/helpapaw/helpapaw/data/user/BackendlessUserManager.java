@@ -189,4 +189,13 @@ public class BackendlessUserManager implements UserManager {
             getUserPropertyCallback.onFailure("User not logged in!");
         }
     }
+
+    @Override
+    public String getUserName() {
+        BackendlessUser user = Backendless.UserService.CurrentUser();
+        if (user == null) {
+            return null;
+        }
+        return (String) user.getProperty(USER_NAME_FIELD);
+    }
 }
