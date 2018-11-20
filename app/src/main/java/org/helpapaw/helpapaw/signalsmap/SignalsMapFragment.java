@@ -720,6 +720,8 @@ public class SignalsMapFragment extends BaseFragment
         if (requestCode == REQUEST_GALLERY && resultCode == Activity.RESULT_OK && data != null && data.getData() != null) {
 
             Uri fileUri = data.getData();
+            String path = null;
+            File photoFile;
 
             // Differentiate between SDK versions
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -732,48 +734,23 @@ public class SignalsMapFragment extends BaseFragment
                     ParcelFileDescriptor parcelFileDesc = getActivity().getContentResolver().openFileDescriptor(fileUri, "r");
                     FileDescriptor fileDesc = parcelFileDesc.getFileDescriptor();
                     Bitmap photo = BitmapFactory.decodeFileDescriptor(fileDesc);
-                    String path = MediaStore.Images.Media.insertImage(getContext().getContentResolver(), photo, "temp", null);
+                    path = MediaStore.Images.Media.insertImage(getContext().getContentResolver(), photo, "temp", null);
                     parcelFileDesc.close();
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                //FileDescriptor fileDesc = parcelFileDesc.getFileDescriptor();
-
+                // DRY!!
+                photoFile = ImageUtils.getInstance().getFromMediaUri(getContext(), getContext().getContentResolver(), Uri.parse(path));
             }
-
             else {
-                // Code for Android 5.1 and < goes here
+                // DRY!!
+                photoFile = ImageUtils.getInstance().getFromMediaUri(getContext(), getContext().getContentResolver(), data.getData());
             }
-//
-//
-//            String path = null;
-//            Uri fileUri = data.getData();
-//            try {
-//                ParcelFileDescriptor parcelFileDesc = getActivity().getContentResolver().openFileDescriptor(fileUri, "r");
-//                FileDescriptor fileDesc = parcelFileDesc.getFileDescriptor();
-//                Bitmap photo = BitmapFactory.decodeFileDescriptor(fileDesc);
-//
-//                // Ask for permission to write into external storage
-//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-//                    if(getActivity().checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-//                        // Ask for permission
-//                        requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-//                                WRITE_EXTERNAL_STORAGE_FOR_CLOUDE);
-//                    }
-//                }
-//                path = MediaStore.Images.Media.insertImage(getContext().getContentResolver(), photo, "Title", null);
-//                parcelFileDesc.close();
-//            } catch (FileNotFoundException e) {
-//                e.printStackTrace();
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//            File photoFile = ImageUtils.getInstance().getFromMediaUri(getContext(), getContext().getContentResolver(), Uri.parse(path));
-//            if(photoFile != null) {
-//                actionsListener.onSignalPhotoSelected(Uri.fromFile(photoFile).getPath());
-//            }
+            if(photoFile != null) {
+                actionsListener.onSignalPhotoSelected(Uri.fromFile(photoFile).getPath());
+            }
         }
 
         if (requestCode == REQUEST_SIGNAL_DETAILS) {
