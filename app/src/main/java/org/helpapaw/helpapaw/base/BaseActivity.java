@@ -14,6 +14,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import org.helpapaw.helpapaw.R;
 import org.helpapaw.helpapaw.about.AboutActivity;
@@ -189,6 +190,13 @@ public abstract class BaseActivity extends AppCompatActivity {
 
         if (userManager.isLoggedIn()) {
             binding.navView.getMenu().findItem(R.id.nav_item_sign_in_out).setTitle(R.string.txt_log_out);
+            TextView title = binding.navView.getHeaderView(0).findViewById(R.id.nav_title);
+            if (title != null) {
+                String username = userManager.getUserName();
+                if (username != null) {
+                    title.setText(username);
+                }
+            }
         } else {
             binding.navView.getMenu().findItem(R.id.nav_item_sign_in_out).setTitle(R.string.txt_log_in);
         }
