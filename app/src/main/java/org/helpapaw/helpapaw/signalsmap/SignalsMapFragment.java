@@ -5,6 +5,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
@@ -28,6 +29,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -117,6 +119,7 @@ public class SignalsMapFragment extends BaseFragment
     private static final String MARKER_LONGITUDE = "marker_longitude";
     private static final String GOOGLE_PHOTOS_PACKAGE_NAME = "content://com.google.android.apps.photos";
     private static final int WRITE_EXTERNAL_STORAGE_FOR_CLOUDE = 7;
+    public static final int MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 123;
 
 
     private GoogleApiClient googleApiClient;
@@ -697,6 +700,21 @@ public class SignalsMapFragment extends BaseFragment
     }
 
     @Override
+    public void saveImageFromURI(Uri photoUri) {
+        //setThumbnailImage(photoUri);
+        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            showPermissionDialog(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE, WRITE_EXTERNAL_STORAGE_FOR_CLOUDE);
+        } else {
+//            Intent intent = new Intent(Intent.ACTION_PICK, photoUri);
+//            if (intent.resolveActivity(getContext().getPackageManager()) != null) {
+//                startActivityForResult(intent, WRITE_EXTERNAL_STORAGE_FOR_CLOUDE);
+//            }
+            //setThumbnailImage(photoUri.toString());
+            //TODO: use code from dev branch to create a file and insert it into MediaStore.Image
+        }
+    }
+
+    @Override
     public void openLoginScreen() {
         Intent intent = new Intent(getContext(), AuthenticationActivity.class);
         startActivity(intent);
@@ -719,38 +737,17 @@ public class SignalsMapFragment extends BaseFragment
 
         if (requestCode == REQUEST_GALLERY && resultCode == Activity.RESULT_OK && data != null && data.getData() != null) {
 
-            Uri fileUri = data.getData();
-            String path = null;
-            File photoFile;
-
-            // Differentiate between SDK versions
+            // Differentiate between API versions
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+               saveImageFromURI(data.getData());
+            } else {
+                // DRY!!
+                File photoFile = ImageUtils.getInstance().getFromMediaUri(getContext(), getContext().getContentResolver(), data.getData());
+                if (photoFile != null) {
+                    actionsListener.onSignalPhotoSelected(Uri.fromFile(photoFile).getPath());
+                }
+            }
 
-                // Code for Android 6 and > goes here
-                if(getActivity().checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                    showPermissionDialog(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE, WRITE_EXTERNAL_STORAGE_FOR_CLOUDE);
-                }
-                try {
-                    ParcelFileDescriptor parcelFileDesc = getActivity().getContentResolver().openFileDescriptor(fileUri, "r");
-                    FileDescriptor fileDesc = parcelFileDesc.getFileDescriptor();
-                    Bitmap photo = BitmapFactory.decodeFileDescriptor(fileDesc);
-                    path = MediaStore.Images.Media.insertImage(getContext().getContentResolver(), photo, "temp", null);
-                    parcelFileDesc.close();
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                // DRY!!
-                photoFile = ImageUtils.getInstance().getFromMediaUri(getContext(), getContext().getContentResolver(), Uri.parse(path));
-            }
-            else {
-                // DRY!!
-                photoFile = ImageUtils.getInstance().getFromMediaUri(getContext(), getContext().getContentResolver(), data.getData());
-            }
-            if(photoFile != null) {
-                actionsListener.onSignalPhotoSelected(Uri.fromFile(photoFile).getPath());
-            }
         }
 
         if (requestCode == REQUEST_SIGNAL_DETAILS) {
@@ -870,7 +867,16 @@ public class SignalsMapFragment extends BaseFragment
                             .show();
                 }
                 break;
-
+            case WRITE_EXTERNAL_STORAGE_FOR_CLOUDE:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // do your stuff
+                    //actionsListener.onSavingImageFromURI(
+                    Toast.makeText(getContext(), "Access to write granted", Toast.LENGTH_LONG);
+                } else {
+                    Toast.makeText(getContext(), R.string.txt_storage_permissions_write_to_storage,
+                            Toast.LENGTH_SHORT).show();
+                }
+                break;
             case READ_EXTERNAL_STORAGE_FOR_GALLERY:
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     actionsListener.onStoragePermissionForGalleryGranted();
