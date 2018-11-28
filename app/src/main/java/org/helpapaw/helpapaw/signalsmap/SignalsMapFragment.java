@@ -3,12 +3,9 @@ package org.helpapaw.helpapaw.signalsmap;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.ComponentName;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
 import android.content.res.Resources;
 import android.databinding.DataBindingUtil;
 import android.graphics.Bitmap;
@@ -24,12 +21,10 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v4.view.MenuItemCompat;
-import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -83,7 +78,6 @@ import org.helpapaw.helpapaw.utils.images.ImageUtils;
 
 import java.io.File;
 import java.io.FileDescriptor;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -118,7 +112,7 @@ public class SignalsMapFragment extends BaseFragment
     private static final String MARKER_LATITUDE = "marker_latitude";
     private static final String MARKER_LONGITUDE = "marker_longitude";
     private static final String GOOGLE_PHOTOS_PACKAGE_NAME = "content://com.google.android.apps.photos";
-    private static final int WRITE_EXTERNAL_STORAGE_FOR_CLOUDE = 7;
+    private static final int WRITE_EXTERNAL_STORAGE_FOR_CLOUD = 7;
     public static final int MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 123;
 
 
@@ -701,16 +695,30 @@ public class SignalsMapFragment extends BaseFragment
 
     @Override
     public void saveImageFromURI(Uri photoUri) {
-        //setThumbnailImage(photoUri);
         if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            showPermissionDialog(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE, WRITE_EXTERNAL_STORAGE_FOR_CLOUDE);
+            // This is where the problem resides: the user never sees the permission request
+            showPermissionDialog(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE, WRITE_EXTERNAL_STORAGE_FOR_CLOUD);
+
         } else {
-//            Intent intent = new Intent(Intent.ACTION_PICK, photoUri);
-//            if (intent.resolveActivity(getContext().getPackageManager()) != null) {
-//                startActivityForResult(intent, WRITE_EXTERNAL_STORAGE_FOR_CLOUDE);
-//            }
-            //setThumbnailImage(photoUri.toString());
-            //TODO: use code from dev branch to create a file and insert it into MediaStore.Image
+
+            // This segment works once the permission is handled
+            try {
+                String path;
+                ParcelFileDescriptor parcelFileDesc = getActivity().getContentResolver().openFileDescriptor(photoUri, "r");
+                FileDescriptor fileDesc = parcelFileDesc.getFileDescriptor();
+                Bitmap photo = BitmapFactory.decodeFileDescriptor(fileDesc);
+                path = MediaStore.Images.Media.insertImage(getContext().getContentResolver(), photo, "temp", null);
+                File photoFile = ImageUtils.getInstance().getFromMediaUri(getContext(), getContext().getContentResolver(), Uri.parse(path));
+
+                if (photoFile != null) {
+                    actionsListener.onSignalPhotoSelected(Uri.fromFile(photoFile).getPath());
+                }
+
+                parcelFileDesc.close();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -740,7 +748,9 @@ public class SignalsMapFragment extends BaseFragment
             // Differentiate between API versions
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                saveImageFromURI(data.getData());
-            } else {
+            }
+
+            else {
                 // DRY!!
                 File photoFile = ImageUtils.getInstance().getFromMediaUri(getContext(), getContext().getContentResolver(), data.getData());
                 if (photoFile != null) {
@@ -867,14 +877,13 @@ public class SignalsMapFragment extends BaseFragment
                             .show();
                 }
                 break;
-            case WRITE_EXTERNAL_STORAGE_FOR_CLOUDE:
+            case WRITE_EXTERNAL_STORAGE_FOR_CLOUD:
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     // do your stuff
                     //actionsListener.onSavingImageFromURI(
                     Toast.makeText(getContext(), "Access to write granted", Toast.LENGTH_LONG);
                 } else {
-                    Toast.makeText(getContext(), R.string.txt_storage_permissions_write_to_storage,
-                            Toast.LENGTH_SHORT).show();
+
                 }
                 break;
             case READ_EXTERNAL_STORAGE_FOR_GALLERY:
