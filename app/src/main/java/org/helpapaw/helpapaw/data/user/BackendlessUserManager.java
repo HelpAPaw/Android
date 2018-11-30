@@ -215,23 +215,5 @@ public class BackendlessUserManager implements UserManager {
         } else {
             getUserPropertyCallback.onFailure("User not logged in!");
         }
-        /*String currentUserId = Backendless.UserService.loggedInUser();
-        final String[] name = new String[1];
-        if (!currentUserId.equals("")) {
-            Backendless.UserService.findById(currentUserId, new AsyncCallback<BackendlessUser>() {
-                @Override
-                public void handleResponse(BackendlessUser user) {
-                    name[0] = (String) user.getProperty(USER_NAME_FIELD);
-                }
-
-                @Override
-                public void handleFault(BackendlessFault fault) {
-                }
-            });
-        } else {
-
-        }
-
-        return name[0];*/
     }
 }
