@@ -13,6 +13,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.TextView;
 
@@ -36,6 +37,8 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected ActivityBaseBinding binding;
     private ActionBarDrawerToggle drawerToggle;
     protected UserManager userManager;
+
+    private static final String TAG = BaseActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -190,12 +193,21 @@ public abstract class BaseActivity extends AppCompatActivity {
 
         if (userManager.isLoggedIn()) {
             binding.navView.getMenu().findItem(R.id.nav_item_sign_in_out).setTitle(R.string.txt_log_out);
-            TextView title = binding.navView.getHeaderView(0).findViewById(R.id.nav_title);
+            final TextView title = binding.navView.getHeaderView(0).findViewById(R.id.nav_title);
             if (title != null) {
-                String username = userManager.getUserName();
-                if (username != null) {
-                    title.setText(username);
-                }
+                userManager.getUserName(new UserManager.GetUserPropertyCallback() {
+                    @Override
+                    public void onSuccess(Object value) {
+                        if (value instanceof String) {
+                            title.setText(value.toString());
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(String message) {
+                        Log.d(TAG, message);
+                    }
+                });
             }
         } else {
             binding.navView.getMenu().findItem(R.id.nav_item_sign_in_out).setTitle(R.string.txt_log_in);
