@@ -15,14 +15,14 @@ public interface UserManager {
 
     void isLoggedIn(LoginCallback loginCallback);
 
+    String getUserToken();
+
     boolean isLoggedIn();
 
-    String getUserToken();
+    void getUserName(final GetUserPropertyCallback getUserPropertyCallback);
 
     void getHasAcceptedPrivacyPolicy(GetUserPropertyCallback getUserPropertyCallback);
     void setHasAcceptedPrivacyPolicy(boolean value, SetUserPropertyCallback setUserPropertyCallback);
-
-    String getUserName();
 
     interface LoginCallback {
         void onLoginSuccess();

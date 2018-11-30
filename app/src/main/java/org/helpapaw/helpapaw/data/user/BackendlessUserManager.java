@@ -24,6 +24,7 @@ public class BackendlessUserManager implements UserManager {
     public void login(String email, String password, final LoginCallback loginCallback) {
         Backendless.UserService.login(email, password, new AsyncCallback<BackendlessUser>() {
             public void handleResponse(BackendlessUser user) {
+                Backendless.UserService.setCurrentUser(user);
                 loginCallback.onLoginSuccess();
             }
 
@@ -37,7 +38,8 @@ public class BackendlessUserManager implements UserManager {
     public  void loginWithFacebook(String accessToken, final LoginCallback loginCallback) {
         Backendless.UserService.loginWithFacebookSdk(accessToken, new AsyncCallback<BackendlessUser>() {
             @Override
-            public void handleResponse(BackendlessUser response) {
+            public void handleResponse(BackendlessUser user) {
+                Backendless.UserService.setCurrentUser(user);
                 loginCallback.onLoginSuccess();
             }
 
@@ -191,11 +193,45 @@ public class BackendlessUserManager implements UserManager {
     }
 
     @Override
-    public String getUserName() {
-        BackendlessUser user = Backendless.UserService.CurrentUser();
-        if (user == null) {
-            return null;
+    public void getUserName(final GetUserPropertyCallback getUserPropertyCallback) {
+        String currentUserId = Backendless.UserService.loggedInUser();
+        if (!currentUserId.equals("")) {
+            Backendless.UserService.findById(currentUserId, new AsyncCallback<BackendlessUser>() {
+                @Override
+                public void handleResponse(BackendlessUser currentUser) {
+                    Object result = false;
+                    Object value = currentUser.getProperty(USER_NAME_FIELD);
+                    if (value != null) {
+                        result = value;
+                    }
+                    getUserPropertyCallback.onSuccess(result);
+                }
+
+                @Override
+                public void handleFault(BackendlessFault fault) {
+                    getUserPropertyCallback.onFailure(fault.getMessage());
+                }
+            });
+        } else {
+            getUserPropertyCallback.onFailure("User not logged in!");
         }
-        return (String) user.getProperty(USER_NAME_FIELD);
+        /*String currentUserId = Backendless.UserService.loggedInUser();
+        final String[] name = new String[1];
+        if (!currentUserId.equals("")) {
+            Backendless.UserService.findById(currentUserId, new AsyncCallback<BackendlessUser>() {
+                @Override
+                public void handleResponse(BackendlessUser user) {
+                    name[0] = (String) user.getProperty(USER_NAME_FIELD);
+                }
+
+                @Override
+                public void handleFault(BackendlessFault fault) {
+                }
+            });
+        } else {
+
+        }
+
+        return name[0];*/
     }
 }
