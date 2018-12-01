@@ -80,8 +80,8 @@
     <string name="string_about_title">About</string>r
     <string name="string_about_contact">Contact us</string>
     <string name="string_about_milen">© Milen Marinov 2018</string>
-    <string name="string_support_email">help.a.paw.app@gmail.com</string>
-    <string name="string_mail_chooser_title">help.a.paw.app@gmail.com</string>
+    <string name="string_support_email">help.a.paw@outlook.com‌</string>
+    <string name="string_mail_chooser_title">help.a.paw@outlook.com‌</string>
     <string name="error_empty_signal_response">Got empty response! Signal not present anymore!?</string>
     <string name="txt_channel_description_help_needed">"Shows signals for animals near you that are in (urgent) need of help"</string>
     <string name="txt_channel_description_somebody_on_the_way">"Shows signals for which help is on the way but are still not solved"</string>
