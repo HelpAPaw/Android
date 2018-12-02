@@ -73,8 +73,6 @@
     <string name="string_about_title">Относно</string>r
     <string name="string_about_contact">Свържете се с нас</string>
     <string name="string_about_milen">© Милен Маринов 2018</string>
-    <string name="string_support_email">help.a.paw@outlook.com‌</string>
-    <string name="string_mail_chooser_title">help.a.paw@outlook.com‌</string>
     <string name="error_empty_signal_response">Получихме празен отговор! Може би сигналът не същестува вече!?</string>
     <string name="txt_channel_description_help_needed">Показва сигналите за животни в близост до мен, които се нуждаят от спешна помощ</string>
     <string name="txt_channel_description_somebody_on_the_way">Показва сигналите, на които някой вече се е отзовал, но са все още неразрешени</string>
