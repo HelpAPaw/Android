@@ -103,7 +103,7 @@ public class SignalsMapFragment extends BaseFragment
     private static final int REQUEST_CAMERA = 2;
     private static final int REQUEST_GALLERY = 3;
     private static final int READ_EXTERNAL_STORAGE_FOR_CAMERA = 4;
-    private static final int READ_EXTERNAL_STORAGE_FOR_GALLERY = 5;
+    private static final int READ_WRITE_EXTERNAL_STORAGE_FOR_GALLERY = 5;
     private static final int REQUEST_SIGNAL_DETAILS = 6;
     private static final int REQUEST_CHECK_SETTINGS = 214;
     private static final String VIEW_ADD_SIGNAL = "view_add_signal";
@@ -683,9 +683,12 @@ public class SignalsMapFragment extends BaseFragment
 
     @Override
     public void openGallery() {
-        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            showPermissionDialog(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE, READ_EXTERNAL_STORAGE_FOR_GALLERY);
-        } else {
+        String[] permissions = {Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE};
+        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED &&
+                ContextCompat.checkSelfPermission(getContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(permissions, READ_WRITE_EXTERNAL_STORAGE_FOR_GALLERY);
+        }
+        else{
             Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
             if (intent.resolveActivity(getContext().getPackageManager()) != null) {
                 startActivityForResult(intent, REQUEST_GALLERY);
@@ -695,30 +698,24 @@ public class SignalsMapFragment extends BaseFragment
 
     @Override
     public void saveImageFromURI(Uri photoUri) {
-        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            // This is where the problem resides: the user never sees the permission request
-            showPermissionDialog(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE, WRITE_EXTERNAL_STORAGE_FOR_CLOUD);
 
-        } else {
+        // This segment works once the permission is handled
+        try {
+            String path;
+            ParcelFileDescriptor parcelFileDesc = getActivity().getContentResolver().openFileDescriptor(photoUri, "r");
+            FileDescriptor fileDesc = parcelFileDesc.getFileDescriptor();
+            Bitmap photo = BitmapFactory.decodeFileDescriptor(fileDesc);
+            path = MediaStore.Images.Media.insertImage(getContext().getContentResolver(), photo, "temp", null);
+            File photoFile = ImageUtils.getInstance().getFromMediaUri(getContext(), getContext().getContentResolver(), Uri.parse(path));
 
-            // This segment works once the permission is handled
-            try {
-                String path;
-                ParcelFileDescriptor parcelFileDesc = getActivity().getContentResolver().openFileDescriptor(photoUri, "r");
-                FileDescriptor fileDesc = parcelFileDesc.getFileDescriptor();
-                Bitmap photo = BitmapFactory.decodeFileDescriptor(fileDesc);
-                path = MediaStore.Images.Media.insertImage(getContext().getContentResolver(), photo, "temp", null);
-                File photoFile = ImageUtils.getInstance().getFromMediaUri(getContext(), getContext().getContentResolver(), Uri.parse(path));
-
-                if (photoFile != null) {
-                    actionsListener.onSignalPhotoSelected(Uri.fromFile(photoFile).getPath());
-                }
-
-                parcelFileDesc.close();
-
-            } catch (IOException e) {
-                e.printStackTrace();
+            if (photoFile != null) {
+                actionsListener.onSignalPhotoSelected(Uri.fromFile(photoFile).getPath());
             }
+
+            parcelFileDesc.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -747,7 +744,7 @@ public class SignalsMapFragment extends BaseFragment
 
             // Differentiate between API versions
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-               saveImageFromURI(data.getData());
+                saveImageFromURI(data.getData());
             }
 
             else {
@@ -877,16 +874,8 @@ public class SignalsMapFragment extends BaseFragment
                             .show();
                 }
                 break;
-            case WRITE_EXTERNAL_STORAGE_FOR_CLOUD:
-                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    // do your stuff
-                    //actionsListener.onSavingImageFromURI(
-                    Toast.makeText(getContext(), "Access to write granted", Toast.LENGTH_LONG);
-                } else {
 
-                }
-                break;
-            case READ_EXTERNAL_STORAGE_FOR_GALLERY:
+            case READ_WRITE_EXTERNAL_STORAGE_FOR_GALLERY:
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     actionsListener.onStoragePermissionForGalleryGranted();
                 } else {
