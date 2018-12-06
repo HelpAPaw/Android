@@ -1,5 +1,7 @@
 package org.helpapaw.helpapaw.signalsmap;
 
+import android.net.Uri;
+
 import org.helpapaw.helpapaw.data.models.Signal;
 
 import java.util.List;
@@ -28,6 +30,8 @@ interface SignalsMapContract {
         void openCamera();
 
         void openGallery();
+
+        void saveImageFromURI(Uri photoUri);
 
         void openLoginScreen();
 
