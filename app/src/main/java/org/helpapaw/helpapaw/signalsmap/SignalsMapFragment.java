@@ -78,7 +78,6 @@ import org.helpapaw.helpapaw.utils.images.ImageUtils;
 
 import java.io.File;
 import java.io.FileDescriptor;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -710,7 +709,7 @@ public class SignalsMapFragment extends BaseFragment
 
             parcelFileDesc.close();
 
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
