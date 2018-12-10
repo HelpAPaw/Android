@@ -41,8 +41,11 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResult;
@@ -59,6 +62,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.VisibleRegion;
+import com.google.android.gms.tasks.OnSuccessListener;
 
 import org.helpapaw.helpapaw.R;
 import org.helpapaw.helpapaw.authentication.AuthenticationActivity;
@@ -86,6 +90,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.Executor;
 
 public class SignalsMapFragment extends BaseFragment
         implements SignalsMapContract.View,
@@ -116,12 +121,16 @@ public class SignalsMapFragment extends BaseFragment
     public static final int MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 123;
 
 
+
     private GoogleApiClient googleApiClient;
     private LocationRequest locationRequest;
     private GoogleMap signalsGoogleMap;
+    private FusedLocationProviderClient mFusedLocationclient;
+    private LocationCallback mLocationCallback;
     private ArrayList<Signal> mDisplayedSignals = new ArrayList<>();
     private Map<String, Signal> mSignalMarkers = new HashMap<>();
     private Signal mCurrentlyShownInfoWindowSignal;
+    private  String imageFileName;
 
     private double mCurrentLat;
     private double mCurrentLong;
@@ -164,6 +173,25 @@ public class SignalsMapFragment extends BaseFragment
             mFocusedSignalId = arguments.getString(Signal.KEY_FOCUSED_SIGNAL_ID);
             arguments.remove(Signal.KEY_FOCUSED_SIGNAL_ID);
         }
+
+        // Instantioate Google Maps API
+        initLocationApi();      // as per the doc. the Google API should be loaded in onCreate()
+
+        // Instantiate the new FusedLocationProviderClient object
+        mFusedLocationclient = LocationServices.getFusedLocationProviderClient(getActivity());
+
+        // Instantiate a LocationCallback for the map
+        mLocationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult (LocationResult locationResult) {
+                if (locationResult == null) {
+                    return;
+                }
+                for (Location location: locationResult.getLocations()) {
+                    handleNewLocation(location);
+                }
+            }
+        };
     }
 
     @Override
@@ -195,7 +223,8 @@ public class SignalsMapFragment extends BaseFragment
         }
         actionsListener = signalsMapPresenter;
         settingsRepository = Injection.getSettingsRepository(getActivity().getPreferences(Context.MODE_PRIVATE));
-        initLocationApi();
+
+        //initLocationApi();
 
         setHasOptionsMenu(true);
 
@@ -231,7 +260,8 @@ public class SignalsMapFragment extends BaseFragment
         binding.mapSignals.onStop();
 
         if (googleApiClient.isConnected()) {
-            LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, this);
+            //LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, this);
+            mFusedLocationclient.removeLocationUpdates(mLocationCallback);
             googleApiClient.disconnect();
         }
     }
@@ -412,12 +442,6 @@ public class SignalsMapFragment extends BaseFragment
     }
 
     /* Location API */
-
-    @Override
-    public void onLocationChanged(Location location) {
-        handleNewLocation(location);
-    }
-
     private void initLocationApi() {
         googleApiClient = new GoogleApiClient.Builder(getContext())
                 .addConnectionCallbacks(this)
@@ -430,7 +454,7 @@ public class SignalsMapFragment extends BaseFragment
         locationRequest = LocationRequest.create()
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
                 .setInterval(30 * 1000)        // 30 seconds, in milliseconds
-                .setFastestInterval(10 * 1000); // 10 seconds, in milliseconds
+                .setFastestInterval(20 * 1000); // 10 seconds, in milliseconds
     }
 
     @Override
@@ -469,14 +493,14 @@ public class SignalsMapFragment extends BaseFragment
                 }
             }
         });
-        Context cont = getContext();
+        Context context = getContext();
         //Protection for the case when activity is destroyed (e.g. when rotating)
         //Probably there is a better fix in the actual workflow but we need a quick fix as users experience a lot of crashes
-        if (cont == null) {
+        if (context == null) {
             Log.e(TAG, "Context is null, exiting...");
             return;
         }
-        if (ContextCompat.checkSelfPermission(cont, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             showPermissionDialog(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION, LOCATION_PERMISSIONS_REQUEST);
         } else {
             setAddSignalViewVisibility(mVisibilityAddSignal);
@@ -490,12 +514,18 @@ public class SignalsMapFragment extends BaseFragment
     @SuppressLint("MissingPermission")
     private void setLastLocation() {
         if (!mVisibilityAddSignal) {
-            Location location = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
-            if (location == null) {
-                LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, this);
-            } else {
-                handleNewLocation(location);
-            }
+            mFusedLocationclient.getLastLocation().addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
+                @Override
+                public void onSuccess(Location location) {
+                    // Got last known location. In some rare situations this can be null.
+                    if (location != null) {
+                        mFusedLocationclient.requestLocationUpdates(locationRequest,
+                                mLocationCallback, null);
+                    } else {
+                        handleNewLocation(location);
+                    }
+                }
+            });
         }
     }
 
@@ -505,6 +535,11 @@ public class SignalsMapFragment extends BaseFragment
         float zoom = calculateMetersToZoom();
         updateMapCameraPosition(mCurrentLat, mCurrentLong, zoom);
         actionsListener.onLocationChanged(mCurrentLat, mCurrentLong, settingsRepository.getRadius(), settingsRepository.getTimeout());
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        handleNewLocation(location);
     }
 
     @Override
@@ -664,10 +699,9 @@ public class SignalsMapFragment extends BaseFragment
         sendPhotoBottomSheet.show(getFragmentManager(), SendPhotoBottomSheet.TAG);
     }
 
-    String imageFileName;
-
     @Override
     public void openCamera() {
+
         if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             showPermissionDialog(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE, READ_EXTERNAL_STORAGE_FOR_CAMERA);
         } else {
@@ -698,8 +732,6 @@ public class SignalsMapFragment extends BaseFragment
 
     @Override
     public void saveImageFromURI(Uri photoUri) {
-
-        // This segment works once the permission is handled
         try {
             String path;
             ParcelFileDescriptor parcelFileDesc = getActivity().getContentResolver().openFileDescriptor(photoUri, "r");
@@ -733,6 +765,7 @@ public class SignalsMapFragment extends BaseFragment
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+
         if (requestCode == REQUEST_CAMERA) {
             if (resultCode == Activity.RESULT_OK) {
                 Uri takenPhotoUri = ImageUtils.getInstance().getPhotoFileUri(getContext(), imageFileName);
