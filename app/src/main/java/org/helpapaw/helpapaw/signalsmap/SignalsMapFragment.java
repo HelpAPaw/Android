@@ -436,7 +436,6 @@ public class SignalsMapFragment extends BaseFragment
 
     @Override
     public void onConnected(Bundle bundle) {
-        Log.d(TAG, "onConnected");
         LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder().addLocationRequest(new LocationRequest());
 
         PendingResult<LocationSettingsResult> result = LocationServices.SettingsApi.checkLocationSettings(googleApiClient, builder.build());
