@@ -71,4 +71,13 @@ public class SettingsRepository implements ISettingsRepository {
         editor.putFloat("zoom", zoom);
         editor.apply();
     }
+
+    @Override
+    public void clearLocationData() {
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.remove("longitude");
+        editor.remove("latitude");
+        editor.remove("zoom");
+        editor.apply();
+    }
 }

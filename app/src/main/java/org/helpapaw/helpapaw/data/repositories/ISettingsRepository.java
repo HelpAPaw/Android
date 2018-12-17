@@ -20,4 +20,6 @@ public interface ISettingsRepository {
     float getZoom();
 
     void setZoom(float zoom);
+
+    void clearLocationData();
 }
