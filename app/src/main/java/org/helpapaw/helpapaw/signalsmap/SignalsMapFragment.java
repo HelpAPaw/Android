@@ -239,6 +239,7 @@ public class SignalsMapFragment extends BaseFragment
     public void onDestroy() {
         binding.mapSignals.onDestroy();
         super.onDestroy();
+        settingsRepository.clearLocationData();
     }
 
     public void onSaveInstanceState(Bundle outState) {
