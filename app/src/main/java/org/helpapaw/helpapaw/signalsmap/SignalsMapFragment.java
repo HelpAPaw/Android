@@ -125,7 +125,7 @@ public class SignalsMapFragment extends BaseFragment
     private GoogleApiClient googleApiClient;
     private LocationRequest locationRequest;
     private GoogleMap signalsGoogleMap;
-    private FusedLocationProviderClient mFusedLocationclient;
+    private FusedLocationProviderClient mFusedLocationClient;
     private LocationCallback mLocationCallback;
     private ArrayList<Signal> mDisplayedSignals = new ArrayList<>();
     private Map<String, Signal> mSignalMarkers = new HashMap<>();
@@ -174,11 +174,11 @@ public class SignalsMapFragment extends BaseFragment
             arguments.remove(Signal.KEY_FOCUSED_SIGNAL_ID);
         }
 
-        // Instantioate Google Maps API
+        // Instantiate Google Maps API
         initLocationApi();      // as per the doc. the Google API should be loaded in onCreate()
 
         // Instantiate the new FusedLocationProviderClient object
-        mFusedLocationclient = LocationServices.getFusedLocationProviderClient(getActivity());
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getActivity());
 
         // Instantiate a LocationCallback for the map
         mLocationCallback = new LocationCallback() {
@@ -188,10 +188,13 @@ public class SignalsMapFragment extends BaseFragment
                     return;
                 }
                 for (Location location: locationResult.getLocations()) {
-                    handleNewLocation(location);
+
                 }
             }
         };
+
+        setLastLocation();
+
     }
 
     @Override
@@ -261,7 +264,7 @@ public class SignalsMapFragment extends BaseFragment
 
         if (googleApiClient.isConnected()) {
             //LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, this);
-            mFusedLocationclient.removeLocationUpdates(mLocationCallback);
+            mFusedLocationClient.removeLocationUpdates(mLocationCallback);
             googleApiClient.disconnect();
         }
     }
@@ -453,7 +456,7 @@ public class SignalsMapFragment extends BaseFragment
         // Create the LocationRequest object
         locationRequest = LocationRequest.create()
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-                .setInterval(30 * 1000)        // 30 seconds, in milliseconds
+                .setInterval(30 * 1000)         // 30 seconds, in milliseconds
                 .setFastestInterval(20 * 1000); // 10 seconds, in milliseconds
     }
 
@@ -514,13 +517,15 @@ public class SignalsMapFragment extends BaseFragment
     @SuppressLint("MissingPermission")
     private void setLastLocation() {
         if (!mVisibilityAddSignal) {
-            mFusedLocationclient.getLastLocation().addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
+            mFusedLocationClient.getLastLocation().addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
                 @Override
                 public void onSuccess(Location location) {
                     // Got last known location. In some rare situations this can be null.
                     if (location != null) {
-                        mFusedLocationclient.requestLocationUpdates(locationRequest,
+                        mFusedLocationClient.requestLocationUpdates(locationRequest,
                                 mLocationCallback, null);
+                        float zoom = calculateMetersToZoom();
+                        updateMapCameraPosition(location.getLatitude(), location.getLongitude(), zoom);
                     } else {
                         handleNewLocation(location);
                     }
