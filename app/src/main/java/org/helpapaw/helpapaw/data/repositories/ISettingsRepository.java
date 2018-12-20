@@ -9,17 +9,17 @@ public interface ISettingsRepository {
 
     int getTimeout();
 
-    double getLatitude();
+    double getLastShownLatitude();
 
-    void setLatitude(double latitude);
+    void setLastShownLatitude(double latitude);
 
-    double getLongitude();
+    double getLastShownLongitude();
 
-    void setLongitude(double longitude);
+    void setLastShownLongitude(double longitude);
 
-    float getZoom();
+    float getLastShownZoom();
 
-    void setZoom(float zoom);
+    void setLastShownZoom(float zoom);
 
     void clearLocationData();
 }

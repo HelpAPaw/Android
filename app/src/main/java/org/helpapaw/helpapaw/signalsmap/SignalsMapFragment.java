@@ -226,9 +226,9 @@ public class SignalsMapFragment extends BaseFragment
         super.onStop();
         binding.mapSignals.onStop();
 
-        settingsRepository.setLatitude(mCurrentLat);
-        settingsRepository.setLongitude(mCurrentLong);
-        settingsRepository.setZoom(mZoom);
+        settingsRepository.setLastShownLatitude(mCurrentLat);
+        settingsRepository.setLastShownLongitude(mCurrentLong);
+        settingsRepository.setLastShownZoom(mZoom);
         if (googleApiClient.isConnected()) {
             LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, this);
             googleApiClient.disconnect();
@@ -502,9 +502,9 @@ public class SignalsMapFragment extends BaseFragment
     }
 
     private void handleNewLocation(Location location) {
-        double longitude = settingsRepository.getLongitude();
-        double latitude = settingsRepository.getLatitude();
-        float newZoom = settingsRepository.getZoom();
+        double longitude = settingsRepository.getLastShownLongitude();
+        double latitude = settingsRepository.getLastShownLatitude();
+        float newZoom = settingsRepository.getLastShownZoom();
 
         mCurrentLat = latitude == 0 ? location.getLatitude() : latitude;
         mCurrentLong = longitude == 0 ? location.getLongitude() : longitude;
