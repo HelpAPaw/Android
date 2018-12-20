@@ -521,7 +521,7 @@ public class SignalsMapFragment extends BaseFragment
                 @Override
                 public void onSuccess(Location location) {
                     // Got last known location. In some rare situations this can be null.
-                    if (location != null) {
+                    if (location == null) {
                         mFusedLocationClient.requestLocationUpdates(locationRequest,
                                 mLocationCallback, null);
                         float zoom = calculateMetersToZoom();
