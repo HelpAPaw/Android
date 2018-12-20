@@ -35,38 +35,38 @@ public class SettingsRepository implements ISettingsRepository {
     }
 
     @Override
-    public double getLatitude() {
+    public double getLastShownLatitude() {
         String lat = preferences.getString("latitude", "0");
         return Double.valueOf(lat);
     }
 
     @Override
-    public void setLatitude(double latitude) {
+    public void setLastShownLatitude(double latitude) {
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString("latitude", String.valueOf(latitude));
         editor.apply();
     }
 
     @Override
-    public double getLongitude() {
+    public double getLastShownLongitude() {
         String longi = preferences.getString("longitude", "0");
         return Double.valueOf(longi);
     }
 
     @Override
-    public void setLongitude(double longitude) {
+    public void setLastShownLongitude(double longitude) {
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString("longitude", String.valueOf(longitude));
         editor.apply();
     }
 
     @Override
-    public float getZoom() {
+    public float getLastShownZoom() {
         return preferences.getFloat("zoom", 0f);
     }
 
     @Override
-    public void setZoom(float zoom) {
+    public void setLastShownZoom(float zoom) {
         SharedPreferences.Editor editor = preferences.edit();
         editor.putFloat("zoom", zoom);
         editor.apply();
