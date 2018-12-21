@@ -183,12 +183,12 @@ public class SignalsMapFragment extends BaseFragment
                     return;
                 }
                 for (Location location: locationResult.getLocations()) {
-
+                    handleNewLocation(location);
                 }
             }
         };
 
-        setLastLocation();
+        //setLastLocation();
 
     }
 
@@ -452,7 +452,7 @@ public class SignalsMapFragment extends BaseFragment
         locationRequest = LocationRequest.create()
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
                 .setInterval(30 * 1000)         // 30 seconds, in milliseconds
-                .setFastestInterval(20 * 1000); // 10 seconds, in milliseconds
+                .setFastestInterval(10 * 1000); // 10 seconds, in milliseconds
     }
 
     @Override
@@ -515,7 +515,7 @@ public class SignalsMapFragment extends BaseFragment
             mFusedLocationClient.getLastLocation().addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
                 @Override
                 public void onSuccess(Location location) {
-                    // Got last known location. In some rare situations this can be null.
+                    // Got last known device location. In some rare situations this can be null.
                     if (location == null) {
                         mFusedLocationClient.requestLocationUpdates(locationRequest,
                                 mLocationCallback, null);
