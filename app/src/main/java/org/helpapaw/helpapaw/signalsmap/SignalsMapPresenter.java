@@ -91,7 +91,8 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
         currentMapLongitude = longitude;
 
         if ((Utils.getInstance().getDistanceBetween(latitude, longitude, this.latitude, this.longitude) > 300)
-            || (this.radius != radius)   ) {
+            || (this.radius != radius)) {
+
             getAllSignals(latitude, longitude, radius, timeout, false);
 
             this.latitude = latitude;

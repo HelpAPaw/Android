@@ -129,6 +129,7 @@ public class SignalsMapFragment extends BaseFragment
 
     private double mCurrentLat;
     private double mCurrentLong;
+    private float mZoom;
 
     private SignalsMapPresenter signalsMapPresenter;
     private SignalsMapContract.UserActionsListener actionsListener;
@@ -257,6 +258,9 @@ public class SignalsMapFragment extends BaseFragment
         super.onStop();
         binding.mapSignals.onStop();
 
+        settingsRepository.setLastShownLatitude(mCurrentLat);
+        settingsRepository.setLastShownLongitude(mCurrentLong);
+        settingsRepository.setLastShownZoom(mZoom);
         if (googleApiClient.isConnected()) {
             //LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, this);
             mFusedLocationClient.removeLocationUpdates(mLocationCallback);
@@ -268,6 +272,7 @@ public class SignalsMapFragment extends BaseFragment
     public void onDestroy() {
         binding.mapSignals.onDestroy();
         super.onDestroy();
+        settingsRepository.clearLocationData();
     }
 
     public void onSaveInstanceState(Bundle outState) {
@@ -342,7 +347,9 @@ public class SignalsMapFragment extends BaseFragment
         public void onCameraIdle() {
             CameraPosition cameraPosition = signalsGoogleMap.getCameraPosition();
             LatLng cameraTarget = cameraPosition.target;
-
+            mCurrentLong = cameraTarget.longitude;
+            mCurrentLat = cameraTarget.latitude;
+            mZoom = cameraPosition.zoom;
             int radius = calculateZoomToMeters();
             actionsListener.onLocationChanged(cameraTarget.latitude, cameraTarget.longitude, radius, settingsRepository.getTimeout());
         }
@@ -530,9 +537,13 @@ public class SignalsMapFragment extends BaseFragment
     }
 
     private void handleNewLocation(Location location) {
-        mCurrentLat = location.getLatitude();
-        mCurrentLong = location.getLongitude();
-        float zoom = calculateMetersToZoom();
+        double longitude = settingsRepository.getLastShownLongitude();
+        double latitude = settingsRepository.getLastShownLatitude();
+        float newZoom = settingsRepository.getLastShownZoom();
+
+        mCurrentLat = latitude == 0 ? location.getLatitude() : latitude;
+        mCurrentLong = longitude == 0 ? location.getLongitude() : longitude;
+        float zoom = newZoom == 0 ? calculateMetersToZoom() : newZoom;
         updateMapCameraPosition(mCurrentLat, mCurrentLong, zoom);
         actionsListener.onLocationChanged(mCurrentLat, mCurrentLong, settingsRepository.getRadius(), settingsRepository.getTimeout());
     }

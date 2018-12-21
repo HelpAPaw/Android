@@ -8,4 +8,18 @@ public interface ISettingsRepository {
     int getRadius();
 
     int getTimeout();
+
+    double getLastShownLatitude();
+
+    void setLastShownLatitude(double latitude);
+
+    double getLastShownLongitude();
+
+    void setLastShownLongitude(double longitude);
+
+    float getLastShownZoom();
+
+    void setLastShownZoom(float zoom);
+
+    void clearLocationData();
 }
