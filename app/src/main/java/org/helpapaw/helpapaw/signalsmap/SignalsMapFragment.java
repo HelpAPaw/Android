@@ -82,7 +82,6 @@ import org.helpapaw.helpapaw.utils.images.ImageUtils;
 
 import java.io.File;
 import java.io.FileDescriptor;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -116,10 +115,6 @@ public class SignalsMapFragment extends BaseFragment
     private static final int PADDING_BOTTOM = 160;
     private static final String MARKER_LATITUDE = "marker_latitude";
     private static final String MARKER_LONGITUDE = "marker_longitude";
-    private static final String GOOGLE_PHOTOS_PACKAGE_NAME = "content://com.google.android.apps.photos";
-    private static final int WRITE_EXTERNAL_STORAGE_FOR_CLOUD = 7;
-    public static final int MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 123;
-
 
 
     private GoogleApiClient googleApiClient;
@@ -751,7 +746,7 @@ public class SignalsMapFragment extends BaseFragment
 
             parcelFileDesc.close();
 
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -780,7 +775,6 @@ public class SignalsMapFragment extends BaseFragment
 
         if (requestCode == REQUEST_GALLERY && resultCode == Activity.RESULT_OK && data != null && data.getData() != null) {
 
-            // Differentiate between API versions
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 saveImageFromURI(data.getData());
             }
