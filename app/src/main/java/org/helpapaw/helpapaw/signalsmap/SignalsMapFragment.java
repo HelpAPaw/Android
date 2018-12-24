@@ -526,8 +526,8 @@ public class SignalsMapFragment extends BaseFragment
                     if (location == null) {
                         mFusedLocationClient.requestLocationUpdates(locationRequest,
                                 mLocationCallback, null);
-                        float zoom = calculateMetersToZoom();
-                        updateMapCameraPosition(location.getLatitude(), location.getLongitude(), zoom);
+//                        float zoom = calculateMetersToZoom();
+//                        updateMapCameraPosition(location.getLatitude(), location.getLongitude(), zoom);
                     } else {
                         handleNewLocation(location);
                     }
