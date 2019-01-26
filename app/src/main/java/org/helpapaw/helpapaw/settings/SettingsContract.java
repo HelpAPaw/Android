@@ -13,5 +13,7 @@ public interface SettingsContract {
         void onRadiusChange(int radius);
 
         void onTimeoutChange(int timeout);
+
+        void onCloseSettingsScreen();
     }
 }
