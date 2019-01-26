@@ -81,6 +81,13 @@ public class SettingsFragment extends BaseFragment implements SettingsContract.V
         binding.timeoutValue.setOnSeekBarChangeListener(onTimeoutSeekBarChangeListener());
     }
 
+    @Override
+    public void onDestroyView() {
+        actionsListener.onCloseSettingsScreen();
+
+        super.onDestroyView();
+    }
+
     public SeekBar.OnSeekBarChangeListener onRadiusSeekBarChangeListener() {
         return new SeekBar.OnSeekBarChangeListener() {
             @Override
