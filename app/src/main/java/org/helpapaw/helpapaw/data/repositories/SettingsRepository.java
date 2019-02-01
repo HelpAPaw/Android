@@ -2,11 +2,6 @@ package org.helpapaw.helpapaw.data.repositories;
 
 import android.content.SharedPreferences;
 
-import com.backendless.Backendless;
-import com.backendless.BackendlessUser;
-import com.backendless.async.callback.AsyncCallback;
-import com.backendless.exceptions.BackendlessFault;
-
 public class SettingsRepository implements ISettingsRepository {
 
     private final static String RADIUS_FIELD = "signalRadius";
@@ -26,25 +21,6 @@ public class SettingsRepository implements ISettingsRepository {
         SharedPreferences.Editor editor = preferences.edit();
         editor.putInt(RADIUS_FIELD, radius);
         editor.apply();
-
-        // Save in Backendless to use for cloud notifications
-        BackendlessUser user = Backendless.UserService.CurrentUser();
-        if (user != null)
-        {
-            user.setProperty(RADIUS_FIELD, radius);
-            Backendless.UserService.update(user, new AsyncCallback<BackendlessUser>()
-            {
-                public void handleResponse(BackendlessUser user)
-                {
-                    // Success - do nothing
-                }
-
-                public void handleFault(BackendlessFault fault)
-                {
-                    // Failure - do nothing
-                }
-            });
-        }
     }
 
     @Override
@@ -52,25 +28,6 @@ public class SettingsRepository implements ISettingsRepository {
         SharedPreferences.Editor editor = preferences.edit();
         editor.putInt(TIMEOUT_FIELD, timeout);
         editor.apply();
-
-        // Save in Backendless to use for cloud notifications
-        BackendlessUser user = Backendless.UserService.CurrentUser();
-        if (user != null)
-        {
-            user.setProperty(TIMEOUT_FIELD, timeout);
-            Backendless.UserService.update(user, new AsyncCallback<BackendlessUser>()
-            {
-                public void handleResponse(BackendlessUser user)
-                {
-                    // Success - do nothing
-                }
-
-                public void handleFault(BackendlessFault fault)
-                {
-                    // Failure - do nothing
-                }
-            });
-        }
     }
 
     @Override
