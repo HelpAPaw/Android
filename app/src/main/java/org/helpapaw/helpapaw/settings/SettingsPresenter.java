@@ -29,16 +29,16 @@ public class SettingsPresenter extends Presenter<SettingsContract.View> implemen
     @Override
     public void onRadiusChange(int radius) {
         this.radius = radius;
+        settingsRepository.saveRadius(radius);
     }
 
     @Override
     public void onTimeoutChange(int timeout) {
         this.timeout = timeout;
+        settingsRepository.saveTimeout(timeout);
     }
 
     @Override
     public void onCloseSettingsScreen() {
-        settingsRepository.saveRadius(radius);
-        settingsRepository.saveTimeout(timeout);
     }
 }

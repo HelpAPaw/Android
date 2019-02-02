@@ -96,7 +96,6 @@ public class SettingsFragment extends BaseFragment implements SettingsContract.V
                     seekBar.setProgress(RADIUS_VALUE_MIN);
                 }
                 else {
-                    actionsListener.onRadiusChange(progress);
                     updateRadius(progress);
                 }
             }
@@ -107,6 +106,7 @@ public class SettingsFragment extends BaseFragment implements SettingsContract.V
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
+                actionsListener.onRadiusChange(seekBar.getProgress());
             }
         };
     }
@@ -119,7 +119,6 @@ public class SettingsFragment extends BaseFragment implements SettingsContract.V
                     seekBar.setProgress(TIMEOUT_VALUE_MIN);
                 }
                 else {
-                    actionsListener.onTimeoutChange(progress);
                     updateTimeout(progress);
                 }
             }
@@ -130,6 +129,7 @@ public class SettingsFragment extends BaseFragment implements SettingsContract.V
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
+                actionsListener.onTimeoutChange(seekBar.getProgress());
             }
         };
     }
