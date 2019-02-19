@@ -3,12 +3,20 @@ package org.helpapaw.helpapaw.base;
 import android.app.Application;
 import android.content.SharedPreferences;
 import android.os.StrictMode;
+import android.util.Log;
 
 import com.backendless.Backendless;
+import com.backendless.DeviceRegistration;
+import com.backendless.async.callback.AsyncCallback;
+import com.backendless.exceptions.BackendlessFault;
+import com.backendless.push.DeviceRegistrationResult;
 
 import org.helpapaw.helpapaw.data.user.UserManager;
 import org.helpapaw.helpapaw.utils.Injection;
 import org.helpapaw.helpapaw.utils.NotificationUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by iliyan on 7/25/16
@@ -29,6 +37,9 @@ public class PawApplication extends Application {
         isTestEnvironment = loadIsTestEnvironment();
         Backendless.initApp(this, BACKENDLESS_APP_ID, BACKENDLESS_ANDROID_API_KEY);
         NotificationUtils.registerNotificationChannels(this);
+
+        // Register device for token
+        Injection.getPushNotificationsInstance().registerDeviceForToken();
 
         // This is done in order to handle the situation where user token is saved on the device but is invalidated on the server
         final UserManager userManager = Injection.getUserManagerInstance();
@@ -78,4 +89,5 @@ public class PawApplication extends Application {
         SharedPreferences prefs = pawApplication.getSharedPreferences("HelpAPaw", MODE_PRIVATE);
         prefs.edit().putBoolean(IS_TEST_ENVIRONMENT_KEY, isTestEnvironment).apply();
     }
+
 }
