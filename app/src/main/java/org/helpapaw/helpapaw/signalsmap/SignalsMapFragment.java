@@ -357,13 +357,16 @@ public class SignalsMapFragment extends BaseFragment
 
     @Override
     public void updateMapCameraPosition(double latitude, double longitude, Float zoom) {
-        CameraUpdate center = CameraUpdateFactory.newLatLng(new LatLng(latitude, longitude));
-        signalsGoogleMap.moveCamera(center);
+        LatLng latLng = new LatLng(latitude, longitude);
+        CameraUpdate cameraUpdate;
 
         if (zoom != null) {
-            CameraUpdate cameraZoom = CameraUpdateFactory.zoomTo(zoom);
-            signalsGoogleMap.animateCamera(cameraZoom);
+            cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, zoom);
         }
+        else {
+            cameraUpdate = CameraUpdateFactory.newLatLng(latLng);
+        }
+        signalsGoogleMap.animateCamera(cameraUpdate);
     }
 
     @Override

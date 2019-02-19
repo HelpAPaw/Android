@@ -9,6 +9,8 @@ import org.helpapaw.helpapaw.utils.Injection;
 public class SettingsPresenter extends Presenter<SettingsContract.View> implements SettingsContract.UserActionsListener {
 
     private ISettingsRepository settingsRepository;
+    private int radius;
+    private int timeout;
 
     SettingsPresenter(SettingsContract.View view, SharedPreferences preferences) {
         super(view);
@@ -17,17 +19,26 @@ public class SettingsPresenter extends Presenter<SettingsContract.View> implemen
 
     @Override
     public void initialize() {
-        getView().setRadius(settingsRepository.getRadius());
-        getView().setTimeout(settingsRepository.getTimeout());
+        radius = settingsRepository.getRadius();
+        timeout = settingsRepository.getTimeout();
+
+        getView().setRadius(radius);
+        getView().setTimeout(timeout);
     }
 
     @Override
     public void onRadiusChange(int radius) {
+        this.radius = radius;
         settingsRepository.saveRadius(radius);
     }
 
     @Override
     public void onTimeoutChange(int timeout) {
+        this.timeout = timeout;
         settingsRepository.saveTimeout(timeout);
+    }
+
+    @Override
+    public void onCloseSettingsScreen() {
     }
 }
