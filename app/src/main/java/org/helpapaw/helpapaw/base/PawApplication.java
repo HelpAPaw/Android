@@ -3,20 +3,10 @@ package org.helpapaw.helpapaw.base;
 import android.app.Application;
 import android.content.SharedPreferences;
 import android.os.StrictMode;
-import android.util.Log;
-
 import com.backendless.Backendless;
-import com.backendless.DeviceRegistration;
-import com.backendless.async.callback.AsyncCallback;
-import com.backendless.exceptions.BackendlessFault;
-import com.backendless.push.DeviceRegistrationResult;
-
 import org.helpapaw.helpapaw.data.user.UserManager;
 import org.helpapaw.helpapaw.utils.Injection;
 import org.helpapaw.helpapaw.utils.NotificationUtils;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by iliyan on 7/25/16
