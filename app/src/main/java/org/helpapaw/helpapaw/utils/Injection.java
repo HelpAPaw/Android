@@ -4,9 +4,11 @@ import android.content.SharedPreferences;
 
 import org.helpapaw.helpapaw.data.repositories.BackendlessCommentRepository;
 import org.helpapaw.helpapaw.data.repositories.BackendlessPhotoRepository;
+import org.helpapaw.helpapaw.data.repositories.BackendlessPushNotifications;
 import org.helpapaw.helpapaw.data.repositories.BackendlessSignalRepository;
 import org.helpapaw.helpapaw.data.repositories.CommentRepository;
 import org.helpapaw.helpapaw.data.repositories.PhotoRepository;
+import org.helpapaw.helpapaw.data.repositories.PushNotifications;
 import org.helpapaw.helpapaw.data.repositories.SettingsRepository;
 import org.helpapaw.helpapaw.data.repositories.SignalRepository;
 import org.helpapaw.helpapaw.data.user.BackendlessUserManager;
@@ -24,6 +26,7 @@ public class Injection {
     private static PhotoRepository photoRepository;
     private static CommentRepository commentRepository;
     private static SettingsRepository settingsRepository;
+    private static PushNotifications pushNotifications;
 
     public synchronized static ImageLoader getImageLoader() {
         if (imageLoader == null) {
@@ -66,5 +69,13 @@ public class Injection {
         }
 
         return settingsRepository;
+    }
+
+    public synchronized static PushNotifications getPushNotificationsInstance() {
+        if (pushNotifications == null) {
+            pushNotifications = new BackendlessPushNotifications();
+        }
+
+        return pushNotifications;
     }
 }
