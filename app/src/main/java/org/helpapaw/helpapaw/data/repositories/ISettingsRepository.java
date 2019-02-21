@@ -22,4 +22,8 @@ public interface ISettingsRepository {
     void setLastShownZoom(float zoom);
 
     void clearLocationData();
+
+    void saveTokenToPreferences(String deviceToken);
+
+    String getTokenFromPreferences();
 }

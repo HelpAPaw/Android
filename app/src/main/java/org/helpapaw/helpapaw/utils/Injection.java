@@ -63,9 +63,9 @@ public class Injection {
         return commentRepository;
     }
 
-    public synchronized static SettingsRepository getSettingsRepository(SharedPreferences preferences) {
+    public synchronized static SettingsRepository getSettingsRepository() {
         if (settingsRepository == null) {
-            settingsRepository = new SettingsRepository(preferences);
+            settingsRepository = new SettingsRepository();
         }
 
         return settingsRepository;
