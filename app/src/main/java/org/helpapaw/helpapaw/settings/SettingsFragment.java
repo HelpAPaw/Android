@@ -53,7 +53,7 @@ public class SettingsFragment extends BaseFragment implements SettingsContract.V
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_settings, container, false);
 
-        settingsPresenter = new SettingsPresenter(this, getActivity().getPreferences(Context.MODE_PRIVATE));
+        settingsPresenter = new SettingsPresenter(this);
         settingsPresenter.setView(this);
         actionsListener = settingsPresenter;
 

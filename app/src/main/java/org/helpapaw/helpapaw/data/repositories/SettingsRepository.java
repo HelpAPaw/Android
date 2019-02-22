@@ -1,6 +1,9 @@
 package org.helpapaw.helpapaw.data.repositories;
 
+import android.content.Context;
 import android.content.SharedPreferences;
+import org.helpapaw.helpapaw.R;
+import org.helpapaw.helpapaw.base.PawApplication;
 
 public class SettingsRepository implements ISettingsRepository {
 
@@ -9,11 +12,18 @@ public class SettingsRepository implements ISettingsRepository {
     private final static String LAST_SHOWN_LATITUDE_FIELD = "lastShownLatitude";
     private final static String LAST_SHOWN_LONGITUDE_FIELD = "lastShownLongitude";
     private final static String LAST_SHOWN_ZOOM_FIELD = "lastShownZoom";
+    private final static String DEVICE_BACKENDLESS_TOKEN = "deviceBackendlessToken";
 
     private SharedPreferences preferences;
 
-    public SettingsRepository(SharedPreferences preferences) {
-        this.preferences = preferences;
+    public SettingsRepository() {
+
+        //for (app) preferences use getDefaultSharedPreferences() (see doc)
+        Context context = PawApplication.getContext();
+        this.preferences = context
+                .getSharedPreferences(context
+                        .getString(R.string
+                                .shared_preferences_for_app), context.MODE_PRIVATE);
     }
 
     @Override
@@ -86,4 +96,20 @@ public class SettingsRepository implements ISettingsRepository {
         editor.remove(LAST_SHOWN_ZOOM_FIELD);
         editor.apply();
     }
+
+    //Save Backendless device-token to local-preferences
+    @Override
+    public void saveTokenToPreferences(String deviceToken) {
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString(DEVICE_BACKENDLESS_TOKEN, deviceToken);
+        editor.apply();
+    }
+
+    //Get Backendless device-token from local-preferences
+    @Override
+    public String getTokenFromPreferences() {
+        String token = preferences.getString(DEVICE_BACKENDLESS_TOKEN, "-1");
+        return token;
+    }
+
 }
