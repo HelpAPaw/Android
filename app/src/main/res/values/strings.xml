@@ -40,7 +40,7 @@
     <string name="permission_not_granted">Permission was not granted!</string>
     <string name="txt_storage_permissions_for_camera">Sorry we could not open the camera without your permission.</string>
     <string name="txt_storage_permissions_for_gallery">Sorry we could not open the gallery without your permission.</string>
-    <string name="txt_storage_permissions_write_to_storage" translatable="false">Sorry we could not write to local storage.</string>
+    <string name="txt_storage_permissions_write_to_storage">Sorry we could not write to local storage.</string>
     <string name="txt_location_permissions_for_map">Sorry we could not get your location without your permission.</string>
     <string name="txt_status_help_needed">Status: Help needed</string>
     <string name="txt_status_somebody_on_the_way">Status: Somebody on the way</string>
