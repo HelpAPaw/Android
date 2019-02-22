@@ -12,9 +12,6 @@ public class BackendlessPushNotifications implements PushNotifications{
 
     @Override
     public void registerDeviceForToken() {
-
-
-
         Backendless.Messaging.registerDevice(new AsyncCallback<DeviceRegistrationResult>(){
             @Override
             public void handleResponse(DeviceRegistrationResult response) {
