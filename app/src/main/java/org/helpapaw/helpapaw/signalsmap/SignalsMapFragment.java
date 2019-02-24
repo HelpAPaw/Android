@@ -153,13 +153,17 @@ public class SignalsMapFragment extends BaseFragment
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setRetainInstance(true);
         Bundle arguments = getArguments();
-        if ((arguments != null) && arguments.containsKey(Signal.KEY_FOCUSED_SIGNAL_ID)) {
 
+        if ((arguments != null) && arguments.containsKey(Signal.KEY_FOCUSED_SIGNAL_ID)) {
             mFocusedSignalId = arguments.getString(Signal.KEY_FOCUSED_SIGNAL_ID);
             arguments.remove(Signal.KEY_FOCUSED_SIGNAL_ID);
         }
+
+        //Initialize location api
+        initLocationApi();
     }
 
     @Override
@@ -191,7 +195,7 @@ public class SignalsMapFragment extends BaseFragment
         }
         actionsListener = signalsMapPresenter;
         settingsRepository = Injection.getSettingsRepository();
-        initLocationApi();
+
 
         setHasOptionsMenu(true);
 
