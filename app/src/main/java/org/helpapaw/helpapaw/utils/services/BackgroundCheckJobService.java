@@ -200,7 +200,7 @@ public class BackgroundCheckJobService extends JobService {
                         @Override
                         public void handleFault(BackendlessFault fault) {
                             // an error has occurred, the error code can be retrieved with fault.getCode()
-                            Log.d(TAG, fault.getCode());
+                            Log.d(TAG, fault.getMessage());
                         }
                     });
         } else {

@@ -9,6 +9,7 @@ import com.backendless.push.DeviceRegistrationResult;
 import org.helpapaw.helpapaw.utils.Injection;
 
 public class BackendlessPushNotifications implements PushNotifications{
+    public static final String TAG = BackendlessPushNotifications.class.getSimpleName();
 
     @Override
     public void registerDeviceForToken() {
@@ -21,7 +22,7 @@ public class BackendlessPushNotifications implements PushNotifications{
             }
             @Override
             public void handleFault(BackendlessFault fault) {
-                Log.e(this.getClass().getSimpleName(), "Device registration fault: " + fault.getMessage());
+                Log.e(TAG, "Device registration fault: " + fault.getMessage());
             }
         });
     }
