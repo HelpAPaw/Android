@@ -9,6 +9,10 @@ import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
+import com.backendless.Backendless;
+import com.backendless.async.callback.AsyncCallback;
+import com.backendless.exceptions.BackendlessFault;
+import com.backendless.persistence.DataQueryBuilder;
 import com.firebase.jobdispatcher.JobParameters;
 import com.firebase.jobdispatcher.JobService;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -24,6 +28,7 @@ import org.helpapaw.helpapaw.utils.NotificationUtils;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 import static org.helpapaw.helpapaw.data.models.Signal.SOLVED;
 import static org.helpapaw.helpapaw.signalsmap.SignalsMapPresenter.DEFAULT_SEARCH_RADIUS;
@@ -62,6 +67,7 @@ public class BackgroundCheckJobService extends JobService {
                             //Got last known location. In some rare situations this can be null.
                             if (location != null) {
                                 getSignalsForLastKnownLocation(location, job);
+                                saveNewDeviceLocation(location);
                             } else {
                                 Log.d(TAG, "got callback but last location is null");
                                 jobFinished(job, true);
@@ -139,5 +145,66 @@ public class BackgroundCheckJobService extends JobService {
             }
         });
 
+    }
+
+    /*
+     * Queries Backendless for locally saved device-token,
+     * and updates 4 properties on the corresponding db-entry
+     */
+    private void saveNewDeviceLocation(final Location location) {
+
+        // Get local device-token
+        String localToken = Injection.getSettingsRepository().getTokenFromPreferences();
+
+        // Make sure localToken exists
+        if (localToken != null) {
+
+            // Build query
+            String whereClause = "deviceToken = '" + localToken + "'";
+            DataQueryBuilder queryBuilder = DataQueryBuilder.create();
+            queryBuilder.setWhereClause(whereClause);
+
+            Backendless.Data.of("DeviceRegistration").find(queryBuilder,
+                    new AsyncCallback<List<Map>>() {
+                        @Override
+                        public void handleResponse(List<Map> foundDevice) {
+                            // every loaded object from the "DeviceRegistration" table
+                            // is now an individual java.util.Map
+
+                            // Extract 'Map' object from the 'List<Map>'
+                            Map mapFoundDevice = foundDevice.get(0);
+                            try {
+                                mapFoundDevice.put("signalRadius", Injection.getSettingsRepository().getRadius());
+                                mapFoundDevice.put("lastLatitude", location.getLatitude());
+                                mapFoundDevice.put("lastLongitude", location.getLongitude());
+                                mapFoundDevice.put("signalTimeout", Injection.getSettingsRepository().getTimeout());
+                            }
+                            catch (Error e) {
+                                Log.e(TAG, e.getMessage());
+                            }
+
+                            // Save updated object
+                            Backendless.Persistence.save(mapFoundDevice, new AsyncCallback<Map>() {
+                                @Override
+                                public void handleResponse(Map response) {
+                                    Log.d(TAG, "obj updated");
+                                }
+
+                                @Override
+                                public void handleFault(BackendlessFault fault) {
+                                    Log.d(TAG, fault.getMessage());
+                                }
+                            });
+                        }
+
+                        @Override
+                        public void handleFault(BackendlessFault fault) {
+                            // an error has occurred, the error code can be retrieved with fault.getCode()
+                            Log.d(TAG, fault.getCode());
+                        }
+                    });
+        } else {
+            Log.d(TAG, "localToken is null -or- non-existent");
+        }
     }
 }
