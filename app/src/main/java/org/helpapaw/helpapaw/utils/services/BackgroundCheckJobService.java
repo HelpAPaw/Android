@@ -9,6 +9,10 @@ import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
+import com.backendless.Backendless;
+import com.backendless.async.callback.AsyncCallback;
+import com.backendless.exceptions.BackendlessFault;
+import com.backendless.persistence.DataQueryBuilder;
 import com.firebase.jobdispatcher.JobParameters;
 import com.firebase.jobdispatcher.JobService;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -24,6 +28,7 @@ import org.helpapaw.helpapaw.utils.NotificationUtils;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 import static org.helpapaw.helpapaw.data.models.Signal.SOLVED;
 import static org.helpapaw.helpapaw.signalsmap.SignalsMapPresenter.DEFAULT_SEARCH_RADIUS;
@@ -62,6 +67,7 @@ public class BackgroundCheckJobService extends JobService {
                             //Got last known location. In some rare situations this can be null.
                             if (location != null) {
                                 getSignalsForLastKnownLocation(location, job);
+                                Injection.getPushNotificationsInstance().saveNewDeviceLocation(location);
                             } else {
                                 Log.d(TAG, "got callback but last location is null");
                                 jobFinished(job, true);
@@ -138,6 +144,5 @@ public class BackgroundCheckJobService extends JobService {
                 jobFinished(job, true);
             }
         });
-
     }
 }
