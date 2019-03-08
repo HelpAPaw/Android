@@ -5,11 +5,16 @@ import android.util.Log;
 import com.backendless.Backendless;
 import com.backendless.async.callback.AsyncCallback;
 import com.backendless.exceptions.BackendlessFault;
+import com.backendless.messaging.DeliveryOptions;
+import com.backendless.messaging.MessageStatus;
+import com.backendless.messaging.PublishOptions;
 import com.backendless.persistence.DataQueryBuilder;
 import com.backendless.push.DeviceRegistrationResult;
 
 import org.helpapaw.helpapaw.utils.Injection;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -91,5 +96,69 @@ public class BackendlessPushNotificationsRepository implements PushNotifications
         } else {
             Log.d(TAG, "localToken is null -or- non-existent");
         }
+    }
+
+    /*
+     * Sends a notification to all devices within a certain distance
+     */
+    @Override
+    public void pushNotification(final String tickerText, final String contentTitle,
+                                 final String contentText, final String message) {
+
+        // Get local device-token, latitude & longitude (from settings)
+        final String localToken = Injection.getSettingsRepository().getTokenFromPreferences();
+        final double localLatitude = Injection.getSettingsRepository().getLastShownLatitude();
+        final double localLongitude = Injection.getSettingsRepository().getLastShownLongitude();
+
+        // Build query
+        String whereClause = "distance( "+ localLatitude +", "+ localLongitude +", " +
+                "lastLatitude, lastLongitude ) < signalRadius * 1000";
+        DataQueryBuilder queryBuilder = DataQueryBuilder.create();
+        queryBuilder.setWhereClause(whereClause);
+
+        Backendless.Data.of("DeviceRegistration").find(queryBuilder,
+                new AsyncCallback<List<Map>>() {
+            @Override
+            public void handleResponse(List<Map> devices) {
+
+                List<String> notifiedDevices = new ArrayList<>();
+
+                // Iterates through all devices, excludes itself
+                for (Map device : devices) {
+                    String deviceToken = device.get("deviceToken").toString();
+
+                    if(deviceToken != localToken) {
+                        notifiedDevices.add(deviceToken);
+                    }
+                }
+
+                // Checks to see if there are any devices
+                if (notifiedDevices.size() > 0) {
+
+                    // Creates delivery options
+                    DeliveryOptions deliveryOptions = new DeliveryOptions();
+                    deliveryOptions.setPushSinglecast(notifiedDevices);
+
+                    // Creates publish options
+                    PublishOptions publishOptions = new PublishOptions();
+                    publishOptions.putHeader("android-ticker-text",
+                            tickerText);
+                    publishOptions.putHeader("android-content-title",
+                            contentTitle);
+                    publishOptions.putHeader("android-content-text",
+                            message);
+
+                    // Delivers notification
+                    MessageStatus status = Backendless.Messaging.publish(message,
+                            publishOptions, deliveryOptions);
+                    Log.d(TAG, status.getMessageId());
+                }
+            }
+
+            @Override
+            public void handleFault(BackendlessFault fault) {
+                Log.d(TAG, fault.getMessage());
+            }
+        });
     }
 }
