@@ -103,15 +103,14 @@ public class BackendlessPushNotificationsRepository implements PushNotifications
      */
     @Override
     public void pushNotification(final String tickerText, final String contentTitle,
-                                 final String contentText, final String message) {
+                                 final String contentText, final String message,
+                                 final double latitude, final double longitude) {
 
         // Get local device-token, latitude & longitude (from settings)
         final String localToken = Injection.getSettingsRepository().getTokenFromPreferences();
-        final double localLatitude = Injection.getSettingsRepository().getLastShownLatitude();
-        final double localLongitude = Injection.getSettingsRepository().getLastShownLongitude();
 
         // Build query
-        String whereClause = "distance( "+ localLatitude +", "+ localLongitude +", " +
+        String whereClause = "distance( "+ latitude +", "+ longitude +", " +
                 "lastLatitude, lastLongitude ) < signalRadius * 1000";
         DataQueryBuilder queryBuilder = DataQueryBuilder.create();
         queryBuilder.setWhereClause(whereClause);
