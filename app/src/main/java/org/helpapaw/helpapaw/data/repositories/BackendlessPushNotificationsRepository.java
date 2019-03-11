@@ -4,6 +4,7 @@ import android.location.Location;
 import android.util.Log;
 import com.backendless.Backendless;
 import com.backendless.async.callback.AsyncCallback;
+import com.backendless.exceptions.BackendlessException;
 import com.backendless.exceptions.BackendlessFault;
 import com.backendless.messaging.DeliveryOptions;
 import com.backendless.messaging.MessageStatus;
@@ -57,12 +58,12 @@ public class BackendlessPushNotificationsRepository implements PushNotifications
             Backendless.Data.of("DeviceRegistration").find(queryBuilder,
                     new AsyncCallback<List<Map>>() {
                         @Override
-                        public void handleResponse(List<Map> foundDevice) {
+                        public void handleResponse(List<Map> foundDevices) {
                             // every loaded object from the "DeviceRegistration" table
                             // is now an individual java.util.Map
 
                             // Extract 'Map' object from the 'List<Map>'
-                            Map mapFoundDevice = foundDevice.get(0);
+                            Map mapFoundDevice = foundDevices.get(0);
                             try {
                                 mapFoundDevice.put("signalRadius", Injection.getSettingsRepository().getRadius());
                                 mapFoundDevice.put("lastLatitude", location.getLatitude());
@@ -74,7 +75,7 @@ public class BackendlessPushNotificationsRepository implements PushNotifications
                             }
 
                             // Save updated object
-                            Backendless.Persistence.save(mapFoundDevice, new AsyncCallback<Map>() {
+                            Backendless.Persistence.of("DeviceRegistration").save(mapFoundDevice, new AsyncCallback<Map>() {
                                 @Override
                                 public void handleResponse(Map response) {
                                     Log.d(TAG, "obj updated");
@@ -126,7 +127,7 @@ public class BackendlessPushNotificationsRepository implements PushNotifications
                 for (Map device : devices) {
                     String deviceToken = device.get("deviceToken").toString();
 
-                    if(deviceToken != localToken) {
+                    if(!deviceToken.equals(localToken)) {
                         notifiedDevices.add(deviceToken);
                     }
                 }
@@ -148,9 +149,18 @@ public class BackendlessPushNotificationsRepository implements PushNotifications
                             message);
 
                     // Delivers notification
-                    MessageStatus status = Backendless.Messaging.publish(message,
-                            publishOptions, deliveryOptions);
-                    Log.d(TAG, status.getMessageId());
+                    Backendless.Messaging.publish(message, publishOptions, deliveryOptions, new AsyncCallback<MessageStatus>() {
+                        @Override
+                        public void handleResponse(MessageStatus response) {
+                            Log.d(TAG, response.getMessageId());
+                        }
+
+                        @Override
+                        public void handleFault(BackendlessFault fault) {
+                            Log.d(TAG, fault.getMessage());
+                        }
+                    });
+
                 }
             }
 
