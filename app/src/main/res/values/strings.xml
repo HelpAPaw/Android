@@ -40,7 +40,6 @@
     <string name="permission_not_granted">Permission was not granted!</string>
     <string name="txt_storage_permissions_for_camera">Sorry we could not open the camera without your permission.</string>
     <string name="txt_storage_permissions_for_gallery">Sorry we could not open the gallery without your permission.</string>
-    <string name="txt_storage_permissions_write_to_storage">Sorry we could not write to local storage.</string>
     <string name="txt_location_permissions_for_map">Sorry we could not get your location without your permission.</string>
     <string name="txt_status_help_needed">Status: Help needed</string>
     <string name="txt_status_somebody_on_the_way">Status: Somebody on the way</string>
@@ -122,7 +121,7 @@
     <string name="txt_error">Error</string>
     <string name="txt_registration_successful">A confirmation link has been sent on your email. Please click it to complete your registration.</string>
     <string name="url_privacy_policy" translatable="false">
-        https://develop.backendless.com/BDCD56B9-351A-E067-FFA4-9EA9CF2F4000/console/fcfdrgddsebccdkjfamuhppaasnowqluooks/files/view/web/privacypolicy.htm
+        https://backendlessappcontent.com/BDCD56B9-351A-E067-FFA4-9EA9CF2F4000/473D7C4A-3FBC-69F4-FFFF-1635F07E4300/files/web/privacypolicy.html
     </string>
     <string name="content_description_app_logo">App logo</string>
     <string name="txt_error_getting_privacy_policy">Could not get Privacy Policy!</string>
