@@ -1,6 +1,5 @@
 package org.helpapaw.helpapaw.settings;
 
-import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -53,7 +52,7 @@ public class SettingsFragment extends BaseFragment implements SettingsContract.V
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_settings, container, false);
 
-        settingsPresenter = new SettingsPresenter(this, getActivity().getPreferences(Context.MODE_PRIVATE));
+        settingsPresenter = new SettingsPresenter(this);
         settingsPresenter.setView(this);
         actionsListener = settingsPresenter;
 
