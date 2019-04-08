@@ -87,6 +87,6 @@ public class SettingsRepository implements ISettingsRepository {
         editor.remove(LAST_SHOWN_LATITUDE_FIELD);
         editor.remove(LAST_SHOWN_LONGITUDE_FIELD);
         editor.remove(LAST_SHOWN_ZOOM_FIELD);
-        editor.apply();
+        editor.commit();
     }
 }
