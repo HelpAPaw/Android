@@ -22,6 +22,8 @@ public class SettingsPresenter extends Presenter<SettingsContract.View> implemen
 
         getView().setRadius(radius);
         getView().setTimeout(timeout);
+
+        settingsRepository.clearLocationData();
     }
 
     @Override
