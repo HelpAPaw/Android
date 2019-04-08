@@ -17,6 +17,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 
 import org.helpapaw.helpapaw.data.models.Signal;
+import org.helpapaw.helpapaw.data.repositories.SettingsRepository;
 import org.helpapaw.helpapaw.data.repositories.SignalRepository;
 import org.helpapaw.helpapaw.db.SignalsDatabase;
 import org.helpapaw.helpapaw.utils.Injection;
@@ -26,8 +27,6 @@ import java.util.HashSet;
 import java.util.List;
 
 import static org.helpapaw.helpapaw.data.models.Signal.SOLVED;
-import static org.helpapaw.helpapaw.signalsmap.SignalsMapPresenter.DEFAULT_SEARCH_RADIUS;
-import static org.helpapaw.helpapaw.signalsmap.SignalsMapPresenter.DEFAULT_SEARCH_TIMEOUT;
 
 /**
  * Created by milen on 20/08/17.
@@ -90,7 +89,8 @@ public class BackgroundCheckJobService extends JobService {
 
     private void getSignalsForLastKnownLocation(Location location, final JobParameters job) {
 
-        Injection.getSignalRepositoryInstance().getAllSignals(location.getLatitude(), location.getLongitude(), DEFAULT_SEARCH_RADIUS * 1000, DEFAULT_SEARCH_TIMEOUT, new SignalRepository.LoadSignalsCallback() {
+        SettingsRepository settingsRepository = Injection.getSettingsRepositoryInstance();
+        Injection.getSignalRepositoryInstance().getAllSignals(location.getLatitude(), location.getLongitude(), settingsRepository.getRadius(), settingsRepository.getTimeout(), new SignalRepository.LoadSignalsCallback() {
             @Override
             public void onSignalsLoaded(List<Signal> signals) {
 
