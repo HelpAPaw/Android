@@ -1,7 +1,5 @@
 package org.helpapaw.helpapaw.utils;
 
-import android.content.SharedPreferences;
-
 import org.helpapaw.helpapaw.data.repositories.BackendlessCommentRepository;
 import org.helpapaw.helpapaw.data.repositories.BackendlessPhotoRepository;
 import org.helpapaw.helpapaw.data.repositories.BackendlessSignalRepository;
@@ -60,11 +58,10 @@ public class Injection {
         return commentRepository;
     }
 
-    public synchronized static SettingsRepository getSettingsRepository(SharedPreferences preferences) {
+    public synchronized static SettingsRepository getSettingsRepositoryInstance() {
         if (settingsRepository == null) {
-            settingsRepository = new SettingsRepository(preferences);
+            settingsRepository = new SettingsRepository();
         }
-
         return settingsRepository;
     }
 }

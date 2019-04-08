@@ -190,7 +190,7 @@ public class SignalsMapFragment extends BaseFragment
             signalsMapPresenter.setView(this);
         }
         actionsListener = signalsMapPresenter;
-        settingsRepository = Injection.getSettingsRepository(getActivity().getPreferences(Context.MODE_PRIVATE));
+        settingsRepository = Injection.getSettingsRepositoryInstance();
         initLocationApi();
 
         setHasOptionsMenu(true);

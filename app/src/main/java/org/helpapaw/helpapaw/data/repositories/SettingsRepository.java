@@ -1,6 +1,9 @@
 package org.helpapaw.helpapaw.data.repositories;
 
+import android.content.Context;
 import android.content.SharedPreferences;
+
+import org.helpapaw.helpapaw.base.PawApplication;
 
 public class SettingsRepository implements ISettingsRepository {
 
@@ -12,8 +15,8 @@ public class SettingsRepository implements ISettingsRepository {
 
     private SharedPreferences preferences;
 
-    public SettingsRepository(SharedPreferences preferences) {
-        this.preferences = preferences;
+    public SettingsRepository() {
+        this.preferences = PawApplication.getContext().getSharedPreferences("HelpAPawSettings", Context.MODE_PRIVATE);
     }
 
     @Override
