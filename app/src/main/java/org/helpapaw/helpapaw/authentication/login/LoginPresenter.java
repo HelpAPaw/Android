@@ -76,11 +76,18 @@ public class LoginPresenter extends Presenter<LoginContract.View>
             @Override
             public void onSuccess(Object hasAcceptedPrivacyPolicy) {
 
-                if (!((Boolean) hasAcceptedPrivacyPolicy)) {
-                    PrivacyPolicyConfirmationGetter privacyPolicyConfirmationGetter = new PrivacyPolicyConfirmationGetter(LoginPresenter.this, PawApplication.getContext());
-                    privacyPolicyConfirmationGetter.execute();
+                try {
+                    Integer accepted = (Integer) hasAcceptedPrivacyPolicy;
+                    if (accepted < 1) {
+                        PrivacyPolicyConfirmationGetter privacyPolicyConfirmationGetter = new PrivacyPolicyConfirmationGetter(LoginPresenter.this, PawApplication.getContext());
+                        privacyPolicyConfirmationGetter.execute();
+                    }
+                    else {
+                        if (!isViewAvailable()) return;
+                        getView().closeLoginScreen();
+                    }
                 }
-                else {
+                catch (Exception ignored) {
                     if (!isViewAvailable()) return;
                     getView().closeLoginScreen();
                 }
