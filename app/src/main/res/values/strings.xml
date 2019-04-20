@@ -108,7 +108,6 @@
     <string name="privacy_policy_dialog_title">Privacy Policy</string>
     <string name="accept">Accept</string>
     <string name="decline">Decline</string>
-    <string name="privacy_policy_url" translatable="false">Go to <![CDATA[https://develop.backendless.com/***REMOVED***/console/fcfdrgddsebccdkjfamuhppaasnowqluooks/files/view/web/privacypolicy.htm]]> to review the Privacy Policy</string>
     <string name="txt_radius">RADIUS</string>
     <string name="txt_radius_description">The area around your current location at any moment that you want to be notified if new signals appear.</string>
     <string name="txt_signal_timeout">SIGNAL TIMEOUT</string>
@@ -120,9 +119,7 @@
     <string name="txt_success">Success</string>
     <string name="txt_error">Error</string>
     <string name="txt_registration_successful">A confirmation link has been sent on your email. Please click it to complete your registration.</string>
-    <string name="url_privacy_policy" translatable="false">
-        https://backendlessappcontent.com/***REMOVED***/473D7C4A-3FBC-69F4-FFFF-1635F07E4300/files/web/privacypolicy.html
-    </string>
+    <string name="url_privacy_policy" translatable="false">https://backendlessappcontent.com/***REMOVED***/473D7C4A-3FBC-69F4-FFFF-1635F07E4300/files/web/privacypolicy.html</string>
     <string name="content_description_app_logo">App logo</string>
     <string name="txt_error_getting_privacy_policy">Could not get Privacy Policy!</string>
     <string name="txt_login_successful">Login successful!</string>

@@ -1,7 +1,5 @@
 package org.helpapaw.helpapaw.settings;
 
-import android.content.SharedPreferences;
-
 import org.helpapaw.helpapaw.base.Presenter;
 import org.helpapaw.helpapaw.data.repositories.ISettingsRepository;
 import org.helpapaw.helpapaw.utils.Injection;
@@ -24,6 +22,8 @@ public class SettingsPresenter extends Presenter<SettingsContract.View> implemen
 
         getView().setRadius(radius);
         getView().setTimeout(timeout);
+
+        settingsRepository.clearLocationData();
     }
 
     @Override

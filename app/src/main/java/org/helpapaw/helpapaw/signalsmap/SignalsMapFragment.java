@@ -230,9 +230,6 @@ public class SignalsMapFragment extends BaseFragment
         super.onStop();
         binding.mapSignals.onStop();
 
-        settingsRepository.setLastShownLatitude(mCurrentLat);
-        settingsRepository.setLastShownLongitude(mCurrentLong);
-        settingsRepository.setLastShownZoom(mZoom);
         if (googleApiClient.isConnected()) {
             LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, this);
             googleApiClient.disconnect();
@@ -802,6 +799,10 @@ public class SignalsMapFragment extends BaseFragment
         Intent intent = new Intent(getContext(), SignalDetailsActivity.class);
         intent.putExtra(SignalDetailsActivity.SIGNAL_KEY, signal);
         startActivityForResult(intent, REQUEST_SIGNAL_DETAILS);
+
+        settingsRepository.setLastShownLatitude(mCurrentLat);
+        settingsRepository.setLastShownLongitude(mCurrentLong);
+        settingsRepository.setLastShownZoom(mZoom);
     }
 
     @Override
