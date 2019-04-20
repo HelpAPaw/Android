@@ -14,6 +14,7 @@ import org.helpapaw.helpapaw.R;
 import org.helpapaw.helpapaw.base.PawApplication;
 import org.helpapaw.helpapaw.data.models.Signal;
 import org.helpapaw.helpapaw.db.SignalsDatabase;
+import org.helpapaw.helpapaw.utils.Injection;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -159,6 +160,10 @@ public class BackendlessSignalRepository implements SignalRepository {
                         signalAuthorName, signalAuthorPhone, geoPoint.getLatitude(), geoPoint.getLongitude(), true);
                 signalsDatabase.signalDao().saveSignal(savedSignal);
                 callback.onSignalSaved(savedSignal);
+
+                // Push notification on successfully saved-signal
+                Injection.getPushNotificationsInstance().pushNotification("<TBD>", savedSignal.getTitle(), "<TBD>",
+                        "<TBD>", savedSignal.getLatitude(), savedSignal.getLongitude());
             }
 
             @Override
