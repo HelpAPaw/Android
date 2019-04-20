@@ -12,7 +12,7 @@ public class SettingsPresenter extends Presenter<SettingsContract.View> implemen
 
     SettingsPresenter(SettingsContract.View view) {
         super(view);
-        settingsRepository = Injection.getSettingsRepository();
+        settingsRepository = Injection.getSettingsRepositoryInstance();
     }
 
     @Override

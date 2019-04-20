@@ -9,10 +9,6 @@ import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
-import com.backendless.Backendless;
-import com.backendless.async.callback.AsyncCallback;
-import com.backendless.exceptions.BackendlessFault;
-import com.backendless.persistence.DataQueryBuilder;
 import com.firebase.jobdispatcher.JobParameters;
 import com.firebase.jobdispatcher.JobService;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -29,7 +25,6 @@ import org.helpapaw.helpapaw.utils.NotificationUtils;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 
 import static org.helpapaw.helpapaw.data.models.Signal.SOLVED;
 

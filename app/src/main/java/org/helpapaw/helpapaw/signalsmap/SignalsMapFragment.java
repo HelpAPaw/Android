@@ -194,7 +194,7 @@ public class SignalsMapFragment extends BaseFragment
             signalsMapPresenter.setView(this);
         }
         actionsListener = signalsMapPresenter;
-        settingsRepository = Injection.getSettingsRepository();
+        settingsRepository = Injection.getSettingsRepositoryInstance();
 
 
         setHasOptionsMenu(true);

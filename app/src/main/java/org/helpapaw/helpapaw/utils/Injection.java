@@ -61,7 +61,7 @@ public class Injection {
         return commentRepository;
     }
 
-    public synchronized static SettingsRepository getSettingsRepository() {
+    public synchronized static SettingsRepository getSettingsRepositoryInstance() {
         if (settingsRepository == null) {
             settingsRepository = new SettingsRepository();
         }
