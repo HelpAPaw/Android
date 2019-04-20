@@ -77,8 +77,8 @@ public class LoginPresenter extends Presenter<LoginContract.View>
             public void onSuccess(Object hasAcceptedPrivacyPolicy) {
 
                 try {
-                    Integer accepted = (Integer) hasAcceptedPrivacyPolicy;
-                    if (accepted < 1) {
+                    Boolean accepted = (Boolean) hasAcceptedPrivacyPolicy;
+                    if (!accepted) {
                         PrivacyPolicyConfirmationGetter privacyPolicyConfirmationGetter = new PrivacyPolicyConfirmationGetter(LoginPresenter.this, PawApplication.getContext());
                         privacyPolicyConfirmationGetter.execute();
                     }
