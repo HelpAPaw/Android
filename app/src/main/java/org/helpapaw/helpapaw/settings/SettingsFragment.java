@@ -1,6 +1,5 @@
 package org.helpapaw.helpapaw.settings;
 
-import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;

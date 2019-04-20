@@ -56,9 +56,13 @@ public class SignalsMapActivity extends BaseActivity {
             userManager.getHasAcceptedPrivacyPolicy(new UserManager.GetUserPropertyCallback() {
                 @Override
                 public void onSuccess(Object hasAcceptedPrivacyPolicy) {
-                    if (!((Boolean) hasAcceptedPrivacyPolicy)) {
-                        logOut();
+                    try {
+                        Boolean accepted = (Boolean) hasAcceptedPrivacyPolicy;
+                        if (!accepted) {
+                            logOut();
+                        }
                     }
+                    catch (Exception ignored) {}
                 }
 
                 @Override
