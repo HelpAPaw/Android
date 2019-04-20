@@ -22,7 +22,7 @@ public class BackendlessPushNotificationsRepository implements PushNotifications
             @Override
             public void handleResponse(DeviceRegistrationResult response) {
                 //Save device-token in preferences
-                Injection.getSettingsRepository().saveTokenToPreferences(response.getDeviceToken());
+                Injection.getSettingsRepositoryInstance().saveTokenToPreferences(response.getDeviceToken());
 
             }
             @Override
@@ -39,7 +39,7 @@ public class BackendlessPushNotificationsRepository implements PushNotifications
     @Override
     public void saveNewDeviceLocation(final Location location) {
         // Get local device-token
-        String localToken = Injection.getSettingsRepository().getTokenFromPreferences();
+        String localToken = Injection.getSettingsRepositoryInstance().getTokenFromPreferences();
 
         // Make sure localToken exists
         if (localToken != null) {
@@ -59,10 +59,10 @@ public class BackendlessPushNotificationsRepository implements PushNotifications
                             // Extract 'Map' object from the 'List<Map>'
                             Map mapFoundDevice = foundDevice.get(0);
                             try {
-                                mapFoundDevice.put("signalRadius", Injection.getSettingsRepository().getRadius());
+                                mapFoundDevice.put("signalRadius", Injection.getSettingsRepositoryInstance().getRadius());
                                 mapFoundDevice.put("lastLatitude", location.getLatitude());
                                 mapFoundDevice.put("lastLongitude", location.getLongitude());
-                                mapFoundDevice.put("signalTimeout", Injection.getSettingsRepository().getTimeout());
+                                mapFoundDevice.put("signalTimeout", Injection.getSettingsRepositoryInstance().getTimeout());
                             }
                             catch (Error e) {
                                 Log.e(TAG, e.getMessage());
