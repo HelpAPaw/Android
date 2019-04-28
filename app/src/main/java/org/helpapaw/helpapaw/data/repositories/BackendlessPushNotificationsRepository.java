@@ -2,9 +2,9 @@ package org.helpapaw.helpapaw.data.repositories;
 
 import android.location.Location;
 import android.util.Log;
+
 import com.backendless.Backendless;
 import com.backendless.async.callback.AsyncCallback;
-import com.backendless.exceptions.BackendlessException;
 import com.backendless.exceptions.BackendlessFault;
 import com.backendless.messaging.DeliveryOptions;
 import com.backendless.messaging.MessageStatus;
@@ -15,7 +15,6 @@ import com.backendless.push.DeviceRegistrationResult;
 import org.helpapaw.helpapaw.utils.Injection;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -103,12 +102,10 @@ public class BackendlessPushNotificationsRepository implements PushNotifications
      * Sends a notification to all devices within a certain distance
      */
     @Override
-    public void pushNotification(final String tickerText, final String contentTitle,
-                                 final String contentText, final String message,
-                                 final double latitude, final double longitude) {
+    public void pushNewSignalNotification(final String tickerText, final String message, final String signalId, final double latitude, final double longitude) {
 
         // Get local device-token, latitude & longitude (from settings)
-        final String localToken = Injection.getSettingsRepository().getTokenFromPreferences();
+        final String localToken = Injection.getSettingsRepositoryInstance().getTokenFromPreferences();
 
         // Build query
         String whereClause = "distance( "+ latitude +", "+ longitude +", " +
@@ -128,7 +125,7 @@ public class BackendlessPushNotificationsRepository implements PushNotifications
                     String deviceToken = device.get("deviceToken").toString();
 
                     if(!deviceToken.equals(localToken)) {
-                        notifiedDevices.add(deviceToken);
+                        notifiedDevices.add(device.get("deviceId").toString());
                     }
                 }
 
@@ -141,12 +138,13 @@ public class BackendlessPushNotificationsRepository implements PushNotifications
 
                     // Creates publish options
                     PublishOptions publishOptions = new PublishOptions();
-                    publishOptions.putHeader("android-ticker-text",
-                            tickerText);
-                    publishOptions.putHeader("android-content-title",
-                            contentTitle);
-                    publishOptions.putHeader("android-content-text",
-                            message);
+                    publishOptions.putHeader("android-ticker-text", tickerText);
+                    publishOptions.putHeader("android-content-text", message);
+                    publishOptions.putHeader("ios-alert", message);
+                    publishOptions.putHeader("ios-badge", "1");
+                    publishOptions.putHeader("signalId", signalId);
+                    publishOptions.putHeader("ios-category", "kNotificationCategoryNewSignal");
+
 
                     // Delivers notification
                     Backendless.Messaging.publish(message, publishOptions, deliveryOptions, new AsyncCallback<MessageStatus>() {

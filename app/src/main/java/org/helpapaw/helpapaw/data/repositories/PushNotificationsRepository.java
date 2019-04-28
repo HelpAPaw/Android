@@ -5,6 +5,5 @@ import android.location.Location;
 public interface PushNotificationsRepository {
     void registerDeviceForToken();
     void saveNewDeviceLocation(Location location);
-    void pushNotification(String tickerText, String contentTitle,
-                          String contentText, String message, double latitude, double longitude);
+    void pushNewSignalNotification(final String tickerText, final String message, final String signalId, final double latitude, final double longitude);
 }
