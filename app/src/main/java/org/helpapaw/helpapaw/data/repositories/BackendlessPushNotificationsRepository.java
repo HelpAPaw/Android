@@ -38,13 +38,13 @@ public class BackendlessPushNotificationsRepository implements PushNotifications
     }
 
     /*
-     * Queries Backendless for locally saved device-token,
-     * and updates 4 properties on the corresponding db-entry
+     * Queries Backendless for locally saved device-token and updates properties on the corresponding db-entry in the cloud
+     * Send null for any parameter you don't want to update
      */
     @Override
-    public void saveNewDeviceLocation(final Location location) {
+    public void updateDeviceInfoInCloud(final Location location, final Integer radius, final Integer timeout) {
         // Get local device-token
-        String localToken = Injection.getSettingsRepositoryInstance().getTokenFromPreferences();
+        final String localToken = Injection.getSettingsRepositoryInstance().getTokenFromPreferences();
 
         // Make sure localToken exists
         if (localToken != null) {
@@ -64,10 +64,16 @@ public class BackendlessPushNotificationsRepository implements PushNotifications
                             // Extract 'Map' object from the 'List<Map>'
                             Map mapFoundDevice = foundDevices.get(0);
                             try {
-                                mapFoundDevice.put("signalRadius", Injection.getSettingsRepositoryInstance().getRadius());
-                                mapFoundDevice.put("lastLatitude", location.getLatitude());
-                                mapFoundDevice.put("lastLongitude", location.getLongitude());
-                                mapFoundDevice.put("signalTimeout", Injection.getSettingsRepositoryInstance().getTimeout());
+                                if (location != null) {
+                                    mapFoundDevice.put("lastLatitude", location.getLatitude());
+                                    mapFoundDevice.put("lastLongitude", location.getLongitude());
+                                }
+                                if (radius != null) {
+                                    mapFoundDevice.put("signalRadius", radius);
+                                }
+                                if (timeout != null) {
+                                    mapFoundDevice.put("signalTimeout", timeout);
+                                }
                             }
                             catch (Error e) {
                                 Log.e(TAG, e.getMessage());

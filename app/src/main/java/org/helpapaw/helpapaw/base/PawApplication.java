@@ -31,7 +31,7 @@ public class PawApplication extends Application {
         NotificationUtils.registerNotificationChannels(this);
 
         // Register device for token
-        Injection.getPushNotificationsInstance().registerDeviceForToken();
+        Injection.getPushNotificationsRepositoryInstance().registerDeviceForToken();
 
         // This is done in order to handle the situation where user token is saved on the device but is invalidated on the server
         final UserManager userManager = Injection.getUserManagerInstance();

@@ -69,7 +69,7 @@ public class Injection {
         return settingsRepository;
     }
 
-    public synchronized static PushNotificationsRepository getPushNotificationsInstance() {
+    public synchronized static PushNotificationsRepository getPushNotificationsRepositoryInstance() {
         if (pushNotificationsRepository == null) {
             pushNotificationsRepository = new BackendlessPushNotificationsRepository();
         }
