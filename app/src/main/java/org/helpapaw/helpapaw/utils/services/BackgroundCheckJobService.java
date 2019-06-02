@@ -61,7 +61,7 @@ public class BackgroundCheckJobService extends JobService {
                             //Got last known location. In some rare situations this can be null.
                             if (location != null) {
                                 getSignalsForLastKnownLocation(location, job);
-                                Injection.getPushNotificationsInstance().saveNewDeviceLocation(location);
+                                Injection.getPushNotificationsRepositoryInstance().updateDeviceInfoInCloud(location, null, null);
                             } else {
                                 Log.d(TAG, "got callback but last location is null");
                                 jobFinished(job, true);

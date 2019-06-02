@@ -515,7 +515,7 @@ public class SignalsMapFragment extends BaseFragment
         float zoom = newZoom == 0 ? calculateMetersToZoom() : newZoom;
         updateMapCameraPosition(mCurrentLat, mCurrentLong, zoom);
         actionsListener.onLocationChanged(mCurrentLat, mCurrentLong, settingsRepository.getRadius(), settingsRepository.getTimeout());
-        Injection.getPushNotificationsInstance().saveNewDeviceLocation(location);
+        Injection.getPushNotificationsRepositoryInstance().updateDeviceInfoInCloud(location, settingsRepository.getRadius(), settingsRepository.getTimeout());
     }
 
     @Override

@@ -162,7 +162,7 @@ public class BackendlessSignalRepository implements SignalRepository {
                 callback.onSignalSaved(savedSignal);
 
                 // Push notification on successfully saved-signal
-                Injection.getPushNotificationsInstance().pushNewSignalNotification("New signal", savedSignal.getTitle(), savedSignal.getId(),
+                Injection.getPushNotificationsRepositoryInstance().pushNewSignalNotification("New signal", savedSignal.getTitle(), savedSignal.getId(),
                         savedSignal.getLatitude(), savedSignal.getLongitude());
             }
 

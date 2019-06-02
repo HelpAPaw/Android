@@ -40,5 +40,7 @@ public class SettingsPresenter extends Presenter<SettingsContract.View> implemen
 
     @Override
     public void onCloseSettingsScreen() {
+        //No need to call it here because it is called when signalsMapFragment resumes and obtains location
+        //Injection.getPushNotificationsRepositoryInstance().updateDeviceInfoInCloud(null, radius, timeout);
     }
 }
