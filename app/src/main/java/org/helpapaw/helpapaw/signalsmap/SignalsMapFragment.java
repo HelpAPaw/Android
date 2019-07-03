@@ -145,7 +145,7 @@ public class SignalsMapFragment extends BaseFragment
     public static SignalsMapFragment newInstance(String focusedSignalId) {
         SignalsMapFragment signalsMapFragment = new SignalsMapFragment();
         Bundle args = new Bundle();
-        args.putString(Signal.KEY_FOCUSED_SIGNAL_ID, focusedSignalId);
+        args.putString(Signal.KEY_SIGNAL_ID, focusedSignalId);
         signalsMapFragment.setArguments(args);
         return signalsMapFragment;
     }
@@ -157,9 +157,9 @@ public class SignalsMapFragment extends BaseFragment
         setRetainInstance(true);
         Bundle arguments = getArguments();
 
-        if ((arguments != null) && arguments.containsKey(Signal.KEY_FOCUSED_SIGNAL_ID)) {
-            mFocusedSignalId = arguments.getString(Signal.KEY_FOCUSED_SIGNAL_ID);
-            arguments.remove(Signal.KEY_FOCUSED_SIGNAL_ID);
+        if ((arguments != null) && arguments.containsKey(Signal.KEY_SIGNAL_ID)) {
+            mFocusedSignalId = arguments.getString(Signal.KEY_SIGNAL_ID);
+            arguments.remove(Signal.KEY_SIGNAL_ID);
         }
 
         //Initialize location api
@@ -298,6 +298,9 @@ public class SignalsMapFragment extends BaseFragment
 
             // Clicking on the map closes any open info window
             mCurrentlyShownInfoWindowSignal = null;
+
+            //TODO: Check
+            mFocusedSignalId = null;
         }
     };
 
@@ -306,6 +309,9 @@ public class SignalsMapFragment extends BaseFragment
         public boolean onMarkerClick(Marker marker) {
             // Save the signal for the currently shown info window in case it should be reopen
             mCurrentlyShownInfoWindowSignal = mSignalMarkers.get(marker.getId());
+
+            //TODO: Check
+            mFocusedSignalId = null;
             return false;
         }
     };
@@ -387,7 +393,8 @@ public class SignalsMapFragment extends BaseFragment
                         showPopup = true;
                         markerToFocus = marker;
                         signalToFocus = signal;
-                        mFocusedSignalId = null;
+                        //TODO: Check
+//                        mFocusedSignalId = null;
                     }
                 }
                 // If an info window was open before signals refresh - reopen it

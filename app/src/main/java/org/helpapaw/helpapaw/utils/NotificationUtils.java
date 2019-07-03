@@ -91,7 +91,7 @@ public class NotificationUtils {
         mBuilder.setLargeIcon(largeIcon);
 
         Intent resultIntent = new Intent(context, SignalsMapActivity.class);
-        resultIntent.putExtra(Signal.KEY_FOCUSED_SIGNAL_ID, signal.getId());
+        resultIntent.putExtra(Signal.KEY_SIGNAL_ID, signal.getId());
 
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
         stackBuilder.addNextIntent(resultIntent);
