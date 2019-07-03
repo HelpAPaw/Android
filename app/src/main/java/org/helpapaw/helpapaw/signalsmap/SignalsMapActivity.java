@@ -1,6 +1,7 @@
 package org.helpapaw.helpapaw.signalsmap;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -99,8 +100,10 @@ public class SignalsMapActivity extends BaseActivity {
 
     private void initFragment() {
         if (mSignalsMapFragment == null) {
-            if (getIntent().hasExtra(Signal.KEY_FOCUSED_SIGNAL_ID)) {
-                mSignalsMapFragment = SignalsMapFragment.newInstance(getIntent().getStringExtra(Signal.KEY_FOCUSED_SIGNAL_ID));
+            if (getIntent().hasExtra(Signal.KEY_SIGNAL_ID)) {
+                Intent intent = getIntent();
+                mSignalsMapFragment = SignalsMapFragment.newInstance(intent.getStringExtra(Signal.KEY_SIGNAL_ID));
+                intent.removeExtra(Signal.KEY_SIGNAL_ID);
             } else {
                 mSignalsMapFragment = SignalsMapFragment.newInstance();
             }

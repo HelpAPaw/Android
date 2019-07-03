@@ -12,6 +12,7 @@ import com.backendless.messaging.PublishOptions;
 import com.backendless.persistence.DataQueryBuilder;
 import com.backendless.push.DeviceRegistrationResult;
 
+import org.helpapaw.helpapaw.data.models.Signal;
 import org.helpapaw.helpapaw.utils.Injection;
 
 import java.util.ArrayList;
@@ -148,7 +149,7 @@ public class BackendlessPushNotificationsRepository implements PushNotifications
                     publishOptions.putHeader("android-content-text", message);
                     publishOptions.putHeader("ios-alert", message);
                     publishOptions.putHeader("ios-badge", "1");
-                    publishOptions.putHeader("signalId", signalId);
+                    publishOptions.putHeader(Signal.KEY_SIGNAL_ID, signalId);
                     publishOptions.putHeader("ios-category", "kNotificationCategoryNewSignal");
 
 
