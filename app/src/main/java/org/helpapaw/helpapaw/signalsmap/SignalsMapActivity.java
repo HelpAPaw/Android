@@ -100,8 +100,8 @@ public class SignalsMapActivity extends BaseActivity {
 
     private void initFragment() {
         if (mSignalsMapFragment == null) {
-            if (getIntent().hasExtra(Signal.KEY_SIGNAL_ID)) {
-                Intent intent = getIntent();
+            Intent intent = getIntent();
+            if (intent.hasExtra(Signal.KEY_SIGNAL_ID)) {
                 mSignalsMapFragment = SignalsMapFragment.newInstance(intent.getStringExtra(Signal.KEY_SIGNAL_ID));
                 intent.removeExtra(Signal.KEY_SIGNAL_ID);
             } else {
