@@ -65,6 +65,26 @@ public class BackendlessSignalRepository implements SignalRepository {
             query.addCategory(category);
         }
 
+        getSignals(query, callback);
+    }
+
+    @Override
+    public void getSignal(String signalId, final LoadSignalsCallback callback) {
+        //TODO: add caching
+
+        BackendlessGeoQuery query = new BackendlessGeoQuery();
+        query.setIncludeMeta(true);
+        query.setWhereClause(String.format("objectid='%s'", signalId));
+
+        String category = getCategory();
+        if (category != null) {
+            query.addCategory(category);
+        }
+
+        getSignals(query, callback);
+    }
+
+    private void getSignals(BackendlessGeoQuery query, final LoadSignalsCallback callback) {
         Backendless.Geo.getPoints(query, new AsyncCallback<List<GeoPoint>>() {
             @Override
             public void handleResponse(List<GeoPoint> response) {
@@ -76,18 +96,19 @@ public class BackendlessSignalRepository implements SignalRepository {
                 for (int i = 0; i < response.size(); i++) {
                     GeoPoint geoPoint = response.get(i);
 
-                    String signalTitle = getToStringOrNull(geoPoint.getMetadata(SIGNAL_TITLE));
+                    String signalTitle         = getToStringOrNull(geoPoint.getMetadata(SIGNAL_TITLE));
                     String dateSubmittedString = getToStringOrNull(geoPoint.getMetadata(SIGNAL_DATE_SUBMITTED));
-                    String signalStatus = getToStringOrNull(geoPoint.getMetadata(SIGNAL_STATUS));
+                    String signalStatus        = getToStringOrNull(geoPoint.getMetadata(SIGNAL_STATUS));
 
                     Date dateSubmitted = null;
                     try {
                         dateSubmitted = new Date(Long.valueOf(dateSubmittedString));
-                    } catch (Exception ex) {
+                    }
+                    catch (Exception ex) {
                         Log.d(BackendlessSignalRepository.class.getName(), "Failed to parse signal date.");
                     }
 
-                    String signalAuthorName = null;
+                    String signalAuthorName  = null;
                     String signalAuthorPhone = null;
 
                     if ((geoPoint.getMetadata(SIGNAL_AUTHOR)) != null) {
@@ -98,8 +119,7 @@ public class BackendlessSignalRepository implements SignalRepository {
                         signalAuthorPhone = getToStringOrNull(((BackendlessUser) geoPoint.getMetadata(SIGNAL_AUTHOR)).getProperty(PHONE_FIELD));
                     }
 
-                    Signal newSignal = new Signal(geoPoint.getObjectId(), signalTitle, dateSubmitted, Integer.parseInt(signalStatus),
-                            signalAuthorName, signalAuthorPhone, geoPoint.getLatitude(), geoPoint.getLongitude(), false);
+                    Signal newSignal = new Signal(geoPoint.getObjectId(), signalTitle, dateSubmitted, Integer.parseInt(signalStatus), signalAuthorName, signalAuthorPhone, geoPoint.getLatitude(), geoPoint.getLongitude(), false);
 
                     // If signal is already in DB - keep seen status
                     List<Signal> signalsFromDB = signalsDatabase.signalDao().getSignal(geoPoint.getObjectId());

@@ -17,11 +17,6 @@ import java.util.List;
  */
 public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> implements SignalsMapContract.UserActionsListener {
 
-    private static final float DEFAULT_MAP_ZOOM = 14.5f;
-    public static final int DEFAULT_SEARCH_RADIUS = 10;
-    public static final int DEFAULT_SEARCH_TIMEOUT = 7;
-    private static final String DATE_TIME_FORMAT = "MM/dd/yyyy hh:mm:ss";
-
     private UserManager userManager;
     private SignalRepository signalRepository;
     private PhotoRepository photoRepository;
@@ -48,17 +43,49 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
     }
 
     @Override
-    public void onInitSignalsMap() {
+    public void onInitSignalsMap(String focusedSignalId) {
         getView().setAddSignalViewVisibility(sendSignalViewVisibility);
         if (!isEmpty(photoUri)) {
             getView().setThumbnailImage(photoUri);
+        }
+        if (focusedSignalId != null) {
+            getSignal(focusedSignalId);
         }
         if (signalsList != null && signalsList.size() > 0) {
             getView().displaySignals(signalsList, false);
         }
     }
 
-    private void getAllSignals(double latitude, double longitude, int radius, int timeout, final boolean showPopup) {
+    private void getSignal(String signalId) {
+        if (Utils.getInstance().hasNetworkConnection()) {
+            getView().setProgressVisibility(true);
+
+            signalRepository.getSignal(signalId,
+                    new SignalRepository.LoadSignalsCallback() {
+                        @Override
+                        public void onSignalsLoaded(List<Signal> signals) {
+                            if (!isViewAvailable()) return;
+                            if (signals.size() > 0) {
+                                replaceSignal(signals.get(0));
+                                signalRepository.markSignalsAsSeen(signals);
+                                getView().displaySignals(signals, true);
+                                getView().setProgressVisibility(false);
+                            }
+                        }
+
+                        @Override
+                        public void onSignalsFailure(String message) {
+                            if (!isViewAvailable()) return;
+                            getView().showMessage(message);
+                            getView().setProgressVisibility(false);
+                        }
+                    });
+        } else {
+            getView().showNoInternetMessage();
+        }
+    }
+
+    private void getAllSignals(double latitude, double longitude, int radius, int timeout) {
         if (Utils.getInstance().hasNetworkConnection()) {
             getView().setProgressVisibility(true);
 
@@ -69,7 +96,7 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
                             if (!isViewAvailable()) return;
                             signalsList = signals;
                             signalRepository.markSignalsAsSeen(signals);
-                            getView().displaySignals(signals, showPopup);
+                            getView().displaySignals(signals, false);
                             getView().setProgressVisibility(false);
                         }
 
@@ -92,7 +119,7 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
 
         if ((Utils.getInstance().getDistanceBetween(latitude, longitude, this.latitude, this.longitude) > 300)
             || (this.radius != radius)) {
-            getAllSignals(latitude, longitude, radius, timeout, false);
+            getAllSignals(latitude, longitude, radius, timeout);
 
             this.latitude = latitude;
             this.longitude = longitude;
@@ -230,21 +257,25 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
 
     @Override
     public void onRefreshButtonClicked() {
-        getAllSignals(latitude, longitude, radius, timeout, false);
+        getAllSignals(latitude, longitude, radius, timeout);
     }
 
     @Override
     public void onSignalStatusUpdated(Signal signal) {
         if (signal == null) return;
 
+        replaceSignal(signal);
+        getView().displaySignals(signalsList, true);
+    }
+
+    private void replaceSignal(Signal signal) {
         for (int i = 0; i < signalsList.size(); i++) {
             Signal currentSignal = signalsList.get(i);
             if (currentSignal.getId().equals(signal.getId())) {
                 signalsList.remove(i);
-                signalsList.add(signal);
-                getView().displaySignals(signalsList, true);
                 break;
             }
+            signalsList.add(signal);
         }
     }
 

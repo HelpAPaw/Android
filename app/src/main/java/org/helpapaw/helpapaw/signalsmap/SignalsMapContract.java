@@ -62,7 +62,7 @@ interface SignalsMapContract {
 
     interface UserActionsListener {
 
-        void onInitSignalsMap();
+        void onInitSignalsMap(String focusedSignalId);
 
         void onLocationChanged(double latitude, double longitude, int radius, int timeout);
 
