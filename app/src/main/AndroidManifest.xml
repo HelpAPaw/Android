@@ -24,7 +24,7 @@
         android:theme="@style/AppTheme.NoActionBar"
         tools:ignore="UnusedAttribute">
 
-        <service android:name="com.backendless.push.BackendlessFCMService">
+        <service android:name=".utils.services.CustomBackendlessFCMService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
