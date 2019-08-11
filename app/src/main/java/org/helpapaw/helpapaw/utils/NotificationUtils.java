@@ -76,7 +76,7 @@ public class NotificationUtils {
         }
 
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context, channel_id);
-        mBuilder.setSmallIcon(R.drawable.ic_paw_notif);
+        mBuilder.setSmallIcon(R.mipmap.ic_launcher);
         mBuilder.setTicker(context.getString(R.string.txt_new_signal));
         mBuilder.setContentTitle(signal.getTitle());
         mBuilder.setDefaults(Notification.DEFAULT_ALL);
