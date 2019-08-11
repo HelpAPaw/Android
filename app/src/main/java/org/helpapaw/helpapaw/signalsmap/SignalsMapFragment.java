@@ -115,6 +115,7 @@ public class SignalsMapFragment extends BaseFragment
     private LocationRequest locationRequest;
     private GoogleMap signalsGoogleMap;
     private ArrayList<Signal> mDisplayedSignals = new ArrayList<>();
+    private ArrayList<Marker> mDisplayedMarkers = new ArrayList<>();
     private Map<String, Signal> mSignalMarkers = new HashMap<>();
     private Signal mCurrentlyShownInfoWindowSignal;
 
@@ -283,7 +284,7 @@ public class SignalsMapFragment extends BaseFragment
             @Override
             public void onMapReady(GoogleMap googleMap) {
                 signalsGoogleMap = googleMap;
-                actionsListener.onInitSignalsMap();
+                actionsListener.onInitSignalsMap(mFocusedSignalId);
                 signalsGoogleMap.setPadding(0, PADDING_TOP, 0, PADDING_BOTTOM);
                 signalsGoogleMap.setOnMapClickListener(mapClickListener);
                 signalsGoogleMap.setOnMarkerClickListener(mapMarkerClickListener);
@@ -299,7 +300,6 @@ public class SignalsMapFragment extends BaseFragment
             // Clicking on the map closes any open info window
             mCurrentlyShownInfoWindowSignal = null;
 
-            //TODO: Check
             mFocusedSignalId = null;
         }
     };
@@ -310,7 +310,6 @@ public class SignalsMapFragment extends BaseFragment
             // Save the signal for the currently shown info window in case it should be reopen
             mCurrentlyShownInfoWindowSignal = mSignalMarkers.get(marker.getId());
 
-            //TODO: Check
             mFocusedSignalId = null;
             return false;
         }
@@ -375,26 +374,19 @@ public class SignalsMapFragment extends BaseFragment
 
         if (signalsGoogleMap != null) {
             signalsGoogleMap.clear();
+            mDisplayedMarkers.clear();
+
             signalsGoogleMap.setPadding(0, PADDING_TOP, 0, PADDING_BOTTOM);
             for (int i = 0; i < mDisplayedSignals.size(); i++) {
                 signal = mDisplayedSignals.get(i);
 
-                MarkerOptions markerOptions = new MarkerOptions()
-                        .position(new LatLng(signal.getLatitude(), signal.getLongitude()))
-                        .title(signal.getTitle());
-
-                markerOptions.icon(BitmapDescriptorFactory.fromResource(StatusUtils.getPinResourceForCode(signal.getStatus())));
-
-                Marker marker = signalsGoogleMap.addMarker(markerOptions);
-                mSignalMarkers.put(marker.getId(), signal);
+                Marker marker = addMarkerToMap(signal);
 
                 if (mFocusedSignalId != null) {
                     if (signal.getId().equalsIgnoreCase(mFocusedSignalId)) {
                         showPopup = true;
                         markerToFocus = marker;
                         signalToFocus = signal;
-                        //TODO: Check
-//                        mFocusedSignalId = null;
                     }
                 }
                 // If an info window was open before signals refresh - reopen it
@@ -418,10 +410,25 @@ public class SignalsMapFragment extends BaseFragment
             if (showPopup && (markerToFocus != null)) {
                 markerToFocus.showInfoWindow();
                 updateMapCameraPosition(signalToFocus.getLatitude(), signalToFocus.getLongitude(), null);
-            } else if (markerToReShow != null) {
+            } else
+                if (markerToReShow != null) {
                 markerToReShow.showInfoWindow();
             }
         }
+    }
+
+    @NonNull
+    private Marker addMarkerToMap(Signal signal) {
+        MarkerOptions markerOptions = new MarkerOptions()
+                .position(new LatLng(signal.getLatitude(), signal.getLongitude()))
+                .title(signal.getTitle());
+
+        markerOptions.icon(BitmapDescriptorFactory.fromResource(StatusUtils.getPinResourceForCode(signal.getStatus())));
+
+        Marker marker = signalsGoogleMap.addMarker(markerOptions);
+        mSignalMarkers.put(marker.getId(), signal);
+        mDisplayedMarkers.add(marker);
+        return marker;
     }
 
     /* Location API */

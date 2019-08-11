@@ -11,6 +11,8 @@ public interface SignalRepository {
 
     void getAllSignals(double latitude, double longitude, double radius, int timeout, LoadSignalsCallback callback);
 
+    void getSignal(String signalId, final LoadSignalsCallback callback);
+
     void saveSignal(Signal signal, SaveSignalCallback callback);
 
     void updateSignalStatus(String signalId, int status, UpdateStatusCallback callback);

@@ -34,6 +34,14 @@ public class SignalsMapActivity extends BaseActivity {
     private boolean restoringActivity = false;
 
     @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+
+        reinitFragment();
+    }
+
+    @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
@@ -115,7 +123,13 @@ public class SignalsMapActivity extends BaseActivity {
     }
 
     private void reinitFragment() {
-        mSignalsMapFragment = SignalsMapFragment.newInstance();
+        Intent intent = getIntent();
+        if (intent.hasExtra(Signal.KEY_SIGNAL_ID)) {
+            mSignalsMapFragment = SignalsMapFragment.newInstance(intent.getStringExtra(Signal.KEY_SIGNAL_ID));
+            intent.removeExtra(Signal.KEY_SIGNAL_ID);
+        } else {
+            mSignalsMapFragment = SignalsMapFragment.newInstance();
+        }
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.replace(R.id.grp_content_frame, mSignalsMapFragment);
