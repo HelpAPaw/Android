@@ -79,7 +79,7 @@
     <string name="txt_new_status_icon">New status icon</string>
     <string name="string_about_title">About</string>r
     <string name="string_about_contact">Contact us</string>
-    <string name="string_about_milen">© Milen Marinov 2018</string>
+    <string name="string_about_milen">© Milen Marinov 2019</string>
     <string name="string_support_email" translatable="false">help.a.paw@outlook.com‌</string>
     <string name="string_mail_chooser_title" translatable="false">help.a.paw@outlook.com‌</string>
     <string name="error_empty_signal_response">Got empty response! Signal not present anymore!?</string>
