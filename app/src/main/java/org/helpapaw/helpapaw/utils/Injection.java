@@ -5,6 +5,7 @@ import org.helpapaw.helpapaw.data.repositories.BackendlessPhotoRepository;
 import org.helpapaw.helpapaw.data.repositories.BackendlessPushNotificationsRepository;
 import org.helpapaw.helpapaw.data.repositories.BackendlessSignalRepository;
 import org.helpapaw.helpapaw.data.repositories.CommentRepository;
+import org.helpapaw.helpapaw.data.repositories.ISettingsRepository;
 import org.helpapaw.helpapaw.data.repositories.PhotoRepository;
 import org.helpapaw.helpapaw.data.repositories.PushNotificationsRepository;
 import org.helpapaw.helpapaw.data.repositories.SettingsRepository;
@@ -61,7 +62,7 @@ public class Injection {
         return commentRepository;
     }
 
-    public synchronized static SettingsRepository getSettingsRepositoryInstance() {
+    public synchronized static ISettingsRepository getSettingsRepositoryInstance() {
         if (settingsRepository == null) {
             settingsRepository = new SettingsRepository();
         }

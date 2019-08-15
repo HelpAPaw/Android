@@ -23,6 +23,7 @@ import org.helpapaw.helpapaw.base.BaseActivity;
 import org.helpapaw.helpapaw.base.PawApplication;
 import org.helpapaw.helpapaw.data.models.Signal;
 import org.helpapaw.helpapaw.data.user.UserManager;
+import org.helpapaw.helpapaw.utils.Injection;
 import org.helpapaw.helpapaw.utils.services.BackgroundCheckJobService;
 
 import java.util.List;
@@ -186,7 +187,11 @@ public class SignalsMapActivity extends BaseActivity {
     }
 
     private void switchEnvironment() {
+        //Reregister device token with new notification channel
+        Injection.getPushNotificationsRepositoryInstance().unregisterDeviceToken();
         PawApplication.setIsTestEnvironment(!PawApplication.getIsTestEnvironment());
+        Injection.getPushNotificationsRepositoryInstance().registerDeviceToken();
+
         binding.toolbarTitle.setText(getToolbarTitle());
         reinitFragment();
         Toast.makeText(this, "Environment switched", Toast.LENGTH_LONG).show();

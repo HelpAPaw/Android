@@ -17,7 +17,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 
 import org.helpapaw.helpapaw.data.models.Signal;
-import org.helpapaw.helpapaw.data.repositories.SettingsRepository;
+import org.helpapaw.helpapaw.data.repositories.ISettingsRepository;
 import org.helpapaw.helpapaw.data.repositories.SignalRepository;
 import org.helpapaw.helpapaw.db.SignalsDatabase;
 import org.helpapaw.helpapaw.utils.Injection;
@@ -90,7 +90,7 @@ public class BackgroundCheckJobService extends JobService {
 
     private void getSignalsForLastKnownLocation(Location location, final JobParameters job) {
 
-        SettingsRepository settingsRepository = Injection.getSettingsRepositoryInstance();
+        ISettingsRepository settingsRepository = Injection.getSettingsRepositoryInstance();
         Injection.getSignalRepositoryInstance().getAllSignals(location.getLatitude(), location.getLongitude(), settingsRepository.getRadius(), settingsRepository.getTimeout(), new SignalRepository.LoadSignalsCallback() {
             @Override
             public void onSignalsLoaded(List<Signal> signals) {
