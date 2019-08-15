@@ -12,28 +12,63 @@ import com.backendless.messaging.PublishOptions;
 import com.backendless.persistence.DataQueryBuilder;
 import com.backendless.push.DeviceRegistrationResult;
 
+import org.helpapaw.helpapaw.base.PawApplication;
 import org.helpapaw.helpapaw.data.models.Signal;
 import org.helpapaw.helpapaw.utils.Injection;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+
 public class BackendlessPushNotificationsRepository implements PushNotificationsRepository {
-    public static final String TAG = BackendlessPushNotificationsRepository.class.getSimpleName();
+    private static final String TAG = BackendlessPushNotificationsRepository.class.getSimpleName();
+    private static final String productionChannel = "default";
+    private static final String debugChannel = "debug";
+    private static Location lastKnownDeviceLocation;
+
+    private String getNotificationChannel() {
+        if (PawApplication.getIsTestEnvironment()) {
+            return debugChannel;
+        }
+        else {
+            return productionChannel;
+        }
+    }
 
     @Override
-    public void registerDeviceForToken() {
-        Backendless.Messaging.registerDevice(new AsyncCallback<DeviceRegistrationResult>(){
+    public void registerDeviceToken() {
+        Backendless.Messaging.registerDevice(Arrays.asList(getNotificationChannel()), new AsyncCallback<DeviceRegistrationResult>(){
             @Override
             public void handleResponse(DeviceRegistrationResult response) {
-                //Save device-token in preferences
-                Injection.getSettingsRepositoryInstance().saveTokenToPreferences(response.getDeviceToken());
+                ISettingsRepository settingsRepository = Injection.getSettingsRepositoryInstance();
 
+                //Save device-token in preferences
+                settingsRepository.saveTokenToPreferences(response.getDeviceToken());
+
+                //Update device info in case the registration is new
+                updateDeviceInfoInCloud(lastKnownDeviceLocation, settingsRepository.getRadius(), settingsRepository.getTimeout());
             }
+
             @Override
             public void handleFault(BackendlessFault fault) {
                 Log.e(TAG, "Device registration fault: " + fault.getMessage());
+            }
+        });
+    }
+
+    @Override
+    public void unregisterDeviceToken() {
+        Backendless.Messaging.unregisterDevice(Arrays.asList(getNotificationChannel()), new AsyncCallback<Integer>() {
+            @Override
+            public void handleResponse(Integer response) {
+                Injection.getSettingsRepositoryInstance().deleteTokenFromPreferences();
+            }
+
+            @Override
+            public void handleFault(BackendlessFault fault) {
+                Log.e(TAG, "Device unregistration fault: " + fault.getMessage());
             }
         });
     }
@@ -62,36 +97,42 @@ public class BackendlessPushNotificationsRepository implements PushNotifications
                             // every loaded object from the "DeviceRegistration" table
                             // is now an individual java.util.Map
 
-                            // Extract 'Map' object from the 'List<Map>'
-                            Map mapFoundDevice = foundDevices.get(0);
-                            try {
-                                if (location != null) {
-                                    mapFoundDevice.put("lastLatitude", location.getLatitude());
-                                    mapFoundDevice.put("lastLongitude", location.getLongitude());
+                            if (foundDevices.size() > 0) {
+                                // Extract 'Map' object from the 'List<Map>'
+                                Map foundDevice = foundDevices.get(0);
+                                try {
+                                    if (location != null) {
+                                        foundDevice.put("lastLatitude", location.getLatitude());
+                                        foundDevice.put("lastLongitude", location.getLongitude());
+                                        lastKnownDeviceLocation = location;
+                                    }
+                                    if (radius != null) {
+                                        foundDevice.put("signalRadius", radius);
+                                    }
+                                    if (timeout != null) {
+                                        foundDevice.put("signalTimeout", timeout);
+                                    }
                                 }
-                                if (radius != null) {
-                                    mapFoundDevice.put("signalRadius", radius);
-                                }
-                                if (timeout != null) {
-                                    mapFoundDevice.put("signalTimeout", timeout);
-                                }
-                            }
-                            catch (Error e) {
-                                Log.e(TAG, e.getMessage());
-                            }
-
-                            // Save updated object
-                            Backendless.Persistence.of("DeviceRegistration").save(mapFoundDevice, new AsyncCallback<Map>() {
-                                @Override
-                                public void handleResponse(Map response) {
-                                    Log.d(TAG, "obj updated");
+                                catch (Error e) {
+                                    Log.e(TAG, e.getMessage());
                                 }
 
-                                @Override
-                                public void handleFault(BackendlessFault fault) {
-                                    Log.d(TAG, fault.getMessage());
-                                }
-                            });
+                                // Save updated object
+                                Backendless.Persistence.of("DeviceRegistration").save(foundDevice, new AsyncCallback<Map>() {
+                                    @Override
+                                    public void handleResponse(Map response) {
+                                        Log.d(TAG, "obj updated");
+                                    }
+
+                                    @Override
+                                    public void handleFault(BackendlessFault fault) {
+                                        Log.d(TAG, fault.getMessage());
+                                    }
+                                });
+                            }
+                            else {
+                                Log.e(TAG, "Device token not found in server DB.");
+                            }
                         }
 
                         @Override
@@ -154,7 +195,7 @@ public class BackendlessPushNotificationsRepository implements PushNotifications
 
 
                     // Delivers notification
-                    Backendless.Messaging.publish(message, publishOptions, deliveryOptions, new AsyncCallback<MessageStatus>() {
+                    Backendless.Messaging.publish(getNotificationChannel(), message, publishOptions, deliveryOptions, new AsyncCallback<MessageStatus>() {
                         @Override
                         public void handleResponse(MessageStatus response) {
                             Log.d(TAG, response.getMessageId());

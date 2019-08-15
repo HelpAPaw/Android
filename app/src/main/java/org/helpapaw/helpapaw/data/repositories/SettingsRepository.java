@@ -105,6 +105,13 @@ public class SettingsRepository implements ISettingsRepository {
         editor.apply();
     }
 
+    @Override
+    public void deleteTokenFromPreferences() {
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.remove(DEVICE_BACKENDLESS_TOKEN);
+        editor.apply();
+    }
+
     //Get Backendless device-token from local-preferences
     @Override
     public String getTokenFromPreferences() {

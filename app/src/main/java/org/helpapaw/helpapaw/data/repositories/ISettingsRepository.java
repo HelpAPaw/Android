@@ -25,5 +25,7 @@ public interface ISettingsRepository {
 
     void saveTokenToPreferences(String deviceToken);
 
+    void deleteTokenFromPreferences();
+
     String getTokenFromPreferences();
 }
