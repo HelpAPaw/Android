@@ -176,7 +176,7 @@
         <LinearLayout
             android:id="@+id/grp_add_comment"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
+            android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
@@ -187,11 +187,11 @@
             <EditText
                 android:id="@+id/edit_comment"
                 android:layout_width="0dp"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginLeft="5dp"
                 android:layout_weight="1"
                 android:hint="@string/txt_comment_hint"
-                android:inputType="textEmailAddress" />
+                android:inputType="textAutoComplete|textAutoCorrect|textCapSentences|textMultiLine" />
 
             <android.support.v7.widget.AppCompatButton
                 android:id="@+id/btn_add_comment"
