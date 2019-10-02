@@ -884,7 +884,7 @@ public class SignalsMapFragment extends BaseFragment
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode) {
             case LOCATION_PERMISSIONS_REQUEST:
-                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                if ((grantResults.length > 0) && (grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
                     signalsGoogleMap.setMyLocationEnabled(true);
                     setLastLocation();
                 } else {
@@ -894,7 +894,7 @@ public class SignalsMapFragment extends BaseFragment
                 }
                 break;
             case READ_EXTERNAL_STORAGE_FOR_CAMERA:
-                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                if ((grantResults.length > 0) && (grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
                     actionsListener.onStoragePermissionForCameraGranted();
                 } else {
                     // Permission Denied
@@ -904,7 +904,7 @@ public class SignalsMapFragment extends BaseFragment
                 break;
 
             case READ_WRITE_EXTERNAL_STORAGE_FOR_GALLERY:
-                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                if ((grantResults.length > 0) && (grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
                     actionsListener.onStoragePermissionForGalleryGranted();
                 } else {
                     // Permission Denied
