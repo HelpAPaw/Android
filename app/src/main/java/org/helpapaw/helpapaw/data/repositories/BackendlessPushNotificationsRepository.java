@@ -97,7 +97,7 @@ public class BackendlessPushNotificationsRepository implements PushNotifications
                             // every loaded object from the "DeviceRegistration" table
                             // is now an individual java.util.Map
 
-                            if (foundDevices.size() > 0) {
+                            if ((foundDevices != null) && (foundDevices.size() > 0)) {
                                 // Extract 'Map' object from the 'List<Map>'
                                 Map foundDevice = foundDevices.get(0);
                                 try {
