@@ -8,8 +8,8 @@ android {
         applicationId "org.helpapaw.helpapaw"
         minSdkVersion 19
         targetSdkVersion 27
-        versionCode 49
-        versionName "2.0.0 (build 49)"
+        versionCode 50
+        versionName "2.0.1 (build 50)"
         vectorDrawables.useSupportLibrary = true
 
         multiDexEnabled true
