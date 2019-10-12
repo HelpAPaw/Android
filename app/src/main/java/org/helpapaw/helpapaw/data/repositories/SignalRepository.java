@@ -1,5 +1,6 @@
 package org.helpapaw.helpapaw.data.repositories;
 
+import org.helpapaw.helpapaw.data.models.Comment;
 import org.helpapaw.helpapaw.data.models.Signal;
 
 import java.util.List;
@@ -15,7 +16,7 @@ public interface SignalRepository {
 
     void saveSignal(Signal signal, SaveSignalCallback callback);
 
-    void updateSignalStatus(String signalId, int status, UpdateStatusCallback callback);
+    void updateSignalStatus(String signalId, int status, List<Comment> currentComments, UpdateStatusCallback callback);
 
     void markSignalsAsSeen(List<Signal> signals);
 

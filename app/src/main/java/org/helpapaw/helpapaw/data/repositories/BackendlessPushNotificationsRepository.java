@@ -12,6 +12,7 @@ import com.backendless.messaging.PublishOptions;
 import com.backendless.persistence.DataQueryBuilder;
 import com.backendless.push.DeviceRegistrationResult;
 
+import org.helpapaw.helpapaw.R;
 import org.helpapaw.helpapaw.base.PawApplication;
 import org.helpapaw.helpapaw.data.models.Comment;
 import org.helpapaw.helpapaw.data.models.Signal;
@@ -23,6 +24,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import static org.helpapaw.helpapaw.data.models.Signal.HELP_IS_NEEDED;
+import static org.helpapaw.helpapaw.data.models.Signal.SOLVED;
+import static org.helpapaw.helpapaw.data.models.Signal.SOMEBODY_ON_THE_WAY;
 
 public class BackendlessPushNotificationsRepository implements PushNotificationsRepository {
     private static final String TAG = BackendlessPushNotificationsRepository.class.getSimpleName();
@@ -221,6 +226,7 @@ public class BackendlessPushNotificationsRepository implements PushNotifications
 
     /*
      * Sends a notification to all users interested in a signal (author and all commenters)
+     * This method is triggered in two situations (differentiated by the SignalUpdate parameter) - new comment or new status
      */
     @Override
     public void pushSignalUpdatedNotification(final Signal signal, final List<Comment> currentComments, final PushNotificationsRepository.SignalUpdate signalUpdate, final int newStatus, final String newComment) {
@@ -267,22 +273,41 @@ public class BackendlessPushNotificationsRepository implements PushNotifications
                             DeliveryOptions deliveryOptions = new DeliveryOptions();
                             deliveryOptions.setPushSinglecast(deviceIds);
 
+                            String updateType = "";
+                            String updateContent = "";
+                            if (signalUpdate == SignalUpdate.NEW_COMMENT) {
+                                updateType = "New comment";
+                                updateContent = newComment;
+                            }
+                            else if (signalUpdate == SignalUpdate.NEW_STATUS) {
+                                updateType = "New status";
+                                if (newStatus == HELP_IS_NEEDED) {
+                                    updateContent = PawApplication.getContext().getString(R.string.txt_you_help_is_needed);
+                                }
+                                else if (newStatus == SOMEBODY_ON_THE_WAY) {
+                                    updateContent = PawApplication.getContext().getString(R.string.txt_somebody_is_on_the_way);
+                                }
+                                else if (newStatus == SOLVED) {
+                                    updateContent = PawApplication.getContext().getString(R.string.txt_solved);
+                                }
+                            }
+
                             // Creates publish options
                             PublishOptions publishOptions = new PublishOptions();
-                            publishOptions.putHeader("android-ticker-text", "New comment");
+                            publishOptions.putHeader("android-ticker-text", updateType);
                             publishOptions.putHeader("android-content-title", signal.getTitle());
-                            publishOptions.putHeader("android-content-text", newComment);
-                            publishOptions.putHeader("ios-alert", newComment);
-                            publishOptions.putHeader("ios-alert-title", "New comment");
+                            publishOptions.putHeader("android-content-text", updateContent);
+                            publishOptions.putHeader("ios-alert", updateContent);
+                            publishOptions.putHeader("ios-alert-title", updateType);
                             publishOptions.putHeader("ios-alert-subtitle", signal.getTitle());
-                            publishOptions.putHeader("ios-alert-body", newComment);
+                            publishOptions.putHeader("ios-alert-body", updateContent);
                             publishOptions.putHeader("ios-badge", "1");
                             publishOptions.putHeader(Signal.KEY_SIGNAL_ID, signal.getId());
                             //TODO: create new category
                             publishOptions.putHeader("ios-category", "kNotificationCategoryNewSignal");
 
                             // Delivers notification
-                            Backendless.Messaging.publish(getNotificationChannel(), newComment, publishOptions, deliveryOptions, new AsyncCallback<MessageStatus>() {
+                            Backendless.Messaging.publish(getNotificationChannel(), updateContent, publishOptions, deliveryOptions, new AsyncCallback<MessageStatus>() {
                                 @Override
                                 public void handleResponse(MessageStatus response) {
                                     Log.d(TAG, response.getMessageId());

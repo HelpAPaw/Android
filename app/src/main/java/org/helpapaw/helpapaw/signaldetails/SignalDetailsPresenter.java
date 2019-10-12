@@ -130,7 +130,7 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
             userManager.isLoggedIn(new UserManager.LoginCallback() {
                 @Override
                 public void onLoginSuccess() {
-                    signalRepository.updateSignalStatus(signal.getId(), status, new SignalRepository.UpdateStatusCallback() {
+                    signalRepository.updateSignalStatus(signal.getId(), status, commentList, new SignalRepository.UpdateStatusCallback() {
                         @Override
                         public void onStatusUpdated(int status) {
                             if(!isViewAvailable()) return;
