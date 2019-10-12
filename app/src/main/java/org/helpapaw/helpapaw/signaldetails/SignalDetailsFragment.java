@@ -153,7 +153,7 @@ public class SignalDetailsFragment extends BaseFragment implements SignalDetails
                 // Then get the string for that status
                 String statusString = StatusUtils.getStatusStringForCode(newStatus);
                 // Finally form the string to be displayed as comment
-                commentText = String.format(getString(R.string.txt_user_changed_status_to), comment.getOwnerName(), statusString);
+                commentText = String.format(getString(R.string.txt_user_changed_status_to), comment.getAuthorName(), statusString);
 
                 // Set the icon for the new status
                 ImageView imgNewStatusIcon = (ImageView) inflatedCommentView.findViewById((R.id.img_new_status_icon));
@@ -163,7 +163,7 @@ public class SignalDetailsFragment extends BaseFragment implements SignalDetails
                 inflatedCommentView = inflater.inflate(R.layout.view_comment, binding.grpComments, false);
 
                 TextView txtCommentAuthor = (TextView) inflatedCommentView.findViewById(R.id.txt_comment_author);
-                txtCommentAuthor.setText(comment.getOwnerName());
+                txtCommentAuthor.setText(comment.getAuthorName());
 
                 commentText = comment.getText();
             }

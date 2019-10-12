@@ -10,7 +10,9 @@ import com.backendless.exceptions.BackendlessFault;
 import com.backendless.persistence.DataQueryBuilder;
 
 import org.helpapaw.helpapaw.data.models.Comment;
+import org.helpapaw.helpapaw.data.models.Signal;
 import org.helpapaw.helpapaw.data.models.backendless.FINComment;
+import org.helpapaw.helpapaw.utils.Injection;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -28,6 +30,7 @@ import static org.helpapaw.helpapaw.data.models.Comment.COMMENT_TYPE_USER_COMMEN
  */
 public class BackendlessCommentRepository implements CommentRepository {
     private static final String DATE_TIME_FORMAT = "MM/dd/yyyy hh:mm:ss";
+    private static final String ID_FIELD = "objectId";
     private static final String NAME_FIELD = "name";
     private static final String CREATED_FIELD = "created";
 
@@ -46,9 +49,13 @@ public class BackendlessCommentRepository implements CommentRepository {
                     public void handleResponse(List<FINComment> foundComments) {
                         for (int i = 0; i < foundComments.size(); i++) {
                             FINComment currentComment = foundComments.get(i);
+                            String authorId = null;
                             String authorName = null;
-                            if (currentComment.getAuthor() != null) {
-                                authorName = getToStringOrNull(currentComment.getAuthor().getProperty(NAME_FIELD));
+
+                            BackendlessUser author = currentComment.getAuthor();
+                            if (author != null) {
+                                authorId = getToStringOrNull(author.getProperty(ID_FIELD));
+                                authorName = getToStringOrNull(author.getProperty(NAME_FIELD));
                             }
 
                             Date dateCreated = null;
@@ -61,7 +68,7 @@ public class BackendlessCommentRepository implements CommentRepository {
                                 Log.d(BackendlessCommentRepository.class.getName(), "Failed to parse comment date.");
                             }
 
-                            Comment comment = new Comment(currentComment.getObjectId(), authorName, dateCreated, currentComment.getText(), currentComment.getType());
+                            Comment comment = new Comment(currentComment.getObjectId(), authorId, authorName, dateCreated, currentComment.getText(), currentComment.getType());
                             comments.add(comment);
                         }
 
@@ -76,11 +83,11 @@ public class BackendlessCommentRepository implements CommentRepository {
     }
 
     @Override
-    public void saveComment(String commentText, String signalId, final SaveCommentCallback callback) {
+    public void saveComment(String commentText, final Signal signal, final List<Comment> currentComments, final SaveCommentCallback callback) {
         SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_TIME_FORMAT, Locale.getDefault());
         String currentDate = dateFormat.format(new Date());
 
-        FINComment backendlessComment = new FINComment(commentText, currentDate, signalId, COMMENT_TYPE_USER_COMMENT, Backendless.UserService.CurrentUser());
+        FINComment backendlessComment = new FINComment(commentText, currentDate, signal.getId(), COMMENT_TYPE_USER_COMMENT, Backendless.UserService.CurrentUser());
 
         final IDataStore<FINComment> commentsStore = Backendless.Data.of(FINComment.class);
         commentsStore.save(backendlessComment, new AsyncCallback<FINComment>() {
@@ -95,8 +102,10 @@ public class BackendlessCommentRepository implements CommentRepository {
                         public void handleResponse( Integer response )
                         {
                             newComment.setAuthor(Backendless.UserService.CurrentUser());
+                            String authorId = null;
                             String authorName = null;
                             if (newComment.getAuthor() != null) {
+                                authorId = getToStringOrNull(newComment.getAuthor().getProperty(ID_FIELD));
                                 authorName = getToStringOrNull(newComment.getAuthor().getProperty(NAME_FIELD));
                             }
 
@@ -110,7 +119,8 @@ public class BackendlessCommentRepository implements CommentRepository {
                                 Log.d(BackendlessCommentRepository.class.getName(), "Failed to parse comment date.");
                             }
 
-                            Comment comment = new Comment(newComment.getObjectId(), authorName, dateCreated, newComment.getText(), COMMENT_TYPE_USER_COMMENT);
+                            Injection.getPushNotificationsRepositoryInstance().pushSignalUpdatedNotification(signal, currentComments, PushNotificationsRepository.SignalUpdate.NEW_COMMENT, 0, newComment.getText());
+                            Comment comment = new Comment(newComment.getObjectId(), authorId, authorName, dateCreated, newComment.getText(), COMMENT_TYPE_USER_COMMENT);
                             callback.onCommentSaved(comment);
                         }
 
