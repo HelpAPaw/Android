@@ -12,6 +12,7 @@ import com.backendless.geo.Units;
 
 import org.helpapaw.helpapaw.R;
 import org.helpapaw.helpapaw.base.PawApplication;
+import org.helpapaw.helpapaw.data.models.Comment;
 import org.helpapaw.helpapaw.data.models.Signal;
 import org.helpapaw.helpapaw.db.SignalsDatabase;
 import org.helpapaw.helpapaw.utils.Injection;
@@ -195,7 +196,7 @@ public class BackendlessSignalRepository implements SignalRepository {
     }
 
     @Override
-    public void updateSignalStatus(final String signalId, final int status, final UpdateStatusCallback callback) {
+    public void updateSignalStatus(final String signalId, final int status, final List<Comment> currentComments, final UpdateStatusCallback callback) {
         String whereClause = "objectId = '" + signalId + "'";
         BackendlessGeoQuery geoQuery = new BackendlessGeoQuery();
         geoQuery.setWhereClause(whereClause);
@@ -224,7 +225,7 @@ public class BackendlessSignalRepository implements SignalRepository {
                         @Override
                         public void handleResponse(GeoPoint geoPoint) {
                             String newSignalStatusString = getToStringOrNull(geoPoint.getMetadata(SIGNAL_STATUS));
-                            Integer newSignalStatusInt = Integer.parseInt(newSignalStatusString);
+                            int    newSignalStatusInt    = Integer.parseInt(newSignalStatusString);
 
                             // Update signal in database
                             List<Signal> signalsFromDB = signalsDatabase.signalDao().getSignal(signalId);
@@ -232,6 +233,8 @@ public class BackendlessSignalRepository implements SignalRepository {
                                 Signal signal = signalsFromDB.get(0);
                                 signal.setStatus(newSignalStatusInt);
                                 signalsDatabase.signalDao().saveSignal(signal);
+
+                                Injection.getPushNotificationsRepositoryInstance().pushSignalUpdatedNotification(signal, currentComments, PushNotificationsRepository.SignalUpdate.NEW_STATUS, newSignalStatusInt, null);
                             }
 
                             callback.onStatusUpdated(newSignalStatusInt);
