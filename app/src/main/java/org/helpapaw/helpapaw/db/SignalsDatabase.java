@@ -12,7 +12,7 @@ import org.helpapaw.helpapaw.data.models.Signal;
  *
  */
 
-@Database(entities = {Signal.class}, version = 1)
+@Database(entities = {Signal.class}, version = 2)
 public abstract class SignalsDatabase extends RoomDatabase {
     private static SignalsDatabase INSTANCE;
 
@@ -22,7 +22,7 @@ public abstract class SignalsDatabase extends RoomDatabase {
         if (INSTANCE == null) {
             // allowMainThreadQueries should not be used, it is added so the query can be executed in
             // the main thread, now we know that it is quick enough and works for now, but should be refactored!!!
-            INSTANCE = Room.databaseBuilder(context, SignalsDatabase.class, "signals_db").allowMainThreadQueries().build();
+            INSTANCE = Room.databaseBuilder(context, SignalsDatabase.class, "signals_db").allowMainThreadQueries().fallbackToDestructiveMigration().build();
         }
         return INSTANCE;
     }

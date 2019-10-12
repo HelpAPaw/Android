@@ -13,14 +13,16 @@ import com.backendless.persistence.DataQueryBuilder;
 import com.backendless.push.DeviceRegistrationResult;
 
 import org.helpapaw.helpapaw.base.PawApplication;
+import org.helpapaw.helpapaw.data.models.Comment;
 import org.helpapaw.helpapaw.data.models.Signal;
 import org.helpapaw.helpapaw.utils.Injection;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-
+import java.util.Set;
 
 public class BackendlessPushNotificationsRepository implements PushNotificationsRepository {
     private static final String TAG = BackendlessPushNotificationsRepository.class.getSimpleName();
@@ -215,5 +217,89 @@ public class BackendlessPushNotificationsRepository implements PushNotifications
                 Log.d(TAG, fault.getMessage());
             }
         });
+    }
+
+    /*
+     * Sends a notification to all users interested in a signal (author and all commenters)
+     */
+    @Override
+    public void pushSignalUpdatedNotification(final Signal signal, final List<Comment> currentComments, final PushNotificationsRepository.SignalUpdate signalUpdate, final int newStatus, final String newComment) {
+
+        // Use Set to ensure there are no double entries
+        Set<String> interestedUserIds = new HashSet<>();
+        // Add author of the signal
+        interestedUserIds.add(signal.getAuthorId());
+        // Add all people that posted comments
+        for (Comment comment : currentComments) {
+            interestedUserIds.add(comment.getAuthorId());
+        }
+        // Remove current user
+        interestedUserIds.remove(Backendless.UserService.CurrentUser().getObjectId());
+
+        // Create a comma separated list
+        StringBuilder userIdsBuilder = new StringBuilder();
+        for (String string : interestedUserIds)
+        {
+            // Strings in the WHERE clause array need to be in single quotes
+            string = "'" + string + "'";
+            userIdsBuilder = userIdsBuilder.length() > 0 ? userIdsBuilder.append(",").append(string) : userIdsBuilder.append(string);
+        }
+        String userIds = userIdsBuilder.toString();
+
+        // Build query
+        String whereClause = "user.objectid IN (" + userIds + ")";
+        DataQueryBuilder queryBuilder = DataQueryBuilder.create();
+        queryBuilder.setWhereClause(whereClause);
+
+        Backendless.Data.of("DeviceRegistration").find(queryBuilder,
+                new AsyncCallback<List<Map>>() {
+                    @Override
+                    public void handleResponse(List<Map> devices) {
+
+                        List<String> deviceIds = new ArrayList<>();
+                        for (Map device : devices) {
+                            deviceIds.add(device.get("deviceId").toString());
+                        }
+
+                        // Checks to see if there are any devices
+                        if (deviceIds.size() > 0) {
+                            // Creates delivery options
+                            DeliveryOptions deliveryOptions = new DeliveryOptions();
+                            deliveryOptions.setPushSinglecast(deviceIds);
+
+                            // Creates publish options
+                            PublishOptions publishOptions = new PublishOptions();
+                            publishOptions.putHeader("android-ticker-text", "New comment");
+                            publishOptions.putHeader("android-content-title", signal.getTitle());
+                            publishOptions.putHeader("android-content-text", newComment);
+                            publishOptions.putHeader("ios-alert", newComment);
+                            publishOptions.putHeader("ios-alert-title", "New comment");
+                            publishOptions.putHeader("ios-alert-subtitle", signal.getTitle());
+                            publishOptions.putHeader("ios-alert-body", newComment);
+                            publishOptions.putHeader("ios-badge", "1");
+                            publishOptions.putHeader(Signal.KEY_SIGNAL_ID, signal.getId());
+                            //TODO: create new category
+                            publishOptions.putHeader("ios-category", "kNotificationCategoryNewSignal");
+
+                            // Delivers notification
+                            Backendless.Messaging.publish(getNotificationChannel(), newComment, publishOptions, deliveryOptions, new AsyncCallback<MessageStatus>() {
+                                @Override
+                                public void handleResponse(MessageStatus response) {
+                                    Log.d(TAG, response.getMessageId());
+                                }
+
+                                @Override
+                                public void handleFault(BackendlessFault fault) {
+                                    Log.d(TAG, fault.getMessage());
+                                }
+                            });
+                        }
+                    }
+
+                    @Override
+                    public void handleFault(BackendlessFault fault) {
+                        Log.d(TAG, fault.getMessage());
+                    }
+                });
     }
 }

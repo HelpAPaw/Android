@@ -38,6 +38,7 @@ public class BackendlessSignalRepository implements SignalRepository {
     private static final String SIGNAL_AUTHOR = "author";
     private static final String NAME_FIELD = "name";
     private static final String PHONE_FIELD = "phoneNumber";
+    private static final String ID_FIELD = "objectId";
 
     public BackendlessSignalRepository() {
         signalsDatabase = SignalsDatabase.getDatabase(getContext());
@@ -108,18 +109,18 @@ public class BackendlessSignalRepository implements SignalRepository {
                         Log.d(BackendlessSignalRepository.class.getName(), "Failed to parse signal date.");
                     }
 
+                    String signalAuthorId = null;
                     String signalAuthorName  = null;
                     String signalAuthorPhone = null;
 
-                    if ((geoPoint.getMetadata(SIGNAL_AUTHOR)) != null) {
-                        signalAuthorName = getToStringOrNull(((BackendlessUser) geoPoint.getMetadata(SIGNAL_AUTHOR)).getProperty(NAME_FIELD));
+                    BackendlessUser signalAuthor = (BackendlessUser) geoPoint.getMetadata(SIGNAL_AUTHOR);
+                    if (signalAuthor != null) {
+                        signalAuthorId = getToStringOrNull(signalAuthor.getProperty(ID_FIELD));
+                        signalAuthorName = getToStringOrNull(signalAuthor.getProperty(NAME_FIELD));
+                        signalAuthorPhone = getToStringOrNull(signalAuthor.getProperty(PHONE_FIELD));
                     }
 
-                    if ((geoPoint.getMetadata(SIGNAL_AUTHOR)) != null) {
-                        signalAuthorPhone = getToStringOrNull(((BackendlessUser) geoPoint.getMetadata(SIGNAL_AUTHOR)).getProperty(PHONE_FIELD));
-                    }
-
-                    Signal newSignal = new Signal(geoPoint.getObjectId(), signalTitle, dateSubmitted, Integer.parseInt(signalStatus), signalAuthorName, signalAuthorPhone, geoPoint.getLatitude(), geoPoint.getLongitude(), false);
+                    Signal newSignal = new Signal(geoPoint.getObjectId(), signalTitle, dateSubmitted, Integer.parseInt(signalStatus), signalAuthorId, signalAuthorName, signalAuthorPhone, geoPoint.getLatitude(), geoPoint.getLongitude(), false);
 
                     // If signal is already in DB - keep seen status
                     List<Signal> signalsFromDB = signalsDatabase.signalDao().getSignal(geoPoint.getObjectId());
@@ -165,19 +166,19 @@ public class BackendlessSignalRepository implements SignalRepository {
                 Date dateSubmitted = new Date(Long.valueOf(dateSubmittedString));
                 String signalStatus = getToStringOrNull(geoPoint.getMetadata(SIGNAL_STATUS));
 
-                String signalAuthorName = null;
+                String signalAuthorId = null;
+                String signalAuthorName  = null;
                 String signalAuthorPhone = null;
 
-                if ((geoPoint.getMetadata(SIGNAL_AUTHOR)) != null) {
-                    signalAuthorName = getToStringOrNull(((BackendlessUser) geoPoint.getMetadata(SIGNAL_AUTHOR)).getProperty(NAME_FIELD));
-                }
-
-                if ((geoPoint.getMetadata(SIGNAL_AUTHOR)) != null) {
-                    signalAuthorPhone = getToStringOrNull(((BackendlessUser) geoPoint.getMetadata(SIGNAL_AUTHOR)).getProperty(PHONE_FIELD));
+                BackendlessUser signalAuthor = (BackendlessUser) geoPoint.getMetadata(SIGNAL_AUTHOR);
+                if (signalAuthor != null) {
+                    signalAuthorId = getToStringOrNull(signalAuthor.getProperty(ID_FIELD));
+                    signalAuthorName = getToStringOrNull(signalAuthor.getProperty(NAME_FIELD));
+                    signalAuthorPhone = getToStringOrNull(signalAuthor.getProperty(PHONE_FIELD));
                 }
 
                 Signal savedSignal = new Signal(geoPoint.getObjectId(), signalTitle, dateSubmitted, Integer.parseInt(signalStatus),
-                        signalAuthorName, signalAuthorPhone, geoPoint.getLatitude(), geoPoint.getLongitude(), true);
+                        signalAuthorId, signalAuthorName, signalAuthorPhone, geoPoint.getLatitude(), geoPoint.getLongitude(), true);
                 signalsDatabase.signalDao().saveSignal(savedSignal);
                 callback.onSignalSaved(savedSignal);
 

@@ -16,14 +16,16 @@ public class Comment {
     public final static String COMMENT_TYPE_STATUS_CHANGE = "status_change";
 
     private String objectId;
-    private String ownerName;
+    private String authorId;
+    private String authorName;
     private Date   dateCreated;
     private String text;
     private String type;
 
-    public Comment(String objectId, String ownerName, Date dateCreated, String text, String type) {
+    public Comment(String objectId, String authorId, String authorName, Date dateCreated, String text, String type) {
         this.objectId = objectId;
-        this.ownerName = ownerName;
+        this.authorId = authorId;
+        this.authorName = authorName;
         this.dateCreated = dateCreated;
         this.text = text;
         this.type = type;
@@ -49,8 +51,12 @@ public class Comment {
         return dateCreated;
     }
 
-    public String getOwnerName() {
-        return ownerName;
+    public String getAuthorId() {
+        return authorId;
+    }
+
+    public String getAuthorName() {
+        return authorName;
     }
 
     public String getType() { return type; }

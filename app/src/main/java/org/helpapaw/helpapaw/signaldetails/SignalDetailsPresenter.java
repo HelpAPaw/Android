@@ -104,7 +104,7 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
                     public void onLoginSuccess() {
                         if (!isViewAvailable()) return;
                         getView().clearSendCommentView();
-                        saveComment(comment, signal.getId());
+                        saveComment(comment);
                     }
 
                     @Override
@@ -181,8 +181,8 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
         getView().setShadowVisibility(!isBottomReached);
     }
 
-    private void saveComment(String comment, String signalId) {
-        commentRepository.saveComment(comment, signalId, new CommentRepository.SaveCommentCallback() {
+    private void saveComment(String comment) {
+        commentRepository.saveComment(comment, signal, commentList, new CommentRepository.SaveCommentCallback() {
             @Override
             public void onCommentSaved(Comment comment) {
                 if (!isViewAvailable()) return;

@@ -1,6 +1,7 @@
 package org.helpapaw.helpapaw.data.repositories;
 
 import org.helpapaw.helpapaw.data.models.Comment;
+import org.helpapaw.helpapaw.data.models.Signal;
 
 import java.util.List;
 
@@ -11,7 +12,7 @@ public interface CommentRepository {
 
     void getAllCommentsBySignalId(String signalId, LoadCommentsCallback callback);
 
-    void saveComment(String commentText, String signalId, SaveCommentCallback callback);
+    void saveComment(String commentText, Signal signal, List<Comment> currentComments, SaveCommentCallback callback);
 
 
     interface LoadCommentsCallback {

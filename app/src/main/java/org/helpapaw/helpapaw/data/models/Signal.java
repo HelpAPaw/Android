@@ -35,6 +35,8 @@ public class Signal implements Parcelable {
     private String title;
     @Ignore
     private Date dateSubmitted;
+    @ColumnInfo(name = "author_id")
+    private String authorId;
     @ColumnInfo(name = "authorName")
     private String authorName;
     @ColumnInfo(name = "authorPhone")
@@ -54,8 +56,8 @@ public class Signal implements Parcelable {
     }
 
     @Ignore
-    public Signal(String id, String title, Date dateSubmitted, int status, String authorName, String authorPhone, double latitude, double longitude, boolean seen) {
-        this(title, dateSubmitted, status, authorName, authorPhone, latitude, longitude);
+    public Signal(@NonNull String id, String title, Date dateSubmitted, int status, String authorId, String authorName, String authorPhone, double latitude, double longitude, boolean seen) {
+        this(title, dateSubmitted, status, authorId, authorName, authorPhone, latitude, longitude);
         this.id = id;
         this.seen = seen;
     }
@@ -75,8 +77,9 @@ public class Signal implements Parcelable {
     }
 
     @Ignore
-    public Signal(String title, Date dateSubmitted, int status, String authorName, String authorPhone, double latitude, double longitude) {
+    public Signal(String title, Date dateSubmitted, int status, String authorId, String authorName, String authorPhone, double latitude, double longitude) {
         this(title, dateSubmitted, status, latitude, longitude);
+        this.authorId = authorId;
         this.authorName = authorName;
         this.authorPhone = authorPhone;
     }
@@ -86,6 +89,7 @@ public class Signal implements Parcelable {
         id = in.readString();
         title = in.readString();
         dateSubmitted = new Date(in.readLong());
+        authorId = in.readString();
         authorName = in.readString();
         authorPhone = in.readString();
         photoUrl = in.readString();
@@ -117,6 +121,14 @@ public class Signal implements Parcelable {
 
     public void setDateSubmitted(Date dateSubmitted) {
         this.dateSubmitted = dateSubmitted;
+    }
+
+    public String getAuthorId() {
+        return authorId;
+    }
+
+    public void setAuthorId(String authorId) {
+        this.authorId = authorId;
     }
 
     public void setAuthorName(String authorName) {
@@ -155,6 +167,7 @@ public class Signal implements Parcelable {
         return longitude;
     }
 
+    @NonNull
     public String getId() {
         return id;
     }
@@ -193,6 +206,7 @@ public class Signal implements Parcelable {
         dest.writeString(id);
         dest.writeString(title);
         dest.writeLong(dateSubmitted.getTime());
+        dest.writeString(authorId);
         dest.writeString(authorName);
         dest.writeString(authorPhone);
         dest.writeString(photoUrl);
