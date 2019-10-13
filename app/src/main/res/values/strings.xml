@@ -68,6 +68,8 @@
     <string name="txt_you_help_is_needed">Your help is needed!</string>
     <string name="txt_somebody_is_on_the_way">Somebody is on the way</string>
     <string name="txt_new_signal">New signal</string>
+    <string name="txt_new_comment">New comment</string>
+    <string name="txt_new_status">New status</string>
     <string name="error_facebook_not_installed">Facebook not installed</string>
     <string name="text_faqs">FAQs</string>
     <string name="text_about">About</string>
