@@ -292,11 +292,11 @@ public class BackendlessPushNotificationsRepository implements PushNotifications
                             String updateType = "";
                             String updateContent = "";
                             if (signalUpdate == SignalUpdate.NEW_COMMENT) {
-                                updateType = "New comment";
+                                updateType = PawApplication.getContext().getString(R.string.txt_new_comment);
                                 updateContent = newComment;
                             }
                             else if (signalUpdate == SignalUpdate.NEW_STATUS) {
-                                updateType = "New status";
+                                updateType = PawApplication.getContext().getString(R.string.txt_new_status);
                                 if (newStatus == HELP_IS_NEEDED) {
                                     updateContent = PawApplication.getContext().getString(R.string.txt_you_help_is_needed);
                                 }

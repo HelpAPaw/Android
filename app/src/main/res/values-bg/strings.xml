@@ -63,6 +63,8 @@
     <string name="txt_you_help_is_needed">Помощта Ви е необходима!</string>
     <string name="txt_somebody_is_on_the_way">Някой е на път</string>
     <string name="txt_new_signal">Нов сигнал</string>
+    <string name="txt_new_comment">Нов коментар</string>
+    <string name="txt_new_status">Нов статус</string>
     <string name="text_faqs">Често задавани въпроси</string>
     <string name="text_about">Относно</string>
     <string name="text_privacy_policy">Политика за поверителност</string>
