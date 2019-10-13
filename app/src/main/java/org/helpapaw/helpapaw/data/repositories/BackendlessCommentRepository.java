@@ -41,7 +41,8 @@ public class BackendlessCommentRepository implements CommentRepository {
         String whereClause = "signalID = '" + signalId + "'";
         DataQueryBuilder queryBuilder = DataQueryBuilder.create();
         queryBuilder.setWhereClause(whereClause);
-        queryBuilder.setPageSize(30);
+        //TODO: get ALL signals?
+        queryBuilder.setPageSize(100);
         queryBuilder.setSortBy(Collections.singletonList(CREATED_FIELD));
 
         Backendless.Persistence.of(FINComment.class).find(queryBuilder, new AsyncCallback<List<FINComment>>() {
