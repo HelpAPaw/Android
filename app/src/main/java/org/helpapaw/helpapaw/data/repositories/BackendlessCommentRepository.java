@@ -120,7 +120,7 @@ public class BackendlessCommentRepository implements CommentRepository {
                                 Log.d(BackendlessCommentRepository.class.getName(), "Failed to parse comment date.");
                             }
 
-                            Injection.getPushNotificationsRepositoryInstance().pushSignalUpdatedNotification(signal, currentComments, PushNotificationsRepository.SignalUpdate.NEW_COMMENT, 0, newComment.getText());
+                            Injection.getPushNotificationsRepositoryInstance().pushNewCommentNotification(signal, newComment.getText(), currentComments);
                             Comment comment = new Comment(newComment.getObjectId(), authorId, authorName, dateCreated, newComment.getText(), COMMENT_TYPE_USER_COMMENT);
                             callback.onCommentSaved(comment);
                         }

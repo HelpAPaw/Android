@@ -233,7 +233,7 @@ public class BackendlessSignalRepository implements SignalRepository {
                                 signal.setStatus(newSignalStatusInt);
                                 signalsDatabase.signalDao().saveSignal(signal);
 
-                                Injection.getPushNotificationsRepositoryInstance().pushSignalUpdatedNotification(signal, currentComments, PushNotificationsRepository.SignalUpdate.NEW_STATUS, newSignalStatusInt, null);
+                                Injection.getPushNotificationsRepositoryInstance().pushNewStatusNotification(signal, newSignalStatusInt, currentComments);
                             }
 
                             callback.onStatusUpdated(newSignalStatusInt);

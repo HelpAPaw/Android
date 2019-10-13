@@ -30,6 +30,10 @@ import static org.helpapaw.helpapaw.data.models.Signal.SOLVED;
 import static org.helpapaw.helpapaw.data.models.Signal.SOMEBODY_ON_THE_WAY;
 
 public class BackendlessPushNotificationsRepository implements PushNotificationsRepository {
+    enum SignalUpdate {
+        NEW_STATUS, NEW_COMMENT
+    }
+
     private static final String TAG = BackendlessPushNotificationsRepository.class.getSimpleName();
     private static final String productionChannel = "default";
     private static final String debugChannel = "debug";
@@ -227,12 +231,21 @@ public class BackendlessPushNotificationsRepository implements PushNotifications
         });
     }
 
+    @Override
+    public void pushNewCommentNotification(Signal signal, String newComment, List<Comment> currentComments) {
+        pushSignalUpdatedNotification(signal, currentComments, SignalUpdate.NEW_COMMENT, 0, newComment);
+    }
+
+    @Override
+    public void pushNewStatusNotification(final Signal signal, final int newStatus, final List<Comment> currentComments) {
+        pushSignalUpdatedNotification(signal, currentComments, SignalUpdate.NEW_STATUS, newStatus, null);
+    }
+
     /*
      * Sends a notification to all users interested in a signal (author and all commenters)
      * This method is triggered in two situations (differentiated by the SignalUpdate parameter) - new comment or new status
      */
-    @Override
-    public void pushSignalUpdatedNotification(final Signal signal, final List<Comment> currentComments, final PushNotificationsRepository.SignalUpdate signalUpdate, final int newStatus, final String newComment) {
+    private void pushSignalUpdatedNotification(final Signal signal, final List<Comment> currentComments, final SignalUpdate signalUpdate, final int newStatus, final String newComment) {
 
         // Use Set to ensure there are no double entries
         Set<String> interestedUserIds = new HashSet<>();
