@@ -16,6 +16,6 @@ public interface PushNotificationsRepository {
     void registerDeviceToken();
     void unregisterDeviceToken();
     void updateDeviceInfoInCloud(final Location location, final Integer radius, final Integer timeout);
-    void pushNewSignalNotification(final String tickerText, final String message, final String signalId, final double latitude, final double longitude);
+    void pushNewSignalNotification(final Signal signal, final double latitude, final double longitude);
     public void pushSignalUpdatedNotification(final Signal signal, final List<Comment> currentComments, final PushNotificationsRepository.SignalUpdate signalUpdate, final int newStatus, final String newComment);
 }

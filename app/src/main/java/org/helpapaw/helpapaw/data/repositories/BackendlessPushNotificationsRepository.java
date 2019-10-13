@@ -157,7 +157,7 @@ public class BackendlessPushNotificationsRepository implements PushNotifications
      * Sends a notification to all devices within a certain distance
      */
     @Override
-    public void pushNewSignalNotification(final String tickerText, final String message, final String signalId, final double latitude, final double longitude) {
+    public void pushNewSignalNotification(final Signal signal, final double latitude, final double longitude) {
 
         // Get local device-token, latitude & longitude (from settings)
         final String localToken = Injection.getSettingsRepositoryInstance().getTokenFromPreferences();
@@ -187,22 +187,25 @@ public class BackendlessPushNotificationsRepository implements PushNotifications
                 // Checks to see if there are any devices
                 if (notifiedDevices.size() > 0) {
 
+                    String newSignalString = PawApplication.getContext().getString(R.string.txt_new_signal);
+
                     // Creates delivery options
                     DeliveryOptions deliveryOptions = new DeliveryOptions();
                     deliveryOptions.setPushSinglecast(notifiedDevices);
 
                     // Creates publish options
                     PublishOptions publishOptions = new PublishOptions();
-                    publishOptions.putHeader("android-ticker-text", tickerText);
-                    publishOptions.putHeader("android-content-text", message);
-                    publishOptions.putHeader("ios-alert", message);
+                    publishOptions.putHeader("android-ticker-text", newSignalString);
+                    publishOptions.putHeader("android-content-title", signal.getTitle());
+                    publishOptions.putHeader("ios-alert-title", signal.getTitle());
                     publishOptions.putHeader("ios-badge", "1");
-                    publishOptions.putHeader(Signal.KEY_SIGNAL_ID, signalId);
+                    publishOptions.putHeader("ios-sound", "default");
+                    publishOptions.putHeader(Signal.KEY_SIGNAL_ID, signal.getId());
                     publishOptions.putHeader("ios-category", "kNotificationCategoryNewSignal");
 
 
                     // Delivers notification
-                    Backendless.Messaging.publish(getNotificationChannel(), message, publishOptions, deliveryOptions, new AsyncCallback<MessageStatus>() {
+                    Backendless.Messaging.publish(getNotificationChannel(), newSignalString, publishOptions, deliveryOptions, new AsyncCallback<MessageStatus>() {
                         @Override
                         public void handleResponse(MessageStatus response) {
                             Log.d(TAG, response.getMessageId());
@@ -302,6 +305,7 @@ public class BackendlessPushNotificationsRepository implements PushNotifications
                             publishOptions.putHeader("ios-alert-subtitle", signal.getTitle());
                             publishOptions.putHeader("ios-alert-body", updateContent);
                             publishOptions.putHeader("ios-badge", "1");
+                            publishOptions.putHeader("ios-sound", "default");
                             publishOptions.putHeader(Signal.KEY_SIGNAL_ID, signal.getId());
                             //TODO: create new category
                             publishOptions.putHeader("ios-category", "kNotificationCategoryNewSignal");
