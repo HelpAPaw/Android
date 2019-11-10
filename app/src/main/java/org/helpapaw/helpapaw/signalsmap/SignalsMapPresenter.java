@@ -139,7 +139,7 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
     }
 
     @Override
-    public void onSendSignalClicked(final String description) {
+    public void onSendSignalClicked(final String description, final String authorPhone) {
         getView().hideKeyboard();
         getView().setSignalViewProgressVisibility(true);
 
@@ -152,7 +152,7 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
                     getView().showDescriptionErrorMessage();
                     getView().setSignalViewProgressVisibility(false);
                 } else {
-                    saveSignal(description, new Date(), 0, currentMapLatitude, currentMapLongitude);
+                    saveSignal(description, authorPhone, new Date(), 0, currentMapLatitude, currentMapLongitude);
                 }
             }
 
@@ -165,8 +165,8 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
         });
     }
 
-    private void saveSignal(String description, Date dateSubmitted, int status, final double latitude, final double longitude) {
-        signalRepository.saveSignal(new Signal(description, dateSubmitted, status, latitude, longitude), new SignalRepository.SaveSignalCallback() {
+    private void saveSignal(String description, String authorPhone, Date dateSubmitted, int status, final double latitude, final double longitude) {
+        signalRepository.saveSignal(new Signal(description, authorPhone, dateSubmitted, status, latitude, longitude), new SignalRepository.SaveSignalCallback() {
             @Override
             public void onSignalSaved(Signal signal) {
                 if (!isViewAvailable()) return;

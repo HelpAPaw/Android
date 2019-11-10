@@ -21,6 +21,8 @@ public interface UserManager {
 
     void getUserName(final GetUserPropertyCallback getUserPropertyCallback);
 
+    void getUserPhone(final GetUserPropertyCallback getUserPropertyCallback);
+
     void getHasAcceptedPrivacyPolicy(GetUserPropertyCallback getUserPropertyCallback);
     void setHasAcceptedPrivacyPolicy(boolean value, SetUserPropertyCallback setUserPropertyCallback);
 

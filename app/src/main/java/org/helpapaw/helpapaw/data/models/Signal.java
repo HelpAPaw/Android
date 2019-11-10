@@ -63,8 +63,9 @@ public class Signal implements Parcelable {
     }
 
     @Ignore
-    public Signal(String title, Date dateSubmitted, int status, double latitude, double longitude) {
+    public Signal(String title, String authorPhone, Date dateSubmitted, int status, double latitude, double longitude) {
         this.title = title;
+        this.authorPhone = authorPhone;
         this.status = status;
         this.latitude = latitude;
         this.longitude = longitude;
@@ -78,10 +79,9 @@ public class Signal implements Parcelable {
 
     @Ignore
     public Signal(String title, Date dateSubmitted, int status, String authorId, String authorName, String authorPhone, double latitude, double longitude) {
-        this(title, dateSubmitted, status, latitude, longitude);
+        this(title, authorPhone, dateSubmitted, status, latitude, longitude);
         this.authorId = authorId;
         this.authorName = authorName;
-        this.authorPhone = authorPhone;
     }
 
     @Ignore

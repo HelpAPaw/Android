@@ -19,6 +19,7 @@ public class SendSignalView extends CardView {
 
     ImageView imgSignalPhoto;
     EditText editSignalDescription;
+    EditText editAuthorPhone;
     TextView txtSignalSend;
     ProgressBar progressSendSignal;
 
@@ -38,8 +39,7 @@ public class SendSignalView extends CardView {
     }
 
     private void initViews(Context context) {
-        LayoutInflater inflater = (LayoutInflater) context
-                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         inflater.inflate(R.layout.view_send_signal, this);
     }
 
@@ -47,10 +47,11 @@ public class SendSignalView extends CardView {
     protected void onFinishInflate() {
         super.onFinishInflate();
 
-        imgSignalPhoto = (ImageView) this.findViewById(R.id.img_signal_photo);
-        editSignalDescription = (EditText) this.findViewById(R.id.edit_signal_description);
-        txtSignalSend = (TextView) this.findViewById(R.id.txt_signal_send);
-        progressSendSignal = (ProgressBar) this.findViewById(R.id.progress_send_signal);
+        imgSignalPhoto = this.findViewById(R.id.img_signal_photo);
+        editSignalDescription = this.findViewById(R.id.edit_signal_description);
+        editAuthorPhone = this.findViewById(R.id.edit_author_phone);
+        txtSignalSend = this.findViewById(R.id.txt_signal_send);
+        progressSendSignal = this.findViewById(R.id.progress_send_signal);
     }
 
     public void setOnSignalSendClickListener(OnClickListener clickListener) {
@@ -70,10 +71,19 @@ public class SendSignalView extends CardView {
         return editSignalDescription.getText().toString().trim();
     }
 
+    public String getAuthorPhone() {
+        return editAuthorPhone.getText().toString().trim();
+    }
+
+    public void setAuthorPhone(String authorPhone) {
+        editAuthorPhone.setText(authorPhone);
+    }
+
     public void clearData() {
         imgSignalPhoto.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
         imgSignalPhoto.setImageResource(R.drawable.ic_camera);
         editSignalDescription.setText(null);
+        editAuthorPhone.setText(null);
         setProgressVisibility(false);
     }
 
