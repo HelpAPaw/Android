@@ -29,6 +29,7 @@
     <string name="txt_i_see">Ясно</string>
     <string name="txt_location_permission_not_granted">Разрешението за ползване местоположението не е предоставено!</string>
     <string name="txt_signal_description">Описание на сигнала</string>
+    <string name="txt_signal_phone">Вашият телефон</string>
     <string name="txt_send">Изпрати</string>
     <string name="txt_take_photo">Направи снимка</string>
     <string name="txt_choose_existing">Избери съществуваща</string>

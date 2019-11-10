@@ -9,33 +9,54 @@
         android:id="@+id/img_signal_photo"
         android:layout_width="@dimen/thumbnail_size"
         android:layout_height="@dimen/thumbnail_size"
-        android:layout_marginRight="5dp"
+        android:layout_marginEnd="5dp"
         android:padding="2dp"
+        android:layout_gravity="center"
         android:src="@drawable/ic_camera" />
 
-    <EditText
-        android:id="@+id/edit_signal_description"
+    <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:minHeight="@dimen/thumbnail_size"
         android:layout_weight="1"
-        android:background="@drawable/rounded_border"
-        android:hint="@string/txt_signal_description"
-        android:inputType="textAutoComplete|textAutoCorrect|textCapSentences|textMultiLine"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        android:textColorHint="@color/gray" />
+        android:orientation="vertical">
+        <EditText
+            android:id="@+id/edit_signal_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="@dimen/thumbnail_size"
+            android:background="@drawable/rounded_border"
+            android:hint="@string/txt_signal_description"
+            android:inputType="textAutoComplete|textAutoCorrect|textCapSentences|textMultiLine"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:layout_marginBottom="5dp"
+            android:textColorHint="@color/gray"
+            android:importantForAutofill="no" />
+        <EditText
+            android:id="@+id/edit_author_phone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="@dimen/thumbnail_size"
+            android:background="@drawable/rounded_border"
+            android:hint="@string/txt_signal_phone"
+            android:inputType="phone"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:textColorHint="@color/gray"
+            android:autofillHints="phoneNational" />
+    </LinearLayout>
 
     <FrameLayout
         android:layout_width="wrap_content"
-        android:layout_height="40dp">
+        android:layout_height="40dp"
+        android:layout_gravity="center">
 
         <TextView
             android:id="@+id/txt_signal_send"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="4dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="4dp"
             android:gravity="center_vertical"
             android:text="@string/txt_send"
             android:textColor="@color/color_primary"

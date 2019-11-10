@@ -37,6 +37,7 @@ public class BackendlessSignalRepository implements SignalRepository {
     private static final String SIGNAL_DATE_SUBMITTED = "dateSubmitted";
     private static final String SIGNAL_STATUS = "status";
     private static final String SIGNAL_AUTHOR = "author";
+    private static final String SIGNAL_AUTHOR_PHONE = "authorPhone";
     private static final String NAME_FIELD = "name";
     private static final String PHONE_FIELD = "phoneNumber";
     private static final String ID_FIELD = "objectId";
@@ -151,6 +152,7 @@ public class BackendlessSignalRepository implements SignalRepository {
         meta.put(SIGNAL_DATE_SUBMITTED, signal.getDateSubmitted().getTime());
         meta.put(SIGNAL_STATUS, signal.getStatus());
         meta.put(SIGNAL_AUTHOR, Backendless.UserService.CurrentUser());
+        meta.put(SIGNAL_AUTHOR_PHONE, signal.getAuthorPhone());
 
         List<String> categories = new ArrayList<>();
         String category = getCategory();
@@ -166,16 +168,19 @@ public class BackendlessSignalRepository implements SignalRepository {
                 String dateSubmittedString = getToStringOrNull(geoPoint.getMetadata(SIGNAL_DATE_SUBMITTED));
                 Date dateSubmitted = new Date(Long.valueOf(dateSubmittedString));
                 String signalStatus = getToStringOrNull(geoPoint.getMetadata(SIGNAL_STATUS));
+                String signalAuthorPhone = getToStringOrNull(geoPoint.getMetadata(SIGNAL_AUTHOR_PHONE));;
 
                 String signalAuthorId = null;
                 String signalAuthorName  = null;
-                String signalAuthorPhone = null;
 
                 BackendlessUser signalAuthor = (BackendlessUser) geoPoint.getMetadata(SIGNAL_AUTHOR);
                 if (signalAuthor != null) {
                     signalAuthorId = getToStringOrNull(signalAuthor.getProperty(ID_FIELD));
                     signalAuthorName = getToStringOrNull(signalAuthor.getProperty(NAME_FIELD));
-                    signalAuthorPhone = getToStringOrNull(signalAuthor.getProperty(PHONE_FIELD));
+                    // If author phone is not found in signal metadata - try ot obtain from author profile
+                    if (signalAuthorPhone == null) {
+                        signalAuthorPhone = getToStringOrNull(signalAuthor.getProperty(PHONE_FIELD));
+                    }
                 }
 
                 Signal savedSignal = new Signal(geoPoint.getObjectId(), signalTitle, dateSubmitted, Integer.parseInt(signalStatus),

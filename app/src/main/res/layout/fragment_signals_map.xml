@@ -24,7 +24,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
-                android:layout_marginTop="-50dp"
+                android:layout_marginTop="-105dp"
                 android:visibility="invisible"
                 app:cardCornerRadius="8dp"
                 app:cardElevation="4dp" />

@@ -199,8 +199,33 @@ public class BackendlessUserManager implements UserManager {
             Backendless.UserService.findById(currentUserId, new AsyncCallback<BackendlessUser>() {
                 @Override
                 public void handleResponse(BackendlessUser currentUser) {
-                    Object result = false;
+                    Object result = "";
                     Object value = currentUser.getProperty(USER_NAME_FIELD);
+                    if (value != null) {
+                        result = value;
+                    }
+                    getUserPropertyCallback.onSuccess(result);
+                }
+
+                @Override
+                public void handleFault(BackendlessFault fault) {
+                    getUserPropertyCallback.onFailure(fault.getMessage());
+                }
+            });
+        } else {
+            getUserPropertyCallback.onFailure("User not logged in!");
+        }
+    }
+
+    @Override
+    public void getUserPhone(final GetUserPropertyCallback getUserPropertyCallback) {
+        String currentUserId = Backendless.UserService.loggedInUser();
+        if (!currentUserId.equals("")) {
+            Backendless.UserService.findById(currentUserId, new AsyncCallback<BackendlessUser>() {
+                @Override
+                public void handleResponse(BackendlessUser currentUser) {
+                    Object result = "";
+                    Object value = currentUser.getProperty(USER_PHONE_NUMBER_FIELD);
                     if (value != null) {
                         result = value;
                     }

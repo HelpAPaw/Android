@@ -617,6 +617,18 @@ public class SignalsMapFragment extends BaseFragment
     private void showAddSignalView() {
         binding.viewSendSignal.setVisibility(View.VISIBLE);
         binding.viewSendSignal.setAlpha(0.0f);
+        // Prefill author phone field with current user's phone (if available)
+        userManager.getUserPhone(new UserManager.GetUserPropertyCallback() {
+            @Override
+            public void onSuccess(Object value) {
+                binding.viewSendSignal.setAuthorPhone((String)value);
+            }
+
+            @Override
+            public void onFailure(String message) {
+                // Do nothing
+            }
+        });
 
         binding.viewSendSignal
                 .animate()
@@ -934,8 +946,9 @@ public class SignalsMapFragment extends BaseFragment
             @Override
             public void onClick(View v) {
                 String description = binding.viewSendSignal.getSignalDescription();
+                String authorPhone = binding.viewSendSignal.getAuthorPhone();
 
-                actionsListener.onSendSignalClicked(description);
+                actionsListener.onSendSignalClicked(description, authorPhone);
             }
         };
     }
