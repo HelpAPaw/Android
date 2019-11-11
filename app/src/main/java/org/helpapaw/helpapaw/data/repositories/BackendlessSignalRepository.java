@@ -1,5 +1,6 @@
 package org.helpapaw.helpapaw.data.repositories;
 
+import android.annotation.SuppressLint;
 import android.util.Log;
 
 import com.backendless.Backendless;
@@ -53,6 +54,7 @@ public class BackendlessSignalRepository implements SignalRepository {
         SignalsDatabase.destroyInstance();
     }
 
+    @SuppressLint("DefaultLocale")
     @Override
     public void getAllSignals(double latitude, double longitude, double radius, int timeout, final LoadSignalsCallback callback) {
         BackendlessGeoQuery query = new BackendlessGeoQuery(latitude, longitude, radius * 1000, Units.METERS);
@@ -102,6 +104,7 @@ public class BackendlessSignalRepository implements SignalRepository {
                     String signalTitle         = getToStringOrNull(geoPoint.getMetadata(SIGNAL_TITLE));
                     String dateSubmittedString = getToStringOrNull(geoPoint.getMetadata(SIGNAL_DATE_SUBMITTED));
                     String signalStatus        = getToStringOrNull(geoPoint.getMetadata(SIGNAL_STATUS));
+                    String signalAuthorPhone   = getToStringOrNull(geoPoint.getMetadata(SIGNAL_AUTHOR_PHONE));
 
                     Date dateSubmitted = null;
                     try {
@@ -113,13 +116,11 @@ public class BackendlessSignalRepository implements SignalRepository {
 
                     String signalAuthorId = null;
                     String signalAuthorName  = null;
-                    String signalAuthorPhone = null;
 
                     BackendlessUser signalAuthor = (BackendlessUser) geoPoint.getMetadata(SIGNAL_AUTHOR);
                     if (signalAuthor != null) {
                         signalAuthorId = getToStringOrNull(signalAuthor.getProperty(ID_FIELD));
                         signalAuthorName = getToStringOrNull(signalAuthor.getProperty(NAME_FIELD));
-                        signalAuthorPhone = getToStringOrNull(signalAuthor.getProperty(PHONE_FIELD));
                     }
 
                     Signal newSignal = new Signal(geoPoint.getObjectId(), signalTitle, dateSubmitted, Integer.parseInt(signalStatus), signalAuthorId, signalAuthorName, signalAuthorPhone, geoPoint.getLatitude(), geoPoint.getLongitude(), false);
