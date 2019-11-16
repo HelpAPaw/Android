@@ -38,6 +38,7 @@ public class BackendlessPushNotificationsRepository implements PushNotifications
     private static final String productionChannel = "default";
     private static final String debugChannel = "debug";
     private static Location lastKnownDeviceLocation;
+    private static final int pageSize = 100;
 
     private String getNotificationChannel() {
         if (PawApplication.getIsTestEnvironment()) {
@@ -167,10 +168,16 @@ public class BackendlessPushNotificationsRepository implements PushNotifications
         final String localToken = Injection.getSettingsRepositoryInstance().getTokenFromPreferences();
 
         // Build query
-        String whereClause = "distance( "+ latitude +", "+ longitude +", " +
-                "lastLatitude, lastLongitude ) < signalRadius * 1000";
+        String whereClause = "distance( "+ latitude +", "+ longitude +", " + "lastLatitude, lastLongitude ) < signalRadius * 1000";
         DataQueryBuilder queryBuilder = DataQueryBuilder.create();
         queryBuilder.setWhereClause(whereClause);
+        queryBuilder.setPageSize(pageSize);
+
+        pushNewSignalNotifications(signal, localToken, queryBuilder, 0);
+    }
+
+    private void pushNewSignalNotifications(final Signal signal, final String localToken, final DataQueryBuilder queryBuilder, final int offset) {
+        queryBuilder.setOffset(offset);
 
         Backendless.Data.of("DeviceRegistration").find(queryBuilder,
                 new AsyncCallback<List<Map>>() {
@@ -220,7 +227,10 @@ public class BackendlessPushNotificationsRepository implements PushNotifications
                             Log.d(TAG, fault.getMessage());
                         }
                     });
+                }
 
+                if (devices.size() == pageSize) {
+                    pushNewSignalNotifications(signal, localToken, queryBuilder, offset + pageSize);
                 }
             }
 
