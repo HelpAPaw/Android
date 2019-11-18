@@ -159,7 +159,7 @@ public class BackendlessPushNotificationsRepository implements PushNotifications
     }
 
     /*
-     * Sends a notification to all devices within a certain distance
+     * Public method that sends a notification to all devices within a certain distance
      */
     @Override
     public void pushNewSignalNotification(final Signal signal, final double latitude, final double longitude) {
@@ -176,6 +176,9 @@ public class BackendlessPushNotificationsRepository implements PushNotifications
         pushNewSignalNotifications(signal, localToken, queryBuilder, 0);
     }
 
+    /*
+     * Private method that recursively sends a notification to all interested devices
+     */
     private void pushNewSignalNotifications(final Signal signal, final String localToken, final DataQueryBuilder queryBuilder, final int offset) {
         queryBuilder.setOffset(offset);
 
@@ -252,7 +255,7 @@ public class BackendlessPushNotificationsRepository implements PushNotifications
     }
 
     /*
-     * Sends a notification to all users interested in a signal (author and all commenters)
+     * Public method that sends a notification to all users interested in a signal (author and all commenters)
      * This method is triggered in two situations (differentiated by the SignalUpdate parameter) - new comment or new status
      */
     private void pushSignalUpdatedNotification(final Signal signal, final List<Comment> currentComments, final SignalUpdate signalUpdate, final int newStatus, final String newComment) {
@@ -282,6 +285,15 @@ public class BackendlessPushNotificationsRepository implements PushNotifications
         String whereClause = "user.objectid IN (" + userIds + ")";
         DataQueryBuilder queryBuilder = DataQueryBuilder.create();
         queryBuilder.setWhereClause(whereClause);
+
+        pushSignalUpdatedNotifications(signal, signalUpdate, newStatus, newComment, queryBuilder, 0);
+    }
+
+    /*
+     * Private method that recursively sends a notification to all pages of devices interested in a signal update
+     */
+    private void pushSignalUpdatedNotifications(final Signal signal, final SignalUpdate signalUpdate, final int newStatus, final String newComment, final DataQueryBuilder queryBuilder, final int offset) {
+        queryBuilder.setOffset(offset);
 
         Backendless.Data.of("DeviceRegistration").find(queryBuilder,
                 new AsyncCallback<List<Map>>() {
@@ -345,6 +357,10 @@ public class BackendlessPushNotificationsRepository implements PushNotifications
                                     Log.d(TAG, fault.getMessage());
                                 }
                             });
+                        }
+
+                        if (devices.size() == pageSize) {
+                            pushSignalUpdatedNotifications(signal, signalUpdate, newStatus, newComment, queryBuilder, offset + pageSize);
                         }
                     }
 
