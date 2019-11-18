@@ -33,21 +33,28 @@ public class BackendlessCommentRepository implements CommentRepository {
     private static final String ID_FIELD = "objectId";
     private static final String NAME_FIELD = "name";
     private static final String CREATED_FIELD = "created";
+    private static final int pageSize = 100;
 
     @Override
     public void getAllCommentsBySignalId(String signalId, final LoadCommentsCallback callback) {
-        final List<Comment> comments = new ArrayList<>();
 
         String whereClause = "signalID = '" + signalId + "'";
         DataQueryBuilder queryBuilder = DataQueryBuilder.create();
         queryBuilder.setWhereClause(whereClause);
-        //TODO: get ALL signals?
-        queryBuilder.setPageSize(100);
+        queryBuilder.setPageSize(pageSize);
         queryBuilder.setSortBy(Collections.singletonList(CREATED_FIELD));
+
+        getAllComments(callback, queryBuilder, 0);
+    }
+
+    private void getAllComments(final LoadCommentsCallback callback, final DataQueryBuilder queryBuilder, final int offset) {
+        queryBuilder.setOffset(offset);
 
         Backendless.Persistence.of(FINComment.class).find(queryBuilder, new AsyncCallback<List<FINComment>>() {
                     @Override
                     public void handleResponse(List<FINComment> foundComments) {
+                        final List<Comment> comments = new ArrayList<>();
+
                         for (int i = 0; i < foundComments.size(); i++) {
                             FINComment currentComment = foundComments.get(i);
                             String authorId = null;
@@ -73,7 +80,23 @@ public class BackendlessCommentRepository implements CommentRepository {
                             comments.add(comment);
                         }
 
-                        callback.onCommentsLoaded(comments);
+                        if (foundComments.size() == pageSize) {
+                            getAllComments(new LoadCommentsCallback() {
+                                @Override
+                                public void onCommentsLoaded(List<Comment> comments2) {
+                                    comments.addAll(comments2);
+                                    callback.onCommentsLoaded(comments);
+                                }
+
+                                @Override
+                                public void onCommentsFailure(String message) {
+                                    callback.onCommentsFailure(message);
+                                }
+                            }, queryBuilder, offset + pageSize);
+                        }
+                        else {
+                            callback.onCommentsLoaded(comments);
+                        }
                     }
 
                     @Override
