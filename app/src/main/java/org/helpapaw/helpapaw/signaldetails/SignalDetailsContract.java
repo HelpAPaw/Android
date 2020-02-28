@@ -26,6 +26,8 @@ public interface SignalDetailsContract {
 
         void clearSendCommentView();
 
+        void showRegistrationRequiredAlert(int messageId);
+
         void openLoginScreen();
 
         void setNoCommentsTextVisibility(boolean visibility);
@@ -54,6 +56,8 @@ public interface SignalDetailsContract {
         void onInitDetailsScreen(Signal signal);
 
         void loadCommentsForSignal(String signalId);
+
+        void onTryToAddComment();
 
         void onAddCommentButtonClicked(String comment);
 

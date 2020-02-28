@@ -50,6 +50,7 @@
     <string name="txt_logout_succeeded">You successfully logged out.</string>
     <string name="txt_logout_failed_because">Logout failed because: \'%1$s\'.</string>
     <string name="txt_logout_failed">Logout failed</string>
+    <string name="txt_only_registered_users_can_submit_signals">Only registered users can submit signals</string>
 
     <!-- Strings related to Signal Details screen -->
     <string name="txt_signal_details_title">Signal Details</string>
@@ -126,6 +127,10 @@
     <string name="content_description_app_logo">App logo</string>
     <string name="txt_error_getting_privacy_policy">Could not get Privacy Policy!</string>
     <string name="txt_login_successful">Login successful!</string>
+    <string name="txt_registration_required">Registration required</string>
+    <string name="txt_only_registered_users_can_comment">Only registered users can write comments</string>
+    <string name="txt_only_registered_users_can_change_status">Only registered users can change signal status</string>
+
     <!-- Other strings -->
     <string name="shared_preferences_for_app" translatable="false">defaultSharedPreferences</string>
 </resources>
