@@ -1,5 +1,6 @@
 package org.helpapaw.helpapaw.signaldetails;
 
+import org.helpapaw.helpapaw.R;
 import org.helpapaw.helpapaw.base.Presenter;
 import org.helpapaw.helpapaw.data.models.Comment;
 import org.helpapaw.helpapaw.data.models.Signal;
@@ -92,29 +93,32 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
     }
 
     @Override
+    public void onTryToAddComment() {
+        if (Utils.getInstance().hasNetworkConnection()) {
+            userManager.isLoggedIn(new UserManager.LoginCallback() {
+                @Override
+                public void onLoginSuccess() {}
+
+                @Override
+                public void onLoginFailure(String message) {
+                    if (!isViewAvailable()) return;
+                    getView().showRegistrationRequiredAlert(R.string.txt_only_registered_users_can_comment);
+                }
+            });
+        } else {
+            getView().showNoInternetMessage();
+        }
+    }
+
+    @Override
     public void onAddCommentButtonClicked(final String comment) {
         if (Utils.getInstance().hasNetworkConnection()) {
             if (comment != null && comment.trim().length() > 0) {
                 getView().hideKeyboard();
                 setProgressIndicator(true);
                 getView().scrollToBottom();
-
-                userManager.isLoggedIn(new UserManager.LoginCallback() {
-                    @Override
-                    public void onLoginSuccess() {
-                        if (!isViewAvailable()) return;
-                        getView().clearSendCommentView();
-                        saveComment(comment);
-                    }
-
-                    @Override
-                    public void onLoginFailure(String message) {
-                        if (!isViewAvailable()) return;
-                        setProgressIndicator(false);
-                        getView().openLoginScreen();
-                    }
-                });
-
+                getView().clearSendCommentView();
+                saveComment(comment);
             } else {
                 getView().showCommentErrorMessage();
             }
@@ -152,7 +156,7 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
                 public void onLoginFailure(String message) {
                     if (!isViewAvailable()) return;
                     getView().onStatusChangeRequestFinished(false, 0);
-                    getView().openLoginScreen();
+                    getView().showRegistrationRequiredAlert(R.string.txt_only_registered_users_can_change_status);
                 }
             });
         } else {
