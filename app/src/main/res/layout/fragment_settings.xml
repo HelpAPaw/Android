@@ -2,19 +2,19 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <android.support.constraint.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/light_gray">
 
-        <android.support.design.widget.AppBarLayout
+        <com.google.android.material.appbar.AppBarLayout
             android:id="@+id/app_bar"
             android:layout_width="match_parent"
             android:layout_height="?actionBarSize"
             android:fitsSystemWindows="true"
             android:theme="@style/AppTheme.AppBarOverlay">
 
-            <android.support.v7.widget.Toolbar
+            <androidx.appcompat.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
@@ -27,8 +27,8 @@
                     android:layout_gravity="center"
                     android:textColor="@android:color/white"
                     android:textSize="20sp" />
-            </android.support.v7.widget.Toolbar>
-        </android.support.design.widget.AppBarLayout>
+            </androidx.appcompat.widget.Toolbar>
+        </com.google.android.material.appbar.AppBarLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -74,7 +74,7 @@
                         android:textSize="18sp" />
                 </RelativeLayout>
 
-                <android.support.v7.widget.AppCompatSeekBar
+                <androidx.appcompat.widget.AppCompatSeekBar
                     android:id="@+id/radius_value"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -132,7 +132,7 @@
                         android:textSize="18sp" />
                 </RelativeLayout>
 
-                <android.support.v7.widget.AppCompatSeekBar
+                <androidx.appcompat.widget.AppCompatSeekBar
                     android:id="@+id/timeout_value"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -152,5 +152,5 @@
                 android:paddingRight="24dp"
                 android:text="@string/txt_timeout_description" />
         </LinearLayout>
-    </android.support.constraint.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
