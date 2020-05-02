@@ -8,15 +8,16 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.core.view.GravityCompat;
 import androidx.appcompat.widget.Toolbar;
+import androidx.work.BackoffPolicy;
+import androidx.work.Constraints;
+import androidx.work.ExistingPeriodicWorkPolicy;
+import androidx.work.ExistingWorkPolicy;
+import androidx.work.NetworkType;
+import androidx.work.PeriodicWorkRequest;
+import androidx.work.WorkManager;
+
 import android.view.View;
 import android.widget.Toast;
-
-import com.firebase.jobdispatcher.Constraint;
-import com.firebase.jobdispatcher.FirebaseJobDispatcher;
-import com.firebase.jobdispatcher.GooglePlayDriver;
-import com.firebase.jobdispatcher.Job;
-import com.firebase.jobdispatcher.RetryStrategy;
-import com.firebase.jobdispatcher.Trigger;
 
 import org.helpapaw.helpapaw.R;
 import org.helpapaw.helpapaw.base.BaseActivity;
@@ -27,6 +28,7 @@ import org.helpapaw.helpapaw.utils.Injection;
 import org.helpapaw.helpapaw.utils.services.BackgroundCheckJobService;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class SignalsMapActivity extends BaseActivity {
 
@@ -165,25 +167,24 @@ public class SignalsMapActivity extends BaseActivity {
     }
 
     private void scheduleBackgroundChecks() {
-        FirebaseJobDispatcher dispatcher = new FirebaseJobDispatcher(new GooglePlayDriver(this));
-
-        Job backgroundCheckJob = dispatcher.newJobBuilder()
-                // the JobService that will be called
-                .setService(BackgroundCheckJobService.class)
-                // uniquely identifies the job
-                .setTag("BackgroundCheckJobService")
-                .setRecurring(true)
-                // start between 30 and 60 minutes from now
-                .setTrigger(Trigger.executionWindow(15 * 60, 30 * 60))
-                // overwrite an existing job with the same tag
-                .setReplaceCurrent(true)
-                // retry with exponential backoff
-                .setRetryStrategy(RetryStrategy.DEFAULT_EXPONENTIAL)
-                // constraints that need to be satisfied for the job to run
-                .setConstraints(Constraint.ON_ANY_NETWORK)
+        // constraints that need to be satisfied for the job to run
+        Constraints workerConstraints = new Constraints.Builder()
+                //Network connectivity required
+                .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build();
 
-        dispatcher.mustSchedule(backgroundCheckJob);
+        PeriodicWorkRequest workRequest = new PeriodicWorkRequest.Builder(BackgroundCheckJobService.class, 15, TimeUnit.MINUTES)
+                // uniquely identifies the job
+                .addTag("BackgroundCheckJobService")
+                // start in 15 minutes from now
+                .setInitialDelay(15, TimeUnit.MINUTES)
+                // retry with exponential backoff
+                .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, 3000, TimeUnit.MILLISECONDS)
+                .setConstraints(workerConstraints)
+                .build();
+
+        WorkManager.getInstance(this)
+                .enqueueUniquePeriodicWork("BackgroundCheckJobService", ExistingPeriodicWorkPolicy.REPLACE, workRequest);
     }
 
     private void switchEnvironment() {
