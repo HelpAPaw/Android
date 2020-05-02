@@ -1,6 +1,6 @@
 package org.helpapaw.helpapaw.signalsmap;
 
-import android.databinding.DataBindingUtil;
+import androidx.databinding.DataBindingUtil;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;

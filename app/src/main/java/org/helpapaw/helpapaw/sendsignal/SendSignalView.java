@@ -1,8 +1,8 @@
 package org.helpapaw.helpapaw.sendsignal;
 
 import android.content.Context;
-import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
-import android.support.v7.widget.CardView;
+import androidx.core.graphics.drawable.RoundedBitmapDrawable;
+import androidx.cardview.widget.CardView;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.widget.EditText;
