@@ -6,15 +6,18 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import androidx.annotation.NonNull;
+import androidx.concurrent.futures.CallbackToFutureAdapter;
 import androidx.core.content.ContextCompat;
+import androidx.work.ListenableWorker;
+import androidx.work.WorkerParameters;
+
 import android.util.Log;
 
-import com.firebase.jobdispatcher.JobParameters;
-import com.firebase.jobdispatcher.JobService;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.common.util.concurrent.ListenableFuture;
 
 import org.helpapaw.helpapaw.data.models.Signal;
 import org.helpapaw.helpapaw.data.repositories.ISettingsRepository;
@@ -33,18 +36,27 @@ import static org.helpapaw.helpapaw.data.models.Signal.SOLVED;
  * This class to periodically check for signals around the user and notify them if there are
  */
 
-public class BackgroundCheckJobService extends JobService {
+public class BackgroundCheckJobService extends ListenableWorker {
     private SignalsDatabase database;
     public static final String TAG = BackgroundCheckJobService.class.getSimpleName();
     static final String CURRENT_NOTIFICATION_IDS = "CurrentNotificationIds";
 
     HashSet<String> mCurrentNotificationIds = new HashSet<>();
     NotificationManager mNotificationManager;
+
+    /**
+     * @param appContext   The application {@link Context}
+     * @param workerParams Parameters to setup the internal state of this worker
+     */
+    public BackgroundCheckJobService(@NonNull Context appContext, @NonNull WorkerParameters workerParams) {
+        super(appContext, workerParams);
+    }
 //    SharedPreferences mSharedPreferences;
 
+    @NonNull
     @Override
-    public boolean onStartJob(final JobParameters job) {
-        database = SignalsDatabase.getDatabase(this);
+    public ListenableFuture<ListenableWorker.Result> startWork() {
+        database = SignalsDatabase.getDatabase(getApplicationContext());
 
         Log.d(TAG, "onStartJob called");
 
@@ -52,19 +64,20 @@ public class BackgroundCheckJobService extends JobService {
 //        mSharedPreferences = getApplicationContext().getSharedPreferences(TAG, Context.MODE_PRIVATE);
 
         // Do some work here
-        if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            FusedLocationProviderClient mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        return CallbackToFutureAdapter.getFuture(completer -> {
+            if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            FusedLocationProviderClient mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getApplicationContext());
             mFusedLocationClient.getLastLocation()
                     .addOnSuccessListener(new OnSuccessListener<Location>() {
                         @Override
                         public void onSuccess(Location location) {
                             //Got last known location. In some rare situations this can be null.
                             if (location != null) {
-                                getSignalsForLastKnownLocation(location, job);
+                                getSignalsForLastKnownLocation(location, completer);
                                 Injection.getPushNotificationsRepositoryInstance().updateDeviceInfoInCloud(location, null, null);
                             } else {
                                 Log.d(TAG, "got callback but last location is null");
-                                jobFinished(job, true);
+                                completer.set(Result.success());
                             }
                         }
                     })
@@ -72,23 +85,23 @@ public class BackgroundCheckJobService extends JobService {
                         @Override
                         public void onFailure(@NonNull Exception e) {
                             Log.d(TAG, "failed to get location");
-                            jobFinished(job, true);
+                            completer.setException(e);
                         }
                     });
-        } else {
-            Log.d(TAG, "No location permission");
-        }
-
-        return true; // Answers the question: "Is there still work going on?"
+            } else {
+                Log.d(TAG, "No location permission");
+                completer.set(Result.failure());
+            }
+            return completer;
+        });
     }
 
     @Override
-    public boolean onStopJob(JobParameters job) {
+    public void onStopped() {
         database = null;
-        return true; // Answers the question: "Should this job be retried?"
     }
 
-    private void getSignalsForLastKnownLocation(Location location, final JobParameters job) {
+    private void getSignalsForLastKnownLocation(Location location, final CallbackToFutureAdapter.Completer<ListenableWorker.Result> completer) {
 
         ISettingsRepository settingsRepository = Injection.getSettingsRepositoryInstance();
         Injection.getSignalRepositoryInstance().getAllSignals(location.getLatitude(), location.getLongitude(), settingsRepository.getRadius(), settingsRepository.getTimeout(), new SignalRepository.LoadSignalsCallback() {
@@ -130,13 +143,13 @@ public class BackgroundCheckJobService extends JobService {
 //                editor.putStringSet(CURRENT_NOTIFICATION_IDS, mCurrentNotificationIds);
 //                editor.apply();
 
-                jobFinished(job, false);
+                completer.set(Result.success());
             }
 
             @Override
             public void onSignalsFailure(String message) {
                 Log.d(TAG, "there was a problem obtaining signals: " + message);
-                jobFinished(job, true);
+                completer.set(Result.failure());
             }
         });
     }
