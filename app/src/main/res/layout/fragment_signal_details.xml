@@ -193,7 +193,7 @@
                 android:hint="@string/txt_comment_hint"
                 android:inputType="textAutoComplete|textAutoCorrect|textCapSentences|textMultiLine" />
 
-            <android.support.v7.widget.AppCompatButton
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btn_add_comment"
                 style="@style/Widget.AppCompat.Button.Colored"
                 android:layout_width="80dp"

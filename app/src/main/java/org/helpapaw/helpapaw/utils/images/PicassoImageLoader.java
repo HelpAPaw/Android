@@ -1,7 +1,7 @@
 package org.helpapaw.helpapaw.utils.images;
 
 import android.content.Context;
-import android.support.annotation.DrawableRes;
+import androidx.annotation.DrawableRes;
 import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;

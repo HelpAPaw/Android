@@ -28,7 +28,7 @@
             android:text="@string/txt_help_needed"
             android:textSize="18sp" />
 
-        <android.support.v7.widget.AppCompatImageView
+        <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/img_signal_need_help_selected"
             android:layout_width="40dp"
             android:layout_height="80dp"
@@ -60,7 +60,7 @@
             android:text="@string/txt_somebody_on_the_way"
             android:textSize="18sp" />
 
-        <android.support.v7.widget.AppCompatImageView
+        <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/img_signal_on_way_selected"
             android:layout_width="40dp"
             android:layout_height="80dp"
@@ -92,7 +92,7 @@
             android:text="@string/txt_solved"
             android:textSize="18sp" />
 
-        <android.support.v7.widget.AppCompatImageView
+        <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/img_signal_solved_selected"
             android:layout_width="40dp"
             android:layout_height="80dp"
