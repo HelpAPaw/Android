@@ -108,10 +108,8 @@ public class BackendlessCommentRepository implements CommentRepository {
 
     @Override
     public void saveComment(String commentText, final Signal signal, final List<Comment> currentComments, final SaveCommentCallback callback) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_TIME_FORMAT, Locale.getDefault());
-        String currentDate = dateFormat.format(new Date());
 
-        FINComment backendlessComment = new FINComment(commentText, currentDate, signal.getId(), COMMENT_TYPE_USER_COMMENT, Backendless.UserService.CurrentUser());
+        FINComment backendlessComment = new FINComment(commentText, signal.getId(), COMMENT_TYPE_USER_COMMENT, Backendless.UserService.CurrentUser());
 
         final IDataStore<FINComment> commentsStore = Backendless.Data.of(FINComment.class);
         commentsStore.save(backendlessComment, new AsyncCallback<FINComment>() {
