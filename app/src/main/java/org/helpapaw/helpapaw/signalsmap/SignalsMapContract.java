@@ -35,6 +35,8 @@ interface SignalsMapContract {
 
         void openLoginScreen();
 
+        void showRegistrationRequiredAlert();
+
         void setThumbnailImage(String photoUri);
 
         void clearSignalViewData();
