@@ -130,7 +130,25 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
 
     @Override
     public void onAddSignalClicked(boolean visibility) {
-        setSendSignalViewVisibility(!visibility);
+        if (!visibility) {
+            userManager.isLoggedIn(new UserManager.LoginCallback() {
+                @Override
+                public void onLoginSuccess() {
+                    if (!isViewAvailable()) return;
+
+                    setSendSignalViewVisibility(true);
+                }
+
+                @Override
+                public void onLoginFailure(String message) {
+                    if (!isViewAvailable()) return;
+                    getView().showRegistrationRequiredAlert();
+                }
+            });
+        }
+        else {
+            setSendSignalViewVisibility(false);
+        }
     }
 
     @Override
@@ -141,28 +159,13 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
     @Override
     public void onSendSignalClicked(final String description, final String authorPhone) {
         getView().hideKeyboard();
-        getView().setSignalViewProgressVisibility(true);
 
-        userManager.isLoggedIn(new UserManager.LoginCallback() {
-            @Override
-            public void onLoginSuccess() {
-                if (!isViewAvailable()) return;
-
-                if (isEmpty(description)) {
-                    getView().showDescriptionErrorMessage();
-                    getView().setSignalViewProgressVisibility(false);
-                } else {
-                    saveSignal(description, authorPhone, new Date(), 0, currentMapLatitude, currentMapLongitude);
-                }
-            }
-
-            @Override
-            public void onLoginFailure(String message) {
-                if (!isViewAvailable()) return;
-                getView().setSignalViewProgressVisibility(false);
-                getView().openLoginScreen();
-            }
-        });
+        if (isEmpty(description)) {
+            getView().showDescriptionErrorMessage();
+        } else {
+            getView().setSignalViewProgressVisibility(true);
+            saveSignal(description, authorPhone, new Date(), 0, currentMapLatitude, currentMapLongitude);
+        }
     }
 
     private void saveSignal(String description, String authorPhone, Date dateSubmitted, int status, final double latitude, final double longitude) {
