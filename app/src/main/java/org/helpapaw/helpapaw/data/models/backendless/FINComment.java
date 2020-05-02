@@ -17,9 +17,8 @@ public class FINComment {
     public FINComment() {
     }
 
-    public FINComment(String text, String created, String signalID, String type, BackendlessUser author) {
+    public FINComment(String text, String signalID, String type, BackendlessUser author) {
         this.text = text;
-        this.created = created;
         this.author = author;
         this.signalID = signalID;
         this.type = type;
