@@ -36,9 +36,9 @@ import static org.helpapaw.helpapaw.data.models.Signal.SOLVED;
  * This class to periodically check for signals around the user and notify them if there are
  */
 
-public class BackgroundCheckJobService extends ListenableWorker {
+public class BackgroundCheckWorker extends ListenableWorker {
     private SignalsDatabase database;
-    public static final String TAG = BackgroundCheckJobService.class.getSimpleName();
+    public static final String TAG = BackgroundCheckWorker.class.getSimpleName();
     static final String CURRENT_NOTIFICATION_IDS = "CurrentNotificationIds";
 
     HashSet<String> mCurrentNotificationIds = new HashSet<>();
@@ -48,7 +48,7 @@ public class BackgroundCheckJobService extends ListenableWorker {
      * @param appContext   The application {@link Context}
      * @param workerParams Parameters to setup the internal state of this worker
      */
-    public BackgroundCheckJobService(@NonNull Context appContext, @NonNull WorkerParameters workerParams) {
+    public BackgroundCheckWorker(@NonNull Context appContext, @NonNull WorkerParameters workerParams) {
         super(appContext, workerParams);
     }
 //    SharedPreferences mSharedPreferences;
