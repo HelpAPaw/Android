@@ -2,6 +2,7 @@ package org.helpapaw.helpapaw.signaldetails;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import androidx.databinding.DataBindingUtil;
 import android.net.Uri;
@@ -80,6 +81,7 @@ public class SignalDetailsFragment extends BaseFragment implements SignalDetails
         actionsListener.onInitDetailsScreen(mSignal);
 
         binding.btnAddComment.setOnClickListener(getOnAddCommentClickListener());
+        binding.editComment.setOnFocusChangeListener(getOnCommentEditTextFocusChangeListener());
         binding.imgCall.setOnClickListener(getOnCallButtonClickListener());
         binding.btnCall.setOnClickListener(getOnCallButtonClickListener());
         binding.imgSignalPhoto.setOnClickListener(getOnSignalPhotoClickListener());
@@ -190,6 +192,32 @@ public class SignalDetailsFragment extends BaseFragment implements SignalDetails
     public void clearSendCommentView() {
         binding.editComment.setError(null);
         binding.editComment.setText(null);
+    }
+
+    @Override
+    public void showRegistrationRequiredAlert(int messageId) {
+        final FragmentActivity activity = getActivity();
+        if (activity == null) return;
+
+        AlertDialog.Builder alertBuilder = new AlertDialog.Builder(activity)
+                .setTitle(R.string.txt_registration_required)
+                .setMessage(messageId)
+                .setCancelable(false)
+                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        binding.editComment.clearFocus();
+                        openLoginScreen();
+                    }
+                })
+                .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        hideKeyboard();
+                        binding.editComment.clearFocus();
+                    }
+                });
+        alertBuilder.create().show();
     }
 
     @Override
@@ -334,6 +362,17 @@ public class SignalDetailsFragment extends BaseFragment implements SignalDetails
             @Override
             public void onClick(View view) {
                 actionsListener.onSignalPhotoClicked();
+            }
+        };
+    }
+
+    public View.OnFocusChangeListener getOnCommentEditTextFocusChangeListener() {
+        return new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    actionsListener.onTryToAddComment();
+                }
             }
         };
     }
