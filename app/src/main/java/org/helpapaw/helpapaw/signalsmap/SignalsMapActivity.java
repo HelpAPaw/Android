@@ -25,7 +25,7 @@ import org.helpapaw.helpapaw.base.PawApplication;
 import org.helpapaw.helpapaw.data.models.Signal;
 import org.helpapaw.helpapaw.data.user.UserManager;
 import org.helpapaw.helpapaw.utils.Injection;
-import org.helpapaw.helpapaw.utils.services.BackgroundCheckJobService;
+import org.helpapaw.helpapaw.utils.services.BackgroundCheckWorker;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -173,7 +173,7 @@ public class SignalsMapActivity extends BaseActivity {
                 .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build();
 
-        PeriodicWorkRequest workRequest = new PeriodicWorkRequest.Builder(BackgroundCheckJobService.class, 15, TimeUnit.MINUTES)
+        PeriodicWorkRequest workRequest = new PeriodicWorkRequest.Builder(BackgroundCheckWorker.class, 15, TimeUnit.MINUTES)
                 // uniquely identifies the job
                 .addTag("BackgroundCheckJobService")
                 // start in 15 minutes from now
