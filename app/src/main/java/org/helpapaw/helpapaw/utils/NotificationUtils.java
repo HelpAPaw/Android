@@ -102,6 +102,13 @@ public class NotificationUtils {
 
         NotificationManager mNotificationManager = (android.app.NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         if (mNotificationManager != null) {
+            if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                NotificationChannel channel = mNotificationManager.getNotificationChannel(channel_id);
+                if (channel == null) {
+                    NotificationUtils.registerNotificationChannels(context);
+                }
+            }
+
             mNotificationManager.notify(signalCode, mBuilder.build());
         }
     }

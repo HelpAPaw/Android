@@ -28,7 +28,6 @@ public class PawApplication extends Application {
         pawApplication = this;
         isTestEnvironment = loadIsTestEnvironment();
         Backendless.initApp(this, BACKENDLESS_APP_ID, BACKENDLESS_ANDROID_API_KEY);
-        NotificationUtils.registerNotificationChannels(this);
 
         // Register device for token
         Injection.getPushNotificationsRepositoryInstance().registerDeviceToken();
