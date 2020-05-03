@@ -83,7 +83,7 @@
             android:windowSoftInputMode="stateHidden" />
 
         <service
-            android:name=".utils.services.BackgroundCheckJobService"
+            android:name=".utils.services.BackgroundCheckWorker"
             android:exported="false"
             android:permission="android.permission.BIND_JOB_SERVICE">
             <intent-filter>
