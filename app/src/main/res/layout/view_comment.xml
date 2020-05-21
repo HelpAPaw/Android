@@ -18,6 +18,9 @@
             android:layout_height="wrap_content"
             android:padding="15dp"
             android:textSize="18sp"
+            android:textIsSelectable="true"
+            android:autoLink="all"
+            android:linksClickable="true"
             tools:text="Heading there, will let you know when I arrive." />
     </androidx.cardview.widget.CardView>
 
