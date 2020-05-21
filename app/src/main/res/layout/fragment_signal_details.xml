@@ -48,6 +48,9 @@
                             android:padding="0dp"
                             android:textSize="22sp"
                             android:textAlignment="center"
+                            android:textIsSelectable="true"
+                            android:autoLink="all"
+                            android:linksClickable="true"
                             tools:text="This is a title but it is very, very, very, VERY long and expands way much more that it should. However the important thing is that it is fully displayed and no part of it is hidden or hard to read! Right!?"/>
 
                         <LinearLayout
