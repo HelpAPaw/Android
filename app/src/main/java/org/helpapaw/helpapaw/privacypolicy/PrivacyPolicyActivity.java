@@ -29,12 +29,17 @@ public class PrivacyPolicyActivity extends AppCompatActivity {
             private ProgressDialog mProgress;
 
             @Override
-            public void onProgressChanged(WebView view, int progress) {
+            public void onProgressChanged(WebView wv, int progress) {
+                if (PrivacyPolicyActivity.this.isFinishing()) {
+                    wv.stopLoading();
+                    return;
+                }
+
                 if (mProgress == null) {
                     mProgress = new ProgressDialog(PrivacyPolicyActivity.this);
                     mProgress.show();
                 }
-                mProgress.setMessage("Loading " + String.valueOf(progress) + "%");
+                mProgress.setMessage("Loading " + progress + "%");
                 if (progress == 100) {
                     mProgress.dismiss();
                     mProgress = null;
