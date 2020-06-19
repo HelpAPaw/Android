@@ -3,13 +3,13 @@ apply plugin: 'io.fabric'
 
 android {
     compileSdkVersion 29
-    buildToolsVersion '28.0.3'
+    buildToolsVersion '29.0.3'
     defaultConfig {
         applicationId "org.helpapaw.helpapaw"
         minSdkVersion 19
         targetSdkVersion 29
-        versionCode 57
-        versionName "2.3.0 (build 57)"
+        versionCode 58
+        versionName "2.3.0 (build 58)"
         vectorDrawables.useSupportLibrary = true
 
         multiDexEnabled true
@@ -69,8 +69,8 @@ dependencies {
     implementation('com.crashlytics.sdk.android:crashlytics:2.10.1@aar') {
         transitive = true
     }
-    implementation 'com.google.firebase:firebase-core:17.4.0'
-    implementation 'com.google.firebase:firebase-messaging:20.1.6'
+    implementation 'com.google.firebase:firebase-core:17.4.3'
+    implementation 'com.google.firebase:firebase-messaging:20.2.0'
     implementation 'com.github.chrisbanes:PhotoView:2.1.3'
 }
 
