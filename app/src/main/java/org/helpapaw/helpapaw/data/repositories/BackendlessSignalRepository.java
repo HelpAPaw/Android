@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.helpapaw.helpapaw.base.PawApplication.getContext;
+import static org.helpapaw.helpapaw.data.models.Signal.HELP_IS_NEEDED;
 
 /**
  * Created by iliyan on 7/28/16
@@ -103,7 +104,7 @@ public class BackendlessSignalRepository implements SignalRepository {
 
                     String signalTitle         = getToStringOrNull(geoPoint.getMetadata(SIGNAL_TITLE));
                     String dateSubmittedString = getToStringOrNull(geoPoint.getMetadata(SIGNAL_DATE_SUBMITTED));
-                    String signalStatus        = getToStringOrNull(geoPoint.getMetadata(SIGNAL_STATUS));
+                    String statusString        = getToStringOrNull(geoPoint.getMetadata(SIGNAL_STATUS));
                     String signalAuthorPhone   = getToStringOrNull(geoPoint.getMetadata(SIGNAL_AUTHOR_PHONE));
 
                     Date dateSubmitted = null;
@@ -123,7 +124,13 @@ public class BackendlessSignalRepository implements SignalRepository {
                         signalAuthorName = getToStringOrNull(signalAuthor.getProperty(NAME_FIELD));
                     }
 
-                    Signal newSignal = new Signal(geoPoint.getObjectId(), signalTitle, dateSubmitted, Integer.parseInt(signalStatus), signalAuthorId, signalAuthorName, signalAuthorPhone, geoPoint.getLatitude(), geoPoint.getLongitude(), false);
+                    int statusInt = HELP_IS_NEEDED;
+                    try {
+                        statusInt = Integer.parseInt(statusString);
+                    }
+                    catch (Exception ingored) {}
+
+                    Signal newSignal = new Signal(geoPoint.getObjectId(), signalTitle, dateSubmitted, statusInt, signalAuthorId, signalAuthorName, signalAuthorPhone, geoPoint.getLatitude(), geoPoint.getLongitude(), false);
 
                     // If signal is already in DB - keep seen status
                     List<Signal> signalsFromDB = signalsDatabase.signalDao().getSignal(geoPoint.getObjectId());
