@@ -3,7 +3,7 @@ package org.helpapaw.helpapaw.utils;
 import org.helpapaw.helpapaw.data.repositories.BackendlessCommentRepository;
 import org.helpapaw.helpapaw.data.repositories.BackendlessPhotoRepository;
 import org.helpapaw.helpapaw.data.repositories.BackendlessPushNotificationsRepository;
-import org.helpapaw.helpapaw.data.repositories.BackendlessSignalRepository;
+import org.helpapaw.helpapaw.data.repositories.BackendlessSpatialSignalRepository;
 import org.helpapaw.helpapaw.data.repositories.CommentRepository;
 import org.helpapaw.helpapaw.data.repositories.ISettingsRepository;
 import org.helpapaw.helpapaw.data.repositories.PhotoRepository;
@@ -43,7 +43,7 @@ public class Injection {
 
     public synchronized static SignalRepository getSignalRepositoryInstance() {
         if (signalRepositoryInstance == null) {
-            signalRepositoryInstance = new BackendlessSignalRepository();
+            signalRepositoryInstance = new BackendlessSpatialSignalRepository();
         }
         return signalRepositoryInstance;
     }
