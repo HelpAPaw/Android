@@ -76,7 +76,6 @@ public class BackendlessSignalRepository implements SignalRepository {
 
     @Override
     public void getSignal(String signalId, final LoadSignalsCallback callback) {
-        //TODO: add caching
 
         BackendlessGeoQuery query = new BackendlessGeoQuery();
         query.setIncludeMeta(true);
