@@ -14,6 +14,7 @@ import org.helpapaw.helpapaw.data.models.Comment;
 import org.helpapaw.helpapaw.data.models.Signal;
 import org.helpapaw.helpapaw.db.SignalsDatabase;
 import org.helpapaw.helpapaw.utils.Injection;
+import org.helpapaw.helpapaw.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -58,7 +59,7 @@ public class BackendlessSpatialSignalRepository implements SignalRepository {
     @Override
     public void getAllSignals(double latitude, double longitude, double radius, int timeout, final LoadSignalsCallback callback) {
 
-        String whereClause1 = String.format("distanceOnSphere(location, '%s') <= %f", getWktPoint(longitude, latitude), radius * 1000);
+        String whereClause1 = String.format("distanceOnSphere(location, '%s') <= %f", Utils.getWktPoint(longitude, latitude), radius * 1000);
 
         final Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DATE, -timeout);
@@ -72,9 +73,6 @@ public class BackendlessSpatialSignalRepository implements SignalRepository {
 
     @Override
     public void getSignal(String signalId, final LoadSignalsCallback callback) {
-        //TODO: add caching
-
-        //TODO: test
         String whereClause = String.format("%s='%s'", OBJECT_ID_FIELD, signalId);
         getSignals(whereClause, callback);
     }
@@ -138,7 +136,7 @@ public class BackendlessSpatialSignalRepository implements SignalRepository {
 
         Map<String, Object> dataMap = new HashMap<>();
         dataMap.put(SIGNAL_TITLE, signal.getTitle());
-        dataMap.put(SIGNAL_LOCATION, getWktPoint(signal.getLongitude(), signal.getLatitude()));
+        dataMap.put(SIGNAL_LOCATION, Utils.getWktPoint(signal.getLongitude(), signal.getLatitude()));
         dataMap.put(SIGNAL_STATUS, signal.getStatus());
         dataMap.put(SIGNAL_AUTHOR_PHONE, signal.getAuthorPhone());
 
@@ -246,10 +244,5 @@ public class BackendlessSpatialSignalRepository implements SignalRepository {
         } else {
             return null;
         }
-    }
-
-    @SuppressLint("DefaultLocale")
-    private String getWktPoint(double longitude, double latitude) {
-        return String.format("Point (%.15f %.15f)", longitude, latitude);
     }
 }
