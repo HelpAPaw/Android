@@ -17,6 +17,7 @@ import org.helpapaw.helpapaw.base.PawApplication;
 import org.helpapaw.helpapaw.data.models.Comment;
 import org.helpapaw.helpapaw.data.models.Signal;
 import org.helpapaw.helpapaw.utils.Injection;
+import org.helpapaw.helpapaw.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -114,8 +115,8 @@ public class BackendlessPushNotificationsRepository implements PushNotifications
                                 Map foundDevice = foundDevices.get(0);
                                 try {
                                     if (location != null) {
-                                        foundDevice.put("lastLatitude", location.getLatitude());
-                                        foundDevice.put("lastLongitude", location.getLongitude());
+                                        String wktPoint = Utils.getWktPoint(location.getLongitude(), location.getLatitude());
+                                        foundDevice.put("lastLocation", wktPoint);
                                         lastKnownDeviceLocation = location;
                                     }
                                     if (radius != null) {
@@ -168,7 +169,8 @@ public class BackendlessPushNotificationsRepository implements PushNotifications
         final String localToken = Injection.getSettingsRepositoryInstance().getTokenFromPreferences();
 
         // Build query
-        String whereClause = "distance( "+ latitude +", "+ longitude +", " + "lastLatitude, lastLongitude ) < signalRadius * 1000";
+        String wktPoint = Utils.getWktPoint(longitude, latitude);
+        String whereClause = "distanceOnSphere( lastLocation, '" + wktPoint + "') < signalRadius * 1000";
         DataQueryBuilder queryBuilder = DataQueryBuilder.create();
         queryBuilder.setWhereClause(whereClause);
         queryBuilder.setPageSize(pageSize);

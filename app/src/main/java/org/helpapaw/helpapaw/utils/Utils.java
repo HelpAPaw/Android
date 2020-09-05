@@ -1,5 +1,6 @@
 package org.helpapaw.helpapaw.utils;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.location.Location;
 import android.net.ConnectivityManager;
@@ -95,6 +96,11 @@ public class Utils {
         pointTwo.setLongitude(longitudePointTwo);
 
         return pointOne.distanceTo(pointTwo);
+    }
+
+    @SuppressLint("DefaultLocale")
+    public static String getWktPoint(double longitude, double latitude) {
+        return String.format("Point (%.15f %.15f)", longitude, latitude);
     }
 
     //Dates
