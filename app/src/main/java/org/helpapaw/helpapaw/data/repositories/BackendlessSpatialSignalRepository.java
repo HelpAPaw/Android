@@ -44,6 +44,8 @@ public class BackendlessSpatialSignalRepository implements SignalRepository {
     private static final String OBJECT_ID_FIELD = "objectId";
     private static final String CREATED_FIELD = "created";
 
+    private static final int PAGE_SIZE = 100;
+
     public BackendlessSpatialSignalRepository() {
         signalsDatabase = SignalsDatabase.getDatabase(getContext());
     }
@@ -78,8 +80,14 @@ public class BackendlessSpatialSignalRepository implements SignalRepository {
     }
 
     private void getSignals(String whereClause, final LoadSignalsCallback callback) {
+        getSignals(whereClause, 0, callback);
+    }
+
+    private void getSignals(String whereClause, int offset, final LoadSignalsCallback callback) {
         DataQueryBuilder queryBuilder = DataQueryBuilder.create();
         queryBuilder.setWhereClause(whereClause);
+        queryBuilder.setPageSize(PAGE_SIZE);
+        queryBuilder.setOffset(offset);
         Backendless.Data.of(getTableName()).find(queryBuilder, new AsyncCallback<List<Map>>() {
             @Override
             public void handleResponse(List<Map> response)
@@ -120,7 +128,24 @@ public class BackendlessSpatialSignalRepository implements SignalRepository {
 
                     signals.add(newSignal);
                 }
-                callback.onSignalsLoaded(signals);
+
+                if (response.size() == PAGE_SIZE) {
+                    getSignals(whereClause, offset + PAGE_SIZE, new LoadSignalsCallback() {
+                        @Override
+                        public void onSignalsLoaded(List<Signal> nextPageSignals) {
+                            signals.addAll(nextPageSignals);
+                            callback.onSignalsLoaded(signals);
+                        }
+
+                        @Override
+                        public void onSignalsFailure(String message) {
+                            callback.onSignalsFailure(message);
+                        }
+                    });
+                }
+                else {
+                    callback.onSignalsLoaded(signals);
+                }
             }
             @Override
             public void handleFault( BackendlessFault fault )
