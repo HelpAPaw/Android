@@ -25,7 +25,7 @@ public class BackendlessUserManager implements UserManager {
         Backendless.UserService.login(email, password, new AsyncCallback<BackendlessUser>() {
             public void handleResponse(BackendlessUser user) {
                 Backendless.UserService.setCurrentUser(user);
-                loginCallback.onLoginSuccess();
+                loginCallback.onLoginSuccess(user.getUserId());
             }
 
             public void handleFault(BackendlessFault fault) {
@@ -40,7 +40,7 @@ public class BackendlessUserManager implements UserManager {
             @Override
             public void handleResponse(BackendlessUser user) {
                 Backendless.UserService.setCurrentUser(user);
-                loginCallback.onLoginSuccess();
+                loginCallback.onLoginSuccess(user.getUserId());
             }
 
             @Override
@@ -100,7 +100,7 @@ public class BackendlessUserManager implements UserManager {
                                 public void handleResponse(BackendlessUser currentUser) {
                                     if (currentUser != null) {
                                         Backendless.UserService.setCurrentUser(currentUser);
-                                        loginCallback.onLoginSuccess();
+                                        loginCallback.onLoginSuccess(currentUserId);
                                     }
                                     else {
                                         loginCallback.onLoginFailure(null);
@@ -114,7 +114,7 @@ public class BackendlessUserManager implements UserManager {
                             });
                         }
                     } else {
-                        loginCallback.onLoginSuccess();
+                        loginCallback.onLoginSuccess(Backendless.UserService.CurrentUser().getUserId());
                     }
                 } else {
                     loginCallback.onLoginFailure(null);

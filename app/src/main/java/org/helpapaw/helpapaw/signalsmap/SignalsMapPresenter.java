@@ -1,5 +1,7 @@
 package org.helpapaw.helpapaw.signalsmap;
 
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
+
 import org.helpapaw.helpapaw.base.Presenter;
 import org.helpapaw.helpapaw.data.models.Signal;
 import org.helpapaw.helpapaw.data.repositories.PhotoRepository;
@@ -133,7 +135,7 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
         if (!visibility) {
             userManager.isLoggedIn(new UserManager.LoginCallback() {
                 @Override
-                public void onLoginSuccess() {
+                public void onLoginSuccess(String userId) {
                     if (!isViewAvailable()) return;
 
                     setSendSignalViewVisibility(true);
@@ -169,6 +171,7 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
     }
 
     private void saveSignal(String description, String authorPhone, Date dateSubmitted, int status, final double latitude, final double longitude) {
+        FirebaseCrashlytics.getInstance().log("Initiate save new signal");
         signalRepository.saveSignal(new Signal(description, authorPhone, dateSubmitted, status, latitude, longitude), new SignalRepository.SaveSignalCallback() {
             @Override
             public void onSignalSaved(Signal signal) {

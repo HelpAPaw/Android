@@ -55,7 +55,7 @@ public class LoginPresenter extends Presenter<LoginContract.View>
         if (Utils.getInstance().hasNetworkConnection()) {
             userManager.login(email, password, new UserManager.LoginCallback() {
                 @Override
-                public void onLoginSuccess() {
+                public void onLoginSuccess(String userId) {
                     LoginPresenter.this.onLoginSuccess();
                 }
 
@@ -132,7 +132,7 @@ public class LoginPresenter extends Presenter<LoginContract.View>
             setProgressIndicator(true);
             userManager.loginWithFacebook(accessToken, new UserManager.LoginCallback() {
                 @Override
-                public void onLoginSuccess() {
+                public void onLoginSuccess(String userId) {
                     setProgressIndicator(false);
                     LoginPresenter.this.onLoginSuccess();
                 }
