@@ -8,6 +8,7 @@ import com.backendless.async.callback.AsyncCallback;
 import com.backendless.exceptions.BackendlessFault;
 import com.backendless.persistence.DataQueryBuilder;
 import com.backendless.persistence.Point;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 
 import org.helpapaw.helpapaw.base.PawApplication;
 import org.helpapaw.helpapaw.data.models.Comment;
@@ -101,6 +102,7 @@ public class BackendlessSpatialSignalRepository implements SignalRepository {
                     HashMap signalMap = (HashMap) response.get(i);
 
                     String objectId = (String) signalMap.get(OBJECT_ID_FIELD);
+                    FirebaseCrashlytics.getInstance().log("Got signal with Id: " + objectId);
                     String signalTitle = (String) signalMap.get(SIGNAL_TITLE);
                     Date dateCreated = (Date) signalMap.get(CREATED_FIELD);
                     Integer status = (Integer) signalMap.get(SIGNAL_STATUS);

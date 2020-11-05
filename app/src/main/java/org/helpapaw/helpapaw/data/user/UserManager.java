@@ -27,7 +27,7 @@ public interface UserManager {
     void setHasAcceptedPrivacyPolicy(boolean value, SetUserPropertyCallback setUserPropertyCallback);
 
     interface LoginCallback {
-        void onLoginSuccess();
+        void onLoginSuccess(String userId);
         void onLoginFailure(String message);
     }
 

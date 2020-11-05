@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.os.StrictMode;
 
 import com.backendless.Backendless;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 
 import org.helpapaw.helpapaw.data.user.UserManager;
 import org.helpapaw.helpapaw.utils.Injection;
@@ -36,8 +37,8 @@ public class PawApplication extends Application {
         final UserManager userManager = Injection.getUserManagerInstance();
         userManager.isLoggedIn(new UserManager.LoginCallback() {
             @Override
-            public void onLoginSuccess() {
-                // Do nothing
+            public void onLoginSuccess(String userId) {
+                FirebaseCrashlytics.getInstance().setUserId(userId);
             }
 
             @Override

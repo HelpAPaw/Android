@@ -1,5 +1,7 @@
 package org.helpapaw.helpapaw.signaldetails;
 
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
+
 import org.helpapaw.helpapaw.R;
 import org.helpapaw.helpapaw.base.Presenter;
 import org.helpapaw.helpapaw.data.models.Comment;
@@ -22,8 +24,6 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
     private List<Comment> commentList;
     private Signal signal;
 
-    private boolean statusChanged;
-
     private CommentRepository commentRepository;
     private PhotoRepository photoRepository;
     private SignalRepository signalRepository;
@@ -32,7 +32,6 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
     public SignalDetailsPresenter(SignalDetailsContract.View view) {
         super(view);
         showProgressBar = true;
-        statusChanged = false;
         commentRepository = Injection.getCommentRepositoryInstance();
         photoRepository = Injection.getPhotoRepositoryInstance();
         userManager = Injection.getUserManagerInstance();
@@ -41,6 +40,7 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
 
     @Override
     public void onInitDetailsScreen(Signal signal) {
+        FirebaseCrashlytics.getInstance().log("Show signal details for " + signal.getId());
         setProgressIndicator(showProgressBar);
         if (signal != null) {
             this.signal = signal;
@@ -97,7 +97,7 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
         if (Utils.getInstance().hasNetworkConnection()) {
             userManager.isLoggedIn(new UserManager.LoginCallback() {
                 @Override
-                public void onLoginSuccess() {}
+                public void onLoginSuccess(String userId) {}
 
                 @Override
                 public void onLoginFailure(String message) {
@@ -133,7 +133,8 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
 
             userManager.isLoggedIn(new UserManager.LoginCallback() {
                 @Override
-                public void onLoginSuccess() {
+                public void onLoginSuccess(String userId) {
+                    FirebaseCrashlytics.getInstance().log("Initiate status change for signal " + signal.getId());
                     signalRepository.updateSignalStatus(signal.getId(), status, commentList, new SignalRepository.UpdateStatusCallback() {
                         @Override
                         public void onStatusUpdated(int status) {
@@ -186,6 +187,7 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
     }
 
     private void saveComment(String comment) {
+        FirebaseCrashlytics.getInstance().log("Initiate save new comment for signal" + signal.getId());
         commentRepository.saveComment(comment, signal, commentList, new CommentRepository.SaveCommentCallback() {
             @Override
             public void onCommentSaved(Comment comment) {
@@ -206,7 +208,6 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
 
     private void setSignalStatus(int status) {
         this.signal.setStatus(status);
-        statusChanged = true;
     }
 
     private boolean isViewAvailable() {
