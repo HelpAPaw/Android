@@ -9,8 +9,8 @@ android {
         applicationId "org.helpapaw.helpapaw"
         minSdkVersion 19
         targetSdkVersion 29
-        versionCode 60
-        versionName "3.0.0 (build 60)"
+        versionCode 61
+        versionName "3.1.0 (build 61)"
         vectorDrawables.useSupportLibrary = true
 
         multiDexEnabled true
@@ -41,7 +41,7 @@ android {
 }
 
 ext {
-    roomVersion = '2.2.5'
+    roomVersion = '2.2.6'
 }
 
 dependencies {
@@ -63,7 +63,7 @@ dependencies {
     implementation 'com.facebook.android:facebook-login:5.8.0'
     implementation "androidx.room:room-runtime:$roomVersion"
     annotationProcessor "androidx.room:room-compiler:$roomVersion"
-    implementation 'com.google.firebase:firebase-crashlytics:17.2.2'
+    implementation 'com.google.firebase:firebase-crashlytics:17.3.0'
     implementation 'com.google.firebase:firebase-analytics:18.0.0'
     implementation 'com.google.firebase:firebase-core:18.0.0'
     implementation 'com.google.firebase:firebase-messaging:21.0.0'
