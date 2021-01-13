@@ -17,7 +17,7 @@ import java.io.File;
  */
 public class BackendlessPhotoRepository implements PhotoRepository {
 
-    private static final String BACKENDLESS_API_DOMAIN = "https://api.backendless.com/";
+    private static final String BACKENDLESS_API_DOMAIN = "https://backendlessappcontent.com/";
     private static final String FILES_FOLDER = "files";
     private final static String PHOTOS_DIRECTORY = "signal_photos";
     private final static String PHOTO_EXTENSION = ".jpg";
@@ -45,7 +45,7 @@ public class BackendlessPhotoRepository implements PhotoRepository {
     @Override
     public String getPhotoUrl(String signalId) {
         if (signalId != null) {
-            //https://api.backendless.com/<application id>/<REST-api-key>/files/<path>/<file name>
+            //https://backendlessappcontent.com/<application id>/<REST-api-key>/files/<path>/<file name>
             return BACKENDLESS_API_DOMAIN +
                     PawApplication.BACKENDLESS_APP_ID + "/" +
                     PawApplication.BACKENDLESS_REST_API_KEY + "/" +

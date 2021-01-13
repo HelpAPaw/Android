@@ -12,7 +12,7 @@ import org.helpapaw.helpapaw.data.models.Signal;
  *
  */
 
-@Database(entities = {Signal.class}, version = 2)
+@Database(entities = {Signal.class}, version = 3)
 public abstract class SignalsDatabase extends RoomDatabase {
     private static SignalsDatabase INSTANCE;
 
