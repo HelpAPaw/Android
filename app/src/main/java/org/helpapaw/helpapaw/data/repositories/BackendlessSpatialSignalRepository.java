@@ -174,8 +174,9 @@ public class BackendlessSpatialSignalRepository implements SignalRepository {
                 parentObject.put(OBJECT_ID_FIELD, saveResponse.get(OBJECT_ID_FIELD));
 
                 BackendlessUser currentUser = Backendless.UserService.CurrentUser();
-                HashMap<String, Object> childObject = new HashMap<>();
-                childObject.put(OBJECT_ID_FIELD, currentUser.getObjectId());
+                //TODO: protect against null current user
+//                HashMap<String, Object> childObject = new HashMap<>();
+//                childObject.put(OBJECT_ID_FIELD, currentUser.getObjectId());
 
                 ArrayList<Map> children = new ArrayList<>();
                 children.add(childObject);
