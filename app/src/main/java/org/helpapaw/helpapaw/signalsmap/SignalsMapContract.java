@@ -72,7 +72,7 @@ interface SignalsMapContract {
 
         void onCancelAddSignal();
 
-        void onSendSignalClicked(String description, String authorPhone);
+        void onSendSignalClicked(String description, String authorPhone, int type);
 
         void onChoosePhotoIconClicked();
 

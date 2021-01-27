@@ -159,20 +159,21 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
     }
 
     @Override
-    public void onSendSignalClicked(final String description, final String authorPhone) {
+    public void onSendSignalClicked(final String description, final String authorPhone, final int type) {
         getView().hideKeyboard();
 
         if (isEmpty(description)) {
             getView().showDescriptionErrorMessage();
         } else {
             getView().setSignalViewProgressVisibility(true);
-            saveSignal(description, authorPhone, new Date(), 0, currentMapLatitude, currentMapLongitude);
+            saveSignal(description, authorPhone, new Date(), 0, currentMapLatitude, currentMapLongitude, type);
         }
     }
 
-    private void saveSignal(String description, String authorPhone, Date dateSubmitted, int status, final double latitude, final double longitude) {
+    private void saveSignal(String description, String authorPhone, Date dateSubmitted, int status,
+                            final double latitude, final double longitude, int type) {
         FirebaseCrashlytics.getInstance().log("Initiate save new signal");
-        signalRepository.saveSignal(new Signal(description, authorPhone, dateSubmitted, status, latitude, longitude), new SignalRepository.SaveSignalCallback() {
+        signalRepository.saveSignal(new Signal(description, authorPhone, dateSubmitted, status, latitude, longitude, type), new SignalRepository.SaveSignalCallback() {
             @Override
             public void onSignalSaved(Signal signal) {
                 if (!isViewAvailable()) return;

@@ -44,6 +44,7 @@ public class BackendlessSpatialSignalRepository implements SignalRepository {
     private static final String NAME_FIELD = "name";
     private static final String OBJECT_ID_FIELD = "objectId";
     private static final String CREATED_FIELD = "created";
+    private static final String SIGNAL_TYPE = "type";
 
     private static final int PAGE_SIZE = 100;
 
@@ -108,6 +109,10 @@ public class BackendlessSpatialSignalRepository implements SignalRepository {
                     Integer status = (Integer) signalMap.get(SIGNAL_STATUS);
                     String signalAuthorPhone = (String) signalMap.get(SIGNAL_AUTHOR_PHONE);
                     Point location = (Point) signalMap.get(SIGNAL_LOCATION);
+                    Integer type = 0;
+                    if (signalMap.get(SIGNAL_TYPE) != null) {
+                        type = (Integer) signalMap.get(SIGNAL_TYPE);
+                    }
 
                     String signalAuthorId = null;
                     String signalAuthorName  = null;
@@ -118,7 +123,9 @@ public class BackendlessSpatialSignalRepository implements SignalRepository {
                         signalAuthorName = getToStringOrNull(signalAuthor.getProperty(NAME_FIELD));
                     }
 
-                    Signal newSignal = new Signal(objectId, signalTitle, dateCreated, status, signalAuthorId, signalAuthorName, signalAuthorPhone, location.getLatitude(), location.getLongitude(), false);
+                    Signal newSignal = new Signal(objectId, signalTitle, dateCreated, status,
+                            signalAuthorId, signalAuthorName, signalAuthorPhone, location.getLatitude(),
+                            location.getLongitude(), false, type);
 
                     // If signal is already in DB - keep seen status
                     List<Signal> signalsFromDB = signalsDatabase.signalDao().getSignal(objectId);

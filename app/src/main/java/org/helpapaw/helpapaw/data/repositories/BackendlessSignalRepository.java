@@ -43,6 +43,7 @@ public class BackendlessSignalRepository implements SignalRepository {
     private static final String NAME_FIELD = "name";
     private static final String PHONE_FIELD = "phoneNumber";
     private static final String ID_FIELD = "objectId";
+    private static final String SIGNAL_TYPE = "type";
 
     public BackendlessSignalRepository() {
         signalsDatabase = SignalsDatabase.getDatabase(getContext());
@@ -105,6 +106,7 @@ public class BackendlessSignalRepository implements SignalRepository {
                     String dateSubmittedString = getToStringOrNull(geoPoint.getMetadata(SIGNAL_DATE_SUBMITTED));
                     String statusString        = getToStringOrNull(geoPoint.getMetadata(SIGNAL_STATUS));
                     String signalAuthorPhone   = getToStringOrNull(geoPoint.getMetadata(SIGNAL_AUTHOR_PHONE));
+                    String typeString        = getToStringOrNull(geoPoint.getMetadata(SIGNAL_TYPE));
 
                     Date dateSubmitted = null;
                     try {
@@ -129,7 +131,15 @@ public class BackendlessSignalRepository implements SignalRepository {
                     }
                     catch (Exception ingored) {}
 
-                    Signal newSignal = new Signal(geoPoint.getObjectId(), signalTitle, dateSubmitted, statusInt, signalAuthorId, signalAuthorName, signalAuthorPhone, geoPoint.getLatitude(), geoPoint.getLongitude(), false);
+                    int typeInt = 0;
+                    try {
+                        typeInt = Integer.parseInt(typeString);
+                    }
+                    catch (Exception ignored) {}
+
+                    Signal newSignal = new Signal(geoPoint.getObjectId(), signalTitle, dateSubmitted,
+                            statusInt, signalAuthorId, signalAuthorName, signalAuthorPhone,
+                            geoPoint.getLatitude(), geoPoint.getLongitude(), false, typeInt);
 
                     // If signal is already in DB - keep seen status
                     List<Signal> signalsFromDB = signalsDatabase.signalDao().getSignal(geoPoint.getObjectId());
@@ -160,6 +170,7 @@ public class BackendlessSignalRepository implements SignalRepository {
         meta.put(SIGNAL_STATUS, signal.getStatus());
         meta.put(SIGNAL_AUTHOR, Backendless.UserService.CurrentUser());
         meta.put(SIGNAL_AUTHOR_PHONE, signal.getAuthorPhone());
+        meta.put(SIGNAL_TYPE, signal.getType());
 
         List<String> categories = new ArrayList<>();
         String category = getCategory();
@@ -190,8 +201,12 @@ public class BackendlessSignalRepository implements SignalRepository {
                     }
                 }
 
-                Signal savedSignal = new Signal(geoPoint.getObjectId(), signalTitle, dateSubmitted, Integer.parseInt(signalStatus),
-                        signalAuthorId, signalAuthorName, signalAuthorPhone, geoPoint.getLatitude(), geoPoint.getLongitude(), true);
+                String signalType = getToStringOrNull(geoPoint.getMetadata(SIGNAL_TYPE));
+
+                Signal savedSignal = new Signal(geoPoint.getObjectId(), signalTitle, dateSubmitted,
+                        Integer.parseInt(signalStatus), signalAuthorId, signalAuthorName,
+                        signalAuthorPhone, geoPoint.getLatitude(), geoPoint.getLongitude(),
+                        true, Integer.parseInt(signalType));
                 signalsDatabase.signalDao().saveSignal(savedSignal);
                 callback.onSignalSaved(savedSignal);
 

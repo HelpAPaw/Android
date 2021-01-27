@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import org.helpapaw.helpapaw.R;
@@ -22,6 +23,7 @@ public class SendSignalView extends CardView {
     EditText editAuthorPhone;
     TextView txtSignalSend;
     ProgressBar progressSendSignal;
+    Spinner spinnerSignalType;
 
     public SendSignalView(Context context) {
         super(context);
@@ -52,6 +54,7 @@ public class SendSignalView extends CardView {
         editAuthorPhone = this.findViewById(R.id.edit_author_phone);
         txtSignalSend = this.findViewById(R.id.txt_signal_send);
         progressSendSignal = this.findViewById(R.id.progress_send_signal);
+        spinnerSignalType = this.findViewById(R.id.spinner_signal_type);
     }
 
     public void setOnSignalSendClickListener(OnClickListener clickListener) {
@@ -85,6 +88,7 @@ public class SendSignalView extends CardView {
         editSignalDescription.setText(null);
         editAuthorPhone.setText(null);
         setProgressVisibility(false);
+        spinnerSignalType.setSelection(0);
     }
 
     public void setProgressVisibility(boolean visibility) {
@@ -95,5 +99,9 @@ public class SendSignalView extends CardView {
             txtSignalSend.setVisibility(VISIBLE);
             progressSendSignal.setVisibility(GONE);
         }
+    }
+
+    public int getSignalType() {
+        return spinnerSignalType.getSelectedItemPosition();
     }
 }
