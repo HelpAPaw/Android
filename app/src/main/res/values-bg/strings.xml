@@ -122,4 +122,12 @@
     <string name="txt_only_registered_users_can_change_status">Само регистрирани потребители могат да променят статуса на сигнал</string>
     <string name="txt_only_registered_users_can_submit_signals">Само регистрирани потребители могат да подават сигнали</string>
 
+    <string-array name="signal_types_items">
+        <item>Други</item>
+        <item>Изгубени</item>
+        <item>Намерени</item>
+        <item>Нужда от кръводаряване</item>
+        <item>Диви Животни</item>
+    </string-array>
+
 </resources>

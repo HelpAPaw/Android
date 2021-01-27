@@ -131,6 +131,14 @@
     <string name="txt_only_registered_users_can_comment">Only registered users can write comments</string>
     <string name="txt_only_registered_users_can_change_status">Only registered users can change signal status</string>
 
+    <string-array name="signal_types_items">
+        <item>General/Other types</item>
+        <item>Lost</item>
+        <item>Found</item>
+        <item>Blood donation needed</item>
+        <item>Wild animal</item>
+    </string-array>
+
     <!-- Other strings -->
     <string name="shared_preferences_for_app" translatable="false">defaultSharedPreferences</string>
 </resources>

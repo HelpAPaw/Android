@@ -971,8 +971,9 @@ public class SignalsMapFragment extends BaseFragment
             public void onClick(View v) {
                 String description = binding.viewSendSignal.getSignalDescription();
                 String authorPhone = binding.viewSendSignal.getAuthorPhone();
+                int type = binding.viewSendSignal.getSignalType();
 
-                actionsListener.onSendSignalClicked(description, authorPhone);
+                actionsListener.onSendSignalClicked(description, authorPhone, type);
             }
         };
     }
