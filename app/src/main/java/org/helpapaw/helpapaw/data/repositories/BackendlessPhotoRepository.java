@@ -17,7 +17,7 @@ import java.io.File;
  */
 public class BackendlessPhotoRepository implements PhotoRepository {
 
-    private static final String BACKENDLESS_API_DOMAIN = "https://api.backendless.com/";
+    private static final String BACKENDLESS_API_DOMAIN = "https://backendlessappcontent.com/";
     private static final String FILES_FOLDER = "files";
     private final static String PHOTOS_DIRECTORY = "signal_photos";
     private final static String PHOTO_EXTENSION = ".jpg";
