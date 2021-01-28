@@ -51,7 +51,7 @@ public class Signal implements Parcelable {
     private double longitude;
     @ColumnInfo(name = "seen")
     private boolean seen;
-    @ColumnInfo(name = "type")
+    @ColumnInfo(name = "signalType")
     private int type;
 
     public Signal() {

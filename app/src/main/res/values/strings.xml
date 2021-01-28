@@ -132,10 +132,10 @@
     <string name="txt_only_registered_users_can_change_status">Only registered users can change signal status</string>
 
     <string-array name="signal_types_items">
-        <item>General/Other types</item>
-        <item>Lost</item>
-        <item>Found</item>
-        <item>Blood donation needed</item>
+        <item>Help needed</item>
+        <item>Lost or Found</item>
+        <item>Blood donation</item>
+        <item>Homeless</item>
         <item>Wild animal</item>
     </string-array>
 
