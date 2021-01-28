@@ -35,6 +35,7 @@ import org.helpapaw.helpapaw.utils.Injection;
 import org.helpapaw.helpapaw.utils.StatusUtils;
 import org.helpapaw.helpapaw.utils.Utils;
 
+import java.security.spec.ECField;
 import java.util.List;
 
 import static org.helpapaw.helpapaw.data.models.Comment.COMMENT_TYPE_STATUS_CHANGE;
@@ -135,6 +136,15 @@ public class SignalDetailsFragment extends BaseFragment implements SignalDetails
             binding.btnCall.setText(authorPhone);
             binding.btnCall.setVisibility(View.VISIBLE);
         }
+
+        int type = 0;
+        try {
+             type = signal.getType();
+        } catch (Exception e) {
+            // ignore
+        }
+        binding.spinnerSignalType.setSelection(type);
+        binding.spinnerSignalType.setEnabled(false);
 
         Injection.getImageLoader().loadWithRoundedCorners(getContext(), signal.getPhotoUrl(), binding.imgSignalPhoto, R.drawable.ic_paw);
     }

@@ -44,7 +44,7 @@ public class BackendlessSpatialSignalRepository implements SignalRepository {
     private static final String NAME_FIELD = "name";
     private static final String OBJECT_ID_FIELD = "objectId";
     private static final String CREATED_FIELD = "created";
-    private static final String SIGNAL_TYPE = "type";
+    private static final String SIGNAL_TYPE = "signalType";
 
     private static final int PAGE_SIZE = 100;
 
@@ -173,6 +173,7 @@ public class BackendlessSpatialSignalRepository implements SignalRepository {
         dataMap.put(SIGNAL_LOCATION, Utils.getWktPoint(signal.getLongitude(), signal.getLatitude()));
         dataMap.put(SIGNAL_STATUS, signal.getStatus());
         dataMap.put(SIGNAL_AUTHOR_PHONE, signal.getAuthorPhone());
+        dataMap.put(SIGNAL_TYPE, signal.getType());
 
         Backendless.Data.of(getTableName()).save(dataMap, new AsyncCallback<Map>() {
             @Override

@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 3,
-    "identityHash": "bbf055940d006293ef550ecfad332888",
+    "identityHash": "7c7a19b769596b347e9a0267a077a782",
     "entities": [
       {
         "tableName": "signals",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`signal_id` TEXT NOT NULL, `title` TEXT, `author_id` TEXT, `authorName` TEXT, `authorPhone` TEXT, `photoUrl` TEXT, `status` INTEGER NOT NULL, `latitude` REAL NOT NULL, `longitude` REAL NOT NULL, `seen` INTEGER NOT NULL, `type` INTEGER NOT NULL, PRIMARY KEY(`signal_id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`signal_id` TEXT NOT NULL, `title` TEXT, `author_id` TEXT, `authorName` TEXT, `authorPhone` TEXT, `photoUrl` TEXT, `status` INTEGER NOT NULL, `latitude` REAL NOT NULL, `longitude` REAL NOT NULL, `seen` INTEGER NOT NULL, `signalType` INTEGER NOT NULL, PRIMARY KEY(`signal_id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -70,7 +70,7 @@
           },
           {
             "fieldPath": "type",
-            "columnName": "type",
+            "columnName": "signalType",
             "affinity": "INTEGER",
             "notNull": true
           }
@@ -88,7 +88,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'bbf055940d006293ef550ecfad332888')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '7c7a19b769596b347e9a0267a077a782')"
     ]
   }
 }
