@@ -131,7 +131,6 @@ public abstract class BaseActivity extends AppCompatActivity {
                     binding.navView.getMenu().findItem(R.id.nav_item_sign_in_out).setTitle(R.string.txt_log_in);
                     Intent intent = new Intent(getApplicationContext(), AuthenticationActivity.class);
                     startActivity(intent);
-                    finish();
                 }
 
                 @Override

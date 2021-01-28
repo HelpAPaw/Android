@@ -109,7 +109,9 @@ public class LoginPresenter extends Presenter<LoginContract.View>
     }
 
     private void setProgressIndicator(boolean active) {
-        getView().setProgressIndicator(active);
+        if (isViewAvailable()) {
+            getView().setProgressIndicator(active);
+        }
         this.showProgressBar = active;
     }
 
