@@ -40,9 +40,9 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
 
     @Override
     public void onInitDetailsScreen(Signal signal) {
-        FirebaseCrashlytics.getInstance().log("Show signal details for " + signal.getId());
         setProgressIndicator(showProgressBar);
         if (signal != null) {
+            FirebaseCrashlytics.getInstance().log("Show signal details for " + signal.getId());
             this.signal = signal;
             signal.setPhotoUrl(photoRepository.getPhotoUrl(signal.getId()));
             getView().showSignalDetails(signal);
