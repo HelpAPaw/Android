@@ -18,6 +18,11 @@
                 android:layout_height="match_parent"
                 android:layout_gravity="center_horizontal|top" />
 
+            <org.helpapaw.helpapaw.signaldetails.SelectSignalTypeView
+                android:id="@+id/view_filter_signal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
             <org.helpapaw.helpapaw.sendsignal.SendSignalView
                 android:id="@+id/view_send_signal"
                 android:layout_width="match_parent"

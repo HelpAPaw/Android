@@ -9,6 +9,7 @@ import com.backendless.exceptions.BackendlessFault;
 import com.backendless.persistence.DataQueryBuilder;
 import com.backendless.persistence.Point;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
+import com.google.zxing.common.StringUtils;
 
 import org.helpapaw.helpapaw.base.PawApplication;
 import org.helpapaw.helpapaw.data.models.Comment;
@@ -23,7 +24,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.StringJoiner;
 
+import static java.lang.String.join;
 import static org.helpapaw.helpapaw.base.PawApplication.getContext;
 
 /**
@@ -73,6 +76,45 @@ public class BackendlessSpatialSignalRepository implements SignalRepository {
         String joinedWhereClause = String.format("(%s) AND (%s)", whereClause1, whereClause2);
 
         getSignals(joinedWhereClause, callback);
+    }
+
+    @SuppressLint("DefaultLocale")
+    @Override
+    public void getFilteredSignals(double latitude, double longitude, double radius, int timeout,
+                                   boolean[] selection, final LoadSignalsCallback callback) {
+
+        String whereClause1 = String.format("distanceOnSphere(location, '%s') <= %f", Utils.getWktPoint(longitude, latitude), radius * 1000);
+
+        final Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DATE, -timeout);
+        Date dateSubmitted = calendar.getTime();
+        String whereClause2 = String.format("%s > %d", CREATED_FIELD, dateSubmitted.getTime());
+
+        StringBuilder whereClause3 = createWhereClauseForType(selection);
+
+        String joinedWhereClause = String.format("(%s) AND (%s) AND (%s)",
+                whereClause1, whereClause2, whereClause3.toString());
+
+        getSignals(joinedWhereClause, callback);
+    }
+
+    private StringBuilder createWhereClauseForType(boolean[] selection) {
+        StringBuilder whereClause3 = new StringBuilder();
+        List<String> selected = new ArrayList<>();
+        for (int i = 0; i < selection.length; ++i) {
+            if (selection[i]) {
+                selected.add(SIGNAL_TYPE + "=" + i);
+            }
+        }
+
+        for (int i = 0; i < selected.size(); ++i) {
+            if (i == selected.size() - 1) {
+                whereClause3.append(selected.get(i));
+            } else {
+                whereClause3.append(selected.get(i) + " OR ");
+            }
+        }
+        return whereClause3;
     }
 
     @Override
