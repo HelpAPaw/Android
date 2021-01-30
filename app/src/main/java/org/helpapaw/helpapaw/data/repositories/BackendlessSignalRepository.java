@@ -17,6 +17,7 @@ import org.helpapaw.helpapaw.data.models.Comment;
 import org.helpapaw.helpapaw.data.models.Signal;
 import org.helpapaw.helpapaw.db.SignalsDatabase;
 import org.helpapaw.helpapaw.utils.Injection;
+import org.helpapaw.helpapaw.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -59,6 +60,26 @@ public class BackendlessSignalRepository implements SignalRepository {
     @SuppressLint("DefaultLocale")
     @Override
     public void getAllSignals(double latitude, double longitude, double radius, int timeout, final LoadSignalsCallback callback) {
+        BackendlessGeoQuery query = new BackendlessGeoQuery(latitude, longitude, radius * 1000, Units.METERS);
+        query.setIncludeMeta(true);
+
+        final Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DATE, -timeout);
+        Date dateSubmitted = calendar.getTime();
+        query.setWhereClause(String.format("dateSubmitted > %d", dateSubmitted.getTime()));
+
+        String category = getCategory();
+        if (category != null) {
+            query.addCategory(category);
+        }
+
+        getSignals(query, callback);
+    }
+
+    @SuppressLint("DefaultLocale")
+    @Override
+    public void getFilteredSignals(double latitude, double longitude, double radius, int timeout,
+                                   boolean[] selection, final LoadSignalsCallback callback) {
         BackendlessGeoQuery query = new BackendlessGeoQuery(latitude, longitude, radius * 1000, Units.METERS);
         query.setIncludeMeta(true);
 

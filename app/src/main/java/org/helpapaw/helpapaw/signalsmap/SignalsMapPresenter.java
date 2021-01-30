@@ -28,12 +28,15 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
     private int radius;
     private int timeout;
 
+    private boolean[] selection;
+
     private double currentMapLatitude;
     private double currentMapLongitude;
 
     private String photoUri;
     private boolean sendSignalViewVisibility;
     private List<Signal> signalsList;
+//    private List<String> selectedTypes;
 
     SignalsMapPresenter(SignalsMapContract.View view) {
         super(view);
@@ -87,16 +90,17 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
         }
     }
 
-    private void getAllSignals(double latitude, double longitude, int radius, int timeout) {
+    private void getFilteredSignals(double latitude, double longitude, int radius, int timeout) {
         if (Utils.getInstance().hasNetworkConnection()) {
             getView().setProgressVisibility(true);
 
-            signalRepository.getAllSignals(latitude, longitude, radius, timeout,
+            signalRepository.getFilteredSignals(latitude, longitude, radius, timeout, selection,
                     new SignalRepository.LoadSignalsCallback() {
                         @Override
                         public void onSignalsLoaded(List<Signal> signals) {
                             if (!isViewAvailable()) return;
                             signalsList = signals;
+
                             signalRepository.markSignalsAsSeen(signals);
                             getView().displaySignals(signals, false);
                             getView().setProgressVisibility(false);
@@ -109,6 +113,7 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
                             getView().setProgressVisibility(false);
                         }
                     });
+
         } else {
             getView().showNoInternetMessage();
         }
@@ -121,7 +126,7 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
 
         if ((Utils.getInstance().getDistanceBetween(latitude, longitude, this.latitude, this.longitude) > 300)
             || (this.radius != radius)) {
-            getAllSignals(latitude, longitude, radius, timeout);
+            getFilteredSignals(latitude, longitude, radius, timeout);
 
             this.latitude = latitude;
             this.longitude = longitude;
@@ -257,6 +262,7 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
     public void onBackButtonPressed() {
         if (sendSignalViewVisibility) {
             setSendSignalViewVisibility(false);
+//            setFilterSignalViewVisibility(false);
         } else {
             getView().closeSignalsMapScreen();
         }
@@ -264,7 +270,7 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
 
     @Override
     public void onRefreshButtonClicked() {
-        getAllSignals(latitude, longitude, radius, timeout);
+        getFilteredSignals(latitude, longitude, radius, timeout);
     }
 
     @Override
@@ -332,6 +338,14 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
     private void setSendSignalViewVisibility(boolean visibility) {
         sendSignalViewVisibility = visibility;
         getView().setAddSignalViewVisibility(visibility);
+    }
+
+//    public void setSelectedTypes(List<String> selectedTypes) {
+//        this.selectedTypes = selectedTypes;
+//    }
+
+    public void setSelection(boolean[] selection) {
+        this.selection = selection;
     }
 
     private boolean isEmpty(String value) {

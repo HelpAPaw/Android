@@ -76,15 +76,20 @@ import org.helpapaw.helpapaw.data.user.UserManager;
 import org.helpapaw.helpapaw.databinding.FragmentSignalsMapBinding;
 import org.helpapaw.helpapaw.reusable.AlertDialogFragment;
 import org.helpapaw.helpapaw.sendsignal.SendPhotoBottomSheet;
+import org.helpapaw.helpapaw.signaldetails.SelectSignalTypeView;
 import org.helpapaw.helpapaw.signaldetails.SignalDetailsActivity;
 import org.helpapaw.helpapaw.utils.Injection;
+import org.helpapaw.helpapaw.utils.MultiSelectionSpinner;
 import org.helpapaw.helpapaw.utils.StatusUtils;
 import org.helpapaw.helpapaw.utils.images.ImageUtils;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.FileDescriptor;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -139,6 +144,8 @@ public class SignalsMapFragment extends BaseFragment
     private String mFocusedSignalId;
 
     private ISettingsRepository settingsRepository;
+
+    private MultiSelectionSpinner typeMultiSpinner;
 
     public SignalsMapFragment() {
         // Required empty public constructor
@@ -202,12 +209,15 @@ public class SignalsMapFragment extends BaseFragment
         actionsListener = signalsMapPresenter;
         settingsRepository = Injection.getSettingsRepositoryInstance();
 
-
         setHasOptionsMenu(true);
 
         binding.fabAddSignal.setOnClickListener(getFabAddSignalClickListener());
         binding.viewSendSignal.setOnSignalSendClickListener(getOnSignalSendClickListener());
         binding.viewSendSignal.setOnSignalPhotoClickListener(getOnSignalPhotoClickListener());
+
+        typeMultiSpinner = binding.getRoot().findViewById(R.id.multi_spinner_signal_type);
+//        signalsMapPresenter.setSelectedTypes(typeMultiSpinner.getSelectedItems());
+        signalsMapPresenter.setSelection(typeMultiSpinner.getSelection());
 
         return binding.getRoot();
     }
