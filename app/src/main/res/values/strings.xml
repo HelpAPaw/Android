@@ -66,6 +66,7 @@
     <string name="txt_help_needed">Help needed</string>
     <string name="txt_status">Status</string>
     <string name="txt_refresh">Refresh</string>
+    <string name="txt_filter_signals">Filter signals</string>
     <string name="txt_status_updated">Status successfully updated!</string>
     <string name="txt_you_help_is_needed">Your help is needed!</string>
     <string name="txt_somebody_is_on_the_way">Somebody is on the way</string>
@@ -138,6 +139,11 @@
         <item>Homeless</item>
         <item>Wild animal</item>
     </string-array>
+
+    <string name="txt_select_all_signal_types">Select all</string>
+    <string name="txt_deselect_all_signal_types">Deselect all</string>
+    <string name="txt_filter_signal_types">Filter</string>
+    <string name="txt_active_filter">There is an active filter</string>
 
     <!-- Other strings -->
     <string name="shared_preferences_for_app" translatable="false">defaultSharedPreferences</string>

@@ -60,6 +60,7 @@
     <string name="txt_help_needed">Нужна е помощ</string>
     <string name="txt_status">Статус</string>
     <string name="txt_refresh">Обнови</string>
+    <string name="txt_filter_signals">Филтрирай сигналите</string>
     <string name="txt_status_updated">Успешно обновен статус!</string>
     <string name="txt_you_help_is_needed">Помощта Ви е необходима!</string>
     <string name="txt_somebody_is_on_the_way">Някой е на път</string>
@@ -130,4 +131,8 @@
         <item>Диви Животни</item>
     </string-array>
 
+    <string name="txt_select_all_signal_types">Селекторай всички</string>
+    <string name="txt_deselect_all_signal_types">Деселекритай всички</string>
+    <string name="txt_filter_signal_types">Филтрирай</string>
+    <string name="txt_active_filter">Има активен филтър</string>
 </resources>

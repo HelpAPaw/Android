@@ -18,10 +18,17 @@
                 android:layout_height="match_parent"
                 android:layout_gravity="center_horizontal|top" />
 
-            <org.helpapaw.helpapaw.signaldetails.SelectSignalTypeView
-                android:id="@+id/view_filter_signal"
+            <TextView
+                android:id="@+id/txt_active_filter"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:padding="6dp"
+                android:textSize="18sp"
+                android:textAlignment="viewStart"
+                android:text="@string/txt_active_filter"
+                android:background="@drawable/rounded_border_transparent"
+                android:visibility="invisible" />
 
             <org.helpapaw.helpapaw.sendsignal.SendSignalView
                 android:id="@+id/view_send_signal"
@@ -30,6 +37,17 @@
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
                 android:layout_marginTop="-105dp"
+                android:visibility="invisible"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="4dp" />
+
+            <org.helpapaw.helpapaw.signaldetails.FilterSignalTypeView
+                android:id="@+id/view_filter_signal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="-405dp"
                 android:visibility="invisible"
                 app:cardCornerRadius="8dp"
                 app:cardElevation="4dp" />

@@ -15,13 +15,17 @@ interface SignalsMapContract {
 
         void showMessage(String message);
 
-        void displaySignals(List<Signal> signals, boolean showPopup);
+        void displaySignals(List<Signal> signals, boolean showPopup, boolean[] selectedTypes);
 
-        void displaySignals(List<Signal> signals, boolean showPopup, String focusedSignalId);
+        void displaySignals(List<Signal> signals, boolean showPopup, String focusedSignalId,  boolean[] selectedTypes);
 
         void updateMapCameraPosition(double latitude, double longitude, Float zoom);
 
         void setAddSignalViewVisibility(boolean visibility);
+
+        void setFilterSignalViewVisibility(boolean visibility);
+
+        void setActiveFilterTextVisibility(boolean visibility);
 
         void hideKeyboard();
 
@@ -74,6 +78,8 @@ interface SignalsMapContract {
 
         void onSendSignalClicked(String description, String authorPhone, int type);
 
+        void onFilterSignalsClicked(boolean[] selectedTypes);
+
         void onChoosePhotoIconClicked();
 
         void onCameraOptionSelected();
@@ -91,6 +97,8 @@ interface SignalsMapContract {
         void onBackButtonPressed();
 
         void onRefreshButtonClicked();
+
+        void onFilterSignalsButtonClicked();
 
         void onSignalStatusUpdated(Signal signal);
 
