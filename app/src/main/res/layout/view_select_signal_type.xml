@@ -6,19 +6,59 @@
     android:padding="6dp">
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:id="@+id/signal_type_multiselection"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_gravity="top"
         android:background="@drawable/rounded_border"
-        android:orientation="horizontal" >
-        <org.helpapaw.helpapaw.utils.MultiSelectionSpinner
-            android:id="@+id/multi_spinner_signal_type"
+        android:orientation="vertical" >
+
+        <ListView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:minHeight="@dimen/thumbnail_size"
-            android:paddingLeft="3dp"
-            android:paddingRight="3dp"
-            android:spinnerMode="dropdown"
-            android:dropDownVerticalOffset="40dp" />
-    </LinearLayout>
+            android:layout_weight="1"
+            android:layout_marginBottom="40dp"
+            android:divider="@null"
+            android:id="@+id/signal_type_list_view">
+        </ListView>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/txt_select_all_signal_types"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:gravity="start"
+                android:text="@string/txt_select_all_signal_types"
+                android:textColor="@color/color_primary"
+                android:textSize="18sp" />
 
+            <TextView
+                android:id="@+id/txt_deselect_all_signal_types"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:gravity="start"
+                android:text="@string/txt_deselect_all_signal_types"
+                android:textColor="@color/color_primary"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/txt_filter_signal_types"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="20dp"
+                android:gravity="end"
+                android:text="@string/txt_filter_signal_types"
+                android:textColor="@color/color_primary"
+                android:textSize="18sp" />
+        </LinearLayout>
+    </LinearLayout>
 </LinearLayout>

@@ -1,5 +1,12 @@
 package org.helpapaw.helpapaw.data.repositories;
 
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import android.annotation.SuppressLint;
 
 import com.backendless.Backendless;
@@ -9,7 +16,6 @@ import com.backendless.exceptions.BackendlessFault;
 import com.backendless.persistence.DataQueryBuilder;
 import com.backendless.persistence.Point;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
-import com.google.zxing.common.StringUtils;
 
 import org.helpapaw.helpapaw.base.PawApplication;
 import org.helpapaw.helpapaw.data.models.Comment;
@@ -18,15 +24,7 @@ import org.helpapaw.helpapaw.db.SignalsDatabase;
 import org.helpapaw.helpapaw.utils.Injection;
 import org.helpapaw.helpapaw.utils.Utils;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.StringJoiner;
 
-import static java.lang.String.join;
 import static org.helpapaw.helpapaw.base.PawApplication.getContext;
 
 /**
@@ -81,7 +79,7 @@ public class BackendlessSpatialSignalRepository implements SignalRepository {
     @SuppressLint("DefaultLocale")
     @Override
     public void getFilteredSignals(double latitude, double longitude, double radius, int timeout,
-                                   boolean[] selection, final LoadSignalsCallback callback) {
+                                   boolean[] selectedTypes, final LoadSignalsCallback callback) {
 
         String whereClause1 = String.format("distanceOnSphere(location, '%s') <= %f", Utils.getWktPoint(longitude, latitude), radius * 1000);
 
@@ -89,21 +87,32 @@ public class BackendlessSpatialSignalRepository implements SignalRepository {
         calendar.add(Calendar.DATE, -timeout);
         Date dateSubmitted = calendar.getTime();
         String whereClause2 = String.format("%s > %d", CREATED_FIELD, dateSubmitted.getTime());
+        String joinedWhereClause;
 
-        StringBuilder whereClause3 = createWhereClauseForType(selection);
+        if (selectedTypes != null && !allSelected(selectedTypes)) {
+            String whereClause3 = createWhereClauseForType(selectedTypes);
 
-        String joinedWhereClause = String.format("(%s) AND (%s) AND (%s)",
-                whereClause1, whereClause2, whereClause3.toString());
+            joinedWhereClause= String.format("(%s) AND (%s) AND (%s)",
+                    whereClause1, whereClause2, whereClause3);
+        } else {
+            joinedWhereClause = String.format("(%s) AND (%s)",
+                    whereClause1, whereClause2);
+        }
 
         getSignals(joinedWhereClause, callback);
     }
 
-    private StringBuilder createWhereClauseForType(boolean[] selection) {
+    private String createWhereClauseForType(boolean[] selection) {
         StringBuilder whereClause3 = new StringBuilder();
         List<String> selected = new ArrayList<>();
+
+        if (allDeselected(selection)) {
+            return SIGNAL_TYPE + " = -1";
+        }
+
         for (int i = 0; i < selection.length; ++i) {
             if (selection[i]) {
-                selected.add(SIGNAL_TYPE + "=" + i);
+                selected.add(SIGNAL_TYPE + " = " + i);
             }
         }
 
@@ -114,7 +123,30 @@ public class BackendlessSpatialSignalRepository implements SignalRepository {
                 whereClause3.append(selected.get(i) + " OR ");
             }
         }
-        return whereClause3;
+
+        return whereClause3.toString();
+    }
+
+    private boolean allDeselected(boolean[] selection) {
+        boolean allDeselected = true;
+        for (int i = 0; i < selection.length; ++i) {
+            if (selection[i]) {
+                return false;
+            }
+        }
+
+        return allDeselected;
+    }
+
+    private boolean allSelected(boolean[] selection) {
+        boolean allSelected = true;
+        for (int i = 0; i < selection.length; ++i) {
+            if (!selection[i]) {
+                return false;
+            }
+        }
+
+        return allSelected;
     }
 
     @Override

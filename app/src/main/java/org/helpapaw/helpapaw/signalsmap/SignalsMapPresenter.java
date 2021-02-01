@@ -1,5 +1,9 @@
 package org.helpapaw.helpapaw.signalsmap;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
 
 import org.helpapaw.helpapaw.base.Presenter;
@@ -10,9 +14,6 @@ import org.helpapaw.helpapaw.data.user.UserManager;
 import org.helpapaw.helpapaw.utils.Injection;
 import org.helpapaw.helpapaw.utils.Utils;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 /**
  * Created by iliyan on 7/28/16
@@ -28,15 +29,15 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
     private int radius;
     private int timeout;
 
-    private boolean[] selection;
+    private boolean[] selectedTypes;
 
     private double currentMapLatitude;
     private double currentMapLongitude;
 
     private String photoUri;
     private boolean sendSignalViewVisibility;
+    private boolean filterSignalViewVisibility;
     private List<Signal> signalsList;
-//    private List<String> selectedTypes;
 
     SignalsMapPresenter(SignalsMapContract.View view) {
         super(view);
@@ -44,12 +45,14 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
         userManager = Injection.getUserManagerInstance();
         photoRepository = Injection.getPhotoRepositoryInstance();
         sendSignalViewVisibility = false;
+        filterSignalViewVisibility = false;
         signalsList = new ArrayList<>();
     }
 
     @Override
     public void onInitSignalsMap(String focusedSignalId) {
         getView().setAddSignalViewVisibility(sendSignalViewVisibility);
+        getView().setFilterSignalViewVisibility(filterSignalViewVisibility);
         if (!isEmpty(photoUri)) {
             getView().setThumbnailImage(photoUri);
         }
@@ -57,7 +60,7 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
             getSignal(focusedSignalId);
         }
         if (signalsList != null && signalsList.size() > 0) {
-            getView().displaySignals(signalsList, false);
+            getView().displaySignals(signalsList, false, selectedTypes);
         }
     }
 
@@ -73,7 +76,7 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
                             if (signals.size() > 0) {
                                 replaceSignal(signals.get(0));
                                 signalRepository.markSignalsAsSeen(signals);
-                                getView().displaySignals(signals, true);
+                                getView().displaySignals(signals, true, selectedTypes);
                                 getView().setProgressVisibility(false);
                             }
                         }
@@ -94,7 +97,7 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
         if (Utils.getInstance().hasNetworkConnection()) {
             getView().setProgressVisibility(true);
 
-            signalRepository.getFilteredSignals(latitude, longitude, radius, timeout, selection,
+            signalRepository.getFilteredSignals(latitude, longitude, radius, timeout, selectedTypes,
                     new SignalRepository.LoadSignalsCallback() {
                         @Override
                         public void onSignalsLoaded(List<Signal> signals) {
@@ -102,7 +105,7 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
                             signalsList = signals;
 
                             signalRepository.markSignalsAsSeen(signals);
-                            getView().displaySignals(signals, false);
+                            getView().displaySignals(signals, false, selectedTypes);
                             getView().setProgressVisibility(false);
                         }
 
@@ -117,6 +120,8 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
         } else {
             getView().showNoInternetMessage();
         }
+
+        setActiveFilterTextVisibility(isActiveFilter(selectedTypes));
     }
 
     @Override
@@ -160,7 +165,7 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
 
     @Override
     public void onCancelAddSignal() {
-        getView().displaySignals(signalsList, false);
+        getView().displaySignals(signalsList, false, selectedTypes);
     }
 
     @Override
@@ -175,6 +180,15 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
         }
     }
 
+    @Override
+    public void onFilterSignalsClicked(boolean[] selectedTypes) {
+        this.selectedTypes = selectedTypes;
+
+        // todo consider adding selectedSignals as parameter - hidden dependency
+        getFilteredSignals(latitude, longitude, radius, timeout);
+        setFilterSignalViewVisibility(false);
+    }
+
     private void saveSignal(String description, String authorPhone, Date dateSubmitted, int status,
                             final double latitude, final double longitude, int type) {
         FirebaseCrashlytics.getInstance().log("Initiate save new signal");
@@ -187,7 +201,7 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
                 } else {
                     signalsList.add(signal);
 
-                    getView().displaySignals(signalsList, true, signal.getId());
+                    getView().displaySignals(signalsList, true, signal.getId(), selectedTypes);
                     setSendSignalViewVisibility(false);
                     clearSignalViewData();
                 }
@@ -207,7 +221,7 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
             public void onPhotoSaved() {
                 if (!isViewAvailable()) return;
                 signalsList.add(signal);
-                getView().displaySignals(signalsList, true, signal.getId());
+                getView().displaySignals(signalsList, true, signal.getId(), selectedTypes);
                 setSendSignalViewVisibility(false);
                 clearSignalViewData();
                 getView().showAddedSignalMessage();
@@ -262,8 +276,12 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
     public void onBackButtonPressed() {
         if (sendSignalViewVisibility) {
             setSendSignalViewVisibility(false);
-//            setFilterSignalViewVisibility(false);
-        } else {
+            setFilterSignalViewVisibility(false);
+        }
+        else if (filterSignalViewVisibility) {
+            setFilterSignalViewVisibility(false);
+        }
+        else {
             getView().closeSignalsMapScreen();
         }
     }
@@ -274,11 +292,16 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
     }
 
     @Override
+    public void onFilterSignalsButtonClicked() {
+        setFilterSignalViewVisibility(true);
+    }
+
+    @Override
     public void onSignalStatusUpdated(Signal signal) {
         if (signal == null) return;
 
         replaceSignal(signal);
-        getView().displaySignals(signalsList, true);
+        getView().displaySignals(signalsList, true, selectedTypes);
     }
 
     private void replaceSignal(Signal signal) {
@@ -340,15 +363,39 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
         getView().setAddSignalViewVisibility(visibility);
     }
 
-//    public void setSelectedTypes(List<String> selectedTypes) {
-//        this.selectedTypes = selectedTypes;
-//    }
-
-    public void setSelection(boolean[] selection) {
-        this.selection = selection;
+    private void setFilterSignalViewVisibility(boolean visibility) {
+        filterSignalViewVisibility = visibility;
+        getView().setFilterSignalViewVisibility(visibility);
     }
+
+    private void setActiveFilterTextVisibility(boolean visibility) {
+        getView().setActiveFilterTextVisibility(visibility);
+    }
+
 
     private boolean isEmpty(String value) {
         return !(value != null && value.length() > 0);
     }
+
+    private boolean isActiveFilter(boolean[] selectedTypes) {
+        boolean isActiveFilter = false;
+
+        if (selectedTypes != null && !allSelected(selectedTypes)) {
+            isActiveFilter = true;
+        }
+
+        return isActiveFilter;
+    }
+
+    private boolean allSelected(boolean[] selection) {
+        boolean allSelected = true;
+        for (int i = 0; i < selection.length; ++i) {
+            if (!selection[i]) {
+                return false;
+            }
+        }
+
+        return allSelected;
+    }
+
 }
