@@ -140,6 +140,7 @@
         <item>Wild animal</item>
     </string-array>
 
+    <string name="txt_filter_signal_types_description">Choose signal types you want to view</string>
     <string name="txt_select_all_signal_types">Select all</string>
     <string name="txt_deselect_all_signal_types">Deselect all</string>
     <string name="txt_filter_signal_types">Filter</string>
