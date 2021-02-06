@@ -15,12 +15,18 @@ public class SignalTypeCustomAdapter extends BaseAdapter {
     private final Context context;
     private final String[] signalType;
 
-    private final boolean[] signalTypeSelection;
+    private boolean[] currentSignalTypeSelection;
+    private boolean[] signalTypeSelection;
 
     public SignalTypeCustomAdapter(Context context, String[] signalType, boolean[] signalTypeSelection) {
         this.context = context;
         this.signalType = signalType;
         this.signalTypeSelection = signalTypeSelection;
+
+        this.currentSignalTypeSelection = new boolean[signalTypeSelection.length];
+        for (int i = 0; i < signalTypeSelection.length; i++) {
+            currentSignalTypeSelection[i] = Boolean.valueOf(signalTypeSelection[i]);
+        }
     }
 
     @Override
@@ -63,21 +69,41 @@ public class SignalTypeCustomAdapter extends BaseAdapter {
             holder = (ViewHolder)convertView.getTag();
         }
         holder.textView.setText(signalType[position]);
-        holder.checkBox.setChecked(signalTypeSelection[position]);
-        holder.checkBox.setTag(R.integer.btnplusview, convertView);
+        holder.checkBox.setChecked(currentSignalTypeSelection[position]);
         holder.checkBox.setTag(position);
 
         holder.checkBox.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                View tempview = (View) holder.checkBox.getTag(R.integer.btnplusview);
-                TextView tv = tempview.findViewById(R.id.type_item);
                 Integer pos = (Integer)  holder.checkBox.getTag();
-
-                signalTypeSelection[pos] = !signalTypeSelection[pos];
+                currentSignalTypeSelection[pos] = !currentSignalTypeSelection[pos];
             }
         });
         return convertView;
+    }
+
+    public boolean[] getSignalTypeSelection() {
+        return this.signalTypeSelection;
+    }
+
+    public void setSignalTypeSelectionToCurrent() {
+        for (int i = 0; i < signalTypeSelection.length; i++) {
+            signalTypeSelection[i] = Boolean.valueOf(currentSignalTypeSelection[i]);
+        }
+    }
+
+    public void setCurrentSignalTypeSelectionToSelected() {
+        for (int i = 0; i < signalTypeSelection.length; i++) {
+            currentSignalTypeSelection[i] = Boolean.valueOf(signalTypeSelection[i]);
+        }
+    }
+
+    public void refreshView(boolean[] selection) {
+        for (int i = 0; i < currentSignalTypeSelection.length; i++) {
+            currentSignalTypeSelection[i] = Boolean.valueOf(selection[i]);
+        }
+
+        notifyDataSetChanged();
     }
 
     private class ViewHolder {

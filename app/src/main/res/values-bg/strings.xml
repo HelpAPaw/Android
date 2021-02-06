@@ -131,6 +131,7 @@
         <item>Диви Животни</item>
     </string-array>
 
+    <string name="txt_filter_signal_types_description">Избери кои типове сигнали да виждаш</string>
     <string name="txt_select_all_signal_types">Селекторай всички</string>
     <string name="txt_deselect_all_signal_types">Деселекритай всички</string>
     <string name="txt_filter_signal_types">Филтрирай</string>

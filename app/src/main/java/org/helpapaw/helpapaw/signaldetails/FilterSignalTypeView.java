@@ -50,25 +50,32 @@ public class FilterSignalTypeView extends CardView {
         TextView selectAll = findViewById(R.id.txt_select_all_signal_types);
         TextView deselectAll = findViewById(R.id.txt_deselect_all_signal_types);
         filter = findViewById(R.id.txt_filter_signal_types);
+        TextView title = findViewById(R.id.txt_filter_signal_types_description);
+        title.setText(R.string.txt_filter_signal_types_description);
 
         signalType = getResources().getStringArray(R.array.signal_types_items);
         signalTypeSelection = new boolean[signalType.length];
-        setSelection(true);
+        signalTypeSelection = setSelection(true);
 
         customAdapter = new SignalTypeCustomAdapter(signalTypeListView.getContext(), signalType, signalTypeSelection);
         signalTypeListView.setAdapter(customAdapter);
 
         selectAll.setOnClickListener(v -> {
-            setSelection(true);
-            customAdapter = new SignalTypeCustomAdapter(signalTypeListView.getContext(), signalType, signalTypeSelection);
-            signalTypeListView.setAdapter(customAdapter);
+            customAdapter.refreshView(setSelection(true));
         });
 
         deselectAll.setOnClickListener(v -> {
-            setSelection(false);
-            customAdapter = new SignalTypeCustomAdapter(signalTypeListView.getContext(), signalType, signalTypeSelection);
-            signalTypeListView.setAdapter(customAdapter);
+            customAdapter.refreshView(setSelection(false));
         });
+    }
+
+    @Override
+    public void onVisibilityChanged(View changedView, int visibility) {
+        super.onVisibilityChanged(changedView, visibility);
+
+        if(visibility == VISIBLE) {
+            customAdapter.refreshView(signalTypeSelection);
+        }
     }
 
     public void setOnFilterClickListener(OnClickListener clickListener) {
@@ -76,13 +83,20 @@ public class FilterSignalTypeView extends CardView {
     }
 
     public boolean[] getSignalTypeSelection() {
+        customAdapter.setSignalTypeSelectionToCurrent();
+
+        signalTypeSelection = customAdapter.getSignalTypeSelection();
         return signalTypeSelection;
     }
 
-    private void setSelection(boolean isSelect){
-        for (int i = 0; i < signalTypeSelection.length; i++) {
-            signalTypeSelection[i] = isSelect;
+    private boolean[] setSelection(boolean isSelect){
+        boolean[] selection = new boolean[signalTypeSelection.length];
+
+        for (int i = 0; i < selection.length; i++) {
+            selection[i] = isSelect;
         }
+
+        return selection;
     }
 }
 
