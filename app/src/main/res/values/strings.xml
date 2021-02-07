@@ -149,4 +149,5 @@
     <!-- Other strings -->
     <string name="shared_preferences_for_app" translatable="false">defaultSharedPreferences</string>
     <string name="txt_signal_type">Signal type: %s</string>
+    <string name="content_description_add_signal">Add signal</string>
 </resources>

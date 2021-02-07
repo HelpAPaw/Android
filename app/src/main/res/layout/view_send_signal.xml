@@ -67,19 +67,19 @@
 
     <FrameLayout
         android:layout_width="wrap_content"
-        android:layout_height="40dp"
+        android:layout_height="match_parent"
         android:layout_gravity="center">
 
         <TextView
             android:id="@+id/txt_signal_send"
-            android:layout_width="33dp"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="4dp"
+            android:layout_marginStart="6dp"
+            android:layout_marginEnd="0dp"
             android:gravity="center_vertical"
             android:text="@string/txt_send"
             android:textColor="@color/color_primary"
-            android:textSize="20sp" />
+            android:textSize="17sp" />
 
         <ProgressBar
             android:id="@+id/progress_send_signal"
