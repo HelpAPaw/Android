@@ -100,7 +100,7 @@ public class Utils {
 
     @SuppressLint("DefaultLocale")
     public static String getWktPoint(double longitude, double latitude) {
-        return String.format("Point (%.15f %.15f)", longitude, latitude);
+        return String.format(Locale.ENGLISH, "Point (%.15f %.15f)", longitude, latitude);
     }
 
     //Dates

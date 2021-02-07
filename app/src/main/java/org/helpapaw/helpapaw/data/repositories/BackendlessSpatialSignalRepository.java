@@ -5,6 +5,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import android.annotation.SuppressLint;
@@ -64,14 +65,14 @@ public class BackendlessSpatialSignalRepository implements SignalRepository {
     @Override
     public void getAllSignals(double latitude, double longitude, double radius, int timeout, final LoadSignalsCallback callback) {
 
-        String whereClause1 = String.format("distanceOnSphere(location, '%s') <= %f", Utils.getWktPoint(longitude, latitude), radius * 1000);
+        String whereClause1 = String.format(Locale.ENGLISH, "distanceOnSphere(location, '%s') <= %f", Utils.getWktPoint(longitude, latitude), radius * 1000);
 
         final Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DATE, -timeout);
         Date dateSubmitted = calendar.getTime();
-        String whereClause2 = String.format("%s > %d", CREATED_FIELD, dateSubmitted.getTime());
+        String whereClause2 = String.format(Locale.ENGLISH, "%s > %d", CREATED_FIELD, dateSubmitted.getTime());
 
-        String joinedWhereClause = String.format("(%s) AND (%s)", whereClause1, whereClause2);
+        String joinedWhereClause = String.format(Locale.ENGLISH, "(%s) AND (%s)", whereClause1, whereClause2);
 
         getSignals(joinedWhereClause, callback);
     }
@@ -81,21 +82,21 @@ public class BackendlessSpatialSignalRepository implements SignalRepository {
     public void getFilteredSignals(double latitude, double longitude, double radius, int timeout,
                                    boolean[] selectedTypes, final LoadSignalsCallback callback) {
 
-        String whereClause1 = String.format("distanceOnSphere(location, '%s') <= %f", Utils.getWktPoint(longitude, latitude), radius * 1000);
+        String whereClause1 = String.format(Locale.ENGLISH, "distanceOnSphere(location, '%s') <= %f", Utils.getWktPoint(longitude, latitude), radius * 1000);
 
         final Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DATE, -timeout);
         Date dateSubmitted = calendar.getTime();
-        String whereClause2 = String.format("%s > %d", CREATED_FIELD, dateSubmitted.getTime());
+        String whereClause2 = String.format(Locale.ENGLISH, "%s > %d", CREATED_FIELD, dateSubmitted.getTime());
         String joinedWhereClause;
 
         if (selectedTypes != null && !allSelected(selectedTypes)) {
             String whereClause3 = createWhereClauseForType(selectedTypes);
 
-            joinedWhereClause= String.format("(%s) AND (%s) AND (%s)",
+            joinedWhereClause= String.format(Locale.ENGLISH, "(%s) AND (%s) AND (%s)",
                     whereClause1, whereClause2, whereClause3);
         } else {
-            joinedWhereClause = String.format("(%s) AND (%s)",
+            joinedWhereClause = String.format(Locale.ENGLISH, "(%s) AND (%s)",
                     whereClause1, whereClause2);
         }
 
@@ -151,7 +152,7 @@ public class BackendlessSpatialSignalRepository implements SignalRepository {
 
     @Override
     public void getSignal(String signalId, final LoadSignalsCallback callback) {
-        String whereClause = String.format("%s='%s'", OBJECT_ID_FIELD, signalId);
+        String whereClause = String.format(Locale.ENGLISH, "%s='%s'", OBJECT_ID_FIELD, signalId);
         getSignals(whereClause, callback);
     }
 
