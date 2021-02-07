@@ -53,6 +53,19 @@
                             android:linksClickable="true"
                             tools:text="This is a title but it is very, very, very, VERY long and expands way much more that it should. However the important thing is that it is fully displayed and no part of it is hidden or hard to read! Right!?"/>
 
+                        <TextView
+                            android:id="@+id/txt_signal_type"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:padding="0dp"
+                            android:layout_gravity="center"
+                            android:gravity="center"
+                            android:dropDownVerticalOffset="50dp"
+                            android:entries="@array/signal_types_items"
+                            android:minHeight="@dimen/thumbnail_size"
+                            android:spinnerMode="dialog"
+                            tools:text="Тип на сигнала: Бездомно животно"/>
+
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content">
@@ -75,7 +88,7 @@
                                 android:layout_weight="1"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="8dp"
+                                android:layout_marginTop="4dp"
                                 android:layout_marginEnd="4dp"
                                 android:textSize="15sp"
                                 android:textStyle="italic"
@@ -93,18 +106,6 @@
                             <RelativeLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content">
-
-                                <Spinner
-                                    android:id="@+id/spinner_signal_type"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="match_parent"
-                                    android:layout_marginTop="6dp"
-                                    android:dropDownVerticalOffset="50dp"
-                                    android:entries="@array/signal_types_items"
-                                    android:minHeight="@dimen/thumbnail_size"
-                                    android:paddingLeft="3dp"
-                                    android:paddingRight="3dp"
-                                    android:spinnerMode="dropdown" />
 
                                 <ImageView
                                     android:id="@+id/img_call"
