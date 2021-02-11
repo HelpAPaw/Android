@@ -1,4 +1,4 @@
-package org.helpapaw.helpapaw.utils;
+package org.helpapaw.helpapaw.filtersignal;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -15,8 +15,8 @@ public class SignalTypeCustomAdapter extends BaseAdapter {
     private final Context context;
     private final String[] signalType;
 
-    private boolean[] currentSignalTypeSelection;
-    private boolean[] signalTypeSelection;
+    private final boolean[] currentSignalTypeSelection;
+    private final boolean[] signalTypeSelection;
 
     public SignalTypeCustomAdapter(Context context, String[] signalType, boolean[] signalTypeSelection) {
         this.context = context;
@@ -24,9 +24,7 @@ public class SignalTypeCustomAdapter extends BaseAdapter {
         this.signalTypeSelection = signalTypeSelection;
 
         this.currentSignalTypeSelection = new boolean[signalTypeSelection.length];
-        for (int i = 0; i < signalTypeSelection.length; i++) {
-            currentSignalTypeSelection[i] = Boolean.valueOf(signalTypeSelection[i]);
-        }
+        System.arraycopy(signalTypeSelection, 0, currentSignalTypeSelection, 0, signalTypeSelection.length);
     }
 
     @Override
@@ -87,26 +85,16 @@ public class SignalTypeCustomAdapter extends BaseAdapter {
     }
 
     public void setSignalTypeSelectionToCurrent() {
-        for (int i = 0; i < signalTypeSelection.length; i++) {
-            signalTypeSelection[i] = Boolean.valueOf(currentSignalTypeSelection[i]);
-        }
-    }
-
-    public void setCurrentSignalTypeSelectionToSelected() {
-        for (int i = 0; i < signalTypeSelection.length; i++) {
-            currentSignalTypeSelection[i] = Boolean.valueOf(signalTypeSelection[i]);
-        }
+        System.arraycopy(currentSignalTypeSelection, 0, signalTypeSelection, 0, signalTypeSelection.length);
     }
 
     public void refreshView(boolean[] selection) {
-        for (int i = 0; i < currentSignalTypeSelection.length; i++) {
-            currentSignalTypeSelection[i] = Boolean.valueOf(selection[i]);
-        }
+        System.arraycopy(selection, 0, currentSignalTypeSelection, 0, currentSignalTypeSelection.length);
 
         notifyDataSetChanged();
     }
 
-    private class ViewHolder {
+    private static class ViewHolder {
         protected CheckBox checkBox;
         private TextView textView;
     }

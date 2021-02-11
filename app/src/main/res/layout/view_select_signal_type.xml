@@ -13,7 +13,7 @@
         android:gravity="left"
         android:textColor="@color/color_primary_dark"
         android:textStyle="bold"
-        android:textSize="18sp" />
+        android:textSize="16sp" />
 
     <LinearLayout
         android:id="@+id/signal_type_multiselection"
@@ -28,7 +28,7 @@
             android:id="@+id/signal_type_list_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
+            android:layout_marginBottom="18dp"
             android:layout_weight="1"
             android:divider="@null"></ListView>
 
@@ -47,7 +47,7 @@
                 android:gravity="start"
                 android:text="@string/txt_select_all_signal_types"
                 android:textColor="@color/color_primary"
-                android:textSize="18sp" />
+                android:textSize="16sp" />
 
             <TextView
                 android:id="@+id/txt_deselect_all_signal_types"
@@ -58,7 +58,7 @@
                 android:gravity="start"
                 android:text="@string/txt_deselect_all_signal_types"
                 android:textColor="@color/color_primary"
-                android:textSize="18sp" />
+                android:textSize="16sp" />
 
             <TextView
                 android:id="@+id/txt_filter_signal_types"
@@ -71,7 +71,7 @@
                 android:textStyle="bold"
 
                 android:textColor="@color/color_primary"
-                android:textSize="18sp" />
+                android:textSize="16sp" />
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>

@@ -49,6 +49,7 @@ import androidx.core.graphics.drawable.RoundedBitmapDrawable;
 import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory;
 import androidx.core.view.MenuItemCompat;
 import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -83,6 +84,7 @@ import org.helpapaw.helpapaw.data.models.Signal;
 import org.helpapaw.helpapaw.data.repositories.ISettingsRepository;
 import org.helpapaw.helpapaw.data.user.UserManager;
 import org.helpapaw.helpapaw.databinding.FragmentSignalsMapBinding;
+import org.helpapaw.helpapaw.filtersignal.FilterSignalTypeDialog;
 import org.helpapaw.helpapaw.reusable.AlertDialogFragment;
 import org.helpapaw.helpapaw.sendsignal.SendPhotoBottomSheet;
 import org.helpapaw.helpapaw.signaldetails.SignalDetailsActivity;
@@ -137,6 +139,8 @@ public class SignalsMapFragment extends BaseFragment
     UserManager userManager;
     private boolean mVisibilityAddSignal = false;
     private String mFocusedSignalId;
+
+    private FilterSignalTypeDialog filterSignalTypeDialog;
 
     private ISettingsRepository settingsRepository;
 
@@ -207,8 +211,10 @@ public class SignalsMapFragment extends BaseFragment
         binding.viewSendSignal.setOnSignalSendClickListener(getOnSignalSendClickListener());
         binding.viewSendSignal.setOnSignalPhotoClickListener(getOnSignalPhotoClickListener());
 
-        binding.viewFilterSignal.setOnFilterClickListener(getOnSignalFilterClickListener());
-
+        if (filterSignalTypeDialog.newInstance() != null) {
+            getOnSignalFilterClickListener(this.filterSignalTypeDialog.getSignalTypeSelection());
+        }
+        
         return binding.getRoot();
     }
 
@@ -624,7 +630,6 @@ public class SignalsMapFragment extends BaseFragment
         if (visibility) {
             showAddSignalView();
             showAddSignalPin();
-            hideFilterSignalView();
 
             binding.fabAddSignal.setImageResource(R.drawable.ic_close);
         } else {
@@ -643,8 +648,6 @@ public class SignalsMapFragment extends BaseFragment
             hideAddSignalView();
             hideAddSignalPin();
             binding.fabAddSignal.setImageResource(R.drawable.fab_add);
-        } else {
-            hideFilterSignalView();
         }
     }
 
@@ -724,30 +727,10 @@ public class SignalsMapFragment extends BaseFragment
     }
 
     private void showFilterSignalView() {
-        binding.viewFilterSignal.setVisibility(View.VISIBLE);
-        binding.viewFilterSignal.setAlpha(0.0f);
+        FragmentManager fm = getChildFragmentManager();
+        filterSignalTypeDialog = FilterSignalTypeDialog.newInstance();
+        filterSignalTypeDialog.show(fm, "filter");
 
-        binding.viewFilterSignal
-                .animate()
-                .setInterpolator(new AccelerateDecelerateInterpolator())
-                .setDuration(300)
-                .translationY((binding.viewFilterSignal.getHeight() * 1.2f))
-                .alpha(1.0f);
-    }
-
-    private void hideFilterSignalView() {
-
-        binding.viewFilterSignal
-                .animate()
-                .setInterpolator(new AccelerateDecelerateInterpolator())
-                .setDuration(300)
-                .translationY(-(binding.viewFilterSignal.getHeight() * 1.2f))
-                .withEndAction(new Runnable() {
-                    @Override
-                    public void run() {
-                        binding.viewFilterSignal.setVisibility(View.INVISIBLE);
-                    }
-                });
     }
 
     private void showActiveFilterText() {
@@ -1051,14 +1034,8 @@ public class SignalsMapFragment extends BaseFragment
         };
     }
 
-    public View.OnClickListener getOnSignalFilterClickListener() {
-        return new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                binding.viewFilterSignal.getSignalTypeSelection();
-                actionsListener.onFilterSignalsClicked(binding.viewFilterSignal.getSignalTypeSelection());
-            }
-        };
+    public void getOnSignalFilterClickListener(boolean[] selection) {
+        actionsListener.onFilterSignalsClicked(selection);
     }
 
     public View.OnClickListener getOnSignalPhotoClickListener() {

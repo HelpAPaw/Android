@@ -10,7 +10,7 @@ import android.widget.TextView;
 import androidx.cardview.widget.CardView;
 
 import org.helpapaw.helpapaw.R;
-import org.helpapaw.helpapaw.utils.SignalTypeCustomAdapter;
+import org.helpapaw.helpapaw.filtersignal.SignalTypeCustomAdapter;
 
 public class FilterSignalTypeView extends CardView {
 

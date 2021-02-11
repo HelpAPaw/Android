@@ -24,7 +24,7 @@
             android:layout_marginStart="20dp"
             android:paddingTop="5dp"
             android:text="Type"
-            android:textSize="22sp" />
+            android:textSize="18sp" />
 
     </LinearLayout>
 </LinearLayout>

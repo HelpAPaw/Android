@@ -41,17 +41,6 @@
                 app:cardCornerRadius="8dp"
                 app:cardElevation="4dp" />
 
-            <org.helpapaw.helpapaw.signaldetails.FilterSignalTypeView
-                android:id="@+id/view_filter_signal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:layout_marginTop="-490dp"
-                android:visibility="invisible"
-                app:cardCornerRadius="8dp"
-                app:cardElevation="4dp" />
-
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/add_signal_pin"
                 android:layout_width="40dp"
