@@ -372,7 +372,6 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
         getView().setActiveFilterTextVisibility(visibility);
     }
 
-
     private boolean isEmpty(String value) {
         return !(value != null && value.length() > 0);
     }
@@ -388,14 +387,11 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
     }
 
     private boolean allSelected(boolean[] selection) {
-        boolean allSelected = true;
         for (int i = 0; i < selection.length; ++i) {
             if (!selection[i]) {
                 return false;
             }
         }
-
-        return allSelected;
+        return true;
     }
-
 }

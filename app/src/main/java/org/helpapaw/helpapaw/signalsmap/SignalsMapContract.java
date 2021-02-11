@@ -106,6 +106,5 @@ interface SignalsMapContract {
 
         void onLoginAction();
 
-
     }
 }
