@@ -92,6 +92,9 @@ import org.helpapaw.helpapaw.utils.Injection;
 import org.helpapaw.helpapaw.utils.StatusUtils;
 import org.helpapaw.helpapaw.utils.images.ImageUtils;
 
+import static org.helpapaw.helpapaw.filtersignal.FilterSignalTypeDialog.EXTRA_SIGNAL_TYPE_SELECTION;
+import static org.helpapaw.helpapaw.filtersignal.FilterSignalTypeDialog.REQUEST_UPDATE_SIGNAL_TYPE_SELECTION;
+
 
 public class SignalsMapFragment extends BaseFragment
         implements SignalsMapContract.View,
@@ -115,8 +118,6 @@ public class SignalsMapFragment extends BaseFragment
     private static final String VIEW_ADD_SIGNAL = "view_add_signal";
     private static final int PADDING_TOP = 190;
     private static final int PADDING_BOTTOM = 160;
-    private static final String MARKER_LATITUDE = "marker_latitude";
-    private static final String MARKER_LONGITUDE = "marker_longitude";
 
     private GoogleApiClient googleApiClient;
     private LocationRequest locationRequest;
@@ -211,9 +212,10 @@ public class SignalsMapFragment extends BaseFragment
         binding.viewSendSignal.setOnSignalSendClickListener(getOnSignalSendClickListener());
         binding.viewSendSignal.setOnSignalPhotoClickListener(getOnSignalPhotoClickListener());
 
-        if (filterSignalTypeDialog.newInstance() != null) {
-            getOnSignalFilterClickListener(this.filterSignalTypeDialog.getSignalTypeSelection());
-        }
+        //TODO: Delete this
+//        if (filterSignalTypeDialog.newInstance() != null) {
+//            getOnSignalFilterClickListener(this.filterSignalTypeDialog.getSignalTypeSelection());
+//        }
         
         return binding.getRoot();
     }
@@ -850,14 +852,14 @@ public class SignalsMapFragment extends BaseFragment
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+
         if (requestCode == REQUEST_CAMERA) {
             if (resultCode == Activity.RESULT_OK) {
                 Uri takenPhotoUri = ImageUtils.getInstance().getPhotoFileUri(getContext(), imageFileName);
                 actionsListener.onSignalPhotoSelected(takenPhotoUri.getPath());
             }
         }
-
-        if (requestCode == REQUEST_GALLERY && resultCode == Activity.RESULT_OK && data != null && data.getData() != null) {
+        else if (requestCode == REQUEST_GALLERY && resultCode == Activity.RESULT_OK && data != null && data.getData() != null) {
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 saveImageFromURI(data.getData());
@@ -872,12 +874,19 @@ public class SignalsMapFragment extends BaseFragment
             }
 
         }
-
-        if (requestCode == REQUEST_SIGNAL_DETAILS) {
+        else if (requestCode == REQUEST_SIGNAL_DETAILS) {
             if (resultCode == Activity.RESULT_OK) {
                 Signal signal = data.getParcelableExtra("signal");
                 if (signal != null) {
                     actionsListener.onSignalStatusUpdated(signal);
+                }
+            }
+        }
+        else if (requestCode == REQUEST_UPDATE_SIGNAL_TYPE_SELECTION) {
+            if (resultCode == Activity.RESULT_OK) {
+                boolean[] signalTypeSelection = data.getBooleanArrayExtra(EXTRA_SIGNAL_TYPE_SELECTION);
+                if (signalTypeSelection != null) {
+                    actionsListener.onFilterSignalsClicked(signalTypeSelection);
                 }
             }
         }

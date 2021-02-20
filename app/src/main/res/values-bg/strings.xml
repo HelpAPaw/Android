@@ -132,8 +132,8 @@
     </string-array>
 
     <string name="txt_filter_signal_types_description">Избери кои типове сигнали да виждаш</string>
-    <string name="txt_select_all_signal_types">Селекторай всички</string>
-    <string name="txt_deselect_all_signal_types">Деселекритай всички</string>
+    <string name="txt_select_all_signal_types">Селектирай всички</string>
+    <string name="txt_deselect_all_signal_types">Деселектирай всички</string>
     <string name="txt_filter_signal_types">Филтрирай</string>
     <string name="txt_active_filter">Има активен филтър</string>
     <string name="txt_signal_type">Тип на сигнала: %s</string>

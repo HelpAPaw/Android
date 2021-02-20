@@ -1,20 +1,24 @@
 package org.helpapaw.helpapaw.filtersignal;
 
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.Intent;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ListView;
-import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
 
 import org.helpapaw.helpapaw.R;
-import org.helpapaw.helpapaw.signalsmap.SignalsMapFragment;
 
 import java.util.Arrays;
 
 public class FilterSignalTypeDialog extends DialogFragment {
+
+    public static final int REQUEST_UPDATE_SIGNAL_TYPE_SELECTION = 7;
+    public static final String EXTRA_SIGNAL_TYPE_SELECTION = "EXTRA_SIGNAL_TYPE_SELECTION";
 
     private static boolean[] signalTypeSelection;
     private SignalTypeCustomAdapter customAdapter;
@@ -26,57 +30,49 @@ public class FilterSignalTypeDialog extends DialogFragment {
         return new FilterSignalTypeDialog();
     }
 
+    @NonNull
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.view_select_signal_type, container);
-        init(view);
-        return view;
-    }
+        AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity());
+        dialog.setTitle(R.string.txt_filter_signal_types_description);
 
-    private void init(View view) {
+        View view = getActivity().getLayoutInflater().inflate(R.layout.view_select_signal_type, null);
 
         ListView signalTypeListView = view.findViewById(R.id.signal_type_list_view);
-        TextView selectAll = view.findViewById(R.id.txt_select_all_signal_types);
-        TextView deselectAll = view.findViewById(R.id.txt_deselect_all_signal_types);
-        TextView filter = view.findViewById(R.id.txt_filter_signal_types);
-        TextView title = view.findViewById(R.id.txt_filter_signal_types_description);
-        title.setText(R.string.txt_filter_signal_types_description);
-
         String[] signalType = getResources().getStringArray(R.array.signal_types_items);
         if (signalTypeSelection == null) {
             signalTypeSelection = new boolean[signalType.length];
             signalTypeSelection = setSelection(true);
         }
-
         customAdapter = new SignalTypeCustomAdapter(signalTypeListView.getContext(), signalType, signalTypeSelection);
         signalTypeListView.setAdapter(customAdapter);
 
-        selectAll.setOnClickListener(v -> {
-            customAdapter.refreshView(setSelection(true));
-        });
+        dialog.setView(view);
 
-        deselectAll.setOnClickListener(v -> {
-            customAdapter.refreshView(setSelection(false));
-        });
-
-        filter.setOnClickListener(v -> {
+        dialog.setPositiveButton(R.string.txt_filter_signal_types, (dialog1, which) -> {
             customAdapter.setSignalTypeSelectionToCurrent();
             signalTypeSelection = customAdapter.getSignalTypeSelection();
 
-            SignalsMapFragment mParentFragment = (SignalsMapFragment) getParentFragment();
-            mParentFragment.getOnSignalFilterClickListener(signalTypeSelection);
+            Intent resultIntent = new Intent();
+            resultIntent.putExtra(EXTRA_SIGNAL_TYPE_SELECTION, signalTypeSelection);
+            getParentFragment().onActivityResult(REQUEST_UPDATE_SIGNAL_TYPE_SELECTION, Activity.RESULT_OK, resultIntent);
+
+            //TODO: Delete this
+//            SignalsMapFragment mParentFragment = (SignalsMapFragment) getParentFragment();
+//            mParentFragment.getOnSignalFilterClickListener(signalTypeSelection);
 
             dismiss();
         });
+
+        return dialog.create();
     }
 
     public static boolean[] getSignalTypeSelection() {
         return signalTypeSelection;
     }
 
-    private boolean[] setSelection(boolean isSelect){
+    private boolean[] setSelection(boolean isSelect) {
         boolean[] selection = new boolean[signalTypeSelection.length];
 
         Arrays.fill(selection, isSelect);
