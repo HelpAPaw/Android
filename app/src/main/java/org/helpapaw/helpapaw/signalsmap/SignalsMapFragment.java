@@ -1043,10 +1043,6 @@ public class SignalsMapFragment extends BaseFragment
         };
     }
 
-    public void getOnSignalFilterClickListener(boolean[] selection) {
-        actionsListener.onFilterSignalsClicked(selection);
-    }
-
     public View.OnClickListener getOnSignalPhotoClickListener() {
         return new View.OnClickListener() {
             @Override
