@@ -137,5 +137,6 @@
     <string name="txt_filter_signal_types">Филтрирай</string>
     <string name="txt_active_filter">Има активен филтър</string>
     <string name="txt_signal_type">Тип на сигнала: %s</string>
+    <string name="txt_type">Тип: %s</string>
     <string name="content_description_add_signal">Добави сигнал</string>
 </resources>
