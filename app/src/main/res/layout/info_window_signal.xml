@@ -11,41 +11,53 @@
 
         <ImageView
             android:id="@+id/img_signal_photo"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_marginRight="8dp"
+            android:layout_width="58dp"
+            android:layout_height="58dp"
+            android:layout_marginEnd="8dp"
+            android:layout_centerVertical="true"
             android:contentDescription="@string/txt_signal_photo_description"
             android:scaleType="centerCrop" />
 
         <TextView
             android:id="@+id/txt_signal_title"
-            android:layout_width="190dp"
+            android:layout_width="220dp"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_toEndOf="@+id/img_signal_photo"
             android:ellipsize="end"
             android:singleLine="true"
             android:textColor="@android:color/black"
-            android:textSize="20sp"
+            android:textSize="17sp"
             tools:text="Signal title" />
 
         <TextView
             android:id="@+id/txt_signal_status"
-            android:layout_width="190dp"
+            android:layout_width="200dp"
             android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/img_signal_photo"
+            android:layout_below="@+id/txt_signal_title"
             android:layout_alignStart="@+id/txt_signal_title"
             android:singleLine="true"
             android:textColor="@android:color/black"
             android:textSize="14sp"
-            tools:text="Status:" />
+            tools:text="Status: Help Needed" />
+
+        <TextView
+            android:id="@+id/txt_signal_type"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/txt_signal_status"
+            android:layout_alignStart="@+id/txt_signal_title"
+            android:singleLine="true"
+            android:textColor="@android:color/black"
+            android:textSize="14sp"
+            tools:text="Тип: Спешен случай" />
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/img_info_icon"
             android:layout_width="20dp"
             android:layout_height="20dp"
-            android:layout_centerVertical="true"
-            android:layout_toEndOf="@+id/txt_signal_title"
+            android:layout_alignBottom="@id/txt_signal_type"
+            android:layout_toEndOf="@+id/txt_signal_type"
             android:src="@android:drawable/ic_dialog_info"
             android:tint="@color/blue" />
 
