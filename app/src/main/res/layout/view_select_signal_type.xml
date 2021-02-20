@@ -2,76 +2,13 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="6dp">
+    android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/txt_filter_signal_types_description"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:gravity="left"
-        android:textColor="@color/color_primary_dark"
-        android:textStyle="bold"
-        android:textSize="16sp" />
-
-    <LinearLayout
-        android:id="@+id/signal_type_multiselection"
+    <ListView
+        android:id="@+id/signal_type_list_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="top"
+        android:layout_height="0dp"
+        android:layout_margin="8dp"
         android:layout_weight="1"
-        android:background="@drawable/rounded_border"
-        android:orientation="vertical">
-
-        <ListView
-            android:id="@+id/signal_type_list_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="18dp"
-            android:layout_weight="1"
-            android:divider="@null"></ListView>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/txt_select_all_signal_types"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginEnd="8dp"
-                android:gravity="start"
-                android:text="@string/txt_select_all_signal_types"
-                android:textColor="@color/color_primary"
-                android:textSize="16sp" />
-
-            <TextView
-                android:id="@+id/txt_deselect_all_signal_types"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginEnd="8dp"
-                android:gravity="start"
-                android:text="@string/txt_deselect_all_signal_types"
-                android:textColor="@color/color_primary"
-                android:textSize="16sp" />
-
-            <TextView
-                android:id="@+id/txt_filter_signal_types"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginEnd="20dp"
-                android:gravity="end"
-                android:text="@string/txt_filter_signal_types"
-                android:textStyle="bold"
-
-                android:textColor="@color/color_primary"
-                android:textSize="16sp" />
-        </LinearLayout>
-    </LinearLayout>
+        android:divider="@null"/>
 </LinearLayout>
