@@ -24,6 +24,14 @@
         android:theme="@style/AppTheme.NoActionBar"
         tools:ignore="UnusedAttribute">
 
+        <receiver android:name="com.google.firebase.iid.FirebaseInstanceIdReceiver" android:exported="true" android:permission="com.google.android.c2dm.permission.SEND">
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
+                <category android:name="@string/facebook_app_id" />
+            </intent-filter>
+        </receiver>
+
         <service android:name=".utils.services.CustomBackendlessFCMService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
@@ -47,6 +55,10 @@
         <uses-library
             android:name="org.apache.http.legacy"
             android:required="false" />
+
+        <provider android:authorities="com.facebook.app.FacebookContentProvider{@string/facebook_app_id}"
+            android:name="com.facebook.FacebookContentProvider"
+            android:exported="true"/>
 
         <activity
             android:name="com.facebook.FacebookActivity"

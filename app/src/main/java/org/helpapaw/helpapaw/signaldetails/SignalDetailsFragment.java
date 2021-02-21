@@ -11,7 +11,12 @@ import androidx.fragment.app.FragmentActivity;
 
 import android.net.Uri;
 import android.os.Bundle;
+
+import com.facebook.share.model.ShareLinkContent;
+import com.facebook.share.widget.ShareButton;
+import com.facebook.share.widget.ShareDialog;
 import com.google.android.material.snackbar.Snackbar;
+
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -42,6 +47,7 @@ import static org.helpapaw.helpapaw.data.models.Comment.COMMENT_TYPE_STATUS_CHAN
 public class SignalDetailsFragment extends BaseFragment implements SignalDetailsContract.View {
 
     private final static String SIGNAL_DETAILS = "signalDetails";
+    private final static String SIGNAL_LINK = "http://help-a-paw.s3-website.eu-central-1.amazonaws.com/map/";
     private final static String TAG = SignalDetailsFragment.class.getSimpleName();
 
     SignalDetailsPresenter signalDetailsPresenter;
@@ -50,6 +56,7 @@ public class SignalDetailsFragment extends BaseFragment implements SignalDetails
     FragmentSignalDetailsBinding binding;
 
     private Signal mSignal;
+    private ShareLinkContent content;
 
     public SignalDetailsFragment() {
         // Required empty public constructor
@@ -82,6 +89,13 @@ public class SignalDetailsFragment extends BaseFragment implements SignalDetails
             mSignal = getArguments().getParcelable(SIGNAL_DETAILS);
         }
 
+        if (mSignal != null) {
+            content = new ShareLinkContent.Builder()
+                    .setContentUrl(Uri.parse(SIGNAL_LINK + mSignal.getId()))
+                    .setQuote(Uri.parse(SIGNAL_LINK + mSignal.getId()).toString())
+                    .build();
+        }
+        binding.btnShare.setShareContent(content);
         actionsListener.onInitDetailsScreen(mSignal);
 
         binding.btnAddComment.setOnClickListener(getOnAddCommentClickListener());
@@ -164,8 +178,7 @@ public class SignalDetailsFragment extends BaseFragment implements SignalDetails
                 // Set the icon for the new status
                 ImageView imgNewStatusIcon = (ImageView) inflatedCommentView.findViewById((R.id.img_new_status_icon));
                 imgNewStatusIcon.setImageResource(StatusUtils.getPinResourceForCode(newStatus));
-            }
-            else {
+            } else {
                 inflatedCommentView = inflater.inflate(R.layout.view_comment, binding.grpComments, false);
 
                 TextView txtCommentAuthor = (TextView) inflatedCommentView.findViewById(R.id.txt_comment_author);
