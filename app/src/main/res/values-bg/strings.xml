@@ -124,11 +124,12 @@
     <string name="txt_only_registered_users_can_submit_signals">Само регистрирани потребители могат да подават сигнали</string>
 
     <string-array name="signal_types_items">
-        <item>Нужда от помощ</item>
+        <item>Спешен случай</item>
         <item>Изгубени или намерени</item>
         <item>Kръводаряване</item>
         <item>Без дом</item>
-        <item>Диви Животни</item>
+        <item>Диви животни</item>
+        <item>Други</item>
     </string-array>
 
     <string name="txt_filter_signal_types_description">Избери кои типове сигнали да виждаш</string>

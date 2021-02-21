@@ -133,11 +133,12 @@
     <string name="txt_only_registered_users_can_change_status">Only registered users can change signal status</string>
 
     <string-array name="signal_types_items">
-        <item>Help needed</item>
+        <item>Emergency</item>
         <item>Lost or Found</item>
         <item>Blood donation</item>
         <item>Homeless</item>
         <item>Wild animal</item>
+        <item>Other</item>
     </string-array>
 
     <string name="txt_filter_signal_types_description">Choose signal types you want to view</string>
