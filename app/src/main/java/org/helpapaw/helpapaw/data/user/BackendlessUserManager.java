@@ -9,6 +9,7 @@ import com.backendless.exceptions.BackendlessException;
 import com.backendless.exceptions.BackendlessFault;
 import com.backendless.persistence.local.UserTokenStorageFactory;
 import com.facebook.login.LoginManager;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 
 /**
  * Created by iliyan on 7/25/16
@@ -26,6 +27,8 @@ public class BackendlessUserManager implements UserManager {
             public void handleResponse(BackendlessUser user) {
                 Backendless.UserService.setCurrentUser(user);
                 loginCallback.onLoginSuccess(user.getUserId());
+
+                FirebaseCrashlytics.getInstance().setUserId(user.getUserId());
             }
 
             public void handleFault(BackendlessFault fault) {
@@ -41,6 +44,8 @@ public class BackendlessUserManager implements UserManager {
             public void handleResponse(BackendlessUser user) {
                 Backendless.UserService.setCurrentUser(user);
                 loginCallback.onLoginSuccess(user.getUserId());
+
+                FirebaseCrashlytics.getInstance().setUserId(user.getUserId());
             }
 
             @Override
