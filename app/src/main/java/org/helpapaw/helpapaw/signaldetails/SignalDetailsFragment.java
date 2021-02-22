@@ -1,22 +1,32 @@
 package org.helpapaw.helpapaw.signaldetails;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.ContextCompat;
+import androidx.core.graphics.drawable.RoundedBitmapDrawable;
+import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.FragmentActivity;
 
+import android.content.pm.PackageManager;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 
 import com.facebook.share.model.ShareLinkContent;
-import com.facebook.share.widget.ShareButton;
-import com.facebook.share.widget.ShareDialog;
 import com.google.android.material.snackbar.Snackbar;
 
+import android.os.ParcelFileDescriptor;
+import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -35,12 +45,19 @@ import org.helpapaw.helpapaw.base.PresenterManager;
 import org.helpapaw.helpapaw.data.models.Comment;
 import org.helpapaw.helpapaw.data.models.Signal;
 import org.helpapaw.helpapaw.databinding.FragmentSignalDetailsBinding;
+import org.helpapaw.helpapaw.sendsignal.SendPhotoBottomSheet;
 import org.helpapaw.helpapaw.signalphoto.SignalPhotoActivity;
 import org.helpapaw.helpapaw.utils.Injection;
 import org.helpapaw.helpapaw.utils.StatusUtils;
 import org.helpapaw.helpapaw.utils.Utils;
+import org.helpapaw.helpapaw.utils.images.ImageUtils;
 
+import java.io.File;
+import java.io.FileDescriptor;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import static org.helpapaw.helpapaw.data.models.Comment.COMMENT_TYPE_STATUS_CHANGE;
 
@@ -49,6 +66,17 @@ public class SignalDetailsFragment extends BaseFragment implements SignalDetails
     private final static String SIGNAL_DETAILS = "signalDetails";
     private final static String SIGNAL_LINK = "http://help-a-paw.s3-website.eu-central-1.amazonaws.com/map/";
     private final static String TAG = SignalDetailsFragment.class.getSimpleName();
+
+    private static final int READ_EXTERNAL_STORAGE_FOR_CAMERA = 4;
+    private static final int READ_WRITE_EXTERNAL_STORAGE_FOR_GALLERY = 5;
+    private static final int REQUEST_CAMERA = 2;
+    private static final int REQUEST_GALLERY = 3;
+
+    private static final String DATE_TIME_FORMAT = "yyyyMMdd_HHmmss";
+    private static final String PHOTO_PREFIX = "JPEG_";
+    private static final String PHOTO_EXTENSION = ".jpg";
+
+    String imageFileName;
 
     SignalDetailsPresenter signalDetailsPresenter;
     SignalDetailsContract.UserActionsListener actionsListener;
@@ -105,6 +133,7 @@ public class SignalDetailsFragment extends BaseFragment implements SignalDetails
         binding.imgSignalPhoto.setOnClickListener(getOnSignalPhotoClickListener());
         binding.scrollSignalDetails.setOnBottomReachedListener(getOnBottomReachedListener());
         binding.viewSignalStatus.setStatusCallback(getStatusViewCallback());
+        binding.imgSignalPhotoUpload.setOnClickListener(l -> showSendPhotoBottomSheet());
 
         return binding.getRoot();
     }
@@ -322,8 +351,112 @@ public class SignalDetailsFragment extends BaseFragment implements SignalDetails
         startActivity(intent);
     }
 
+    @Override
+    public void saveImageFromURI(Uri photoUri) {
+        try {
+            String path;
+            ParcelFileDescriptor parcelFileDesc = getActivity().getContentResolver().openFileDescriptor(photoUri, "r");
+            FileDescriptor fileDesc = parcelFileDesc.getFileDescriptor();
+            Bitmap photo = BitmapFactory.decodeFileDescriptor(fileDesc);
+            path = MediaStore.Images.Media.insertImage(getContext().getContentResolver(), photo, "temp", null);
+            File photoFile = ImageUtils.getInstance().getFromMediaUri(getContext(), getContext().getContentResolver(), Uri.parse(path));
+
+            if (photoFile != null) {
+                actionsListener.onSignalPhotoSelected(Uri.fromFile(photoFile).getPath());
+            }
+
+            parcelFileDesc.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void openCamera() {
+        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            showPermissionDialog(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE, READ_EXTERNAL_STORAGE_FOR_CAMERA);
+        } else {
+            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            if (intent.resolveActivity(getContext().getPackageManager()) != null) {
+                String timeStamp = new SimpleDateFormat(DATE_TIME_FORMAT, Locale.getDefault()).format(new Date());
+                imageFileName = PHOTO_PREFIX + timeStamp + PHOTO_EXTENSION;
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, ImageUtils.getInstance().getPhotoFileUri(getContext(), imageFileName));
+                startActivityForResult(intent, REQUEST_CAMERA);
+            }
+        }
+    }
+
+    @Override
+    public void openGallery() {
+        String[] permissions = {Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE};
+        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED &&
+                ContextCompat.checkSelfPermission(getContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(permissions, READ_WRITE_EXTERNAL_STORAGE_FOR_GALLERY);
+        } else {
+            Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+            if (intent.resolveActivity(getContext().getPackageManager()) != null) {
+                startActivityForResult(intent, REQUEST_GALLERY);
+            }
+        }
+    }
+
+    @Override
+    public void setThumbnailImage(String photoUri) {
+        Resources res = getResources();
+        RoundedBitmapDrawable drawable = RoundedBitmapDrawableFactory.create(res, ImageUtils.getInstance().getRotatedBitmap(new File(photoUri)));
+        drawable.setCornerRadius(10);
+        binding.imgSignalPhoto.setScaleType(ImageView.ScaleType.FIT_XY);
+        binding.imgSignalPhoto.setImageDrawable(drawable);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CAMERA) {
+            if (resultCode == Activity.RESULT_OK) {
+                Uri takenPhotoUri = ImageUtils.getInstance().getPhotoFileUri(getContext(), imageFileName);
+                actionsListener.onSignalPhotoSelected(takenPhotoUri.getPath());
+            }
+        }
+
+        if (requestCode == REQUEST_GALLERY && resultCode == Activity.RESULT_OK
+                && data != null && data.getData() != null) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                saveImageFromURI(data.getData());
+            } else {
+                File photoFile = ImageUtils.getInstance().getFromMediaUri(getContext(), getContext().getContentResolver(), data.getData());
+                if (photoFile != null) {
+                    actionsListener.onSignalPhotoSelected(Uri.fromFile(photoFile).getPath());
+                }
+            }
+        }
+    }
+
     public void onBackPressed() {
         actionsListener.onSignalDetailsClosing();
+    }
+
+    public void showPermissionDialog(Activity activity, String permission, int permissionCode) {
+        if (ContextCompat.checkSelfPermission(activity, permission) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{permission}, permissionCode);
+        }
+    }
+
+    private void showSendPhotoBottomSheet() {
+        super.hideKeyboard();
+
+        SendPhotoBottomSheet sendPhotoBottomSheet = new SendPhotoBottomSheet();
+        sendPhotoBottomSheet.setListener(photoType -> {
+            if (photoType == SendPhotoBottomSheet.PhotoType.CAMERA) {
+                actionsListener.onCameraOptionSelected();
+            } else if (photoType == SendPhotoBottomSheet.PhotoType.GALLERY) {
+                actionsListener.onGalleryOptionSelected();
+            }
+        });
+        if (getFragmentManager() != null) {
+            sendPhotoBottomSheet.show(getFragmentManager(), SendPhotoBottomSheet.TAG);
+        }
     }
 
     /* OnClick Listeners */

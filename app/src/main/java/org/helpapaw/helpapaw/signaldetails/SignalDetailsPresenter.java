@@ -63,7 +63,7 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
     }
 
     public void loadCommentsForSignal(String signalId) {
-        if(Utils.getInstance().hasNetworkConnection()) {
+        if (Utils.getInstance().hasNetworkConnection()) {
             commentRepository.getAllCommentsBySignalId(signalId, new CommentRepository.LoadCommentsCallback() {
                 @Override
                 public void onCommentsLoaded(List<Comment> comments) {
@@ -86,7 +86,7 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
                 }
             });
         } else {
-            if(isViewAvailable()) {
+            if (isViewAvailable()) {
                 getView().showNoInternetMessage();
             }
         }
@@ -97,7 +97,8 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
         if (Utils.getInstance().hasNetworkConnection()) {
             userManager.isLoggedIn(new UserManager.LoginCallback() {
                 @Override
-                public void onLoginSuccess(String userId) {}
+                public void onLoginSuccess(String userId) {
+                }
 
                 @Override
                 public void onLoginFailure(String message) {
@@ -138,7 +139,7 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
                     signalRepository.updateSignalStatus(signal.getId(), status, commentList, new SignalRepository.UpdateStatusCallback() {
                         @Override
                         public void onStatusUpdated(int status) {
-                            if(!isViewAvailable()) return;
+                            if (!isViewAvailable()) return;
                             setSignalStatus(status);
                             getView().showStatusUpdatedMessage();
                             getView().onStatusChangeRequestFinished(true, status);
@@ -174,6 +175,21 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
     @Override
     public void onSignalPhotoClicked() {
         getView().openSignalPhotoScreen();
+    }
+
+    @Override
+    public void onCameraOptionSelected() {
+        getView().openCamera();
+    }
+
+    @Override
+    public void onGalleryOptionSelected() {
+        getView().openGallery();
+    }
+
+    @Override
+    public void onSignalPhotoSelected(String photoUri) {
+        savePhoto(photoUri, signal);
     }
 
     @Override
@@ -218,4 +234,23 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
         getView().setProgressIndicator(active);
         this.showProgressBar = active;
     }
+
+    private void savePhoto(final String photoUri, final Signal signal) {
+        photoRepository.savePhoto(photoUri, signal.getId(), new PhotoRepository.SavePhotoCallback() {
+            @Override
+            public void onPhotoSaved() {
+                if (!isViewAvailable()) {
+                    return;
+                }
+                getView().setThumbnailImage(photoUri);
+            }
+
+            @Override
+            public void onPhotoFailure(String message) {
+                if (!isViewAvailable()) return;
+                getView().showMessage(message);
+            }
+        });
+    }
+
 }

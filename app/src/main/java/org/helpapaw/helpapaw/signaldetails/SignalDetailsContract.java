@@ -1,5 +1,7 @@
 package org.helpapaw.helpapaw.signaldetails;
 
+import android.net.Uri;
+
 import org.helpapaw.helpapaw.data.models.Comment;
 import org.helpapaw.helpapaw.data.models.Signal;
 
@@ -49,6 +51,15 @@ public interface SignalDetailsContract {
         void onStatusChangeRequestFinished(boolean success, int newStatus);
 
         void openSignalPhotoScreen();
+
+        void saveImageFromURI(Uri uri);
+
+        void openCamera();
+
+        void openGallery();
+
+        void setThumbnailImage(String photoUri);
+
     }
 
     interface UserActionsListener {
@@ -70,5 +81,12 @@ public interface SignalDetailsContract {
         void onBottomReached(boolean isBottomReached);
 
         void onSignalPhotoClicked();
+
+        void onCameraOptionSelected();
+
+        void onGalleryOptionSelected();
+
+        void onSignalPhotoSelected(String photoUri);
+
     }
 }
