@@ -1,6 +1,8 @@
 package org.helpapaw.helpapaw.settings;
 
 import androidx.databinding.DataBindingUtil;
+
+import android.content.Intent;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -12,9 +14,11 @@ import android.view.ViewGroup;
 import android.widget.SeekBar;
 
 import org.helpapaw.helpapaw.R;
+import org.helpapaw.helpapaw.base.BaseActivity;
 import org.helpapaw.helpapaw.base.BaseFragment;
 import org.helpapaw.helpapaw.base.Presenter;
 import org.helpapaw.helpapaw.databinding.FragmentSettingsBinding;
+import org.helpapaw.helpapaw.privacypolicy.PrivacyPolicyActivity;
 
 import java.util.Locale;
 
@@ -78,6 +82,7 @@ public class SettingsFragment extends BaseFragment implements SettingsContract.V
 
         binding.radiusValue.setOnSeekBarChangeListener(onRadiusSeekBarChangeListener());
         binding.timeoutValue.setOnSeekBarChangeListener(onTimeoutSeekBarChangeListener());
+        binding.signalTypeSetting.setOnClickListener(onSelectedSignalTypeChangeListener());
     }
 
     @Override
@@ -129,6 +134,17 @@ public class SettingsFragment extends BaseFragment implements SettingsContract.V
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
                 actionsListener.onTimeoutChange(seekBar.getProgress());
+            }
+        };
+    }
+
+    public View.OnClickListener onSelectedSignalTypeChangeListener() {
+        return new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getContext(), SignalTypeSelectedSettingsActivity.class);
+                startActivity(intent);
+                binding.signalTypeSetting.setText("Clicked");
             }
         };
     }
