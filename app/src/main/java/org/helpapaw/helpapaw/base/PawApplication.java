@@ -16,9 +16,16 @@ import org.helpapaw.helpapaw.utils.NotificationUtils;
  */
 public class PawApplication extends Application {
     
-    public static final String  BACKENDLESS_APP_ID          = "***REMOVED***";
-    public static final String  BACKENDLESS_REST_API_KEY    = "***REMOVED***";
-    private static final String BACKENDLESS_ANDROID_API_KEY = "***REMOVED***";
+    // TODO: before creating the PR, adjust this
+//    public static final String  BACKENDLESS_APP_ID          = "***REMOVED***";
+//    public static final String  BACKENDLESS_REST_API_KEY    = "***REMOVED***";
+//    private static final String BACKENDLESS_ANDROID_API_KEY = "***REMOVED***";
+//    private static final String IS_TEST_ENVIRONMENT_KEY     = "IS_TEST_ENVIRONMENT_KEY";
+
+    // STAGING DB
+    public static final String  BACKENDLESS_APP_ID          = "A2E71FD3-94A4-E6FE-FFFD-A881FCD2AA00";
+    public static final String  BACKENDLESS_REST_API_KEY    = "B061AC2D-43F3-4F3C-B3F5-0C45673F82DF";
+    private static final String BACKENDLESS_ANDROID_API_KEY = "02D2374C-C85C-442A-BAE8-E5C7A8DBBD4A";
     private static final String IS_TEST_ENVIRONMENT_KEY     = "IS_TEST_ENVIRONMENT_KEY";
 
     private static Boolean isTestEnvironment;
