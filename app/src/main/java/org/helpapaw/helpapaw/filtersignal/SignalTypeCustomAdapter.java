@@ -88,12 +88,6 @@ public class SignalTypeCustomAdapter extends BaseAdapter {
         System.arraycopy(currentSignalTypeSelection, 0, signalTypeSelection, 0, signalTypeSelection.length);
     }
 
-    public void refreshView(boolean[] selection) {
-        System.arraycopy(selection, 0, currentSignalTypeSelection, 0, currentSignalTypeSelection.length);
-
-        notifyDataSetChanged();
-    }
-
     private static class ViewHolder {
         protected CheckBox checkBox;
         private TextView textView;
