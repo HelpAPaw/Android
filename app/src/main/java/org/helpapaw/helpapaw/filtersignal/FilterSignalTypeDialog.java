@@ -20,14 +20,16 @@ public class FilterSignalTypeDialog extends DialogFragment {
     public static final int REQUEST_UPDATE_SIGNAL_TYPE_SELECTION = 7;
     public static final String EXTRA_SIGNAL_TYPE_SELECTION = "EXTRA_SIGNAL_TYPE_SELECTION";
 
-    private static boolean[] signalTypeSelection;
+    private boolean[] signalTypeSelection;
     private SignalTypeCustomAdapter customAdapter;
 
     public FilterSignalTypeDialog() {
     }
 
-    public static FilterSignalTypeDialog newInstance() {
-        return new FilterSignalTypeDialog();
+    public static FilterSignalTypeDialog newInstance(boolean[] currentSignalTypeSelection) {
+        FilterSignalTypeDialog filterSignalTypeDialog = new FilterSignalTypeDialog();
+        filterSignalTypeDialog.signalTypeSelection = currentSignalTypeSelection;
+        return filterSignalTypeDialog;
     }
 
     @NonNull
@@ -40,12 +42,8 @@ public class FilterSignalTypeDialog extends DialogFragment {
         View view = getActivity().getLayoutInflater().inflate(R.layout.view_select_signal_type, null);
 
         ListView signalTypeListView = view.findViewById(R.id.signal_type_list_view);
-        String[] signalType = getResources().getStringArray(R.array.signal_types_items);
-        if (signalTypeSelection == null) {
-            signalTypeSelection = new boolean[signalType.length];
-            signalTypeSelection = setSelection(true);
-        }
-        customAdapter = new SignalTypeCustomAdapter(signalTypeListView.getContext(), signalType, signalTypeSelection);
+        String[] signalTypes = getResources().getStringArray(R.array.signal_types_items);
+        customAdapter = new SignalTypeCustomAdapter(signalTypeListView.getContext(), signalTypes, signalTypeSelection);
         signalTypeListView.setAdapter(customAdapter);
 
         dialog.setView(view);
@@ -58,26 +56,10 @@ public class FilterSignalTypeDialog extends DialogFragment {
             resultIntent.putExtra(EXTRA_SIGNAL_TYPE_SELECTION, signalTypeSelection);
             getParentFragment().onActivityResult(REQUEST_UPDATE_SIGNAL_TYPE_SELECTION, Activity.RESULT_OK, resultIntent);
 
-            //TODO: Delete this
-//            SignalsMapFragment mParentFragment = (SignalsMapFragment) getParentFragment();
-//            mParentFragment.getOnSignalFilterClickListener(signalTypeSelection);
-
             dismiss();
         });
 
         return dialog.create();
-    }
-
-    public static boolean[] getSignalTypeSelection() {
-        return signalTypeSelection;
-    }
-
-    private boolean[] setSelection(boolean isSelect) {
-        boolean[] selection = new boolean[signalTypeSelection.length];
-
-        Arrays.fill(selection, isSelect);
-
-        return selection;
     }
 }
 

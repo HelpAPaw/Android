@@ -29,7 +29,7 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
     private int radius;
     private int timeout;
 
-    private boolean[] selectedTypes;
+    static boolean[] selectedSignalTypes;
 
     private double currentMapLatitude;
     private double currentMapLongitude;
@@ -60,7 +60,7 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
             getSignal(focusedSignalId);
         }
         if (signalsList != null && signalsList.size() > 0) {
-            getView().displaySignals(signalsList, false, selectedTypes);
+            getView().displaySignals(signalsList, false, selectedSignalTypes);
         }
     }
 
@@ -76,7 +76,7 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
                             if (signals.size() > 0) {
                                 replaceSignal(signals.get(0));
                                 signalRepository.markSignalsAsSeen(signals);
-                                getView().displaySignals(signals, true, selectedTypes);
+                                getView().displaySignals(signals, true, selectedSignalTypes);
                                 getView().setProgressVisibility(false);
                             }
                         }
@@ -97,7 +97,7 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
         if (Utils.getInstance().hasNetworkConnection()) {
             getView().setProgressVisibility(true);
 
-            signalRepository.getFilteredSignals(latitude, longitude, radius, timeout, selectedTypes,
+            signalRepository.getFilteredSignals(latitude, longitude, radius, timeout, selectedSignalTypes,
                     new SignalRepository.LoadSignalsCallback() {
                         @Override
                         public void onSignalsLoaded(List<Signal> signals) {
@@ -105,7 +105,7 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
                             signalsList = signals;
 
                             signalRepository.markSignalsAsSeen(signals);
-                            getView().displaySignals(signals, false, selectedTypes);
+                            getView().displaySignals(signals, false, selectedSignalTypes);
                             getView().setProgressVisibility(false);
                         }
 
@@ -121,7 +121,7 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
             getView().showNoInternetMessage();
         }
 
-        setActiveFilterTextVisibility(isActiveFilter(selectedTypes));
+        setActiveFilterTextVisibility(isActiveFilter(selectedSignalTypes));
     }
 
     @Override
@@ -165,7 +165,7 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
 
     @Override
     public void onCancelAddSignal() {
-        getView().displaySignals(signalsList, false, selectedTypes);
+        getView().displaySignals(signalsList, false, selectedSignalTypes);
     }
 
     @Override
@@ -182,7 +182,7 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
 
     @Override
     public void onFilterSignalsClicked(boolean[] selectedTypes) {
-        this.selectedTypes = selectedTypes;
+        SignalsMapPresenter.selectedSignalTypes = selectedTypes;
 
         // todo consider adding selectedSignals as parameter - hidden dependency
         getFilteredSignals(latitude, longitude, radius, timeout);
@@ -201,7 +201,7 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
                 } else {
                     signalsList.add(signal);
 
-                    getView().displaySignals(signalsList, true, signal.getId(), selectedTypes);
+                    getView().displaySignals(signalsList, true, signal.getId(), selectedSignalTypes);
                     setSendSignalViewVisibility(false);
                     clearSignalViewData();
                 }
@@ -221,7 +221,7 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
             public void onPhotoSaved() {
                 if (!isViewAvailable()) return;
                 signalsList.add(signal);
-                getView().displaySignals(signalsList, true, signal.getId(), selectedTypes);
+                getView().displaySignals(signalsList, true, signal.getId(), selectedSignalTypes);
                 setSendSignalViewVisibility(false);
                 clearSignalViewData();
                 getView().showAddedSignalMessage();
@@ -301,7 +301,7 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
         if (signal == null) return;
 
         replaceSignal(signal);
-        getView().displaySignals(signalsList, true, selectedTypes);
+        getView().displaySignals(signalsList, true, selectedSignalTypes);
     }
 
     private void replaceSignal(Signal signal) {
@@ -387,8 +387,8 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
     }
 
     private boolean allSelected(boolean[] selection) {
-        for (int i = 0; i < selection.length; ++i) {
-            if (!selection[i]) {
+        for (boolean b : selection) {
+            if (!b) {
                 return false;
             }
         }

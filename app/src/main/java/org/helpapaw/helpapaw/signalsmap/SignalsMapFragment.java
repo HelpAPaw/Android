@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileDescriptor;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -199,6 +200,14 @@ public class SignalsMapFragment extends BaseFragment
 
         if (savedInstanceState == null || PresenterManager.getInstance().getPresenter(getScreenId()) == null) {
             signalsMapPresenter = new SignalsMapPresenter(this);
+
+            // Init signal type selection (for filtering what signals are shown on the map)
+            // Default to "all signals shown"
+            String[] signalTypes = getResources().getStringArray(R.array.signal_types_items);
+            if (SignalsMapPresenter.selectedSignalTypes == null) {
+                SignalsMapPresenter.selectedSignalTypes = new boolean[signalTypes.length];
+                Arrays.fill(SignalsMapPresenter.selectedSignalTypes, true);
+            }
         } else {
             signalsMapPresenter = PresenterManager.getInstance().getPresenter(getScreenId());
             signalsMapPresenter.setView(this);
@@ -211,11 +220,6 @@ public class SignalsMapFragment extends BaseFragment
         binding.fabAddSignal.setOnClickListener(getFabAddSignalClickListener());
         binding.viewSendSignal.setOnSignalSendClickListener(getOnSignalSendClickListener());
         binding.viewSendSignal.setOnSignalPhotoClickListener(getOnSignalPhotoClickListener());
-
-        //TODO: Delete this
-//        if (filterSignalTypeDialog.newInstance() != null) {
-//            getOnSignalFilterClickListener(this.filterSignalTypeDialog.getSignalTypeSelection());
-//        }
         
         return binding.getRoot();
     }
@@ -730,9 +734,9 @@ public class SignalsMapFragment extends BaseFragment
 
     private void showFilterSignalView() {
         FragmentManager fm = getChildFragmentManager();
-        filterSignalTypeDialog = FilterSignalTypeDialog.newInstance();
-        filterSignalTypeDialog.show(fm, "filter");
 
+        filterSignalTypeDialog = FilterSignalTypeDialog.newInstance(SignalsMapPresenter.selectedSignalTypes);
+        filterSignalTypeDialog.show(fm, "filter");
     }
 
     private void showActiveFilterText() {
