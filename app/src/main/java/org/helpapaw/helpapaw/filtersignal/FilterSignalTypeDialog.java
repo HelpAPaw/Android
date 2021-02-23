@@ -13,7 +13,6 @@ import androidx.fragment.app.DialogFragment;
 
 import org.helpapaw.helpapaw.R;
 
-import java.util.Arrays;
 
 public class FilterSignalTypeDialog extends DialogFragment {
 
