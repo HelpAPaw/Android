@@ -11,8 +11,8 @@
 
         <ImageView
             android:id="@+id/img_signal_photo"
-            android:layout_width="58dp"
-            android:layout_height="58dp"
+            android:layout_width="52dp"
+            android:layout_height="52dp"
             android:layout_marginEnd="8dp"
             android:layout_centerVertical="true"
             android:contentDescription="@string/txt_signal_photo_description"
@@ -24,6 +24,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_toEndOf="@+id/img_signal_photo"
+            android:layout_marginBottom="2dp"
             android:ellipsize="end"
             android:singleLine="true"
             android:textColor="@android:color/black"
@@ -37,8 +38,8 @@
             android:layout_below="@+id/txt_signal_title"
             android:layout_alignStart="@+id/txt_signal_title"
             android:singleLine="true"
-            android:textColor="@android:color/black"
-            android:textSize="14sp"
+            android:textColor="@color/dark_gray"
+            android:textSize="12sp"
             tools:text="Status: Help Needed" />
 
         <TextView
@@ -48,8 +49,8 @@
             android:layout_below="@+id/txt_signal_status"
             android:layout_alignStart="@+id/txt_signal_title"
             android:singleLine="true"
-            android:textColor="@android:color/black"
-            android:textSize="14sp"
+            android:textColor="@color/dark_gray"
+            android:textSize="12sp"
             tools:text="Тип: Спешен случай" />
 
         <androidx.appcompat.widget.AppCompatImageView

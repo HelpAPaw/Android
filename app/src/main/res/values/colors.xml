@@ -7,6 +7,7 @@
     <color name="blue">#177ffa</color>
     <color name="transparent_white">#e6ffffff</color>
     <color name="gray">#ccccd1</color>
+    <color name="dark_gray">#777777</color>
     <color name="light_gray">#f3f3f3</color>
     <color name="horizontal_rule">#ccc</color>
     <color name="comments_gray">#999999</color>
