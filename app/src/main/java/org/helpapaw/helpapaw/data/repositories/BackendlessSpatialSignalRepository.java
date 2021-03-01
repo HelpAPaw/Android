@@ -1,13 +1,5 @@
 package org.helpapaw.helpapaw.data.repositories;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
 import android.annotation.SuppressLint;
 
 import com.backendless.Backendless;
@@ -25,6 +17,13 @@ import org.helpapaw.helpapaw.db.SignalsDatabase;
 import org.helpapaw.helpapaw.utils.Injection;
 import org.helpapaw.helpapaw.utils.Utils;
 
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 import static org.helpapaw.helpapaw.base.PawApplication.getContext;
 
