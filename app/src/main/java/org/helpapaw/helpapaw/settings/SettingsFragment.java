@@ -14,13 +14,14 @@ import android.view.ViewGroup;
 import android.widget.SeekBar;
 
 import org.helpapaw.helpapaw.R;
-import org.helpapaw.helpapaw.base.BaseActivity;
 import org.helpapaw.helpapaw.base.BaseFragment;
 import org.helpapaw.helpapaw.base.Presenter;
 import org.helpapaw.helpapaw.databinding.FragmentSettingsBinding;
-import org.helpapaw.helpapaw.privacypolicy.PrivacyPolicyActivity;
 
+import java.util.Arrays;
 import java.util.Locale;
+
+import static android.app.Activity.RESULT_OK;
 
 public class SettingsFragment extends BaseFragment implements SettingsContract.View {
 
@@ -142,11 +143,20 @@ public class SettingsFragment extends BaseFragment implements SettingsContract.V
         return new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getContext(), SignalTypeSelectedSettingsActivity.class);
-                startActivity(intent);
-                binding.signalTypeSetting.setText("Clicked");
+                Intent intent = new Intent(getContext(), SignalTypeSettingsActivity.class);
+                startActivityForResult(intent, 1);
             }
         };
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == 1) {
+            if (resultCode == RESULT_OK) {
+                boolean[] selectedTypesValue = data.getBooleanArrayExtra("selected_types");
+                binding.signalTypeSetting.setText("selectedTypesValue.toString()");
+            }
+        }
     }
 
     @Override

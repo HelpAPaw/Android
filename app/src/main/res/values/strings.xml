@@ -82,7 +82,7 @@
     <string name="text_privacy_policy">Privacy Policy</string>
     <string name="txt_user_changed_status_to">%1$s changed the status to \'%2$s\'</string>
     <string name="txt_new_status_icon">New status icon</string>
-    <string name="string_about_title">About</string>r
+    <string name="string_about_title">About</string>
     <string name="string_about_contact">Contact us</string>
     <string name="string_about_milen">© Milen Marinov 2019</string>
     <string name="string_support_email" translatable="false">help.a.paw@outlook.com‌</string>
@@ -153,4 +153,5 @@
     <string name="content_description_add_signal">Add signal</string>
     <string name="txt_type_settings">TYPE</string>
     <string name="txt_type_settings_description">Signal types you want to be notified about</string>
+    <string name="string_signal_type_settings_title">Signal Types</string>
 </resources>

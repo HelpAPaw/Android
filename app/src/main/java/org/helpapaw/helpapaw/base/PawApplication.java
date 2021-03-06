@@ -11,7 +11,7 @@ import org.helpapaw.helpapaw.data.user.UserManager;
 import org.helpapaw.helpapaw.utils.Injection;
 import org.helpapaw.helpapaw.utils.NotificationUtils;
 
-/**
+/**<<
  * Created by iliyan on 7/25/16
  */
 public class PawApplication extends Application {
