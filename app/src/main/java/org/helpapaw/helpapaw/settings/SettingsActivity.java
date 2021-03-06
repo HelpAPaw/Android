@@ -1,6 +1,8 @@
 package org.helpapaw.helpapaw.settings;
 
 import androidx.databinding.DataBindingUtil;
+
+import android.content.Intent;
 import android.os.Bundle;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -24,6 +26,17 @@ public class SettingsActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         initialize();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+//        if (requestCode == 1) {
+//            if (resultCode == RESULT_OK) {
+//                boolean[] selectedTypesValue = data.getBooleanArrayExtra("selected_types");
+//                mSettingsFragment.binding.signalTypeSetting.setText("selectedTypesValue.toString()");
+//            }
+//        }
     }
 
     private void initialize() {

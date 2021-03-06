@@ -109,6 +109,11 @@
             android:name=".privacypolicy.PrivacyPolicyActivity"
             android:noHistory="true"
             android:parentActivityName=".signalsmap.SignalsMapActivity"/>
+        <activity
+            android:name=".settings.SignalTypeSettingsActivity"
+            android:noHistory="true"
+            android:launchMode="singleTop"
+            android:parentActivityName=".settings.SettingsActivity"/>
     </application>
 
 </manifest>

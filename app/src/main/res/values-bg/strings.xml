@@ -141,4 +141,5 @@
     <string name="content_description_add_signal">Добави сигнал</string>
     <string name="txt_type_settings">ТИП</string>
     <string name="txt_type_settings_description">Типове на сигналите, за които бивате известявани</string>
+    <string name="string_signal_type_settings_title">Типове на сигнали</string>
 </resources>
