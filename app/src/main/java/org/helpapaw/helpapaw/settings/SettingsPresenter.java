@@ -9,6 +9,7 @@ public class SettingsPresenter extends Presenter<SettingsContract.View> implemen
     private ISettingsRepository settingsRepository;
     private int radius;
     private int timeout;
+    private int signalTypes;
 
     SettingsPresenter(SettingsContract.View view) {
         super(view);
@@ -19,9 +20,11 @@ public class SettingsPresenter extends Presenter<SettingsContract.View> implemen
     public void initialize() {
         radius = settingsRepository.getRadius();
         timeout = settingsRepository.getTimeout();
+        signalTypes = settingsRepository.getSignalTypes();
 
         getView().setRadius(radius);
         getView().setTimeout(timeout);
+        getView().setSignalTypes(signalTypes);
 
         settingsRepository.clearLocationData();
     }
@@ -39,8 +42,18 @@ public class SettingsPresenter extends Presenter<SettingsContract.View> implemen
     }
 
     @Override
+    public void onSignalTypesChange(int signalTypes) {
+        this.signalTypes = signalTypes;
+        settingsRepository.saveSignalTypes(signalTypes);
+    }
+
+    @Override
     public void onCloseSettingsScreen() {
         //No need to call it here because it is called when signalsMapFragment resumes and obtains location
         //Injection.getPushNotificationsRepositoryInstance().updateDeviceInfoInCloud(null, radius, timeout);
+    }
+
+    public int getSignalTypes() {
+        return signalTypes;
     }
 }

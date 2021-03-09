@@ -5,6 +5,8 @@ public interface SettingsContract {
         void setRadius(int radius);
 
         void setTimeout(int timeout);
+
+        void setSignalTypes(int signalTypes);
     }
 
     interface UserActionsListener {
@@ -13,6 +15,8 @@ public interface SettingsContract {
         void onRadiusChange(int radius);
 
         void onTimeoutChange(int timeout);
+
+        void onSignalTypesChange(int signalTypes);
 
         void onCloseSettingsScreen();
     }
