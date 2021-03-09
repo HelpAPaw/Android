@@ -181,11 +181,12 @@
                     android:id="@+id/signal_type_setting"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="1"
                     android:layout_marginTop="12dp"
                     android:layout_marginBottom="12dp"
                     android:paddingLeft="4dp"
-                    android:paddingRight="4dp"
-                    android:text="To be removed" />
+                    android:paddingRight="4dp" />
 
             </LinearLayout>
 

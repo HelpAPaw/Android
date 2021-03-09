@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,7 +19,6 @@ import org.helpapaw.helpapaw.base.BaseFragment;
 import org.helpapaw.helpapaw.base.Presenter;
 import org.helpapaw.helpapaw.databinding.FragmentSettingsBinding;
 
-import java.util.Arrays;
 import java.util.Locale;
 
 import static android.app.Activity.RESULT_OK;
@@ -27,6 +27,9 @@ public class SettingsFragment extends BaseFragment implements SettingsContract.V
 
     private static final int RADIUS_VALUE_MIN = 1;
     private static final int TIMEOUT_VALUE_MIN = 1;
+    private static final int REQUEST_CHANGE_SIGNAL_TYPES = 1;
+
+    int selectedTypesForDb = Integer.MAX_VALUE;
 
     FragmentSettingsBinding binding;
     SettingsPresenter settingsPresenter;
@@ -84,10 +87,14 @@ public class SettingsFragment extends BaseFragment implements SettingsContract.V
         binding.radiusValue.setOnSeekBarChangeListener(onRadiusSeekBarChangeListener());
         binding.timeoutValue.setOnSeekBarChangeListener(onTimeoutSeekBarChangeListener());
         binding.signalTypeSetting.setOnClickListener(onSelectedSignalTypeChangeListener());
+
+        Intent intent = getActivity().getIntent();
+        onActivityResult(REQUEST_CHANGE_SIGNAL_TYPES, RESULT_OK, intent);
     }
 
     @Override
     public void onDestroyView() {
+        actionsListener.onSignalTypesChange(selectedTypesForDb);
         actionsListener.onCloseSettingsScreen();
 
         super.onDestroyView();
@@ -144,17 +151,28 @@ public class SettingsFragment extends BaseFragment implements SettingsContract.V
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getContext(), SignalTypeSettingsActivity.class);
-                startActivityForResult(intent, 1);
+                intent.putExtra("selected_types", convertIntegerToBooleanArray(selectedTypesForDb));
+
+                startActivityForResult(intent, REQUEST_CHANGE_SIGNAL_TYPES);
             }
         };
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == 1) {
+        if (requestCode == REQUEST_CHANGE_SIGNAL_TYPES) {
             if (resultCode == RESULT_OK) {
                 boolean[] selectedTypesValue = data.getBooleanArrayExtra("selected_types");
-                binding.signalTypeSetting.setText("selectedTypesValue.toString()");
+                if (selectedTypesValue == null ) {
+                    selectedTypesForDb = settingsPresenter.getSignalTypes();
+                    boolean[] selectedTypesDbValue = convertIntegerToBooleanArray(selectedTypesForDb);
+                    binding.signalTypeSetting.setText(selectedTypesToString(selectedTypesDbValue)); // TODO retrieve from db
+                } else {
+                    String signalTypesStr = selectedTypesToString(selectedTypesValue);
+                    binding.signalTypeSetting.setText(signalTypesStr);
+
+                    selectedTypesForDb = convertBooleansToInt(selectedTypesValue); // TODO save to the DB on settings closed
+                }
             }
         }
     }
@@ -169,6 +187,12 @@ public class SettingsFragment extends BaseFragment implements SettingsContract.V
     public void setTimeout(int timeout) {
         binding.timeoutValue.setProgress(timeout);
         updateTimeout(timeout);
+    }
+
+    @Override
+    public void setSignalTypes(int signalTypes) {
+        String signalTypesStr = selectedTypesToString(convertIntegerToBooleanArray(signalTypes));
+        binding.signalTypeSetting.setText(signalTypesStr);
     }
 
     private void updateRadius(int value) {
@@ -189,5 +213,66 @@ public class SettingsFragment extends BaseFragment implements SettingsContract.V
             String result = String.format(Locale.getDefault(), getString(R.string.timeout_output), value);
             binding.timeoutOutput.setText(result);
         }
+    }
+
+    private int convertBooleansToInt(boolean[] arr) {
+        int n = 0;
+        for (boolean b : arr) {
+            n = (n << 1) | (b ? 1 : 0);
+        }
+        return n;
+    }
+
+    private boolean[] convertIntegerToBooleanArray(int n) {
+        String[] signalTypes = getResources().getStringArray(R.array.signal_types_items);
+        boolean[] booleanArr = new boolean[signalTypes.length];
+
+        for (int i = 0; i < signalTypes.length; i++) {
+            if ((n & (1 << i)) > 0) {
+                booleanArr[signalTypes.length - 1 - i] = true;
+            } else {
+                booleanArr[signalTypes.length - 1 - i] = false;
+            }
+        }
+
+        return booleanArr;
+    }
+
+    private String selectedTypesToString(boolean[] selectedSignalTypes) {
+        String selectedTypesToString = "";
+        String[] signalTypes = getResources().getStringArray(R.array.signal_types_items);
+
+        if (allSelected(selectedSignalTypes)) {
+            selectedTypesToString = "All signal types";
+        } else if (noneSelected(selectedSignalTypes)) {
+            selectedTypesToString = "None";
+        } else {
+            for (int i = 0; i < selectedSignalTypes.length; i++) {
+                if (selectedSignalTypes[i]) {
+                    selectedTypesToString = selectedTypesToString + signalTypes[i] + ", ";
+                }
+            }
+            selectedTypesToString = selectedTypesToString.substring(0, selectedTypesToString.length() - 2);
+        }
+
+        return selectedTypesToString;
+    }
+
+    private boolean allSelected(boolean[] selectedSignalTypes) {
+        for (boolean selectedSignalType : selectedSignalTypes) {
+            if (!selectedSignalType) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean noneSelected(boolean[] selectedSignalTypes) {
+        for (boolean selectedSignalType : selectedSignalTypes) {
+            if (selectedSignalType) {
+                return false;
+            }
+        }
+        return true;
     }
 }

@@ -9,6 +9,7 @@ public class SettingsRepository implements ISettingsRepository {
 
     private final static String RADIUS_FIELD = "signalRadius";
     private final static String TIMEOUT_FIELD = "signalTimeout";
+    private final static String SIGNAL_TYPES_FIELD = "signalTypes";
     private final static String LAST_SHOWN_LATITUDE_FIELD = "lastShownLatitude";
     private final static String LAST_SHOWN_LONGITUDE_FIELD = "lastShownLongitude";
     private final static String LAST_SHOWN_ZOOM_FIELD = "lastShownZoom";
@@ -41,6 +42,13 @@ public class SettingsRepository implements ISettingsRepository {
     }
 
     @Override
+    public void saveSignalTypes(int signalTypes) {
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putInt(SIGNAL_TYPES_FIELD, signalTypes);
+        editor.apply();
+    }
+
+    @Override
     public int getRadius() {
         return preferences.getInt(RADIUS_FIELD, 10);
     }
@@ -48,6 +56,11 @@ public class SettingsRepository implements ISettingsRepository {
     @Override
     public int getTimeout() {
         return preferences.getInt(TIMEOUT_FIELD, 7);
+    }
+
+    @Override
+    public int getSignalTypes() {
+        return preferences.getInt(SIGNAL_TYPES_FIELD, 127);
     }
 
     @Override
