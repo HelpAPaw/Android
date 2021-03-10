@@ -122,4 +122,5 @@
     <string name="txt_only_registered_users_can_change_status">Само регистрирани потребители могат да променят статуса на сигнал</string>
     <string name="txt_only_registered_users_can_submit_signals">Само регистрирани потребители могат да подават сигнали</string>
 
+    <string name="txt_logged_user_not_found">Не е открит вписан потребител!</string>
 </resources>
