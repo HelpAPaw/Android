@@ -100,36 +100,41 @@ public class BackendlessSpatialSignalRepository implements SignalRepository {
 
                 List<Signal> signals = new ArrayList<>();
                 for (int i = 0; i < response.size(); i++) {
-                    HashMap signalMap = (HashMap) response.get(i);
+                    try {
+                        HashMap signalMap = (HashMap) response.get(i);
 
-                    String objectId = (String) signalMap.get(OBJECT_ID_FIELD);
-                    FirebaseCrashlytics.getInstance().log("Got signal with Id: " + objectId);
-                    String signalTitle = (String) signalMap.get(SIGNAL_TITLE);
-                    Date dateCreated = (Date) signalMap.get(CREATED_FIELD);
-                    Integer status = (Integer) signalMap.get(SIGNAL_STATUS);
-                    String signalAuthorPhone = (String) signalMap.get(SIGNAL_AUTHOR_PHONE);
-                    Point location = (Point) signalMap.get(SIGNAL_LOCATION);
+                        String objectId = (String) signalMap.get(OBJECT_ID_FIELD);
+                        FirebaseCrashlytics.getInstance().log("Got signal with Id: " + objectId);
+                        String signalTitle = (String) signalMap.get(SIGNAL_TITLE);
+                        Date dateCreated = (Date) signalMap.get(CREATED_FIELD);
+                        Integer status = (Integer) signalMap.get(SIGNAL_STATUS);
+                        String signalAuthorPhone = (String) signalMap.get(SIGNAL_AUTHOR_PHONE);
+                        Point location = (Point) signalMap.get(SIGNAL_LOCATION);
 
-                    String signalAuthorId = null;
-                    String signalAuthorName  = null;
+                        String signalAuthorId = null;
+                        String signalAuthorName  = null;
 
-                    BackendlessUser signalAuthor = (BackendlessUser) signalMap.get(SIGNAL_AUTHOR);
-                    if (signalAuthor != null) {
-                        signalAuthorId = getToStringOrNull(signalAuthor.getProperty(OBJECT_ID_FIELD));
-                        signalAuthorName = getToStringOrNull(signalAuthor.getProperty(NAME_FIELD));
+                        BackendlessUser signalAuthor = (BackendlessUser) signalMap.get(SIGNAL_AUTHOR);
+                        if (signalAuthor != null) {
+                            signalAuthorId = getToStringOrNull(signalAuthor.getProperty(OBJECT_ID_FIELD));
+                            signalAuthorName = getToStringOrNull(signalAuthor.getProperty(NAME_FIELD));
+                        }
+
+                        Signal newSignal = new Signal(objectId, signalTitle, dateCreated, status, signalAuthorId, signalAuthorName, signalAuthorPhone, location.getLatitude(), location.getLongitude(), false);
+
+                        // If signal is already in DB - keep seen status
+                        List<Signal> signalsFromDB = signalsDatabase.signalDao().getSignal(objectId);
+                        if (signalsFromDB.size() > 0) {
+                            Signal signalFromDb = signalsFromDB.get(0);
+                            newSignal.setSeen(signalFromDb.getSeen());
+                        }
+                        signalsDatabase.signalDao().saveSignal(newSignal);
+
+                        signals.add(newSignal);
                     }
-
-                    Signal newSignal = new Signal(objectId, signalTitle, dateCreated, status, signalAuthorId, signalAuthorName, signalAuthorPhone, location.getLatitude(), location.getLongitude(), false);
-
-                    // If signal is already in DB - keep seen status
-                    List<Signal> signalsFromDB = signalsDatabase.signalDao().getSignal(objectId);
-                    if (signalsFromDB.size() > 0) {
-                        Signal signalFromDb = signalsFromDB.get(0);
-                        newSignal.setSeen(signalFromDb.getSeen());
+                    catch (Exception ex) {
+                        FirebaseCrashlytics.getInstance().recordException(ex);
                     }
-                    signalsDatabase.signalDao().saveSignal(newSignal);
-
-                    signals.add(newSignal);
                 }
 
                 if (response.size() == PAGE_SIZE) {
