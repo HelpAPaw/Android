@@ -55,6 +55,11 @@ public class BackendlessCommentRepository implements CommentRepository {
                     public void handleResponse(List<FINComment> foundComments) {
                         final List<Comment> comments = new ArrayList<>();
 
+                        if (foundComments == null) {
+                            callback.onCommentsLoaded(comments);
+                            return;
+                        }
+
                         for (int i = 0; i < foundComments.size(); i++) {
                             FINComment currentComment = foundComments.get(i);
                             String authorId = null;
