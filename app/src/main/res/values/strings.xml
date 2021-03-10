@@ -133,4 +133,6 @@
 
     <!-- Other strings -->
     <string name="shared_preferences_for_app" translatable="false">defaultSharedPreferences</string>
+
+    <string name="txt_logged_user_not_found">Logged in user not found!</string>
 </resources>
