@@ -517,7 +517,9 @@ public class SignalsMapFragment extends BaseFragment
         if (!mVisibilityAddSignal) {
             Location location = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
             if (location == null) {
-                LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, this);
+                if (googleApiClient.isConnected()) {
+                    LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, this);
+                }
             } else {
                 handleNewLocation(location);
             }
