@@ -18,6 +18,7 @@ import org.helpapaw.helpapaw.R;
 import org.helpapaw.helpapaw.base.BaseFragment;
 import org.helpapaw.helpapaw.base.Presenter;
 import org.helpapaw.helpapaw.databinding.FragmentSettingsBinding;
+import org.helpapaw.helpapaw.utils.Utils;
 
 import java.util.Locale;
 
@@ -29,7 +30,8 @@ public class SettingsFragment extends BaseFragment implements SettingsContract.V
     private static final int TIMEOUT_VALUE_MIN = 1;
     private static final int REQUEST_CHANGE_SIGNAL_TYPES = 1;
 
-    int selectedTypesForDb = Integer.MAX_VALUE;
+    private int selectedTypesForDb = Integer.MAX_VALUE;
+    private String[] signalTypes;
 
     FragmentSettingsBinding binding;
     SettingsPresenter settingsPresenter;
@@ -59,6 +61,7 @@ public class SettingsFragment extends BaseFragment implements SettingsContract.V
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_settings, container, false);
+        signalTypes = getResources().getStringArray(R.array.signal_types_items);
 
         settingsPresenter = new SettingsPresenter(this);
         settingsPresenter.setView(this);
@@ -150,7 +153,8 @@ public class SettingsFragment extends BaseFragment implements SettingsContract.V
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getContext(), SignalTypeSettingsActivity.class);
-                intent.putExtra("selected_types", convertIntegerToBooleanArray(selectedTypesForDb));
+                intent.putExtra("selected_types",
+                        Utils.convertIntegerToBooleanArray(selectedTypesForDb, signalTypes.length));
 
                 startActivityForResult(intent, REQUEST_CHANGE_SIGNAL_TYPES);
             }
@@ -162,15 +166,18 @@ public class SettingsFragment extends BaseFragment implements SettingsContract.V
         if (requestCode == REQUEST_CHANGE_SIGNAL_TYPES) {
             if (resultCode == RESULT_OK) {
                 boolean[] selectedTypesValue = data.getBooleanArrayExtra("selected_types");
+
                 if (selectedTypesValue == null ) {
                     selectedTypesForDb = settingsPresenter.getSignalTypes();
-                    boolean[] selectedTypesDbValue = convertIntegerToBooleanArray(selectedTypesForDb);
-                    binding.signalTypeSetting.setText(selectedTypesToString(selectedTypesDbValue));
+                    boolean[] selectedTypesDbValue =
+                            Utils.convertIntegerToBooleanArray(selectedTypesForDb, signalTypes.length);
+
+                    binding.signalTypeSetting.setText(Utils.selectedTypesToString(selectedTypesDbValue, signalTypes));
                 } else {
-                    String signalTypesStr = selectedTypesToString(selectedTypesValue);
+                    String signalTypesStr = Utils.selectedTypesToString(selectedTypesValue, signalTypes);
                     binding.signalTypeSetting.setText(signalTypesStr);
 
-                    selectedTypesForDb = convertBooleanArrayToInt(selectedTypesValue);
+                    selectedTypesForDb = Utils.convertBooleanArrayToInt(selectedTypesValue);
                 }
                 actionsListener.onSignalTypesChange(selectedTypesForDb);
             }
@@ -190,8 +197,10 @@ public class SettingsFragment extends BaseFragment implements SettingsContract.V
     }
 
     @Override
-    public void setSignalTypes(int signalTypes) {
-        String signalTypesStr = selectedTypesToString(convertIntegerToBooleanArray(signalTypes));
+    public void setSignalTypes(int signalTypesInt) {
+        String signalTypesStr =
+                Utils.selectedTypesToString(Utils.convertIntegerToBooleanArray(signalTypesInt, signalTypes.length), signalTypes);
+
         binding.signalTypeSetting.setText(signalTypesStr);
     }
 
@@ -213,66 +222,5 @@ public class SettingsFragment extends BaseFragment implements SettingsContract.V
             String result = String.format(Locale.getDefault(), getString(R.string.timeout_output), value);
             binding.timeoutOutput.setText(result);
         }
-    }
-
-    private int convertBooleanArrayToInt(boolean[] arr) {
-        int n = 0;
-        for (boolean b : arr) {
-            n = (n << 1) | (b ? 1 : 0);
-        }
-        return n;
-    }
-
-    private boolean[] convertIntegerToBooleanArray(int n) {
-        String[] signalTypes = getResources().getStringArray(R.array.signal_types_items);
-        boolean[] booleanArr = new boolean[signalTypes.length];
-
-        for (int i = 0; i < signalTypes.length; i++) {
-            if ((n & (1 << i)) > 0) {
-                booleanArr[signalTypes.length - 1 - i] = true;
-            } else {
-                booleanArr[signalTypes.length - 1 - i] = false;
-            }
-        }
-
-        return booleanArr;
-    }
-
-    private String selectedTypesToString(boolean[] selectedSignalTypes) {
-        String selectedTypesToString = "";
-        String[] signalTypes = getResources().getStringArray(R.array.signal_types_items);
-
-        if (allSelected(selectedSignalTypes)) {
-            selectedTypesToString = "All signal types";
-        } else if (noneSelected(selectedSignalTypes)) {
-            selectedTypesToString = "None";
-        } else {
-            for (int i = 0; i < selectedSignalTypes.length; i++) {
-                if (selectedSignalTypes[i]) {
-                    selectedTypesToString = selectedTypesToString + signalTypes[i] + ", ";
-                }
-            }
-            selectedTypesToString = selectedTypesToString.substring(0, selectedTypesToString.length() - 2);
-        }
-
-        return selectedTypesToString;
-    }
-
-    private boolean allSelected(boolean[] selectedSignalTypes) {
-        for (boolean selectedSignalType : selectedSignalTypes) {
-            if (!selectedSignalType) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private boolean noneSelected(boolean[] selectedSignalTypes) {
-        for (boolean selectedSignalType : selectedSignalTypes) {
-            if (selectedSignalType) {
-                return false;
-            }
-        }
-        return true;
     }
 }

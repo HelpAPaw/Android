@@ -26,6 +26,8 @@ import java.util.regex.Pattern;
  */
 public class Utils {
 
+    private static final String SIGNAL_TYPE = "signalType";
+
     private static Utils instance;
 
     public synchronized static Utils getInstance() {
@@ -117,5 +119,64 @@ public class Utils {
         }
 
         return formattedDate;
+    }
+
+    public static int convertBooleanArrayToInt(boolean[] arr) {
+        int n = 0;
+        for (boolean b : arr) {
+            n = (n << 1) | (b ? 1 : 0);
+        }
+        return n;
+    }
+
+    public static boolean[] convertIntegerToBooleanArray(int n, int arraySize) {
+        boolean[] booleanArr = new boolean[arraySize];
+
+        for (int i = 0; i < arraySize; i++) {
+            if ((n & (1 << i)) > 0) {
+                booleanArr[arraySize - 1 - i] = true;
+            } else {
+                booleanArr[arraySize - 1 - i] = false;
+            }
+        }
+
+        return booleanArr;
+    }
+
+    public static String selectedTypesToString(boolean[] selectedSignalTypes, String[] signalTypes) {
+        String selectedTypesToString = "";
+
+        if (allSelected(selectedSignalTypes)) {
+            selectedTypesToString = "All signal types";
+        } else if (noneSelected(selectedSignalTypes)) {
+            selectedTypesToString = "None";
+        } else {
+            for (int i = 0; i < selectedSignalTypes.length; i++) {
+                if (selectedSignalTypes[i]) {
+                    selectedTypesToString = selectedTypesToString + signalTypes[i] + ", ";
+                }
+            }
+            selectedTypesToString = selectedTypesToString.substring(0, selectedTypesToString.length() - 2);
+        }
+
+        return selectedTypesToString;
+    }
+
+    public static boolean allSelected(boolean[] selectedSignalTypes) {
+        for (boolean selectedSignalType : selectedSignalTypes) {
+            if (!selectedSignalType) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static boolean noneSelected(boolean[] selectedSignalTypes) {
+        for (boolean selectedSignalType : selectedSignalTypes) {
+            if (selectedSignalType) {
+                return false;
+            }
+        }
+        return true;
     }
 }

@@ -23,9 +23,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import static org.helpapaw.helpapaw.base.PawApplication.getContext;
 import static org.helpapaw.helpapaw.data.models.Signal.HELP_IS_NEEDED;
 import static org.helpapaw.helpapaw.data.models.Signal.SOLVED;
 import static org.helpapaw.helpapaw.data.models.Signal.SOMEBODY_ON_THE_WAY;
@@ -172,18 +174,29 @@ public class BackendlessPushNotificationsRepository implements PushNotifications
     /*
      * Public method that sends a notification to all devices within a certain distance
      */
-    // TODO add signal type here
+    // TODO add signal type where clause here
     @Override
-    public void pushNewSignalNotification(final Signal signal, final double latitude, final double longitude) {
+    public void pushNewSignalNotification(final Signal signal, final double latitude, final double longitude, final int signalType) {
 
         // Get local device-token, latitude & longitude (from settings)
         final String localToken = Injection.getSettingsRepositoryInstance().getTokenFromPreferences();
 
         // Build query
         String wktPoint = Utils.getWktPoint(longitude, latitude);
-        String whereClause = "distanceOnSphere( lastLocation, '" + wktPoint + "') < signalRadius * 1000";
+        String whereClauseDistance = "distanceOnSphere( lastLocation, '" + wktPoint + "') < signalRadius * 1000";
+
+        // Selected Types where clause
+        int signalTypes = Injection.getSettingsRepositoryInstance().getSignalTypes();
+        int signalTypesSize = getContext().getResources().getStringArray(R.array.signal_types_items).length;
+        boolean[] selectedSignalTypes = Utils.convertIntegerToBooleanArray(signalTypes, signalTypesSize);
+        // TODO find a way to create this where clause;
+        String whereClauseType = "";
+
+        String joinedWhereClause= String.format(Locale.ENGLISH, "(%s) AND (%s)",
+                whereClauseDistance, whereClauseType);
+
         DataQueryBuilder queryBuilder = DataQueryBuilder.create();
-        queryBuilder.setWhereClause(whereClause);
+        queryBuilder.setWhereClause(whereClauseDistance); // TODO use here joined where clause
         queryBuilder.setPageSize(pageSize);
 
         pushNewSignalNotifications(signal, localToken, queryBuilder, 0);
@@ -204,12 +217,15 @@ public class BackendlessPushNotificationsRepository implements PushNotifications
 
                 // Iterates through all devices, excludes itself
                 for (Map device : devices) {
-                    String deviceToken = device.get("deviceToken").toString();
+                    // TODO uncomment this after the testing
+//                    String deviceToken = device.get("deviceToken").toString();
+//
+//                    if(!deviceToken.equals(localToken)) {
+//                        notifiedDevices.add(device.get("deviceId").toString());
+//                    }
 
-                    //TODO comment this for testing purpose
-                    if(!deviceToken.equals(localToken)) {
-                        notifiedDevices.add(device.get("deviceId").toString());
-                    }
+                    // TODO remove this after the testing
+                    notifiedDevices.add(device.get("deviceId").toString());
                 }
 
                 // Checks to see if there are any devices
