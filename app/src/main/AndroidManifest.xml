@@ -112,7 +112,6 @@
         <activity
             android:name=".settings.SignalTypeSettingsActivity"
             android:noHistory="true" />
-<!--        android:parentActivityName=".settings.SettingsActivity"-->
     </application>
 
 </manifest>

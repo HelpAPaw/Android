@@ -61,7 +61,11 @@ public class BackendlessPushNotificationsRepository implements PushNotifications
                 settingsRepository.saveTokenToPreferences(response.getDeviceToken());
 
                 //Update device info in case the registration is new
-                updateDeviceInfoInCloud(lastKnownDeviceLocation, settingsRepository.getRadius(), settingsRepository.getTimeout());
+                updateDeviceInfoInCloud(
+                        lastKnownDeviceLocation,
+                        settingsRepository.getRadius(),
+                        settingsRepository.getTimeout(),
+                        settingsRepository.getSignalTypes());
             }
 
             @Override
@@ -91,7 +95,10 @@ public class BackendlessPushNotificationsRepository implements PushNotifications
      * Send null for any parameter you don't want to update
      */
     @Override
-    public void updateDeviceInfoInCloud(final Location location, final Integer radius, final Integer timeout) {
+    public void updateDeviceInfoInCloud(final Location location,
+                                        final Integer radius,
+                                        final Integer timeout,
+                                        final Integer signalTypes) {
         // Get local device-token
         final String localToken = Injection.getSettingsRepositoryInstance().getTokenFromPreferences();
 
@@ -124,6 +131,9 @@ public class BackendlessPushNotificationsRepository implements PushNotifications
                                     }
                                     if (timeout != null) {
                                         foundDevice.put("signalTimeout", timeout);
+                                    }
+                                    if (signalTypes != null) {
+                                        foundDevice.put("signalTypes", signalTypes);
                                     }
                                 }
                                 catch (Error e) {
@@ -162,6 +172,7 @@ public class BackendlessPushNotificationsRepository implements PushNotifications
     /*
      * Public method that sends a notification to all devices within a certain distance
      */
+    // TODO add signal type here
     @Override
     public void pushNewSignalNotification(final Signal signal, final double latitude, final double longitude) {
 
@@ -195,6 +206,7 @@ public class BackendlessPushNotificationsRepository implements PushNotifications
                 for (Map device : devices) {
                     String deviceToken = device.get("deviceToken").toString();
 
+                    //TODO comment this for testing purpose
                     if(!deviceToken.equals(localToken)) {
                         notifiedDevices.add(device.get("deviceId").toString());
                     }
