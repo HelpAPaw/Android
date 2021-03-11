@@ -89,7 +89,7 @@ public class BackendlessSpatialSignalRepository implements SignalRepository {
         String whereClause2 = String.format(Locale.ENGLISH, "%s > %d", CREATED_FIELD, dateSubmitted.getTime());
         String joinedWhereClause;
 
-        if (selectedTypes != null && !allSelected(selectedTypes)) {
+        if (selectedTypes != null && !Utils.allSelected(selectedTypes)) {
             String whereClause3 = createWhereClauseForType(selectedTypes);
 
             joinedWhereClause= String.format(Locale.ENGLISH, "(%s) AND (%s) AND (%s)",
@@ -106,7 +106,7 @@ public class BackendlessSpatialSignalRepository implements SignalRepository {
         StringBuilder whereClause3 = new StringBuilder();
         List<String> selected = new ArrayList<>();
 
-        if (allDeselected(selection)) {
+        if (Utils.noneSelected(selection)) {
             return SIGNAL_TYPE + " = -1";
         }
 
@@ -125,28 +125,6 @@ public class BackendlessSpatialSignalRepository implements SignalRepository {
         }
 
         return whereClause3.toString();
-    }
-
-    private boolean allDeselected(boolean[] selection) {
-        boolean allDeselected = true;
-        for (int i = 0; i < selection.length; ++i) {
-            if (selection[i]) {
-                return false;
-            }
-        }
-
-        return allDeselected;
-    }
-
-    private boolean allSelected(boolean[] selection) {
-        boolean allSelected = true;
-        for (int i = 0; i < selection.length; ++i) {
-            if (!selection[i]) {
-                return false;
-            }
-        }
-
-        return allSelected;
     }
 
     @Override
@@ -277,7 +255,12 @@ public class BackendlessSpatialSignalRepository implements SignalRepository {
                                 callback.onSignalSaved(signal);
 
                                 // Push notification on successfully saved-signal
-                                Injection.getPushNotificationsRepositoryInstance().pushNewSignalNotification(signal, signal.getLatitude(), signal.getLongitude());
+                                Injection.getPushNotificationsRepositoryInstance().
+                                        pushNewSignalNotification(
+                                                signal,
+                                                signal.getLatitude(),
+                                                signal.getLongitude(),
+                                                signal.getType());
                             }
 
                             @Override

@@ -379,19 +379,10 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
     private boolean isActiveFilter(boolean[] selectedTypes) {
         boolean isActiveFilter = false;
 
-        if (selectedTypes != null && !allSelected(selectedTypes)) {
+        if (selectedTypes != null && !Utils.allSelected(selectedTypes)) {
             isActiveFilter = true;
         }
 
         return isActiveFilter;
-    }
-
-    private boolean allSelected(boolean[] selection) {
-        for (boolean b : selection) {
-            if (!b) {
-                return false;
-            }
-        }
-        return true;
     }
 }
