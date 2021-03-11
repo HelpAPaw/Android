@@ -94,7 +94,6 @@ public class SettingsFragment extends BaseFragment implements SettingsContract.V
 
     @Override
     public void onDestroyView() {
-        actionsListener.onSignalTypesChange(selectedTypesForDb);
         actionsListener.onCloseSettingsScreen();
 
         super.onDestroyView();
@@ -166,13 +165,14 @@ public class SettingsFragment extends BaseFragment implements SettingsContract.V
                 if (selectedTypesValue == null ) {
                     selectedTypesForDb = settingsPresenter.getSignalTypes();
                     boolean[] selectedTypesDbValue = convertIntegerToBooleanArray(selectedTypesForDb);
-                    binding.signalTypeSetting.setText(selectedTypesToString(selectedTypesDbValue)); // TODO retrieve from db
+                    binding.signalTypeSetting.setText(selectedTypesToString(selectedTypesDbValue));
                 } else {
                     String signalTypesStr = selectedTypesToString(selectedTypesValue);
                     binding.signalTypeSetting.setText(signalTypesStr);
 
-                    selectedTypesForDb = convertBooleansToInt(selectedTypesValue); // TODO save to the DB on settings closed
+                    selectedTypesForDb = convertBooleanArrayToInt(selectedTypesValue);
                 }
+                actionsListener.onSignalTypesChange(selectedTypesForDb);
             }
         }
     }
@@ -215,7 +215,7 @@ public class SettingsFragment extends BaseFragment implements SettingsContract.V
         }
     }
 
-    private int convertBooleansToInt(boolean[] arr) {
+    private int convertBooleanArrayToInt(boolean[] arr) {
         int n = 0;
         for (boolean b : arr) {
             n = (n << 1) | (b ? 1 : 0);

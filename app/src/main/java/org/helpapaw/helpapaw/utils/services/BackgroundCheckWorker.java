@@ -74,7 +74,8 @@ public class BackgroundCheckWorker extends ListenableWorker {
                             //Got last known location. In some rare situations this can be null.
                             if (location != null) {
                                 getSignalsForLastKnownLocation(location, completer);
-                                Injection.getPushNotificationsRepositoryInstance().updateDeviceInfoInCloud(location, null, null);
+                                Injection.getPushNotificationsRepositoryInstance().
+                                        updateDeviceInfoInCloud(location, null, null, null);
                             } else {
                                 Log.d(TAG, "got callback but last location is null");
                                 completer.set(Result.success());
