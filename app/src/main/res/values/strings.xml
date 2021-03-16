@@ -84,7 +84,7 @@
     <string name="txt_new_status_icon">New status icon</string>
     <string name="string_about_title">About</string>
     <string name="string_about_contact">Contact us</string>
-    <string name="string_about_milen">© Milen Marinov 2019</string>
+    <string name="string_about_milen">© Milen Marinov 2021</string>
     <string name="string_support_email" translatable="false">help.a.paw@outlook.com‌</string>
     <string name="string_mail_chooser_title" translatable="false">help.a.paw@outlook.com‌</string>
     <string name="error_empty_signal_response">Got empty response! Signal not present anymore!?</string>
@@ -132,6 +132,11 @@
     <string name="txt_only_registered_users_can_comment">Only registered users can write comments</string>
     <string name="txt_only_registered_users_can_change_status">Only registered users can change signal status</string>
 
+    <!-- Other strings -->
+    <string name="shared_preferences_for_app" translatable="false">defaultSharedPreferences</string>
+
+    <string name="txt_logged_user_not_found">Logged in user not found!</string>
+
     <string-array name="signal_types_items">
         <item>Emergency</item>
         <item>Lost or Found</item>
@@ -146,8 +151,6 @@
     <string name="txt_filter_signal_types">Filter</string>
     <string name="txt_active_filter">There is an active filter</string>
 
-    <!-- Other strings -->
-    <string name="shared_preferences_for_app" translatable="false">defaultSharedPreferences</string>
     <string name="txt_signal_type">Signal type: %s</string>
     <string name="txt_type">Type: %s</string>
     <string name="content_description_add_signal">Add signal</string>
