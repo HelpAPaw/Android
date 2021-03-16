@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -40,6 +39,8 @@ public class BackendlessPushNotificationsRepository implements PushNotifications
     private static final String TAG = BackendlessPushNotificationsRepository.class.getSimpleName();
     private static final String productionChannel = "default";
     private static final String debugChannel = "debug";
+    private static final int SIGNAL_TYPES_SIZE = getContext().getResources().getStringArray(R.array.signal_types_items).length;
+    private static final int MAX_PADDING = 65408;
     private static Location lastKnownDeviceLocation;
     private static final int pageSize = 100;
 
@@ -135,7 +136,7 @@ public class BackendlessPushNotificationsRepository implements PushNotifications
                                         foundDevice.put("signalTimeout", timeout);
                                     }
                                     if (signalTypes != null) {
-                                        foundDevice.put("signalTypes", signalTypes);
+                                        foundDevice.put("signalTypes", convertSignalTypeForDb(signalTypes));
                                     }
                                 }
                                 catch (Error e) {
@@ -174,7 +175,6 @@ public class BackendlessPushNotificationsRepository implements PushNotifications
     /*
      * Public method that sends a notification to all devices within a certain distance
      */
-    // TODO add signal type where clause here
     @Override
     public void pushNewSignalNotification(final Signal signal, final double latitude, final double longitude, final int signalType) {
 
@@ -183,20 +183,9 @@ public class BackendlessPushNotificationsRepository implements PushNotifications
 
         // Build query
         String wktPoint = Utils.getWktPoint(longitude, latitude);
-        String whereClauseDistance = "distanceOnSphere( lastLocation, '" + wktPoint + "') < signalRadius * 1000";
-
-        // Selected Types where clause
-        int signalTypes = Injection.getSettingsRepositoryInstance().getSignalTypes();
-        int signalTypesSize = getContext().getResources().getStringArray(R.array.signal_types_items).length;
-        boolean[] selectedSignalTypes = Utils.convertIntegerToBooleanArray(signalTypes, signalTypesSize);
-        // TODO find a way to create this where clause;
-        String whereClauseType = "";
-
-        String joinedWhereClause= String.format(Locale.ENGLISH, "(%s) AND (%s)",
-                whereClauseDistance, whereClauseType);
-
+        String whereClause = "distanceOnSphere( lastLocation, '" + wktPoint + "') < signalRadius * 1000";
         DataQueryBuilder queryBuilder = DataQueryBuilder.create();
-        queryBuilder.setWhereClause(whereClauseDistance); // TODO use here joined where clause
+        queryBuilder.setWhereClause(whereClause);
         queryBuilder.setPageSize(pageSize);
 
         pushNewSignalNotifications(signal, localToken, queryBuilder, 0);
@@ -217,15 +206,16 @@ public class BackendlessPushNotificationsRepository implements PushNotifications
 
                 // Iterates through all devices, excludes itself
                 for (Map device : devices) {
-                    // TODO uncomment this after the testing
-//                    String deviceToken = device.get("deviceToken").toString();
-//
-//                    if(!deviceToken.equals(localToken)) {
-//                        notifiedDevices.add(device.get("deviceId").toString());
-//                    }
+                    String deviceToken = device.get("deviceToken").toString();
 
-                    // TODO remove this after the testing
-                    notifiedDevices.add(device.get("deviceId").toString());
+                    if(!deviceToken.equals(localToken)) {
+                        int signalTypes = Integer.parseInt(device.get("signalTypes").toString());
+                        int shift = SIGNAL_TYPES_SIZE - signal.getType() - 1;
+                        
+                        if ((signalTypes & (1 << shift)) > 0) {
+                            notifiedDevices.add(device.get("deviceId").toString());
+                        }
+                    }
                 }
 
                 // Checks to see if there are any devices
@@ -399,5 +389,9 @@ public class BackendlessPushNotificationsRepository implements PushNotifications
                         Log.d(TAG, fault.getMessage());
                     }
                 });
+    }
+
+    private int convertSignalTypeForDb(final int signalTypes) {
+        return MAX_PADDING | signalTypes;
     }
 }

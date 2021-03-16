@@ -15,17 +15,10 @@ import org.helpapaw.helpapaw.utils.NotificationUtils;
  * Created by iliyan on 7/25/16
  */
 public class PawApplication extends Application {
-    
-    // TODO: before creating the PR, adjust this
-//    public static final String  BACKENDLESS_APP_ID          = "BDCD56B9-351A-E067-FFA4-9EA9CF2F4000";
-//    public static final String  BACKENDLESS_REST_API_KEY    = "FF1687C9-961B-4388-FFF2-0C8BDC5DFB00";
-//    private static final String BACKENDLESS_ANDROID_API_KEY = "FF1687C9-961B-4388-FFF2-0C8BDC5DFB00";
-//    private static final String IS_TEST_ENVIRONMENT_KEY     = "IS_TEST_ENVIRONMENT_KEY";
 
-    // STAGING DB
-    public static final String  BACKENDLESS_APP_ID          = "A2E71FD3-94A4-E6FE-FFFD-A881FCD2AA00";
-    public static final String  BACKENDLESS_REST_API_KEY    = "B061AC2D-43F3-4F3C-B3F5-0C45673F82DF";
-    private static final String BACKENDLESS_ANDROID_API_KEY = "02D2374C-C85C-442A-BAE8-E5C7A8DBBD4A";
+    public static final String  BACKENDLESS_APP_ID          = "BDCD56B9-351A-E067-FFA4-9EA9CF2F4000";
+    public static final String  BACKENDLESS_REST_API_KEY    = "FF1687C9-961B-4388-FFF2-0C8BDC5DFB00";
+    private static final String BACKENDLESS_ANDROID_API_KEY = "FF1687C9-961B-4388-FFF2-0C8BDC5DFB00";
     private static final String IS_TEST_ENVIRONMENT_KEY     = "IS_TEST_ENVIRONMENT_KEY";
 
     private static Boolean isTestEnvironment;

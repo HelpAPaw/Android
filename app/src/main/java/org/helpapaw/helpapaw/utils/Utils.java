@@ -26,8 +26,6 @@ import java.util.regex.Pattern;
  */
 public class Utils {
 
-    private static final String SIGNAL_TYPE = "signalType";
-
     private static Utils instance;
 
     public synchronized static Utils getInstance() {
