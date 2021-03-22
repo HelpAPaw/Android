@@ -923,7 +923,9 @@ public class SignalsMapFragment extends BaseFragment
         switch (requestCode) {
             case LOCATION_PERMISSIONS_REQUEST:
                 if ((grantResults.length > 0) && (grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                    signalsGoogleMap.setMyLocationEnabled(true);
+                    if (signalsGoogleMap != null) {
+                        signalsGoogleMap.setMyLocationEnabled(true);
+                    }
                     setLastLocation();
                 } else {
                     // Permission Denied
