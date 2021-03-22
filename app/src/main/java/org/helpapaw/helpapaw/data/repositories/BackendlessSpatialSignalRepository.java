@@ -180,6 +180,11 @@ public class BackendlessSpatialSignalRepository implements SignalRepository {
                 parentObject.put(OBJECT_ID_FIELD, saveResponse.get(OBJECT_ID_FIELD));
 
                 BackendlessUser currentUser = Backendless.UserService.CurrentUser();
+                if (currentUser == null) {
+                    // currentUser should not be null but indeed here it is
+                    // Cannot set the relation so just return
+                    return;
+                }
                 HashMap<String, Object> childObject = new HashMap<>();
                 childObject.put(OBJECT_ID_FIELD, currentUser.getObjectId());
 
