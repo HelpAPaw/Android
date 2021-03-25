@@ -224,7 +224,6 @@ public class BackendlessPushNotificationsRepository implements PushNotifications
                     Backendless.Messaging.publish(getNotificationChannel(), newSignalString, publishOptions, deliveryOptions, new AsyncCallback<MessageStatus>() {
                         @Override
                         public void handleResponse(MessageStatus response) {
-                            Log.d(TAG, response.getMessageId());
                         }
 
                         @Override
@@ -310,6 +309,8 @@ public class BackendlessPushNotificationsRepository implements PushNotifications
                     @Override
                     public void handleResponse(List<Map> devices) {
 
+                        if (devices == null) return;
+
                         List<String> deviceIds = new ArrayList<>();
                         for (Map device : devices) {
                             deviceIds.add(device.get("deviceId").toString());
@@ -359,7 +360,6 @@ public class BackendlessPushNotificationsRepository implements PushNotifications
                             Backendless.Messaging.publish(getNotificationChannel(), updateContent, publishOptions, deliveryOptions, new AsyncCallback<MessageStatus>() {
                                 @Override
                                 public void handleResponse(MessageStatus response) {
-                                    Log.d(TAG, response.getMessageId());
                                 }
 
                                 @Override
