@@ -91,7 +91,7 @@ public class SettingsFragment extends BaseFragment implements SettingsContract.V
 
         binding.radiusValue.setOnSeekBarChangeListener(onRadiusSeekBarChangeListener());
         binding.timeoutValue.setOnSeekBarChangeListener(onTimeoutSeekBarChangeListener());
-        binding.signalTypeSetting.setOnClickListener(onSelectedSignalTypeChangeListener());
+        binding.signalTypeSetting.setOnClickListener(onSelectedSignalTypesClickListener());
 
         Intent intent = getActivity().getIntent();
         onActivityResult(REQUEST_CHANGE_SIGNAL_TYPES, RESULT_OK, intent);
@@ -150,7 +150,7 @@ public class SettingsFragment extends BaseFragment implements SettingsContract.V
         };
     }
 
-    public View.OnClickListener onSelectedSignalTypeChangeListener() {
+    public View.OnClickListener onSelectedSignalTypesClickListener() {
         return new View.OnClickListener() {
             @Override
             public void onClick(View v) {
