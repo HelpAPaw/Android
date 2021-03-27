@@ -24,11 +24,13 @@ import java.util.Locale;
 
 import static android.app.Activity.RESULT_OK;
 
+import static org.helpapaw.helpapaw.settings.SignalTypeSettingsActivity.REQUEST_CHANGE_SIGNAL_TYPES;
+
 public class SettingsFragment extends BaseFragment implements SettingsContract.View {
 
     private static final int RADIUS_VALUE_MIN = 1;
     private static final int TIMEOUT_VALUE_MIN = 1;
-    private static final int REQUEST_CHANGE_SIGNAL_TYPES = 1;
+    private static final String SELECTED_TYPES = "selected_types";
 
     private int selectedTypesForDb = Integer.MAX_VALUE;
     private String[] signalTypes;
@@ -153,7 +155,7 @@ public class SettingsFragment extends BaseFragment implements SettingsContract.V
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getContext(), SignalTypeSettingsActivity.class);
-                intent.putExtra("selected_types",
+                intent.putExtra(SELECTED_TYPES,
                         Utils.convertIntegerToBooleanArray(selectedTypesForDb, signalTypes.length));
 
                 startActivityForResult(intent, REQUEST_CHANGE_SIGNAL_TYPES);

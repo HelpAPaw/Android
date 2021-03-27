@@ -60,7 +60,7 @@ public class SettingsRepository implements ISettingsRepository {
 
     @Override
     public int getSignalTypes() {
-        return preferences.getInt(SIGNAL_TYPES_FIELD, 127);
+        return preferences.getInt(SIGNAL_TYPES_FIELD, 65535);
     }
 
     @Override

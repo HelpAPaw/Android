@@ -29,12 +29,12 @@ public class SignalTypeCustomAdapter extends BaseAdapter {
 
     @Override
     public int getViewTypeCount() {
-        return getCount();
+        return 1;
     }
 
     @Override
     public int getItemViewType(int position) {
-        return position;
+        return 0;
     }
 
     @Override
@@ -49,7 +49,7 @@ public class SignalTypeCustomAdapter extends BaseAdapter {
 
     @Override
     public long getItemId(int position) {
-        return 0;
+        return position;
     }
 
     @Override
