@@ -176,13 +176,13 @@ public class BackendlessPushNotificationsRepository implements PushNotifications
      * Public method that sends a notification to all devices within a certain distance
      */
     @Override
-    public void pushNewSignalNotification(final Signal signal, final double latitude, final double longitude, final int signalType) {
+    public void pushNewSignalNotification(final Signal signal) {
 
         // Get local device-token, latitude & longitude (from settings)
         final String localToken = Injection.getSettingsRepositoryInstance().getTokenFromPreferences();
 
         // Build query
-        String wktPoint = Utils.getWktPoint(longitude, latitude);
+        String wktPoint = Utils.getWktPoint(signal.getLongitude(), signal.getLatitude());
         String whereClause = "distanceOnSphere( lastLocation, '" + wktPoint + "') < signalRadius * 1000";
         DataQueryBuilder queryBuilder = DataQueryBuilder.create();
         queryBuilder.setWhereClause(whereClause);
@@ -209,9 +209,9 @@ public class BackendlessPushNotificationsRepository implements PushNotifications
                     String deviceToken = device.get("deviceToken").toString();
 
                     if(!deviceToken.equals(localToken)) {
-                        int signalTypes = Integer.parseInt(device.get("signalTypes").toString());
+                        int signalTypes = (int) device.get("signalTypes");
                         int shift = SIGNAL_TYPES_SIZE - signal.getType() - 1;
-                        
+
                         if ((signalTypes & (1 << shift)) > 0) {
                             notifiedDevices.add(device.get("deviceId").toString());
                         }

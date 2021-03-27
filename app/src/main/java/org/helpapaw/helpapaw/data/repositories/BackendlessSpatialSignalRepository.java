@@ -260,11 +260,7 @@ public class BackendlessSpatialSignalRepository implements SignalRepository {
 
                                 // Push notification on successfully saved-signal
                                 Injection.getPushNotificationsRepositoryInstance().
-                                        pushNewSignalNotification(
-                                                signal,
-                                                signal.getLatitude(),
-                                                signal.getLongitude(),
-                                                signal.getType());
+                                        pushNewSignalNotification(signal);
                             }
 
                             @Override

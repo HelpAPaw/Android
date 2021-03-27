@@ -18,7 +18,7 @@ import org.helpapaw.helpapaw.filtersignal.SignalTypeCustomAdapter;
 
 public class SignalTypeSettingsActivity extends AppCompatActivity {
 
-    private static final int REQUEST_CHANGE_SIGNAL_TYPES = 1;
+    protected static final int REQUEST_CHANGE_SIGNAL_TYPES = 1;
 
     private boolean[] signalTypeSelection;
     private String[] signalTypes;
