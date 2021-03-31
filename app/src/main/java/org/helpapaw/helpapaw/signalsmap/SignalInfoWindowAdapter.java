@@ -55,7 +55,7 @@ public class SignalInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
                 binding.txtSignalTitle.setText(signal.getTitle());
                 binding.txtSignalStatus.setText(getStatusString(signal.getStatus()));
 
-                Picasso.with(inflater.getContext()).load(photoUrl).resize(200, 200)
+                Picasso.get().load(photoUrl).resize(200, 200)
                         .centerCrop()
                         .noFade()
                         .placeholder(R.drawable.ic_paw)
@@ -76,8 +76,8 @@ public class SignalInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
         }
 
         @Override
-        public void onError() {
-            Log.e(getClass().getSimpleName(), "Error loading thumbnail!");
+        public void onError(Exception e) {
+            Log.e(getClass().getSimpleName(), "Error loading thumbnail: " + e.getLocalizedMessage());
         }
 
         @Override
