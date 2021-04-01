@@ -19,9 +19,9 @@ import org.helpapaw.helpapaw.filtersignal.SignalTypeCustomAdapter;
 public class SignalTypeSettingsActivity extends AppCompatActivity {
 
     protected static final int REQUEST_CHANGE_SIGNAL_TYPES = 1;
+    public static final String EXTRA_SELECTED_TYPES = "selected_types";
 
     private boolean[] signalTypeSelection;
-    private String[] signalTypes;
     private SignalTypeCustomAdapter customAdapter;
 
     ActivitySignalTypeSettingsBinding binding;
@@ -44,11 +44,11 @@ public class SignalTypeSettingsActivity extends AppCompatActivity {
         Intent intent = this.getIntent();
 
         ListView signalTypeListView = findViewById(R.id.signal_type_list_view);
-        signalTypes = getResources().getStringArray(R.array.signal_types_items);
+        String[] signalTypeStrings = getResources().getStringArray(R.array.signal_types_items);
         if (signalTypeSelection == null) {
-            signalTypeSelection = intent.getBooleanArrayExtra("selected_types");
+            signalTypeSelection = intent.getBooleanArrayExtra(EXTRA_SELECTED_TYPES);
         }
-        customAdapter = new SignalTypeCustomAdapter(signalTypeListView.getContext(), signalTypes, signalTypeSelection);
+        customAdapter = new SignalTypeCustomAdapter(signalTypeListView.getContext(), signalTypeStrings, signalTypeSelection);
         signalTypeListView.setAdapter(customAdapter);
     }
 
@@ -59,26 +59,9 @@ public class SignalTypeSettingsActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_CHANGE_SIGNAL_TYPES) {
-            if (resultCode == RESULT_OK) {
-                boolean[] selectedTypesValue = data.getBooleanArrayExtra("selected_types");
-                if(selectedTypesValue == null ) {
-                    signalTypeSelection = new boolean[signalTypes.length];
-                    for (int i = 0; i < signalTypeSelection.length; i++) {
-                        signalTypeSelection[i] = true;
-                    }
-                } else {
-                    signalTypeSelection = selectedTypesValue;
-                }
-            }
-        }
-    }
-
-    @Override
     public boolean onSupportNavigateUp() {
         saveSelectedTypes();
+        finish();
         return true;
     }
 
@@ -86,11 +69,8 @@ public class SignalTypeSettingsActivity extends AppCompatActivity {
         customAdapter.setSignalTypeSelectionToCurrent();
         signalTypeSelection = customAdapter.getSignalTypeSelection();
 
-        Intent resultIntent = new Intent(this, SettingsActivity.class);
-        resultIntent.putExtra("selected_types", signalTypeSelection);
+        Intent resultIntent = new Intent();
+        resultIntent.putExtra(EXTRA_SELECTED_TYPES, signalTypeSelection);
         setResult(RESULT_OK, resultIntent);
-
-        startActivityForResult(resultIntent, 90);
-        finish();
     }
 }

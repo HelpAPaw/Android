@@ -24,16 +24,16 @@ import java.util.Locale;
 
 import static android.app.Activity.RESULT_OK;
 
+import static org.helpapaw.helpapaw.settings.SignalTypeSettingsActivity.EXTRA_SELECTED_TYPES;
 import static org.helpapaw.helpapaw.settings.SignalTypeSettingsActivity.REQUEST_CHANGE_SIGNAL_TYPES;
 
 public class SettingsFragment extends BaseFragment implements SettingsContract.View {
 
     private static final int RADIUS_VALUE_MIN = 1;
     private static final int TIMEOUT_VALUE_MIN = 1;
-    private static final String SELECTED_TYPES = "selected_types";
 
-    private int selectedTypesForDb = Integer.MAX_VALUE;
-    private String[] signalTypes;
+    private int currentlySelectedTypesInt = Integer.MAX_VALUE;
+    private String[] signalTypeStrings;
 
     FragmentSettingsBinding binding;
     SettingsPresenter settingsPresenter;
@@ -63,7 +63,7 @@ public class SettingsFragment extends BaseFragment implements SettingsContract.V
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_settings, container, false);
-        signalTypes = getResources().getStringArray(R.array.signal_types_items);
+        signalTypeStrings = getResources().getStringArray(R.array.signal_types_items);
 
         settingsPresenter = new SettingsPresenter(this);
         settingsPresenter.setView(this);
@@ -92,9 +92,6 @@ public class SettingsFragment extends BaseFragment implements SettingsContract.V
         binding.radiusValue.setOnSeekBarChangeListener(onRadiusSeekBarChangeListener());
         binding.timeoutValue.setOnSeekBarChangeListener(onTimeoutSeekBarChangeListener());
         binding.signalTypeSetting.setOnClickListener(onSelectedSignalTypesClickListener());
-
-        Intent intent = getActivity().getIntent();
-        onActivityResult(REQUEST_CHANGE_SIGNAL_TYPES, RESULT_OK, intent);
     }
 
     @Override
@@ -155,8 +152,8 @@ public class SettingsFragment extends BaseFragment implements SettingsContract.V
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getContext(), SignalTypeSettingsActivity.class);
-                intent.putExtra(SELECTED_TYPES,
-                        Utils.convertIntegerToBooleanArray(selectedTypesForDb, signalTypes.length));
+                intent.putExtra(EXTRA_SELECTED_TYPES,
+                        Utils.convertIntegerToBooleanArray(currentlySelectedTypesInt, signalTypeStrings.length));
 
                 startActivityForResult(intent, REQUEST_CHANGE_SIGNAL_TYPES);
             }
@@ -167,21 +164,12 @@ public class SettingsFragment extends BaseFragment implements SettingsContract.V
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_CHANGE_SIGNAL_TYPES) {
             if (resultCode == RESULT_OK) {
-                boolean[] selectedTypesValue = data.getBooleanArrayExtra("selected_types");
+                boolean[] selectedTypesValue = data.getBooleanArrayExtra(EXTRA_SELECTED_TYPES);
 
-                if (selectedTypesValue == null ) {
-                    selectedTypesForDb = settingsPresenter.getSignalTypes();
-                    boolean[] selectedTypesDbValue =
-                            Utils.convertIntegerToBooleanArray(selectedTypesForDb, signalTypes.length);
-
-                    binding.signalTypeSetting.setText(Utils.selectedTypesToString(selectedTypesDbValue, signalTypes));
-                } else {
-                    String signalTypesStr = Utils.selectedTypesToString(selectedTypesValue, signalTypes);
-                    binding.signalTypeSetting.setText(signalTypesStr);
-
-                    selectedTypesForDb = Utils.convertBooleanArrayToInt(selectedTypesValue);
+                if (selectedTypesValue != null ) {
+                    setSignalTypes(Utils.convertBooleanArrayToInt(selectedTypesValue));
+                    actionsListener.onSignalTypesChange(currentlySelectedTypesInt);
                 }
-                actionsListener.onSignalTypesChange(selectedTypesForDb);
             }
         }
     }
@@ -200,8 +188,9 @@ public class SettingsFragment extends BaseFragment implements SettingsContract.V
 
     @Override
     public void setSignalTypes(int signalTypesInt) {
+        currentlySelectedTypesInt = signalTypesInt;
         String signalTypesStr =
-                Utils.selectedTypesToString(Utils.convertIntegerToBooleanArray(signalTypesInt, signalTypes.length), signalTypes);
+                Utils.selectedTypesToString(Utils.convertIntegerToBooleanArray(signalTypesInt, signalTypeStrings.length), signalTypeStrings);
 
         binding.signalTypeSetting.setText(signalTypesStr);
     }
