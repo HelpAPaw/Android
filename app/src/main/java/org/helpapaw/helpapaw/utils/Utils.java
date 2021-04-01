@@ -121,8 +121,8 @@ public class Utils {
 
     public static int convertBooleanArrayToInt(boolean[] arr) {
         int n = 0;
-        for (boolean b : arr) {
-            n = (n << 1) | (b ? 1 : 0);
+        for (int i = arr.length - 1; i >= 0; i--) {
+            n = (n << 1) | (arr[i] ? 1 : 0);
         }
         return n;
     }
@@ -130,11 +130,11 @@ public class Utils {
     public static boolean[] convertIntegerToBooleanArray(int n, int arraySize) {
         boolean[] booleanArr = new boolean[arraySize];
 
-        for (int i = 0; i < arraySize; i++) {
+        for (int i = arraySize - 1; i >= 0; i--) {
             if ((n & (1 << i)) > 0) {
-                booleanArr[arraySize - 1 - i] = true;
+                booleanArr[i] = true;
             } else {
-                booleanArr[arraySize - 1 - i] = false;
+                booleanArr[i] = false;
             }
         }
 
