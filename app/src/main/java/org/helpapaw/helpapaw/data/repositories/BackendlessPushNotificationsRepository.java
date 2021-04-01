@@ -40,7 +40,7 @@ public class BackendlessPushNotificationsRepository implements PushNotifications
     private static final String productionChannel = "default";
     private static final String debugChannel = "debug";
     private static final int SIGNAL_TYPES_SIZE = getContext().getResources().getStringArray(R.array.signal_types_items).length;
-    private static final int MAX_PADDING = 65408;
+    private static final int MAX_PADDING = 65535;
     private static Location lastKnownDeviceLocation;
     private static final int pageSize = 100;
 
@@ -210,7 +210,7 @@ public class BackendlessPushNotificationsRepository implements PushNotifications
 
                     if(!deviceToken.equals(localToken)) {
                         int signalTypes = (int) device.get("signalTypes");
-                        int shift = SIGNAL_TYPES_SIZE - signal.getType() - 1;
+                        int shift = signal.getType();
 
                         if ((signalTypes & (1 << shift)) > 0) {
                             notifiedDevices.add(device.get("deviceId").toString());
@@ -392,6 +392,6 @@ public class BackendlessPushNotificationsRepository implements PushNotifications
     }
 
     private int convertSignalTypeForDb(final int signalTypes) {
-        return MAX_PADDING | signalTypes;
+        return ((MAX_PADDING << SIGNAL_TYPES_SIZE) & MAX_PADDING) | signalTypes;
     }
 }
