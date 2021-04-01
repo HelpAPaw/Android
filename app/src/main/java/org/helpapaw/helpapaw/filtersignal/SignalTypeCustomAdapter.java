@@ -80,12 +80,8 @@ public class SignalTypeCustomAdapter extends BaseAdapter {
         return convertView;
     }
 
-    public boolean[] getSignalTypeSelection() {
-        return this.signalTypeSelection;
-    }
-
-    public void setSignalTypeSelectionToCurrent() {
-        System.arraycopy(currentSignalTypeSelection, 0, signalTypeSelection, 0, signalTypeSelection.length);
+    public boolean[] getCurrentSignalTypeSelection() {
+        return this.currentSignalTypeSelection;
     }
 
     private static class ViewHolder {
