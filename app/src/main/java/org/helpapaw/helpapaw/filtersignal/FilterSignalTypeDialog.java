@@ -48,8 +48,7 @@ public class FilterSignalTypeDialog extends DialogFragment {
         dialog.setView(view);
 
         dialog.setPositiveButton(R.string.txt_filter_signal_types, (dialog1, which) -> {
-            customAdapter.setSignalTypeSelectionToCurrent();
-            signalTypeSelection = customAdapter.getSignalTypeSelection();
+            signalTypeSelection = customAdapter.getCurrentSignalTypeSelection();
 
             Intent resultIntent = new Intent();
             resultIntent.putExtra(EXTRA_SIGNAL_TYPE_SELECTION, signalTypeSelection);
