@@ -544,7 +544,9 @@ public class SignalsMapFragment extends BaseFragment
         if (!mVisibilityAddSignal) {
             Location location = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
             if (location == null) {
-                LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, this);
+                if (googleApiClient.isConnected()) {
+                    LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, this);
+                }
             } else {
                 handleNewLocation(location);
             }
@@ -995,7 +997,9 @@ public class SignalsMapFragment extends BaseFragment
         switch (requestCode) {
             case LOCATION_PERMISSIONS_REQUEST:
                 if ((grantResults.length > 0) && (grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                    signalsGoogleMap.setMyLocationEnabled(true);
+                    if (signalsGoogleMap != null) {
+                        signalsGoogleMap.setMyLocationEnabled(true);
+                    }
                     setLastLocation();
                 } else {
                     // Permission Denied

@@ -283,13 +283,21 @@ public class BackendlessPushNotificationsRepository implements PushNotifications
         // Use Set to ensure there are no double entries
         Set<String> interestedUserIds = new HashSet<>();
         // Add author of the signal
-        interestedUserIds.add(signal.getAuthorId());
+        if (signal.getAuthorId() != null) {
+            interestedUserIds.add(signal.getAuthorId());
+        }
         // Add all people that posted comments
         for (Comment comment : currentComments) {
-            interestedUserIds.add(comment.getAuthorId());
+            if (comment.getAuthorId() != null) {
+                interestedUserIds.add(comment.getAuthorId());
+            }
         }
         // Remove current user
         interestedUserIds.remove(Backendless.UserService.CurrentUser().getObjectId());
+
+        if (interestedUserIds.size() == 0) {
+            return;
+        }
 
         // Create a comma separated list
         StringBuilder userIdsBuilder = new StringBuilder();

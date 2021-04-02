@@ -11,6 +11,9 @@ import com.backendless.persistence.local.UserTokenStorageFactory;
 import com.facebook.login.LoginManager;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
 
+import org.helpapaw.helpapaw.R;
+import org.helpapaw.helpapaw.base.PawApplication;
+
 /**
  * Created by iliyan on 7/25/16
  */
@@ -149,6 +152,12 @@ public class BackendlessUserManager implements UserManager {
     public void setHasAcceptedPrivacyPolicy(boolean value, final SetUserPropertyCallback setUserPropertyCallback) {
         try
         {
+            BackendlessUser currentUser = Backendless.UserService.CurrentUser();
+            if (currentUser == null) {
+                setUserPropertyCallback.onFailure(PawApplication.getContext().getResources().getString(R.string.txt_logged_user_not_found));
+                return;
+            }
+
             Backendless.UserService.CurrentUser().setProperty(USER_ACCEPTED_PRIVACY_POLICY_FIELD, true);
             Backendless.UserService.update(Backendless.UserService.CurrentUser(), new AsyncCallback<BackendlessUser>() {
                 @Override
@@ -178,6 +187,11 @@ public class BackendlessUserManager implements UserManager {
             Backendless.UserService.findById(currentUserId, new AsyncCallback<BackendlessUser>() {
                 @Override
                 public void handleResponse(BackendlessUser currentUser) {
+                    if (currentUser == null) {
+                        getUserPropertyCallback.onFailure(PawApplication.getContext().getResources().getString(R.string.txt_logged_user_not_found));
+                        return;
+                    }
+
                     Object result = false;
                     Object value = currentUser.getProperty(USER_ACCEPTED_PRIVACY_POLICY_FIELD);
                     if (value != null) {
@@ -204,6 +218,11 @@ public class BackendlessUserManager implements UserManager {
             Backendless.UserService.findById(currentUserId, new AsyncCallback<BackendlessUser>() {
                 @Override
                 public void handleResponse(BackendlessUser currentUser) {
+                    if (currentUser == null) {
+                        getUserPropertyCallback.onFailure(PawApplication.getContext().getResources().getString(R.string.txt_logged_user_not_found));
+                        return;
+                    }
+
                     Object result = "";
                     Object value = currentUser.getProperty(USER_NAME_FIELD);
                     if (value != null) {
@@ -229,6 +248,11 @@ public class BackendlessUserManager implements UserManager {
             Backendless.UserService.findById(currentUserId, new AsyncCallback<BackendlessUser>() {
                 @Override
                 public void handleResponse(BackendlessUser currentUser) {
+                    if (currentUser == null) {
+                        getUserPropertyCallback.onFailure(PawApplication.getContext().getResources().getString(R.string.txt_logged_user_not_found));
+                        return;
+                    }
+
                     Object result = "";
                     Object value = currentUser.getProperty(USER_PHONE_NUMBER_FIELD);
                     if (value != null) {
