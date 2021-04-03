@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -70,7 +71,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerHorizontal="true"
-                        android:text="0 kilometers"
+                        tools:text="0 kilometers"
                         android:textSize="18sp" />
                 </RelativeLayout>
 
@@ -128,7 +129,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerHorizontal="true"
-                        android:text="0 days"
+                        tools:text="0 days"
                         android:textSize="18sp" />
                 </RelativeLayout>
 
@@ -167,28 +168,20 @@
                 android:layout_height="1dp"
                 android:background="@color/horizontal_rule" />
 
-            <LinearLayout
+            <TextView
+                android:id="@+id/signal_type_setting"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@android:color/white"
-                android:orientation="vertical"
-                android:paddingLeft="18dp"
-                android:paddingTop="4dp"
-                android:paddingRight="18dp"
-                android:paddingBottom="4dp">
-
-                <TextView
-                    android:id="@+id/signal_type_setting"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:ellipsize="end"
-                    android:maxLines="1"
-                    android:layout_marginTop="12dp"
-                    android:layout_marginBottom="12dp"
-                    android:paddingLeft="4dp"
-                    android:paddingRight="4dp" />
-
-            </LinearLayout>
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:paddingTop="16dp"
+                android:paddingBottom="16dp"
+                android:paddingLeft="22dp"
+                android:paddingRight="22dp"
+                android:background="@drawable/ripple_background_white"
+                android:clickable="true"
+                android:focusable="true"
+                tools:text="All signal types"/>
 
             <TableRow
                 android:layout_width="match_parent"
@@ -201,7 +194,6 @@
                 android:layout_marginTop="4dp"
                 android:paddingLeft="24dp"
                 android:paddingRight="24dp"
-                android:clickable="true"
                 android:text="@string/txt_type_settings_description" />
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
