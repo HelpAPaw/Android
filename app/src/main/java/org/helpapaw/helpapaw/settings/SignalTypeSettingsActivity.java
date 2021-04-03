@@ -52,11 +52,11 @@ public class SignalTypeSettingsActivity extends AppCompatActivity {
         signalTypeListView.setAdapter(customAdapter);
     }
 
-//    @Override
-//    public void onBackPressed() {
-//        saveSelectedTypes();
-//        super.onBackPressed();
-//    }
+    @Override
+    public void onBackPressed() {
+        saveSelectedTypes();
+        super.onBackPressed();
+    }
 
     @Override
     public boolean onSupportNavigateUp() {
@@ -64,13 +64,6 @@ public class SignalTypeSettingsActivity extends AppCompatActivity {
         finish();
         return true;
     }
-
-    @Override
-    public void onDestroy() {
-        saveSelectedTypes();
-        super.onDestroy();
-    }
-
 
     private void saveSelectedTypes() {
         signalTypeSelection = customAdapter.getCurrentSignalTypeSelection();
