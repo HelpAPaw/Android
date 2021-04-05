@@ -209,10 +209,9 @@ public class BackendlessPushNotificationsRepository implements PushNotifications
                     String deviceToken = device.get("deviceToken").toString();
 
                     if(!deviceToken.equals(localToken)) {
-                        int signalTypes = (int) device.get("signalTypes");
-                        int shift = signal.getType();
+                        int signalTypesSetting = (int) device.get("signalTypes");
 
-                        if ((signalTypes & (1 << shift)) > 0) {
+                        if (Utils.shouldNotifyAboutSignalType(signal.getType(), signalTypesSetting)) {
                             notifiedDevices.add(device.get("deviceId").toString());
                         }
                     }

@@ -25,6 +25,7 @@ import org.helpapaw.helpapaw.data.repositories.SignalRepository;
 import org.helpapaw.helpapaw.db.SignalsDatabase;
 import org.helpapaw.helpapaw.utils.Injection;
 import org.helpapaw.helpapaw.utils.NotificationUtils;
+import org.helpapaw.helpapaw.utils.Utils;
 
 import java.util.HashSet;
 import java.util.List;
@@ -113,8 +114,11 @@ public class BackgroundCheckWorker extends ListenableWorker {
 
                 if (signals != null && !signals.isEmpty() && database != null) {
 
+                    int signalTypesSetting = settingsRepository.getSignalTypes();
+
                     for (Signal signal : signals) {
-                        if (signal.getStatus() < SOLVED) {
+                        // Notify user only if signal is not solved and user has subscribed for that signal type
+                        if ((signal.getStatus() < SOLVED) && (Utils.shouldNotifyAboutSignalType(signal.getType(), signalTypesSetting))) {
                             List<Signal> signalsFromDB = database.signalDao().getSignal(signal.getId());
                             if (signalsFromDB.size() > 0) {
                                 Signal signalFromDb = signalsFromDB.get(0);

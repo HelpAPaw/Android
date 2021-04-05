@@ -177,4 +177,15 @@ public class Utils {
         }
         return true;
     }
+
+
+    /**
+     * @param signalType The signal type for which to check. Should have only a single bit raised
+     * @param signalTypeSettings The notification settings against which to check. Should have raised
+     *                           bits for each signal type that the user wants to be notified about
+     * @return Whether the respective user should be notified about that signal type or not
+     */
+    public static boolean shouldNotifyAboutSignalType(int signalType, int signalTypeSettings) {
+        return ((signalTypeSettings & (1 << signalType)) > 0);
+    }
 }
