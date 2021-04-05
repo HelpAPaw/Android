@@ -86,7 +86,7 @@
             style="?android:attr/progressBarStyleSmallInverse"
             android:layout_width="@dimen/thumbnail_size"
             android:layout_height="@dimen/thumbnail_size"
-            android:layout_marginLeft="10dp"
-            android:visibility="gone" />
+            android:layout_gravity="center"
+            android:visibility="invisible" />
     </FrameLayout>
 </LinearLayout>
