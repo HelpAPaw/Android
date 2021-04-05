@@ -51,24 +51,30 @@ public class Signal implements Parcelable {
     private double longitude;
     @ColumnInfo(name = "seen")
     private boolean seen;
+    @ColumnInfo(name = "signalType")
+    private int type;
 
     public Signal() {
     }
 
     @Ignore
-    public Signal(@NonNull String id, String title, Date dateSubmitted, int status, String authorId, String authorName, String authorPhone, double latitude, double longitude, boolean seen) {
-        this(title, dateSubmitted, status, authorId, authorName, authorPhone, latitude, longitude);
+    public Signal(@NonNull String id, String title, Date dateSubmitted, int status, String authorId,
+                  String authorName, String authorPhone, double latitude, double longitude,
+                  boolean seen, int type) {
+        this(title, dateSubmitted, status, authorId, authorName, authorPhone, latitude, longitude, type);
         this.id = id;
         this.seen = seen;
     }
 
     @Ignore
-    public Signal(String title, String authorPhone, Date dateSubmitted, int status, double latitude, double longitude) {
+    public Signal(String title, String authorPhone, Date dateSubmitted, int status, double latitude,
+                  double longitude, int type) {
         this.title = title;
         this.authorPhone = authorPhone;
         this.status = status;
         this.latitude = latitude;
         this.longitude = longitude;
+        this.type = type;
 
         if (dateSubmitted != null) {
             this.dateSubmitted = dateSubmitted;
@@ -78,8 +84,9 @@ public class Signal implements Parcelable {
     }
 
     @Ignore
-    public Signal(String title, Date dateSubmitted, int status, String authorId, String authorName, String authorPhone, double latitude, double longitude) {
-        this(title, authorPhone, dateSubmitted, status, latitude, longitude);
+    public Signal(String title, Date dateSubmitted, int status, String authorId, String authorName,
+                  String authorPhone, double latitude, double longitude, int type) {
+        this(title, authorPhone, dateSubmitted, status, latitude, longitude, type);
         this.authorId = authorId;
         this.authorName = authorName;
     }
@@ -97,6 +104,7 @@ public class Signal implements Parcelable {
         latitude = in.readDouble();
         longitude = in.readDouble();
         seen = in.readByte() != 0;
+        type = in.readInt();
     }
 
     public static final Creator<Signal> CREATOR = new Creator<Signal>() {
@@ -196,6 +204,10 @@ public class Signal implements Parcelable {
 
     public void setSeen(boolean seen) { this.seen = seen; }
 
+    public int getType() { return type; }
+
+    public void setType(int type) { this.type = type; }
+
     @Override
     public int describeContents() {
         return 0;
@@ -214,5 +226,6 @@ public class Signal implements Parcelable {
         dest.writeDouble(latitude);
         dest.writeDouble(longitude);
         dest.writeByte((byte) (seen ? 1 : 0));
+        dest.writeInt(type);
     }
 }

@@ -1,5 +1,16 @@
 package org.helpapaw.helpapaw.signalsmap;
 
+import java.io.File;
+import java.io.FileDescriptor;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -8,9 +19,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
-
-import androidx.appcompat.app.AlertDialog;
-import androidx.databinding.DataBindingUtil;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -21,15 +29,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import com.google.android.material.snackbar.Snackbar;
-import androidx.core.content.ContextCompat;
-import androidx.core.graphics.drawable.RoundedBitmapDrawable;
-import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory;
-import androidx.core.view.MenuItemCompat;
-import androidx.fragment.app.FragmentActivity;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -40,6 +39,18 @@ import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.ProgressBar;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.databinding.DataBindingUtil;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import com.google.android.material.snackbar.Snackbar;
+import androidx.core.content.ContextCompat;
+import androidx.core.graphics.drawable.RoundedBitmapDrawable;
+import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory;
+import androidx.core.view.MenuItemCompat;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -74,6 +85,7 @@ import org.helpapaw.helpapaw.data.models.Signal;
 import org.helpapaw.helpapaw.data.repositories.ISettingsRepository;
 import org.helpapaw.helpapaw.data.user.UserManager;
 import org.helpapaw.helpapaw.databinding.FragmentSignalsMapBinding;
+import org.helpapaw.helpapaw.filtersignal.FilterSignalTypeDialog;
 import org.helpapaw.helpapaw.reusable.AlertDialogFragment;
 import org.helpapaw.helpapaw.sendsignal.SendPhotoBottomSheet;
 import org.helpapaw.helpapaw.signaldetails.SignalDetailsActivity;
@@ -81,15 +93,9 @@ import org.helpapaw.helpapaw.utils.Injection;
 import org.helpapaw.helpapaw.utils.StatusUtils;
 import org.helpapaw.helpapaw.utils.images.ImageUtils;
 
-import java.io.File;
-import java.io.FileDescriptor;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import static org.helpapaw.helpapaw.filtersignal.FilterSignalTypeDialog.EXTRA_SIGNAL_TYPE_SELECTION;
+import static org.helpapaw.helpapaw.filtersignal.FilterSignalTypeDialog.REQUEST_UPDATE_SIGNAL_TYPE_SELECTION;
+
 
 public class SignalsMapFragment extends BaseFragment
         implements SignalsMapContract.View,
@@ -113,8 +119,6 @@ public class SignalsMapFragment extends BaseFragment
     private static final String VIEW_ADD_SIGNAL = "view_add_signal";
     private static final int PADDING_TOP = 190;
     private static final int PADDING_BOTTOM = 160;
-    private static final String MARKER_LATITUDE = "marker_latitude";
-    private static final String MARKER_LONGITUDE = "marker_longitude";
 
     private GoogleApiClient googleApiClient;
     private LocationRequest locationRequest;
@@ -137,6 +141,8 @@ public class SignalsMapFragment extends BaseFragment
     UserManager userManager;
     private boolean mVisibilityAddSignal = false;
     private String mFocusedSignalId;
+
+    private FilterSignalTypeDialog filterSignalTypeDialog;
 
     private ISettingsRepository settingsRepository;
 
@@ -188,13 +194,20 @@ public class SignalsMapFragment extends BaseFragment
         //noinspection SimplifiableConditionalExpression
         mVisibilityAddSignal = savedInstanceState != null ? savedInstanceState.getBoolean(VIEW_ADD_SIGNAL) : false;
 
-//        setAddSignalViewVisibility(mVisibilityAddSignal);
         if (binding.mapSignals != null) {
             binding.mapSignals.getMapAsync(getMapReadyCallback());
         }
 
         if (savedInstanceState == null || PresenterManager.getInstance().getPresenter(getScreenId()) == null) {
             signalsMapPresenter = new SignalsMapPresenter(this);
+
+            // Init signal type selection (for filtering what signals are shown on the map)
+            // Default to "all signals shown"
+            String[] signalTypes = getResources().getStringArray(R.array.signal_types_items);
+            if (SignalsMapPresenter.selectedSignalTypes == null) {
+                SignalsMapPresenter.selectedSignalTypes = new boolean[signalTypes.length];
+                Arrays.fill(SignalsMapPresenter.selectedSignalTypes, true);
+            }
         } else {
             signalsMapPresenter = PresenterManager.getInstance().getPresenter(getScreenId());
             signalsMapPresenter.setView(this);
@@ -202,13 +215,12 @@ public class SignalsMapFragment extends BaseFragment
         actionsListener = signalsMapPresenter;
         settingsRepository = Injection.getSettingsRepositoryInstance();
 
-
         setHasOptionsMenu(true);
 
         binding.fabAddSignal.setOnClickListener(getFabAddSignalClickListener());
         binding.viewSendSignal.setOnSignalSendClickListener(getOnSignalSendClickListener());
         binding.viewSendSignal.setOnSignalPhotoClickListener(getOnSignalPhotoClickListener());
-
+        
         return binding.getRoot();
     }
 
@@ -277,6 +289,10 @@ public class SignalsMapFragment extends BaseFragment
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.menu_item_refresh) {
             actionsListener.onRefreshButtonClicked();
+            return true;
+        }
+        if (item.getItemId() == R.id.menu_item_filter_signals) {
+            actionsListener.onFilterSignalsButtonClicked();
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -348,33 +364,44 @@ public class SignalsMapFragment extends BaseFragment
     }
 
     @Override
-    public void displaySignals(List<Signal> signals, boolean showPopup, String focusedSignalId) {
+    public void displaySignals(List<Signal> signals, boolean showPopup, String focusedSignalId,  boolean[] selectedTypes) {
         mFocusedSignalId = focusedSignalId;
-        displaySignals(signals, showPopup);
+        displaySignals(signals, showPopup, selectedTypes);
     }
 
     @Override
-    public void displaySignals(List<Signal> signals, boolean showPopup) {
+    public void displaySignals(List<Signal> signals, boolean showPopup, boolean[] selectedTypes) {
 
         Signal signal;
         Marker markerToFocus = null;
         Signal signalToFocus = null;
         Marker markerToReShow = null;
 
+        mDisplayedSignals.clear();
+
         // Add new signals to the currently displayed ones
         for (Signal newSignal : signals) {
-            Signal alreadyPresent = null;
+            Signal signalToRemove = null;
             for (Signal presentSignal : mDisplayedSignals) {
                 if (newSignal.getId().equals(presentSignal.getId())) {
-                    alreadyPresent = presentSignal;
+                    signalToRemove = presentSignal;
+                    break;
+                }
+                if (selectedTypes != null && !selectedTypes[presentSignal.getType()]) {
+                    signalToRemove = presentSignal;
                     break;
                 }
             }
 
-            if (alreadyPresent != null) {
-                mDisplayedSignals.remove(alreadyPresent);
+            if (signalToRemove != null) {
+                mDisplayedSignals.remove(signalToRemove);
             }
+
             mDisplayedSignals.add(newSignal);
+        }
+
+        if (signals.size() == 0) {
+            mDisplayedSignals.clear();
         }
 
         if (signalsGoogleMap != null) {
@@ -536,7 +563,12 @@ public class SignalsMapFragment extends BaseFragment
         float zoom = newZoom == 0 ? calculateMetersToZoom() : newZoom;
         updateMapCameraPosition(mCurrentLat, mCurrentLong, zoom);
         actionsListener.onLocationChanged(mCurrentLat, mCurrentLong, settingsRepository.getRadius(), settingsRepository.getTimeout());
-        Injection.getPushNotificationsRepositoryInstance().updateDeviceInfoInCloud(location, settingsRepository.getRadius(), settingsRepository.getTimeout());
+
+        Injection.getPushNotificationsRepositoryInstance().updateDeviceInfoInCloud(
+                location,
+                settingsRepository.getRadius(),
+                settingsRepository.getTimeout(),
+                settingsRepository.getSignalTypes());
     }
 
     @Override
@@ -621,6 +653,26 @@ public class SignalsMapFragment extends BaseFragment
         }
     }
 
+    @Override
+    public void setFilterSignalViewVisibility(boolean visibility) {
+        if (visibility) {
+            showFilterSignalView();
+
+            hideAddSignalView();
+            hideAddSignalPin();
+            binding.fabAddSignal.setImageResource(R.drawable.fab_add);
+        }
+    }
+
+    @Override
+    public void setActiveFilterTextVisibility(boolean visibility) {
+        if (visibility) {
+            showActiveFilterText();
+        } else {
+            hideActiveFilterText();
+        }
+    }
+
     private void showAddSignalView() {
         binding.viewSendSignal.setVisibility(View.VISIBLE);
         binding.viewSendSignal.setAlpha(0.0f);
@@ -685,6 +737,21 @@ public class SignalsMapFragment extends BaseFragment
                         binding.addSignalPin.setVisibility(View.INVISIBLE);
                     }
                 });
+    }
+
+    private void showFilterSignalView() {
+        FragmentManager fm = getChildFragmentManager();
+
+        filterSignalTypeDialog = FilterSignalTypeDialog.newInstance(SignalsMapPresenter.selectedSignalTypes);
+        filterSignalTypeDialog.show(fm, "filter");
+    }
+
+    private void showActiveFilterText() {
+        binding.txtActiveFilter.setVisibility(View.VISIBLE);
+    }
+
+    private void hideActiveFilterText() {
+        binding.txtActiveFilter.setVisibility(View.INVISIBLE);
     }
 
     @Override
@@ -796,14 +863,14 @@ public class SignalsMapFragment extends BaseFragment
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+
         if (requestCode == REQUEST_CAMERA) {
             if (resultCode == Activity.RESULT_OK) {
                 Uri takenPhotoUri = ImageUtils.getInstance().getPhotoFileUri(getContext(), imageFileName);
                 actionsListener.onSignalPhotoSelected(takenPhotoUri.getPath());
             }
         }
-
-        if (requestCode == REQUEST_GALLERY && resultCode == Activity.RESULT_OK && data != null && data.getData() != null) {
+        else if (requestCode == REQUEST_GALLERY && resultCode == Activity.RESULT_OK && data != null && data.getData() != null) {
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 saveImageFromURI(data.getData());
@@ -818,12 +885,19 @@ public class SignalsMapFragment extends BaseFragment
             }
 
         }
-
-        if (requestCode == REQUEST_SIGNAL_DETAILS) {
+        else if (requestCode == REQUEST_SIGNAL_DETAILS) {
             if (resultCode == Activity.RESULT_OK) {
                 Signal signal = data.getParcelableExtra("signal");
                 if (signal != null) {
                     actionsListener.onSignalStatusUpdated(signal);
+                }
+            }
+        }
+        else if (requestCode == REQUEST_UPDATE_SIGNAL_TYPE_SELECTION) {
+            if (resultCode == Activity.RESULT_OK) {
+                boolean[] signalTypeSelection = data.getBooleanArrayExtra(EXTRA_SIGNAL_TYPE_SELECTION);
+                if (signalTypeSelection != null) {
+                    actionsListener.onFilterSignalsClicked(signalTypeSelection);
                 }
             }
         }
@@ -975,8 +1049,9 @@ public class SignalsMapFragment extends BaseFragment
             public void onClick(View v) {
                 String description = binding.viewSendSignal.getSignalDescription();
                 String authorPhone = binding.viewSendSignal.getAuthorPhone();
+                int type = binding.viewSendSignal.getSignalType();
 
-                actionsListener.onSendSignalClicked(description, authorPhone);
+                actionsListener.onSendSignalClicked(description, authorPhone, type);
             }
         };
     }

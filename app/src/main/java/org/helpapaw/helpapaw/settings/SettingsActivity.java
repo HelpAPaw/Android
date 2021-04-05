@@ -1,7 +1,9 @@
 package org.helpapaw.helpapaw.settings;
 
-import androidx.databinding.DataBindingUtil;
 import android.os.Bundle;
+
+import androidx.databinding.DataBindingUtil;
+
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.appcompat.app.AppCompatActivity;

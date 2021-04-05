@@ -2,6 +2,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
+        android:id="@+id/menu_item_filter_signals"
+        android:icon="@drawable/filter_list"
+        android:title="@string/txt_filter_signals"
+        app:showAsAction="always" />
+    <item
         android:id="@+id/menu_item_refresh"
         android:icon="@drawable/ic_refresh_white_24dp"
         android:title="@string/txt_refresh"

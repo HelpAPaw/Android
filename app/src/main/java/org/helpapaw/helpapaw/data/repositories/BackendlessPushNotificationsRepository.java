@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static org.helpapaw.helpapaw.base.PawApplication.getContext;
 import static org.helpapaw.helpapaw.data.models.Signal.HELP_IS_NEEDED;
 import static org.helpapaw.helpapaw.data.models.Signal.SOLVED;
 import static org.helpapaw.helpapaw.data.models.Signal.SOMEBODY_ON_THE_WAY;
@@ -38,6 +39,8 @@ public class BackendlessPushNotificationsRepository implements PushNotifications
     private static final String TAG = BackendlessPushNotificationsRepository.class.getSimpleName();
     private static final String productionChannel = "default";
     private static final String debugChannel = "debug";
+    private static final int SIGNAL_TYPES_SIZE = getContext().getResources().getStringArray(R.array.signal_types_items).length;
+    private static final int MAX_PADDING = 65535;
     private static Location lastKnownDeviceLocation;
     private static final int pageSize = 100;
 
@@ -61,7 +64,11 @@ public class BackendlessPushNotificationsRepository implements PushNotifications
                 settingsRepository.saveTokenToPreferences(response.getDeviceToken());
 
                 //Update device info in case the registration is new
-                updateDeviceInfoInCloud(lastKnownDeviceLocation, settingsRepository.getRadius(), settingsRepository.getTimeout());
+                updateDeviceInfoInCloud(
+                        lastKnownDeviceLocation,
+                        settingsRepository.getRadius(),
+                        settingsRepository.getTimeout(),
+                        settingsRepository.getSignalTypes());
             }
 
             @Override
@@ -91,7 +98,10 @@ public class BackendlessPushNotificationsRepository implements PushNotifications
      * Send null for any parameter you don't want to update
      */
     @Override
-    public void updateDeviceInfoInCloud(final Location location, final Integer radius, final Integer timeout) {
+    public void updateDeviceInfoInCloud(final Location location,
+                                        final Integer radius,
+                                        final Integer timeout,
+                                        final Integer signalTypes) {
         // Get local device-token
         final String localToken = Injection.getSettingsRepositoryInstance().getTokenFromPreferences();
 
@@ -124,6 +134,9 @@ public class BackendlessPushNotificationsRepository implements PushNotifications
                                     }
                                     if (timeout != null) {
                                         foundDevice.put("signalTimeout", timeout);
+                                    }
+                                    if (signalTypes != null) {
+                                        foundDevice.put("signalTypes", convertSignalTypeForDb(signalTypes));
                                     }
                                 }
                                 catch (Error e) {
@@ -163,13 +176,13 @@ public class BackendlessPushNotificationsRepository implements PushNotifications
      * Public method that sends a notification to all devices within a certain distance
      */
     @Override
-    public void pushNewSignalNotification(final Signal signal, final double latitude, final double longitude) {
+    public void pushNewSignalNotification(final Signal signal) {
 
         // Get local device-token, latitude & longitude (from settings)
         final String localToken = Injection.getSettingsRepositoryInstance().getTokenFromPreferences();
 
         // Build query
-        String wktPoint = Utils.getWktPoint(longitude, latitude);
+        String wktPoint = Utils.getWktPoint(signal.getLongitude(), signal.getLatitude());
         String whereClause = "distanceOnSphere( lastLocation, '" + wktPoint + "') < signalRadius * 1000";
         DataQueryBuilder queryBuilder = DataQueryBuilder.create();
         queryBuilder.setWhereClause(whereClause);
@@ -196,7 +209,11 @@ public class BackendlessPushNotificationsRepository implements PushNotifications
                     String deviceToken = device.get("deviceToken").toString();
 
                     if(!deviceToken.equals(localToken)) {
-                        notifiedDevices.add(device.get("deviceId").toString());
+                        int signalTypesSetting = (int) device.get("signalTypes");
+
+                        if (Utils.shouldNotifyAboutSignalType(signal.getType(), signalTypesSetting)) {
+                            notifiedDevices.add(device.get("deviceId").toString());
+                        }
                     }
                 }
 
@@ -379,5 +396,9 @@ public class BackendlessPushNotificationsRepository implements PushNotifications
                         Log.d(TAG, fault.getMessage());
                     }
                 });
+    }
+
+    private int convertSignalTypeForDb(final int signalTypes) {
+        return ((MAX_PADDING << SIGNAL_TYPES_SIZE) & MAX_PADDING) | signalTypes;
     }
 }

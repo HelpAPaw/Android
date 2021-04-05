@@ -1,11 +1,14 @@
 package org.helpapaw.helpapaw.settings;
 
-import androidx.databinding.DataBindingUtil;
+import android.content.Intent;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+
+import androidx.databinding.DataBindingUtil;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,13 +18,22 @@ import org.helpapaw.helpapaw.R;
 import org.helpapaw.helpapaw.base.BaseFragment;
 import org.helpapaw.helpapaw.base.Presenter;
 import org.helpapaw.helpapaw.databinding.FragmentSettingsBinding;
+import org.helpapaw.helpapaw.utils.Utils;
 
 import java.util.Locale;
+
+import static android.app.Activity.RESULT_OK;
+
+import static org.helpapaw.helpapaw.settings.SignalTypeSettingsActivity.EXTRA_SELECTED_TYPES;
+import static org.helpapaw.helpapaw.settings.SignalTypeSettingsActivity.REQUEST_CHANGE_SIGNAL_TYPES;
 
 public class SettingsFragment extends BaseFragment implements SettingsContract.View {
 
     private static final int RADIUS_VALUE_MIN = 1;
     private static final int TIMEOUT_VALUE_MIN = 1;
+
+    private int currentlySelectedTypesInt = Integer.MAX_VALUE;
+    private String[] signalTypeStrings;
 
     FragmentSettingsBinding binding;
     SettingsPresenter settingsPresenter;
@@ -51,6 +63,7 @@ public class SettingsFragment extends BaseFragment implements SettingsContract.V
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_settings, container, false);
+        signalTypeStrings = getResources().getStringArray(R.array.signal_types_items);
 
         settingsPresenter = new SettingsPresenter(this);
         settingsPresenter.setView(this);
@@ -78,6 +91,7 @@ public class SettingsFragment extends BaseFragment implements SettingsContract.V
 
         binding.radiusValue.setOnSeekBarChangeListener(onRadiusSeekBarChangeListener());
         binding.timeoutValue.setOnSeekBarChangeListener(onTimeoutSeekBarChangeListener());
+        binding.signalTypeSetting.setOnClickListener(onSelectedSignalTypesClickListener());
     }
 
     @Override
@@ -133,6 +147,33 @@ public class SettingsFragment extends BaseFragment implements SettingsContract.V
         };
     }
 
+    public View.OnClickListener onSelectedSignalTypesClickListener() {
+        return new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getContext(), SignalTypeSettingsActivity.class);
+                intent.putExtra(EXTRA_SELECTED_TYPES,
+                        Utils.convertIntegerToBooleanArray(currentlySelectedTypesInt, signalTypeStrings.length));
+
+                startActivityForResult(intent, REQUEST_CHANGE_SIGNAL_TYPES);
+            }
+        };
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_CHANGE_SIGNAL_TYPES) {
+            if (resultCode == RESULT_OK) {
+                boolean[] selectedTypesValue = data.getBooleanArrayExtra(EXTRA_SELECTED_TYPES);
+
+                if (selectedTypesValue != null ) {
+                    setSignalTypes(Utils.convertBooleanArrayToInt(selectedTypesValue));
+                    actionsListener.onSignalTypesChange(currentlySelectedTypesInt);
+                }
+            }
+        }
+    }
+
     @Override
     public void setRadius(int radius) {
         binding.radiusValue.setProgress(radius);
@@ -143,6 +184,15 @@ public class SettingsFragment extends BaseFragment implements SettingsContract.V
     public void setTimeout(int timeout) {
         binding.timeoutValue.setProgress(timeout);
         updateTimeout(timeout);
+    }
+
+    @Override
+    public void setSignalTypes(int signalTypesInt) {
+        currentlySelectedTypesInt = signalTypesInt;
+        String signalTypesStr =
+                Utils.selectedTypesToString(Utils.convertIntegerToBooleanArray(signalTypesInt, signalTypeStrings.length), signalTypeStrings);
+
+        binding.signalTypeSetting.setText(signalTypesStr);
     }
 
     private void updateRadius(int value) {

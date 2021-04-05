@@ -118,4 +118,74 @@ public class Utils {
 
         return formattedDate;
     }
+
+    public static int convertBooleanArrayToInt(boolean[] arr) {
+        int n = 0;
+        for (int i = arr.length - 1; i >= 0; i--) {
+            n = (n << 1) | (arr[i] ? 1 : 0);
+        }
+        return n;
+    }
+
+    public static boolean[] convertIntegerToBooleanArray(int n, int arraySize) {
+        boolean[] booleanArr = new boolean[arraySize];
+
+        for (int i = arraySize - 1; i >= 0; i--) {
+            if ((n & (1 << i)) > 0) {
+                booleanArr[i] = true;
+            } else {
+                booleanArr[i] = false;
+            }
+        }
+
+        return booleanArr;
+    }
+
+    public static String selectedTypesToString(boolean[] selectedSignalTypes, String[] signalTypes) {
+        String selectedTypesToString = "";
+
+        if (allSelected(selectedSignalTypes)) {
+            selectedTypesToString = "All signal types";
+        } else if (noneSelected(selectedSignalTypes)) {
+            selectedTypesToString = "None";
+        } else {
+            for (int i = 0; i < selectedSignalTypes.length; i++) {
+                if (selectedSignalTypes[i]) {
+                    selectedTypesToString = selectedTypesToString + signalTypes[i] + ", ";
+                }
+            }
+            selectedTypesToString = selectedTypesToString.substring(0, selectedTypesToString.length() - 2);
+        }
+
+        return selectedTypesToString;
+    }
+
+    public static boolean allSelected(boolean[] selectedSignalTypes) {
+        for (boolean selectedSignalType : selectedSignalTypes) {
+            if (!selectedSignalType) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static boolean noneSelected(boolean[] selectedSignalTypes) {
+        for (boolean selectedSignalType : selectedSignalTypes) {
+            if (selectedSignalType) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+
+    /**
+     * @param signalType The signal type for which to check. Should have only a single bit raised
+     * @param signalTypeSettings The notification settings against which to check. Should have raised
+     *                           bits for each signal type that the user wants to be notified about
+     * @return Whether the respective user should be notified about that signal type or not
+     */
+    public static boolean shouldNotifyAboutSignalType(int signalType, int signalTypeSettings) {
+        return ((signalTypeSettings & (1 << signalType)) > 0);
+    }
 }

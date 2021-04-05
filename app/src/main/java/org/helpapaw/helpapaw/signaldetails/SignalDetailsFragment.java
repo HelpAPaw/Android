@@ -136,6 +136,15 @@ public class SignalDetailsFragment extends BaseFragment implements SignalDetails
             binding.btnCall.setVisibility(View.VISIBLE);
         }
 
+        int type = 0;
+        try {
+             type = signal.getType();
+        } catch (Exception e) {
+            // ignore
+        }
+        String[] signalTypes = getResources().getStringArray(R.array.signal_types_items);
+        binding.txtSignalType.setText(String.format(getString(R.string.txt_signal_type), signalTypes[type]));
+
         Injection.getImageLoader().loadWithRoundedCorners(getContext(), signal.getPhotoUrl(), binding.imgSignalPhoto, R.drawable.ic_paw);
     }
 

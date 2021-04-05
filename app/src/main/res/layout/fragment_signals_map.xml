@@ -18,13 +18,25 @@
                 android:layout_height="match_parent"
                 android:layout_gravity="center_horizontal|top" />
 
+            <TextView
+                android:id="@+id/txt_active_filter"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:padding="6dp"
+                android:textSize="18sp"
+                android:textAlignment="center"
+                android:text="@string/txt_active_filter"
+                android:background="@drawable/rounded_border_transparent"
+                android:visibility="invisible" />
+
             <org.helpapaw.helpapaw.sendsignal.SendSignalView
                 android:id="@+id/view_send_signal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
-                android:layout_marginTop="-105dp"
+                android:layout_marginTop="-165dp"
                 android:visibility="invisible"
                 app:cardCornerRadius="8dp"
                 app:cardElevation="4dp" />
@@ -47,6 +59,7 @@
             android:layout_margin="8dp"
             android:src="@drawable/fab_add"
             app:layout_anchor="@id/grp_signals_map_container"
-            app:layout_anchorGravity="bottom|right|end" />
+            app:layout_anchorGravity="bottom|right|end"
+            android:contentDescription="@string/content_description_add_signal" />
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>
