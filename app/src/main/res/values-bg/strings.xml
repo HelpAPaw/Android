@@ -60,6 +60,7 @@
     <string name="txt_help_needed">Нужна е помощ</string>
     <string name="txt_status">Статус</string>
     <string name="txt_refresh">Обнови</string>
+    <string name="txt_filter_signals">Филтрирай сигналите</string>
     <string name="txt_status_updated">Успешно обновен статус!</string>
     <string name="txt_you_help_is_needed">Помощта Ви е необходима!</string>
     <string name="txt_somebody_is_on_the_way">Някой е на път</string>
@@ -123,4 +124,24 @@
     <string name="txt_only_registered_users_can_submit_signals">Само регистрирани потребители могат да подават сигнали</string>
 
     <string name="txt_logged_user_not_found">Не е открит вписан потребител!</string>
+    
+    <string-array name="signal_types_items">
+        <item>Спешен случай</item>
+        <item>Изгубени или намерени</item>
+        <item>Kръводаряване</item>
+        <item>Без дом</item>
+        <item>Некастрирани животни</item>
+        <item>Диви животни</item>
+        <item>Други</item>
+    </string-array>
+
+    <string name="txt_filter_signal_types_description">Избери кои типове сигнали да виждаш</string>
+    <string name="txt_filter_signal_types">Филтрирай</string>
+    <string name="txt_active_filter">Има активен филтър</string>
+    <string name="txt_signal_type">Тип на сигнала: %s</string>
+    <string name="txt_type">Тип: %s</string>
+    <string name="content_description_add_signal">Добави сигнал</string>
+    <string name="txt_type_settings">ТИП</string>
+    <string name="txt_type_settings_description">Типове на сигналите, за които бивате известявани</string>
+    <string name="string_signal_type_settings_title">Типове на сигнали</string>
 </resources>

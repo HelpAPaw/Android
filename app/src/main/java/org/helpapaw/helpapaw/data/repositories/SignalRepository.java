@@ -12,6 +12,8 @@ public interface SignalRepository {
 
     void getAllSignals(double latitude, double longitude, double radius, int timeout, LoadSignalsCallback callback);
 
+    void getFilteredSignals(double latitude, double longitude, double radius, int timeout, boolean[] selection, LoadSignalsCallback callback);
+
     void getSignal(String signalId, final LoadSignalsCallback callback);
 
     void saveSignal(Signal signal, SaveSignalCallback callback);

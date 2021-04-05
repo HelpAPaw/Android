@@ -45,6 +45,7 @@ public class BackendlessSpatialSignalRepository implements SignalRepository {
     private static final String NAME_FIELD = "name";
     private static final String OBJECT_ID_FIELD = "objectId";
     private static final String CREATED_FIELD = "created";
+    private static final String SIGNAL_TYPE = "signalType";
 
     private static final int PAGE_SIZE = 100;
 
@@ -73,6 +74,57 @@ public class BackendlessSpatialSignalRepository implements SignalRepository {
         String joinedWhereClause = String.format(Locale.ENGLISH, "(%s) AND (%s)", whereClause1, whereClause2);
 
         getSignals(joinedWhereClause, callback);
+    }
+
+    @SuppressLint("DefaultLocale")
+    @Override
+    public void getFilteredSignals(double latitude, double longitude, double radius, int timeout,
+                                   boolean[] selectedTypes, final LoadSignalsCallback callback) {
+
+        String whereClause1 = String.format(Locale.ENGLISH, "distanceOnSphere(location, '%s') <= %f", Utils.getWktPoint(longitude, latitude), radius * 1000);
+
+        final Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DATE, -timeout);
+        Date dateSubmitted = calendar.getTime();
+        String whereClause2 = String.format(Locale.ENGLISH, "%s > %d", CREATED_FIELD, dateSubmitted.getTime());
+        String joinedWhereClause;
+
+        if (selectedTypes != null && !Utils.allSelected(selectedTypes)) {
+            String whereClause3 = createWhereClauseForType(selectedTypes);
+
+            joinedWhereClause= String.format(Locale.ENGLISH, "(%s) AND (%s) AND (%s)",
+                    whereClause1, whereClause2, whereClause3);
+        } else {
+            joinedWhereClause = String.format(Locale.ENGLISH, "(%s) AND (%s)",
+                    whereClause1, whereClause2);
+        }
+
+        getSignals(joinedWhereClause, callback);
+    }
+
+    private String createWhereClauseForType(boolean[] selection) {
+        StringBuilder whereClause3 = new StringBuilder();
+        List<String> selected = new ArrayList<>();
+
+        if (Utils.noneSelected(selection)) {
+            return SIGNAL_TYPE + " = -1";
+        }
+
+        for (int i = 0; i < selection.length; ++i) {
+            if (selection[i]) {
+                selected.add(SIGNAL_TYPE + " = " + i);
+            }
+        }
+
+        for (int i = 0; i < selected.size(); ++i) {
+            if (i == selected.size() - 1) {
+                whereClause3.append(selected.get(i));
+            } else {
+                whereClause3.append(selected.get(i) + " OR ");
+            }
+        }
+
+        return whereClause3.toString();
     }
 
     @Override
@@ -110,9 +162,13 @@ public class BackendlessSpatialSignalRepository implements SignalRepository {
                         Integer status = (Integer) signalMap.get(SIGNAL_STATUS);
                         String signalAuthorPhone = (String) signalMap.get(SIGNAL_AUTHOR_PHONE);
                         Point location = (Point) signalMap.get(SIGNAL_LOCATION);
+                        Integer type = 0;
+                        if (signalMap.get(SIGNAL_TYPE) != null) {
+                            type = (Integer) signalMap.get(SIGNAL_TYPE);
+                        }
 
                         String signalAuthorId = null;
-                        String signalAuthorName  = null;
+                        String signalAuthorName = null;
 
                         BackendlessUser signalAuthor = (BackendlessUser) signalMap.get(SIGNAL_AUTHOR);
                         if (signalAuthor != null) {
@@ -120,7 +176,9 @@ public class BackendlessSpatialSignalRepository implements SignalRepository {
                             signalAuthorName = getToStringOrNull(signalAuthor.getProperty(NAME_FIELD));
                         }
 
-                        Signal newSignal = new Signal(objectId, signalTitle, dateCreated, status, signalAuthorId, signalAuthorName, signalAuthorPhone, location.getLatitude(), location.getLongitude(), false);
+                        Signal newSignal = new Signal(objectId, signalTitle, dateCreated, status,
+                                signalAuthorId, signalAuthorName, signalAuthorPhone, location.getLatitude(),
+                                location.getLongitude(), false, type);
 
                         // If signal is already in DB - keep seen status
                         List<Signal> signalsFromDB = signalsDatabase.signalDao().getSignal(objectId);
@@ -131,8 +189,7 @@ public class BackendlessSpatialSignalRepository implements SignalRepository {
                         signalsDatabase.signalDao().saveSignal(newSignal);
 
                         signals.add(newSignal);
-                    }
-                    catch (Exception ex) {
+                    } catch (Exception ex) {
                         FirebaseCrashlytics.getInstance().recordException(ex);
                     }
                 }
@@ -172,6 +229,7 @@ public class BackendlessSpatialSignalRepository implements SignalRepository {
         dataMap.put(SIGNAL_LOCATION, Utils.getWktPoint(signal.getLongitude(), signal.getLatitude()));
         dataMap.put(SIGNAL_STATUS, signal.getStatus());
         dataMap.put(SIGNAL_AUTHOR_PHONE, signal.getAuthorPhone());
+        dataMap.put(SIGNAL_TYPE, signal.getType());
 
         Backendless.Data.of(getTableName()).save(dataMap, new AsyncCallback<Map>() {
             @Override
@@ -206,7 +264,8 @@ public class BackendlessSpatialSignalRepository implements SignalRepository {
                                 callback.onSignalSaved(signal);
 
                                 // Push notification on successfully saved-signal
-                                Injection.getPushNotificationsRepositoryInstance().pushNewSignalNotification(signal, signal.getLatitude(), signal.getLongitude());
+                                Injection.getPushNotificationsRepositoryInstance().
+                                        pushNewSignalNotification(signal);
                             }
 
                             @Override

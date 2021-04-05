@@ -1,8 +1,12 @@
 package org.helpapaw.helpapaw.base;
 
 import android.app.Application;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.StrictMode;
+
+import androidx.multidex.MultiDex;
+import androidx.multidex.MultiDexApplication;
 
 import com.backendless.Backendless;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
@@ -14,7 +18,8 @@ import org.helpapaw.helpapaw.utils.NotificationUtils;
 /**
  * Created by iliyan on 7/25/16
  */
-public class PawApplication extends Application {
+public class PawApplication extends MultiDexApplication {
+
     public static final String  BACKENDLESS_APP_ID          = "BDCD56B9-351A-E067-FFA4-9EA9CF2F4000";
     public static final String  BACKENDLESS_REST_API_KEY    = "FF1687C9-961B-4388-FFF2-0C8BDC5DFB00";
     private static final String BACKENDLESS_ANDROID_API_KEY = "FF1687C9-961B-4388-FFF2-0C8BDC5DFB00";
@@ -22,6 +27,12 @@ public class PawApplication extends Application {
 
     private static Boolean isTestEnvironment;
     private static PawApplication pawApplication;
+
+    @Override
+    protected void attachBaseContext(Context context) {
+        super.attachBaseContext(context);
+        MultiDex.install(this);
+    }
 
     @Override
     public void onCreate() {

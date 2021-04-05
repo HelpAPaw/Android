@@ -5,9 +5,13 @@ public interface ISettingsRepository {
 
     void saveTimeout(int timeout);
 
+    void saveSignalTypes(int signalTypes);
+
     int getRadius();
 
     int getTimeout();
+
+    int getSignalTypes();
 
     double getLastShownLatitude();
 

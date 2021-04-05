@@ -93,21 +93,21 @@
 
         <activity
             android:name=".faq.FAQsView"
-            android:noHistory="true"
             android:parentActivityName=".signalsmap.SignalsMapActivity" />
         <activity
             android:name=".about.AboutActivity"
-            android:noHistory="true"
             android:parentActivityName=".signalsmap.SignalsMapActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".settings.SettingsActivity"
-            android:noHistory="true"
             android:parentActivityName=".signalsmap.SignalsMapActivity"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".settings.SignalTypeSettingsActivity"
+            android:parentActivityName=".settings.SettingsActivity"
+            android:screenOrientation="portrait"  />
+        <activity
             android:name=".privacypolicy.PrivacyPolicyActivity"
-            android:noHistory="true"
             android:parentActivityName=".signalsmap.SignalsMapActivity"/>
     </application>
 

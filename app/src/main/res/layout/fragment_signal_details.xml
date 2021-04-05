@@ -53,6 +53,19 @@
                             android:linksClickable="true"
                             tools:text="This is a title but it is very, very, very, VERY long and expands way much more that it should. However the important thing is that it is fully displayed and no part of it is hidden or hard to read! Right!?"/>
 
+                        <TextView
+                            android:id="@+id/txt_signal_type"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:padding="0dp"
+                            android:layout_gravity="center"
+                            android:gravity="center"
+                            android:dropDownVerticalOffset="50dp"
+                            android:entries="@array/signal_types_items"
+                            android:minHeight="@dimen/thumbnail_size"
+                            android:spinnerMode="dialog"
+                            tools:text="Тип на сигнала: Бездомно животно"/>
+
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content">
@@ -75,7 +88,7 @@
                                 android:layout_weight="1"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="8dp"
+                                android:layout_marginTop="4dp"
                                 android:layout_marginEnd="4dp"
                                 android:textSize="15sp"
                                 android:textStyle="italic"
@@ -84,29 +97,41 @@
                                 tools:text="Milen Marinov"/>
 
                         </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+
+                                <ImageView
+                                    android:id="@+id/img_call"
+                                    android:layout_width="20dp"
+                                    android:layout_height="20dp"
+                                    android:layout_toStartOf="@id/btn_call"
+                                    android:layout_alignTop="@id/btn_call"
+                                    android:layout_marginTop="16dp"
+                                    android:src="@drawable/ic_call"
+                                    app:tint="@color/comments_gray"
+                                    android:visibility="visible" />
+
+                                <Button
+                                    android:id="@+id/btn_call"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignParentEnd="true"
+                                    android:layout_marginStart="4dp"
+                                    android:layout_marginTop="4dp"
+                                    style="@style/Widget.AppCompat.Button.Colored"
+                                    tools:text="0881234567"/>
+                            </RelativeLayout>
+                        </LinearLayout>
+
                     </LinearLayout>
 
-                    <Button
-                        android:id="@+id/btn_call"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true"
-                        android:layout_below="@id/photo_title_layout"
-                        android:layout_marginStart="4dp"
-                        android:layout_marginTop="4dp"
-                        style="@style/Widget.AppCompat.Button.Colored"
-                        tools:text="0881234567"/>
-
-                    <ImageView
-                        android:id="@+id/img_call"
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:layout_toStartOf="@id/btn_call"
-                        android:layout_alignTop="@id/btn_call"
-                        android:layout_marginTop="16dp"
-                        android:src="@drawable/ic_call"
-                        android:tint="@color/comments_gray"
-                        android:visibility="visible" />
 
                 </RelativeLayout>
 
