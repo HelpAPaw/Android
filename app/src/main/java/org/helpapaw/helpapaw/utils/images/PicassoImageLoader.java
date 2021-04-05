@@ -12,7 +12,7 @@ import com.squareup.picasso.Picasso;
 public class PicassoImageLoader implements ImageLoader {
     @Override
     public void load(Context context, String url, ImageView imageView, @DrawableRes int error) {
-        Picasso.with(context)
+        Picasso.get()
                 .load(url)
                 .error(error)
                 .fit()
@@ -22,7 +22,7 @@ public class PicassoImageLoader implements ImageLoader {
 
     @Override
     public void loadWithRoundedCorners(Context context, String url, ImageView imageView, @DrawableRes int placeholder) {
-        Picasso.with(context)
+        Picasso.get()
                 .load(url)
                 .placeholder(placeholder)
                 .transform(new RoundedTransformation(16, 0))

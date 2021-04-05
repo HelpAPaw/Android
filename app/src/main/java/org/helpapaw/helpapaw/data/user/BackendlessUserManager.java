@@ -42,7 +42,7 @@ public class BackendlessUserManager implements UserManager {
 
     @Override
     public  void loginWithFacebook(String accessToken, final LoginCallback loginCallback) {
-        Backendless.UserService.loginWithFacebookSdk(accessToken, new AsyncCallback<BackendlessUser>() {
+        Backendless.UserService.loginWithOAuth2("facebook", accessToken, null, new AsyncCallback<BackendlessUser>() {
             @Override
             public void handleResponse(BackendlessUser user) {
                 Backendless.UserService.setCurrentUser(user);

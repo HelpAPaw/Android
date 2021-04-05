@@ -94,10 +94,10 @@ public class SendSignalView extends CardView {
     public void setProgressVisibility(boolean visibility) {
         if (visibility) {
             progressSendSignal.setVisibility(VISIBLE);
-            txtSignalSend.setVisibility(GONE);
+            txtSignalSend.setVisibility(INVISIBLE);
         } else {
             txtSignalSend.setVisibility(VISIBLE);
-            progressSendSignal.setVisibility(GONE);
+            progressSendSignal.setVisibility(INVISIBLE);
         }
     }
 
