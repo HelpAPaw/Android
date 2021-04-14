@@ -387,9 +387,11 @@ public class SignalsMapFragment extends BaseFragment
                     signalToRemove = presentSignal;
                     break;
                 }
-                if (selectedTypes != null && !selectedTypes[presentSignal.getType()]) {
-                    signalToRemove = presentSignal;
-                    break;
+                if (selectedTypes.length > presentSignal.getType()) {
+                    if (selectedTypes != null && !selectedTypes[presentSignal.getType()]) {
+                        signalToRemove = presentSignal;
+                        break;
+                    }
                 }
             }
 

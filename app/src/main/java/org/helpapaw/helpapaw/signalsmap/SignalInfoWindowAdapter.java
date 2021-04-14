@@ -55,7 +55,12 @@ public class SignalInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
                 binding.txtSignalTitle.setText(signal.getTitle());
                 binding.txtSignalStatus.setText(getStatusString(signal.getStatus()));
                 String[] signalTypes = inflater.getContext().getResources().getStringArray(R.array.signal_types_items);
-                binding.txtSignalType.setText(String.format(inflater.getContext().getString(R.string.txt_type), signalTypes[signal.getType()]));
+
+                String signalType = "-";
+                if (signalTypes.length > signal.getType()) {
+                    signalType = signalTypes[signal.getType()];
+                }
+                binding.txtSignalType.setText(String.format(inflater.getContext().getString(R.string.txt_type), signalType));
 
                 Picasso.get().load(photoUrl).resize(200, 200)
                         .centerCrop()
