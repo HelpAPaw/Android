@@ -39,8 +39,8 @@ public class BackendlessPushNotificationsRepository implements PushNotifications
     private static final String TAG = BackendlessPushNotificationsRepository.class.getSimpleName();
     private static final String productionChannel = "default";
     private static final String debugChannel = "debug";
-    private static final int SIGNAL_TYPES_SIZE = getContext().getResources().getStringArray(R.array.signal_types_items).length;
-    private static final int MAX_PADDING = 65535;
+    public static final int SIGNAL_TYPES_SIZE = getContext().getResources().getStringArray(R.array.signal_types_items).length;
+    public static final int MAX_PADDING = 65535;
     private static Location lastKnownDeviceLocation;
     private static final int pageSize = 100;
 
