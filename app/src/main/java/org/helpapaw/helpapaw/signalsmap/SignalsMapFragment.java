@@ -91,6 +91,7 @@ import org.helpapaw.helpapaw.sendsignal.SendPhotoBottomSheet;
 import org.helpapaw.helpapaw.signaldetails.SignalDetailsActivity;
 import org.helpapaw.helpapaw.utils.Injection;
 import org.helpapaw.helpapaw.utils.StatusUtils;
+import org.helpapaw.helpapaw.utils.Utils;
 import org.helpapaw.helpapaw.utils.images.ImageUtils;
 
 import static org.helpapaw.helpapaw.filtersignal.FilterSignalTypeDialog.EXTRA_SIGNAL_TYPE_SELECTION;
@@ -387,11 +388,10 @@ public class SignalsMapFragment extends BaseFragment
                     signalToRemove = presentSignal;
                     break;
                 }
-                if (selectedTypes.length > presentSignal.getType()) {
-                    if (selectedTypes != null && !selectedTypes[presentSignal.getType()]) {
-                        signalToRemove = presentSignal;
-                        break;
-                    }
+                if ((selectedTypes != null) && (selectedTypes.length > presentSignal.getType()) &&
+                        !selectedTypes[presentSignal.getType()]) {
+                    signalToRemove = presentSignal;
+                    break;
                 }
             }
 
