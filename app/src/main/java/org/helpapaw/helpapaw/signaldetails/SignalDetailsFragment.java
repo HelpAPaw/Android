@@ -142,8 +142,13 @@ public class SignalDetailsFragment extends BaseFragment implements SignalDetails
         } catch (Exception e) {
             // ignore
         }
+
         String[] signalTypes = getResources().getStringArray(R.array.signal_types_items);
-        binding.txtSignalType.setText(String.format(getString(R.string.txt_signal_type), signalTypes[type]));
+        String signalType = "-";
+        if (signalTypes.length > signal.getType()) {
+            signalType = signalTypes[signal.getType()];
+        }
+        binding.txtSignalType.setText(String.format(getString(R.string.txt_signal_type), signalType));
 
         Injection.getImageLoader().loadWithRoundedCorners(getContext(), signal.getPhotoUrl(), binding.imgSignalPhoto, R.drawable.ic_paw);
     }

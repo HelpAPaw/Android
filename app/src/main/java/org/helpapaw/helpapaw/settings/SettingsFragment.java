@@ -24,6 +24,8 @@ import java.util.Locale;
 
 import static android.app.Activity.RESULT_OK;
 
+import static org.helpapaw.helpapaw.data.repositories.BackendlessPushNotificationsRepository.MAX_PADDING;
+import static org.helpapaw.helpapaw.data.repositories.BackendlessPushNotificationsRepository.SIGNAL_TYPES_SIZE;
 import static org.helpapaw.helpapaw.settings.SignalTypeSettingsActivity.EXTRA_SELECTED_TYPES;
 import static org.helpapaw.helpapaw.settings.SignalTypeSettingsActivity.REQUEST_CHANGE_SIGNAL_TYPES;
 
@@ -167,7 +169,10 @@ public class SettingsFragment extends BaseFragment implements SettingsContract.V
                 boolean[] selectedTypesValue = data.getBooleanArrayExtra(EXTRA_SELECTED_TYPES);
 
                 if (selectedTypesValue != null ) {
-                    setSignalTypes(Utils.convertBooleanArrayToInt(selectedTypesValue));
+                    int selectedTypesInt = Utils.convertBooleanArrayToInt(selectedTypesValue);
+                    int selectedTypesIntPadding = ((MAX_PADDING << SIGNAL_TYPES_SIZE) & MAX_PADDING) | selectedTypesInt;
+                    setSignalTypes(selectedTypesIntPadding);
+
                     actionsListener.onSignalTypesChange(currentlySelectedTypesInt);
                 }
             }
