@@ -11,6 +11,7 @@ import androidx.multidex.MultiDexApplication;
 import com.backendless.Backendless;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
 
+import org.helpapaw.helpapaw.R;
 import org.helpapaw.helpapaw.data.user.UserManager;
 import org.helpapaw.helpapaw.utils.Injection;
 import org.helpapaw.helpapaw.utils.NotificationUtils;
@@ -20,9 +21,6 @@ import org.helpapaw.helpapaw.utils.NotificationUtils;
  */
 public class PawApplication extends MultiDexApplication {
 
-    public static final String  BACKENDLESS_APP_ID          = "***REMOVED***";
-    public static final String  BACKENDLESS_REST_API_KEY    = "***REMOVED***";
-    private static final String BACKENDLESS_ANDROID_API_KEY = "***REMOVED***";
     private static final String IS_TEST_ENVIRONMENT_KEY     = "IS_TEST_ENVIRONMENT_KEY";
 
     private static Boolean isTestEnvironment;
@@ -39,7 +37,7 @@ public class PawApplication extends MultiDexApplication {
         super.onCreate();
         pawApplication = this;
         isTestEnvironment = loadIsTestEnvironment();
-        Backendless.initApp(this, BACKENDLESS_APP_ID, BACKENDLESS_ANDROID_API_KEY);
+        Backendless.initApp(this, getResources().getString(R.string.BACKENDLESS_APP_ID), getResources().getString(R.string.BACKENDLESS_ANDROID_API_KEY));
 
         // Register device for token
         Injection.getPushNotificationsRepositoryInstance().registerDeviceToken();

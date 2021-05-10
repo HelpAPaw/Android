@@ -1,7 +1,5 @@
 <resources>
     <string name="app_name" translatable="false">Help A Paw</string>
-    <string name="google_android_map_api_key" translatable="false">***REMOVED***</string>
-    <string name="google_places_api_key" translatable="false">***REMOVED***</string>
     <!-- Strings related to Login and Register screens -->
     <string name="txt_invalid_email">Invalid email.</string>
     <string name="txt_invalid_password">The password is too short.</string>
@@ -91,8 +89,6 @@
     <string name="txt_channel_description_help_needed">"Shows signals for animals near you that are in (urgent) need of help"</string>
     <string name="txt_channel_description_somebody_on_the_way">"Shows signals for which help is on the way but are still not solved"</string>
     <string name="txt_or">or</string>
-    <string name="facebook_app_id" translatable="false">***REMOVED***</string>
-    <string name="fb_login_protocol_scheme" translatable="false">fb***REMOVED***</string>
     <string name="string_faq"><![CDATA[ <font color=\'#ff9700\'>
         <b>&emsp;How does this app work?</b>
         <br>
@@ -124,7 +120,6 @@
     <string name="txt_success">Success</string>
     <string name="txt_error">Error</string>
     <string name="txt_registration_successful">A confirmation link has been sent on your email. Please click it to complete your registration.</string>
-    <string name="url_privacy_policy" translatable="false">https://backendlessappcontent.com/***REMOVED***/473D7C4A-3FBC-69F4-FFFF-1635F07E4300/files/web/privacypolicy.html</string>
     <string name="content_description_app_logo">App logo</string>
     <string name="txt_error_getting_privacy_policy">Could not get Privacy Policy!</string>
     <string name="txt_login_successful">Login successful!</string>
@@ -154,7 +149,7 @@
     <string name="txt_signal_type">Signal type: %s</string>
     <string name="txt_type">Type: %s</string>
     <string name="content_description_add_signal">Add signal</string>
-    <string name="txt_type_settings">TYPE</string>
+    <string name="txt_type_settings">TYPES</string>
     <string name="txt_type_settings_description">Signal types you want to be notified about</string>
     <string name="string_signal_type_settings_title">Signal Types</string>
 </resources>

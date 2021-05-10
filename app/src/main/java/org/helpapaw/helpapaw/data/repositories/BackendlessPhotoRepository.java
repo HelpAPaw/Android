@@ -7,6 +7,7 @@ import com.backendless.async.callback.AsyncCallback;
 import com.backendless.exceptions.BackendlessFault;
 import com.backendless.files.BackendlessFile;
 
+import org.helpapaw.helpapaw.R;
 import org.helpapaw.helpapaw.base.PawApplication;
 import org.helpapaw.helpapaw.utils.images.ImageUtils;
 
@@ -47,8 +48,8 @@ public class BackendlessPhotoRepository implements PhotoRepository {
         if (signalId != null) {
             //https://api.backendless.com/<application id>/<REST-api-key>/files/<path>/<file name>
             return BACKENDLESS_API_DOMAIN +
-                    PawApplication.BACKENDLESS_APP_ID + "/" +
-                    PawApplication.BACKENDLESS_REST_API_KEY + "/" +
+                    PawApplication.getContext().getResources().getString(R.string.BACKENDLESS_APP_ID) + "/" +
+                    PawApplication.getContext().getResources().getString(R.string.BACKENDLESS_REST_API_KEY) + "/" +
                     FILES_FOLDER + "/" +
                     PHOTOS_DIRECTORY + "/" +
                     signalId +
