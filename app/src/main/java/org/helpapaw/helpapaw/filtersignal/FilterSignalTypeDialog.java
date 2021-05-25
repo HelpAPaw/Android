@@ -10,6 +10,7 @@ import android.widget.ListView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentManager;
 
 import org.helpapaw.helpapaw.R;
 
@@ -34,6 +35,9 @@ public class FilterSignalTypeDialog extends DialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+        if (savedInstanceState != null) {
+            signalTypeSelection = savedInstanceState.getBooleanArray("signalTypeSelection");
+        }
 
         AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity());
         dialog.setTitle(R.string.txt_filter_signal_types_description);
@@ -44,6 +48,11 @@ public class FilterSignalTypeDialog extends DialogFragment {
         String[] signalTypes = getResources().getStringArray(R.array.signal_types_items);
         customAdapter = new SignalTypeCustomAdapter(signalTypeListView.getContext(), signalTypes, signalTypeSelection);
         signalTypeListView.setAdapter(customAdapter);
+
+        if (savedInstanceState != null) {
+            customAdapter.setCurrentSignalTypeSelection(
+                    savedInstanceState.getBooleanArray("currentSignalTypeSelection"));
+        }
 
         dialog.setView(view);
 
@@ -58,6 +67,26 @@ public class FilterSignalTypeDialog extends DialogFragment {
         });
 
         return dialog.create();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putBooleanArray("signalTypeSelection", signalTypeSelection);
+        outState.putBooleanArray("currentSignalTypeSelection", customAdapter.getCurrentSignalTypeSelection());
+
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void show(@NonNull FragmentManager manager, String tag) {
+        if (tag != null && tag.equals("filter")) {
+            // we do not show it twice
+            if (manager.findFragmentByTag(tag) == null) {
+                super.show(manager, tag);
+            }
+        } else {
+            super.show(manager, tag);
+        }
     }
 }
 
