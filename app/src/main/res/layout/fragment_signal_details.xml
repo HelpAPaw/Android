@@ -30,16 +30,31 @@
                         android:layout_height="wrap_content"
                         android:orientation="vertical">
 
-                        <ImageView
-                            android:id="@+id/img_signal_photo"
-                            android:layout_width="150dp"
-                            android:layout_height="150dp"
-                            android:layout_marginTop="8dp"
-                            android:layout_marginBottom="8dp"
-                            android:layout_gravity="center"
-                            android:background="@drawable/ic_paw"
-                            android:contentDescription="@string/txt_signal_photo_description" />
+                        <FrameLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center">
+                            <ImageView
+                                android:id="@+id/img_signal_photo"
+                                android:layout_width="150dp"
+                                android:layout_height="150dp"
+                                android:layout_marginTop="8dp"
+                                android:layout_marginBottom="8dp"
+                                android:layout_gravity="center"
+                                android:background="@drawable/ic_paw"
+                                android:contentDescription="@string/txt_signal_photo_description" />
 
+                            <Button
+                                android:id="@+id/btn_changePhoto"
+                                style="@style/Widget.AppCompat.Button.Colored"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_marginStart="4dp"
+                                android:layout_marginTop="4dp"
+                                android:text="@string/txt_change_photo"
+                                android:drawableStart="@drawable/ic_outline_cloud_upload_24" />
+                        </FrameLayout>
                         <TextView
                             android:id="@+id/txt_signal_title"
                             android:layout_width="match_parent"

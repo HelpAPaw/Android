@@ -17,6 +17,8 @@ public interface UserManager {
 
     String getUserToken();
 
+    String getUserId();
+
     boolean isLoggedIn();
 
     void getUserName(final GetUserPropertyCallback getUserPropertyCallback);

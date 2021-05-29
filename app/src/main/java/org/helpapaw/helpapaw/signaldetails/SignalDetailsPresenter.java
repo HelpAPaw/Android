@@ -1,5 +1,9 @@
 package org.helpapaw.helpapaw.signaldetails;
 
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
 
 import org.helpapaw.helpapaw.R;
@@ -10,6 +14,7 @@ import org.helpapaw.helpapaw.data.repositories.CommentRepository;
 import org.helpapaw.helpapaw.data.repositories.PhotoRepository;
 import org.helpapaw.helpapaw.data.repositories.SignalRepository;
 import org.helpapaw.helpapaw.data.user.UserManager;
+import org.helpapaw.helpapaw.signalphoto.SignalPhotoContract;
 import org.helpapaw.helpapaw.utils.Injection;
 import org.helpapaw.helpapaw.utils.Utils;
 
@@ -29,13 +34,23 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
     private SignalRepository signalRepository;
     private UserManager userManager;
 
-    public SignalDetailsPresenter(SignalDetailsContract.View view) {
+    private FragmentManager fragmentManager;
+    private Fragment fragment;
+
+    public SignalDetailsPresenter(SignalDetailsContract.View view,
+                                  FragmentManager fragmentManager,
+                                  Fragment fragment) {
         super(view);
+
+        this.fragmentManager = fragmentManager;
+        this.fragment = fragment;
+
         showProgressBar = true;
         commentRepository = Injection.getCommentRepositoryInstance();
         photoRepository = Injection.getPhotoRepositoryInstance();
         userManager = Injection.getUserManagerInstance();
         signalRepository = Injection.getSignalRepositoryInstance();
+
     }
 
     @Override
@@ -177,6 +192,13 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
     }
 
     @Override
+    public void onChangeSignalPhotoClicked() {
+        if (getView() instanceof SignalPhotoContract.Upload){
+            ((SignalPhotoContract.Upload) getView()).showSendPhotoBottomSheet(this, fragmentManager); // TODO
+        }
+    }
+
+    @Override
     public void onSignalDetailsClosing() {
         getView().closeScreenWithResult(signal);
     }
@@ -184,6 +206,53 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
     @Override
     public void onBottomReached(boolean isBottomReached) {
         getView().setShadowVisibility(!isBottomReached);
+    }
+
+    @Override
+    public void onCameraOptionSelected() {
+        if (getView() instanceof SignalPhotoContract.Upload){
+            ((SignalPhotoContract.Upload) getView()).openCamera(fragment); // TODO
+        }
+    }
+
+    @Override
+    public void onGalleryOptionSelected() {
+        if (getView() instanceof SignalPhotoContract.Upload){
+            ((SignalPhotoContract.Upload) getView()).openGallery(fragment);
+        }
+    }
+
+    @Override
+    public void onSignalPhotoSelected(String photoUri) {
+        savePhoto(photoUri, signal);
+        signal.setPhotoUrl(photoUri);
+    }
+
+    private void savePhoto(final String photoUri, final Signal signal) {
+        photoRepository.savePhoto(photoUri, signal.getId(), new PhotoRepository.SavePhotoCallback() {
+            @Override
+            public void onPhotoSaved() {
+                // refresh
+                FragmentTransaction fragTransaction = fragmentManager.beginTransaction();
+                fragTransaction.detach(fragment);
+                fragTransaction.attach(fragment);
+                fragTransaction.commit();
+            }
+
+            @Override
+            public void onPhotoFailure(String message) {
+                if (!isViewAvailable()) return;
+                getView().showMessage(message);
+            }
+        });
+    }
+
+    public String getCurrentUserId() {
+        return userManager.getUserId();
+    }
+
+    public boolean isAnyPhotoUploaded(String signalId) {
+        return photoRepository.photoExists(signalId);
     }
 
     private void saveComment(String comment) {

@@ -142,6 +142,11 @@ public class BackendlessUserManager implements UserManager {
     }
 
     @Override
+    public String getUserId() {
+        return Backendless.UserService.loggedInUser();
+    }
+
+    @Override
     public boolean isLoggedIn() {
         String userToken = getUserToken();
 

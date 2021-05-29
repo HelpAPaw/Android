@@ -70,5 +70,13 @@ public interface SignalDetailsContract {
         void onBottomReached(boolean isBottomReached);
 
         void onSignalPhotoClicked();
+
+        void onChangeSignalPhotoClicked();
+
+        void onCameraOptionSelected();
+
+        void onGalleryOptionSelected();
+
+        void onSignalPhotoSelected(String photoUri);
     }
 }

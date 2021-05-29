@@ -9,6 +9,8 @@ public interface PhotoRepository {
 
     String getPhotoUrl(String signalId);
 
+    boolean photoExists(String signalId);
+
 
     interface SavePhotoCallback {
 
