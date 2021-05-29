@@ -19,6 +19,9 @@ public class FilterSignalTypeDialog extends DialogFragment {
 
     public static final int REQUEST_UPDATE_SIGNAL_TYPE_SELECTION = 7;
     public static final String EXTRA_SIGNAL_TYPE_SELECTION = "EXTRA_SIGNAL_TYPE_SELECTION";
+    public static final String SIGNAL_TYPE_SELECTION = "signalTypeSelection";
+    public static final String CURRENT_SIGNAL_TYPE_SELECTION = "currentSignalTypeSelection";
+    public static final String FILTER_TAG = "filter";
 
     private boolean[] signalTypeSelection;
     private SignalTypeCustomAdapter customAdapter;
@@ -36,7 +39,7 @@ public class FilterSignalTypeDialog extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         if (savedInstanceState != null) {
-            signalTypeSelection = savedInstanceState.getBooleanArray("signalTypeSelection");
+            signalTypeSelection = savedInstanceState.getBooleanArray(SIGNAL_TYPE_SELECTION);
         }
 
         AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity());
@@ -51,7 +54,7 @@ public class FilterSignalTypeDialog extends DialogFragment {
 
         if (savedInstanceState != null) {
             customAdapter.setCurrentSignalTypeSelection(
-                    savedInstanceState.getBooleanArray("currentSignalTypeSelection"));
+                    savedInstanceState.getBooleanArray(CURRENT_SIGNAL_TYPE_SELECTION));
         }
 
         dialog.setView(view);
@@ -71,15 +74,15 @@ public class FilterSignalTypeDialog extends DialogFragment {
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        outState.putBooleanArray("signalTypeSelection", signalTypeSelection);
-        outState.putBooleanArray("currentSignalTypeSelection", customAdapter.getCurrentSignalTypeSelection());
+        outState.putBooleanArray(SIGNAL_TYPE_SELECTION, signalTypeSelection);
+        outState.putBooleanArray(CURRENT_SIGNAL_TYPE_SELECTION, customAdapter.getCurrentSignalTypeSelection());
 
         super.onSaveInstanceState(outState);
     }
 
     @Override
     public void show(@NonNull FragmentManager manager, String tag) {
-        if (tag != null && tag.equals("filter")) {
+        if (tag != null && tag.equals(FILTER_TAG)) {
             // we do not show it twice
             if (manager.findFragmentByTag(tag) == null) {
                 super.show(manager, tag);

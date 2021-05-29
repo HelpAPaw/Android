@@ -91,10 +91,10 @@ import org.helpapaw.helpapaw.sendsignal.SendPhotoBottomSheet;
 import org.helpapaw.helpapaw.signaldetails.SignalDetailsActivity;
 import org.helpapaw.helpapaw.utils.Injection;
 import org.helpapaw.helpapaw.utils.StatusUtils;
-import org.helpapaw.helpapaw.utils.Utils;
 import org.helpapaw.helpapaw.utils.images.ImageUtils;
 
 import static org.helpapaw.helpapaw.filtersignal.FilterSignalTypeDialog.EXTRA_SIGNAL_TYPE_SELECTION;
+import static org.helpapaw.helpapaw.filtersignal.FilterSignalTypeDialog.FILTER_TAG;
 import static org.helpapaw.helpapaw.filtersignal.FilterSignalTypeDialog.REQUEST_UPDATE_SIGNAL_TYPE_SELECTION;
 
 
@@ -745,7 +745,7 @@ public class SignalsMapFragment extends BaseFragment
         FragmentManager fm = getChildFragmentManager();
 
         filterSignalTypeDialog = FilterSignalTypeDialog.newInstance(SignalsMapPresenter.selectedSignalTypes);
-        filterSignalTypeDialog.show(fm, "filter");
+        filterSignalTypeDialog.show(fm, FILTER_TAG);
     }
 
     private void showActiveFilterText() {
