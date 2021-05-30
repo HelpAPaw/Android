@@ -1,5 +1,6 @@
 package org.helpapaw.helpapaw.authentication.login;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import androidx.databinding.DataBindingUtil;
 import android.os.Bundle;
@@ -56,6 +57,7 @@ public class LoginFragment extends AuthenticationFragment implements LoginContra
 
         binding.btnLogin.setOnClickListener(getBtnLoginClickListener());
         binding.btnShowRegister.setOnClickListener(getBtnShowRegisterClickListener());
+        binding.btnForgotPassword.setOnClickListener(getBtnForgotPasswordClickListener());
 
         binding.btnLoginFb.setReadPermissions(Arrays.asList("email"));
         // Callback registration
@@ -142,6 +144,20 @@ public class LoginFragment extends AuthenticationFragment implements LoginContra
     }
 
     @Override
+    public void showPasswordResetConfirmationDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setMessage(getString(R.string.txt_confirm_password_reset))
+                .setPositiveButton(R.string.txt_yes, (dialogInterface, i) -> actionsListener.onPasswordResetRequested(binding.editEmail.getText().toString().trim()))
+                .setNegativeButton(R.string.txt_no, (dialogInterface, i) -> {})
+                .show();
+    }
+
+    @Override
+    public void showPasswordResetSuccessfulMessage() {
+        AlertDialogFragment.showAlert(getString(R.string.txt_success), getString(R.string.txt_password_reset_successful), false, this.getFragmentManager());
+    }
+
+    @Override
     public boolean isActive() {
         return isAdded();
     }
@@ -149,22 +165,18 @@ public class LoginFragment extends AuthenticationFragment implements LoginContra
     /* OnClick Listeners */
 
     public View.OnClickListener getBtnLoginClickListener() {
-        return new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String email = binding.editEmail.getText().toString().trim();
-                String password = binding.editPassword.getText().toString();
-                actionsListener.onLoginButtonClicked(email, password);
-            }
+        return v -> {
+            String email = binding.editEmail.getText().toString().trim();
+            String password = binding.editPassword.getText().toString();
+            actionsListener.onLoginButtonClicked(email, password);
         };
     }
 
     public View.OnClickListener getBtnShowRegisterClickListener() {
-        return new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                actionsListener.onRegisterButtonClicked();
-            }
-        };
+        return v -> actionsListener.onRegisterButtonClicked();
+    }
+
+    public View.OnClickListener getBtnForgotPasswordClickListener() {
+        return v -> actionsListener.onForgotPasswordButtonClicked();
     }
 }

@@ -11,6 +11,8 @@ public interface UserManager {
 
     void register(String email, String password, String name, String phoneNumber, RegistrationCallback registrationCallback);
 
+    void resetPassword(String email, ResetPasswordCallback resetPasswordCallback);
+
     void logout(LogoutCallback logoutCallback);
 
     void isLoggedIn(LoginCallback loginCallback);
@@ -34,6 +36,11 @@ public interface UserManager {
     interface RegistrationCallback {
         void onRegistrationSuccess();
         void onRegistrationFailure(String message);
+    }
+
+    interface ResetPasswordCallback {
+        void onResetPasswordSuccess();
+        void onResetPasswordFailure(String message);
     }
 
     interface LogoutCallback {

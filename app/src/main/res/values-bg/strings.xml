@@ -1,8 +1,8 @@
 <resources>
     <!-- Strings related to Login and Register screens -->
-    <string name="txt_invalid_email">Невалидна имейл.</string>
-    <string name="txt_invalid_password">Паролата е прекалено къса.</string>
-    <string name="txt_invalid_password_confirmation">Двете въведени пароли не съвпадат.</string>
+    <string name="txt_invalid_email">Невалиден имейл</string>
+    <string name="txt_invalid_password">Паролата е прекалено къса</string>
+    <string name="txt_invalid_password_confirmation">Двете въведени пароли не съвпадат</string>
     <string name="txt_email_hint">Имейл</string>
     <string name="txt_password_hint">Парола</string>
     <string name="txt_password_confirmation_hint">Потвърдете паролата</string>
@@ -122,6 +122,10 @@
     <string name="txt_only_registered_users_can_comment">Само регистрирани потребители могат да пишат коментари</string>
     <string name="txt_only_registered_users_can_change_status">Само регистрирани потребители могат да променят статуса на сигнал</string>
     <string name="txt_only_registered_users_can_submit_signals">Само регистрирани потребители могат да подават сигнали</string>
+    <string name="txt_confirm_password_reset">"Ако вече сте се регистрирали, но сте забравили паролата си, можете да я промените. Желаете ли да продължите</string>
+    <string name="txt_password_reset_successful">Изпратихме Ви имейл с линк, от който можете да промените паролата си</string>
+    <string name="txt_yes">Да</string>
+    <string name="txt_no">Не</string>
 
     <string name="txt_logged_user_not_found">Не е открит вписан потребител!</string>
     
@@ -144,4 +148,5 @@
     <string name="txt_type_settings">ТИПОВЕ</string>
     <string name="txt_type_settings_description">Типове на сигналите, за които желаете да бъдете известявани</string>
     <string name="string_signal_type_settings_title">Типове на сигнали</string>
+    <string name="txt_forgot_password">Забравена парола?</string>
 </resources>

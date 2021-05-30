@@ -132,35 +132,22 @@ public class RegisterFragment extends AuthenticationFragment implements Register
     /* OnClick Listeners */
 
     public View.OnClickListener getBtnShowLoginClickListener() {
-        return new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                actionsListener.onLoginButtonClicked();
-            }
-        };
+        return v -> actionsListener.onLoginButtonClicked();
     }
 
     public View.OnClickListener getBtnSignUpListener() {
-        return new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String email = binding.editEmail.getText().toString().trim();
-                String password = binding.editPassword.getText().toString();
-                String passwordConfirmation = binding.editPasswordConfirmation.getText().toString();
-                String name = binding.editName.getText().toString();
-                String phoneNumber = binding.editPhone.getText().toString();
+        return v -> {
+            String email = binding.editEmail.getText().toString().trim();
+            String password = binding.editPassword.getText().toString();
+            String passwordConfirmation = binding.editPasswordConfirmation.getText().toString();
+            String name = binding.editName.getText().toString();
+            String phoneNumber = binding.editPhone.getText().toString();
 
-                actionsListener.onRegisterButtonClicked(email, password, passwordConfirmation, name, phoneNumber);
-            }
+            actionsListener.onRegisterButtonClicked(email, password, passwordConfirmation, name, phoneNumber);
         };
     }
 
     public View.OnClickListener getTxtWhyPhoneClickListener() {
-        return new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                actionsListener.onWhyPhoneButtonClicked();
-            }
-        };
+        return v -> actionsListener.onWhyPhoneButtonClicked();
     }
 }

@@ -30,7 +30,7 @@
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
+                android:layout_marginBottom="0dp"
                 android:layout_marginTop="8dp">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -40,6 +40,15 @@
                     android:hint="@string/txt_password_hint"
                     android:inputType="textPassword" />
             </com.google.android.material.textfield.TextInputLayout>
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_forgot_password"
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:text="@string/txt_forgot_password"
+                android:textAllCaps="false"
+                android:textColor="@color/blue"
+                android:background="@android:color/transparent"/>
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btn_login"

@@ -27,6 +27,10 @@ public interface LoginContract {
 
         void showNoInternetMessage();
 
+        void showPasswordResetConfirmationDialog();
+
+        void showPasswordResetSuccessfulMessage();
+
         boolean isActive();
     }
 
@@ -37,6 +41,10 @@ public interface LoginContract {
         void onLoginButtonClicked(String email, String password);
 
         void onRegisterButtonClicked();
+
+        void onForgotPasswordButtonClicked();
+
+        void onPasswordResetRequested(String email);
 
         void onLoginFbSuccess(String accessToken);
     }

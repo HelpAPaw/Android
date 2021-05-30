@@ -197,4 +197,46 @@ public class LoginPresenter extends Presenter<LoginContract.View>
             }
         });
     }
+
+    @Override
+    public void onForgotPasswordButtonClicked() {
+        getView().showPasswordResetConfirmationDialog();
+    }
+
+    @Override
+    public void onPasswordResetRequested(String email) {
+        getView().clearErrorMessages();
+
+        if (isEmpty(email) || !Utils.getInstance().isEmailValid(email)) {
+            getView().showEmailErrorMessage();
+            return;
+        }
+
+        getView().hideKeyboard();
+        setProgressIndicator(true);
+        sendResetPasswordRequest(email);
+    }
+
+    private void sendResetPasswordRequest(String email) {
+        if (Utils.getInstance().hasNetworkConnection()) {
+            userManager.resetPassword(email, new UserManager.ResetPasswordCallback() {
+                @Override
+                public void onResetPasswordSuccess() {
+                    if (!isViewAvailable()) return;
+                    setProgressIndicator(false);
+                    getView().showPasswordResetSuccessfulMessage();
+                }
+
+                @Override
+                public void onResetPasswordFailure(String message) {
+                    if (!isViewAvailable()) return;
+                    setProgressIndicator(false);
+                    getView().showErrorMessage(message);
+                }
+            });
+        } else {
+            getView().showNoInternetMessage();
+            setProgressIndicator(false);
+        }
+    }
 }

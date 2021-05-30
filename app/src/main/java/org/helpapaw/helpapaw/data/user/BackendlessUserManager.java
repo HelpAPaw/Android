@@ -80,6 +80,21 @@ public class BackendlessUserManager implements UserManager {
     }
 
     @Override
+    public void resetPassword(String email, ResetPasswordCallback resetPasswordCallback) {
+        Backendless.UserService.restorePassword(email, new AsyncCallback<Void>() {
+            @Override
+            public void handleResponse(Void response) {
+                resetPasswordCallback.onResetPasswordSuccess();
+            }
+
+            @Override
+            public void handleFault(BackendlessFault fault) {
+                resetPasswordCallback.onResetPasswordFailure(fault.getMessage());
+            }
+        });
+    }
+
+    @Override
     public void logout(final LogoutCallback logoutCallback) {
         Backendless.UserService.logout(new AsyncCallback<Void>() {
             public void handleResponse(Void response) {
