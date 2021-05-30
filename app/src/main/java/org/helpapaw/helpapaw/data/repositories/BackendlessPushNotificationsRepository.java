@@ -285,9 +285,11 @@ public class BackendlessPushNotificationsRepository implements PushNotifications
             interestedUserIds.add(signal.getAuthorId());
         }
         // Add all people that posted comments
-        for (Comment comment : currentComments) {
-            if (comment.getAuthorId() != null) {
-                interestedUserIds.add(comment.getAuthorId());
+        if (currentComments != null) {
+            for (Comment comment : currentComments) {
+                if (comment.getAuthorId() != null) {
+                    interestedUserIds.add(comment.getAuthorId());
+                }
             }
         }
         // Remove current user
