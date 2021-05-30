@@ -15,13 +15,11 @@ public class SignalTypeCustomAdapter extends BaseAdapter {
     private final Context context;
     private final String[] signalType;
 
-    private final boolean[] currentSignalTypeSelection;
-    private final boolean[] signalTypeSelection;
+    private boolean[] currentSignalTypeSelection;
 
     public SignalTypeCustomAdapter(Context context, String[] signalType, boolean[] signalTypeSelection) {
         this.context = context;
         this.signalType = signalType;
-        this.signalTypeSelection = signalTypeSelection;
 
         this.currentSignalTypeSelection = new boolean[signalTypeSelection.length];
         System.arraycopy(signalTypeSelection, 0, currentSignalTypeSelection, 0, signalTypeSelection.length);
@@ -82,6 +80,10 @@ public class SignalTypeCustomAdapter extends BaseAdapter {
 
     public boolean[] getCurrentSignalTypeSelection() {
         return this.currentSignalTypeSelection;
+    }
+
+    public void setCurrentSignalTypeSelection(boolean[] currentSignalTypeSelection) {
+        this.currentSignalTypeSelection = currentSignalTypeSelection;
     }
 
     private static class ViewHolder {
