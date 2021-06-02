@@ -61,7 +61,7 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
             this.signal = signal;
             signal.setPhotoUrl(photoRepository.getPhotoUrl(signal.getId()));
             getView().showSignalDetails(signal);
-            showUploadButtonIfNeeded(signal.getId());
+            showUploadButtonIfNeeded(signal);
 
             if (commentList != null) {
                 setProgressIndicator(false);
@@ -78,24 +78,26 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
         }
     }
 
-    private void showUploadButtonIfNeeded(String signalId) {
-        photoRepository.photoExists(signalId, new PhotoRepository.PhotoExistsCallback() {
-            @Override
-            public void onPhotoExistsSuccess(boolean photoExists) {
-                if (!isViewAvailable()) return;
-                if (photoExists) {
-                    getView().hideUploadPhotoButton();
+    private void showUploadButtonIfNeeded(Signal signal) {
+        if (userManager.getUserId().equals(signal.getAuthorId())) {
+            photoRepository.photoExists(signal.getId(), new PhotoRepository.PhotoExistsCallback() {
+                @Override
+                public void onPhotoExistsSuccess(boolean photoExists) {
+                    if (!isViewAvailable()) return;
+                    if (photoExists) {
+                        getView().hideUploadPhotoButton();
+                    }
+                    else {
+                        getView().showUploadPhotoButton();
+                    }
                 }
-                else {
-                    getView().showUploadPhotoButton();
-                }
-            }
 
-            @Override
-            public void onPhotoExistsFailure(String message) {
-                // Don't show an error because user doesn't have any action and will be confused
-            }
-        });
+                @Override
+                public void onPhotoExistsFailure(String message) {
+                    // Don't show an error because user doesn't have any action and will be confused
+                }
+            });
+        }
     }
 
     public void loadCommentsForSignal(String signalId) {
