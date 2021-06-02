@@ -53,6 +53,7 @@
                                 android:layout_marginStart="4dp"
                                 android:layout_marginTop="4dp"
                                 android:text="@string/txt_change_photo"
+                                android:visibility="invisible"
                                 android:drawableStart="@drawable/ic_outline_cloud_upload_24" />
                         </FrameLayout>
                         <TextView

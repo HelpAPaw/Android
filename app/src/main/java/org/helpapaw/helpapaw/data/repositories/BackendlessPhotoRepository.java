@@ -60,33 +60,20 @@ public class BackendlessPhotoRepository implements PhotoRepository {
     }
 
     @Override
-    public boolean photoExists(String signalId) {
+    public void photoExists(String signalId, PhotoExistsCallback callback) {
 
-        // TODO: check the path - should this be only FILES_FOLDER?
-        String path = BACKENDLESS_API_DOMAIN +
-                PawApplication.getContext().getResources().getString(R.string.BACKENDLESS_APP_ID) + "/" +
-                PawApplication.getContext().getResources().getString(R.string.BACKENDLESS_REST_API_KEY) + "/" +
-                FILES_FOLDER + "/" +
-                PHOTOS_DIRECTORY + "/";
         String pattern = signalId + PHOTO_EXTENSION;
 
-        // TODO: this is not working
-        final int[] fileCount = {0};
-        Backendless.Files.getFileCount(path, pattern, new AsyncCallback<Integer>()
-        {
+        Backendless.Files.getFileCount(PHOTOS_DIRECTORY, pattern, new AsyncCallback<Integer>() {
             @Override
-            public void handleResponse( Integer response )
-            {
-                fileCount[0] = response;
+            public void handleResponse(Integer response) {
+                callback.onPhotoExistsSuccess(response > 0);
             }
 
             @Override
-            public void handleFault( BackendlessFault fault )
-            {
-                System.out.println("++++++" + fault);
+            public void handleFault(BackendlessFault fault) {
+                callback.onPhotoExistsFailure(fault.getMessage());
             }
-        }
-        );
-        return fileCount[0] != 0;
+        });
     }
 }

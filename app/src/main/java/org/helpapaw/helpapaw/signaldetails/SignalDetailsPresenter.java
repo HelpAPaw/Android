@@ -61,6 +61,7 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
             this.signal = signal;
             signal.setPhotoUrl(photoRepository.getPhotoUrl(signal.getId()));
             getView().showSignalDetails(signal);
+            showUploadButtonIfNeeded(signal.getId());
 
             if (commentList != null) {
                 setProgressIndicator(false);
@@ -75,6 +76,26 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
                 loadCommentsForSignal(signal.getId());
             }
         }
+    }
+
+    private void showUploadButtonIfNeeded(String signalId) {
+        photoRepository.photoExists(signalId, new PhotoRepository.PhotoExistsCallback() {
+            @Override
+            public void onPhotoExistsSuccess(boolean photoExists) {
+                if (!isViewAvailable()) return;
+                if (photoExists) {
+                    getView().hideUploadPhotoButton();
+                }
+                else {
+                    getView().showUploadPhotoButton();
+                }
+            }
+
+            @Override
+            public void onPhotoExistsFailure(String message) {
+                // Don't show an error because user doesn't have any action and will be confused
+            }
+        });
     }
 
     public void loadCommentsForSignal(String signalId) {
@@ -245,14 +266,6 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
                 getView().showMessage(message);
             }
         });
-    }
-
-    public String getCurrentUserId() {
-        return userManager.getUserId();
-    }
-
-    public boolean isAnyPhotoUploaded(String signalId) {
-        return photoRepository.photoExists(signalId);
     }
 
     private void saveComment(String comment) {

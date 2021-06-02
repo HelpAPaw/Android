@@ -9,7 +9,7 @@ public interface PhotoRepository {
 
     String getPhotoUrl(String signalId);
 
-    boolean photoExists(String signalId);
+    void photoExists(String signalId, PhotoExistsCallback callback);
 
 
     interface SavePhotoCallback {
@@ -17,5 +17,10 @@ public interface PhotoRepository {
         void onPhotoSaved();
 
         void onPhotoFailure(String message);
+    }
+
+    interface PhotoExistsCallback {
+        void onPhotoExistsSuccess(boolean photoExists);
+        void onPhotoExistsFailure(String message);
     }
 }

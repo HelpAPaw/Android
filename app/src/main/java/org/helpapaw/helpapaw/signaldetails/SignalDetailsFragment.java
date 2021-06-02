@@ -145,24 +145,6 @@ public class SignalDetailsFragment extends BaseFragment implements SignalDetails
             binding.btnCall.setVisibility(View.VISIBLE);
         }
 
-        // here check if signal author is current user
-        boolean anyPhotoUploaded = signalDetailsPresenter.isAnyPhotoUploaded(signal.getId());
-        boolean isCurrentUserSignalAuthor = signalDetailsPresenter.getCurrentUserId().equals(signal.getAuthorId());
-        if (isCurrentUserSignalAuthor && !anyPhotoUploaded) {
-            binding.imgSignalPhoto.setVisibility(View.INVISIBLE);
-            binding.btnChangePhoto.setVisibility(View.VISIBLE);
-        } else {
-            binding.imgSignalPhoto.setVisibility(View.VISIBLE);
-            binding.btnChangePhoto.setVisibility(View.INVISIBLE);
-        }
-
-        int type = 0;
-        try {
-             type = signal.getType();
-        } catch (Exception e) {
-            // ignore
-        }
-
         String[] signalTypes = getResources().getStringArray(R.array.signal_types_items);
         String signalType = "-";
         if (signalTypes.length > signal.getType()) {
@@ -171,6 +153,16 @@ public class SignalDetailsFragment extends BaseFragment implements SignalDetails
         binding.txtSignalType.setText(String.format(getString(R.string.txt_signal_type), signalType));
 
         Injection.getImageLoader().loadWithRoundedCorners(getContext(), signal.getPhotoUrl(), binding.imgSignalPhoto, R.drawable.ic_paw);
+    }
+
+    public void showUploadPhotoButton() {
+        binding.imgSignalPhoto.setVisibility(View.INVISIBLE);
+        binding.btnChangePhoto.setVisibility(View.VISIBLE);
+    }
+
+    public void hideUploadPhotoButton() {
+        binding.imgSignalPhoto.setVisibility(View.VISIBLE);
+        binding.btnChangePhoto.setVisibility(View.INVISIBLE);
     }
 
     @Override

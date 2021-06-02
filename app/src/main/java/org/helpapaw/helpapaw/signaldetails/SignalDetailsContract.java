@@ -20,6 +20,10 @@ public interface SignalDetailsContract {
 
         void showSignalDetails(Signal signal);
 
+        void showUploadPhotoButton();
+
+        void hideUploadPhotoButton();
+
         void displayComments(List<Comment> comments);
 
         void showCommentErrorMessage();
