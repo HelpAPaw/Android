@@ -17,7 +17,7 @@ public interface UserManager {
 
     String getUserToken();
 
-    String getUserId();
+    String getLoggedUserId();
 
     boolean isLoggedIn();
 

@@ -75,7 +75,7 @@ public interface SignalDetailsContract {
 
         void onSignalPhotoClicked();
 
-        void onChangeSignalPhotoClicked();
+        void onUploadSignalPhotoClicked();
 
         void onCameraOptionSelected();
 

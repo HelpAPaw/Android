@@ -1,7 +1,5 @@
 package org.helpapaw.helpapaw.utils;
 
-import com.squareup.picasso.Picasso;
-
 import org.helpapaw.helpapaw.data.repositories.BackendlessCommentRepository;
 import org.helpapaw.helpapaw.data.repositories.BackendlessPhotoRepository;
 import org.helpapaw.helpapaw.data.repositories.BackendlessPushNotificationsRepository;

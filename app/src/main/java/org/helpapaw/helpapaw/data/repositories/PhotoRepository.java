@@ -20,7 +20,9 @@ public interface PhotoRepository {
     }
 
     interface PhotoExistsCallback {
+
         void onPhotoExistsSuccess(boolean photoExists);
+        
         void onPhotoExistsFailure(String message);
     }
 }

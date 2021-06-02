@@ -44,11 +44,10 @@ import java.util.List;
 
 import static org.helpapaw.helpapaw.data.models.Comment.COMMENT_TYPE_STATUS_CHANGE;
 
-public class SignalDetailsFragment extends BaseFragment implements SignalDetailsContract.View,
-        SignalPhotoContract.Upload {
+public class SignalDetailsFragment extends BaseFragment
+        implements SignalDetailsContract.View, SignalPhotoContract.Upload {
 
     private final static String SIGNAL_DETAILS = "signalDetails";
-    private final static String TAG = SignalDetailsFragment.class.getSimpleName();
 
     SignalDetailsPresenter signalDetailsPresenter;
     SignalDetailsContract.UserActionsListener actionsListener;
@@ -99,7 +98,7 @@ public class SignalDetailsFragment extends BaseFragment implements SignalDetails
         binding.imgSignalPhoto.setOnClickListener(getOnSignalPhotoClickListener());
         binding.scrollSignalDetails.setOnBottomReachedListener(getOnBottomReachedListener());
         binding.viewSignalStatus.setStatusCallback(getStatusViewCallback());
-        binding.btnChangePhoto.setOnClickListener(getOnChangeSignalPhotoClickListener());
+        binding.btnUploadPhoto.setOnClickListener(getOnUploadSignalPhotoClickListener());
 
         return binding.getRoot();
     }
@@ -157,12 +156,12 @@ public class SignalDetailsFragment extends BaseFragment implements SignalDetails
 
     public void showUploadPhotoButton() {
         binding.imgSignalPhoto.setVisibility(View.INVISIBLE);
-        binding.btnChangePhoto.setVisibility(View.VISIBLE);
+        binding.btnUploadPhoto.setVisibility(View.VISIBLE);
     }
 
     public void hideUploadPhotoButton() {
         binding.imgSignalPhoto.setVisibility(View.VISIBLE);
-        binding.btnChangePhoto.setVisibility(View.INVISIBLE);
+        binding.btnUploadPhoto.setVisibility(View.INVISIBLE);
     }
 
     @Override
@@ -362,7 +361,6 @@ public class SignalDetailsFragment extends BaseFragment implements SignalDetails
             }
 
             else {
-                // DRY!!
                 File photoFile = ImageUtils.getInstance().getFromMediaUri(getContext(), getContext().getContentResolver(), data.getData());
                 if (photoFile != null) {
                     actionsListener.onSignalPhotoSelected(Uri.fromFile(photoFile).getPath());
@@ -426,11 +424,11 @@ public class SignalDetailsFragment extends BaseFragment implements SignalDetails
         };
     }
 
-    public View.OnClickListener getOnChangeSignalPhotoClickListener() {
+    public View.OnClickListener getOnUploadSignalPhotoClickListener() {
         return new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                actionsListener.onChangeSignalPhotoClicked();
+                actionsListener.onUploadSignalPhotoClicked();
             }
         };
     }

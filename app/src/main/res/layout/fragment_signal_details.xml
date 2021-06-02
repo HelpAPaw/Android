@@ -45,16 +45,16 @@
                                 android:contentDescription="@string/txt_signal_photo_description" />
 
                             <Button
-                                android:id="@+id/btn_changePhoto"
+                                android:id="@+id/btn_uploadPhoto"
                                 style="@style/Widget.AppCompat.Button.Colored"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center"
                                 android:layout_marginStart="4dp"
                                 android:layout_marginTop="4dp"
-                                android:text="@string/txt_change_photo"
+                                android:text="@string/txt_upload_photo"
                                 android:visibility="invisible"
-                                android:drawableStart="@drawable/ic_outline_cloud_upload_24" />
+                                android:drawableStart="@drawable/ic_cloud_upload_24" />
                         </FrameLayout>
                         <TextView
                             android:id="@+id/txt_signal_title"

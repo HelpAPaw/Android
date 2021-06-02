@@ -23,7 +23,8 @@ import java.util.List;
 /**
  * Created by iliyan on 7/25/16
  */
-public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View> implements SignalDetailsContract.UserActionsListener {
+public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View>
+        implements SignalDetailsContract.UserActionsListener {
 
     private boolean showProgressBar;
     private List<Comment> commentList;
@@ -34,8 +35,8 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
     private SignalRepository signalRepository;
     private UserManager userManager;
 
-    private FragmentManager fragmentManager;
-    private Fragment fragment;
+    private final FragmentManager fragmentManager;
+    private final Fragment fragment;
 
     public SignalDetailsPresenter(SignalDetailsContract.View view,
                                   FragmentManager fragmentManager,
@@ -50,16 +51,18 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
         photoRepository = Injection.getPhotoRepositoryInstance();
         userManager = Injection.getUserManagerInstance();
         signalRepository = Injection.getSignalRepositoryInstance();
-
     }
 
     @Override
     public void onInitDetailsScreen(Signal signal) {
         setProgressIndicator(showProgressBar);
+
         if (signal != null) {
             FirebaseCrashlytics.getInstance().log("Show signal details for " + signal.getId());
+
             this.signal = signal;
             signal.setPhotoUrl(photoRepository.getPhotoUrl(signal.getId()));
+
             getView().showSignalDetails(signal);
             showUploadButtonIfNeeded(signal);
 
@@ -79,11 +82,12 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
     }
 
     private void showUploadButtonIfNeeded(Signal signal) {
-        if (userManager.getUserId().equals(signal.getAuthorId())) {
+        if (userManager.getLoggedUserId().equals(signal.getAuthorId())) {
             photoRepository.photoExists(signal.getId(), new PhotoRepository.PhotoExistsCallback() {
                 @Override
                 public void onPhotoExistsSuccess(boolean photoExists) {
                     if (!isViewAvailable()) return;
+
                     if (photoExists) {
                         getView().hideUploadPhotoButton();
                     }
@@ -215,7 +219,7 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
     }
 
     @Override
-    public void onChangeSignalPhotoClicked() {
+    public void onUploadSignalPhotoClicked() {
         if (getView() instanceof SignalPhotoContract.Upload){
             ((SignalPhotoContract.Upload) getView()).showSendPhotoBottomSheet(this, fragmentManager); // TODO
         }
@@ -234,7 +238,7 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
     @Override
     public void onCameraOptionSelected() {
         if (getView() instanceof SignalPhotoContract.Upload){
-            ((SignalPhotoContract.Upload) getView()).openCamera(fragment); // TODO
+            ((SignalPhotoContract.Upload) getView()).openCamera(fragment);
         }
     }
 
