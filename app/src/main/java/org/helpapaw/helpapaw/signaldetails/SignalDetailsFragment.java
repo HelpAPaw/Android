@@ -8,6 +8,7 @@ import android.content.Intent;
 import androidx.appcompat.app.AlertDialog;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.net.Uri;
 import android.os.Build;
@@ -33,7 +34,7 @@ import org.helpapaw.helpapaw.data.models.Comment;
 import org.helpapaw.helpapaw.data.models.Signal;
 import org.helpapaw.helpapaw.databinding.FragmentSignalDetailsBinding;
 import org.helpapaw.helpapaw.signalphoto.SignalPhotoActivity;
-import org.helpapaw.helpapaw.signalphoto.SignalPhotoContract;
+import org.helpapaw.helpapaw.signalphoto.UploadPhotoContract;
 import org.helpapaw.helpapaw.utils.Injection;
 import org.helpapaw.helpapaw.utils.StatusUtils;
 import org.helpapaw.helpapaw.utils.Utils;
@@ -45,12 +46,13 @@ import java.util.List;
 import static org.helpapaw.helpapaw.data.models.Comment.COMMENT_TYPE_STATUS_CHANGE;
 
 public class SignalDetailsFragment extends BaseFragment
-        implements SignalDetailsContract.View, SignalPhotoContract.Upload {
+        implements SignalDetailsContract.View, UploadPhotoContract.View {
 
     private final static String SIGNAL_DETAILS = "signalDetails";
 
     SignalDetailsPresenter signalDetailsPresenter;
     SignalDetailsContract.UserActionsListener actionsListener;
+    UploadPhotoContract.UserActionsListener uploadPhotoActionsListeners;
 
     FragmentSignalDetailsBinding binding;
 
@@ -76,13 +78,15 @@ public class SignalDetailsFragment extends BaseFragment
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_signal_details, container, false);
 
         if (savedInstanceState == null || PresenterManager.getInstance().getPresenter(getScreenId()) == null) {
-            signalDetailsPresenter = new SignalDetailsPresenter(this, getFragmentManager(),this);
+            signalDetailsPresenter = new SignalDetailsPresenter(this);
         } else {
             signalDetailsPresenter = PresenterManager.getInstance().getPresenter(getScreenId());
             signalDetailsPresenter.setView(this);
         }
 
         actionsListener = signalDetailsPresenter;
+        uploadPhotoActionsListeners = signalDetailsPresenter;
+
         setHasOptionsMenu(true);
         mSignal = null;
         if (getArguments() != null) {
@@ -345,13 +349,21 @@ public class SignalDetailsFragment extends BaseFragment
     }
 
     @Override
+    public void refreshSignalDetails() {
+        FragmentTransaction fragTransaction = getFragmentManager().beginTransaction();
+        fragTransaction.detach(getFragment());
+        fragTransaction.attach(getFragment());
+        fragTransaction.commit();
+    }
+
+    @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == REQUEST_CAMERA) {
             if (resultCode == Activity.RESULT_OK) {
                 Uri takenPhotoUri = ImageUtils.getInstance().getPhotoFileUri(getContext(), getImageFileName());
-                actionsListener.onSignalPhotoSelected(takenPhotoUri.getPath());
+                uploadPhotoActionsListeners.onSignalPhotoSelected(takenPhotoUri.getPath());
             }
         }
         else if (requestCode == REQUEST_GALLERY && resultCode == Activity.RESULT_OK && data != null && data.getData() != null) {
@@ -363,7 +375,7 @@ public class SignalDetailsFragment extends BaseFragment
             else {
                 File photoFile = ImageUtils.getInstance().getFromMediaUri(getContext(), getContext().getContentResolver(), data.getData());
                 if (photoFile != null) {
-                    actionsListener.onSignalPhotoSelected(Uri.fromFile(photoFile).getPath());
+                    uploadPhotoActionsListeners.onSignalPhotoSelected(Uri.fromFile(photoFile).getPath());
                 }
             }
         }

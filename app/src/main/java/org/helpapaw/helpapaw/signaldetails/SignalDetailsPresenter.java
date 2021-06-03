@@ -1,9 +1,5 @@
 package org.helpapaw.helpapaw.signaldetails;
 
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
 
 import org.helpapaw.helpapaw.R;
@@ -14,7 +10,7 @@ import org.helpapaw.helpapaw.data.repositories.CommentRepository;
 import org.helpapaw.helpapaw.data.repositories.PhotoRepository;
 import org.helpapaw.helpapaw.data.repositories.SignalRepository;
 import org.helpapaw.helpapaw.data.user.UserManager;
-import org.helpapaw.helpapaw.signalphoto.SignalPhotoContract;
+import org.helpapaw.helpapaw.signalphoto.UploadPhotoContract;
 import org.helpapaw.helpapaw.utils.Injection;
 import org.helpapaw.helpapaw.utils.Utils;
 
@@ -24,7 +20,7 @@ import java.util.List;
  * Created by iliyan on 7/25/16
  */
 public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View>
-        implements SignalDetailsContract.UserActionsListener {
+        implements SignalDetailsContract.UserActionsListener, UploadPhotoContract.UserActionsListener {
 
     private boolean showProgressBar;
     private List<Comment> commentList;
@@ -35,16 +31,8 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
     private SignalRepository signalRepository;
     private UserManager userManager;
 
-    private final FragmentManager fragmentManager;
-    private final Fragment fragment;
-
-    public SignalDetailsPresenter(SignalDetailsContract.View view,
-                                  FragmentManager fragmentManager,
-                                  Fragment fragment) {
+    public SignalDetailsPresenter(SignalDetailsContract.View view) {
         super(view);
-
-        this.fragmentManager = fragmentManager;
-        this.fragment = fragment;
 
         showProgressBar = true;
         commentRepository = Injection.getCommentRepositoryInstance();
@@ -220,8 +208,8 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
 
     @Override
     public void onUploadSignalPhotoClicked() {
-        if (getView() instanceof SignalPhotoContract.Upload){
-            ((SignalPhotoContract.Upload) getView()).showSendPhotoBottomSheet(this, fragmentManager); // TODO
+        if (getView() instanceof UploadPhotoContract.View){
+            ((UploadPhotoContract.View) getView()).showSendPhotoBottomSheet(this);
         }
     }
 
@@ -237,15 +225,15 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
 
     @Override
     public void onCameraOptionSelected() {
-        if (getView() instanceof SignalPhotoContract.Upload){
-            ((SignalPhotoContract.Upload) getView()).openCamera(fragment);
+        if (getView() instanceof UploadPhotoContract.View){
+            ((UploadPhotoContract.View) getView()).openCamera();
         }
     }
 
     @Override
     public void onGalleryOptionSelected() {
-        if (getView() instanceof SignalPhotoContract.Upload){
-            ((SignalPhotoContract.Upload) getView()).openGallery(fragment);
+        if (getView() instanceof UploadPhotoContract.View){
+            ((UploadPhotoContract.View) getView()).openGallery();
         }
     }
 
@@ -260,10 +248,7 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
             @Override
             public void onPhotoSaved() {
                 // refresh
-                FragmentTransaction fragTransaction = fragmentManager.beginTransaction();
-                fragTransaction.detach(fragment);
-                fragTransaction.attach(fragment);
-                fragTransaction.commit();
+                getView().refreshSignalDetails();
             }
 
             @Override

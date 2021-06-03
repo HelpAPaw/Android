@@ -53,6 +53,8 @@ public interface SignalDetailsContract {
         void onStatusChangeRequestFinished(boolean success, int newStatus);
 
         void openSignalPhotoScreen();
+
+        void refreshSignalDetails();
     }
 
     interface UserActionsListener {
@@ -76,11 +78,5 @@ public interface SignalDetailsContract {
         void onSignalPhotoClicked();
 
         void onUploadSignalPhotoClicked();
-
-        void onCameraOptionSelected();
-
-        void onGalleryOptionSelected();
-
-        void onSignalPhotoSelected(String photoUri);
     }
 }
