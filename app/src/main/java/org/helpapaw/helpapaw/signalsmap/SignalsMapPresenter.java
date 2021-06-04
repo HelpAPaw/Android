@@ -11,6 +11,7 @@ import org.helpapaw.helpapaw.data.models.Signal;
 import org.helpapaw.helpapaw.data.repositories.PhotoRepository;
 import org.helpapaw.helpapaw.data.repositories.SignalRepository;
 import org.helpapaw.helpapaw.data.user.UserManager;
+import org.helpapaw.helpapaw.photo.UploadPhotoContract;
 import org.helpapaw.helpapaw.utils.Injection;
 import org.helpapaw.helpapaw.utils.Utils;
 
@@ -18,7 +19,8 @@ import org.helpapaw.helpapaw.utils.Utils;
 /**
  * Created by iliyan on 7/28/16
  */
-public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> implements SignalsMapContract.UserActionsListener {
+public class SignalsMapPresenter extends Presenter<SignalsMapContract.View>
+        implements SignalsMapContract.UserActionsListener, UploadPhotoContract.UserActionsListener {
 
     private UserManager userManager;
     private SignalRepository signalRepository;
@@ -238,17 +240,23 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
     @Override
     public void onChoosePhotoIconClicked() {
         getView().hideKeyboard();
-        getView().showSendPhotoBottomSheet();
+        if (getView() instanceof UploadPhotoContract.View) {
+            ((UploadPhotoContract.View)getView()).showSendPhotoBottomSheet(this);
+        }
     }
 
     @Override
     public void onCameraOptionSelected() {
-        getView().openCamera();
+        if (getView() instanceof UploadPhotoContract.View) {
+            ((UploadPhotoContract.View)getView()).openCamera();
+        }
     }
 
     @Override
     public void onGalleryOptionSelected() {
-        getView().openGallery();
+        if (getView() instanceof UploadPhotoContract.View) {
+            ((UploadPhotoContract.View)getView()).openGallery();
+        }
     }
 
     @Override
@@ -259,12 +267,16 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View> impl
 
     @Override
     public void onStoragePermissionForCameraGranted() {
-        getView().openCamera();
+        if (getView() instanceof UploadPhotoContract.View) {
+            ((UploadPhotoContract.View)getView()).openCamera();
+        }
     }
 
     @Override
     public void onStoragePermissionForGalleryGranted() {
-        getView().openGallery();
+        if (getView() instanceof UploadPhotoContract.View) {
+            ((UploadPhotoContract.View)getView()).openGallery();
+        }
     }
 
     @Override

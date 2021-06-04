@@ -1,4 +1,4 @@
-package org.helpapaw.helpapaw.signalphoto;
+package org.helpapaw.helpapaw.photo;
 
 import android.Manifest;
 import android.app.Activity;
@@ -16,7 +16,6 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import org.helpapaw.helpapaw.sendsignal.SendPhotoBottomSheet;
-import org.helpapaw.helpapaw.signaldetails.SignalDetailsPresenter;
 import org.helpapaw.helpapaw.utils.images.ImageUtils;
 
 import java.io.File;
@@ -89,9 +88,9 @@ public interface UploadPhotoContract {
             }
         }
 
-        default void saveImageFromURI(Fragment fragment, SignalDetailsPresenter actionsListener, Uri photoUri) {
-            Context context = fragment.getContext();
-            Activity activity = fragment.getActivity();
+        default void saveImageFromURI(UserActionsListener actionsListener, Uri photoUri) {
+            Context context = getFragment().getContext();
+            Activity activity = getFragment().getActivity();
 
             // This segment works once the permission is handled
             try {
@@ -113,9 +112,7 @@ public interface UploadPhotoContract {
             }
         }
 
-        default Fragment getFragment() {
-            return (Fragment) this;
-        }
+        Fragment getFragment();
 
         FragmentManager getFragmentManager();
     }

@@ -7,8 +7,8 @@ import android.content.Intent;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.databinding.DataBindingUtil;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentTransaction;
 
 import android.net.Uri;
 import android.os.Build;
@@ -34,7 +34,7 @@ import org.helpapaw.helpapaw.data.models.Comment;
 import org.helpapaw.helpapaw.data.models.Signal;
 import org.helpapaw.helpapaw.databinding.FragmentSignalDetailsBinding;
 import org.helpapaw.helpapaw.signalphoto.SignalPhotoActivity;
-import org.helpapaw.helpapaw.signalphoto.UploadPhotoContract;
+import org.helpapaw.helpapaw.photo.UploadPhotoContract;
 import org.helpapaw.helpapaw.utils.Injection;
 import org.helpapaw.helpapaw.utils.StatusUtils;
 import org.helpapaw.helpapaw.utils.Utils;
@@ -366,7 +366,7 @@ public class SignalDetailsFragment extends BaseFragment
         else if (requestCode == REQUEST_GALLERY && resultCode == Activity.RESULT_OK && data != null && data.getData() != null) {
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                saveImageFromURI(this, signalDetailsPresenter, data.getData());
+                saveImageFromURI(signalDetailsPresenter, data.getData());
             }
 
             else {
@@ -376,6 +376,11 @@ public class SignalDetailsFragment extends BaseFragment
                 }
             }
         }
+    }
+
+    @Override
+    public Fragment getFragment() {
+        return this;
     }
 
     public void onBackPressed() {
