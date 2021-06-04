@@ -155,7 +155,8 @@ public class SignalDetailsFragment extends BaseFragment
         }
         binding.txtSignalType.setText(String.format(getString(R.string.txt_signal_type), signalType));
 
-        Injection.getImageLoader().loadWithRoundedCorners(getContext(), signal.getPhotoUrl(), binding.imgSignalPhoto, R.drawable.ic_paw);
+        hideUploadPhotoButton();
+        showSignalPhoto(signal);
     }
 
     public void showUploadPhotoButton() {
@@ -166,6 +167,10 @@ public class SignalDetailsFragment extends BaseFragment
     public void hideUploadPhotoButton() {
         binding.imgSignalPhoto.setVisibility(View.VISIBLE);
         binding.btnUploadPhoto.setVisibility(View.INVISIBLE);
+    }
+
+    public void showSignalPhoto(Signal signal) {
+        Injection.getImageLoader().loadWithRoundedCorners(getContext(), signal.getPhotoUrl(), binding.imgSignalPhoto, R.drawable.ic_paw);
     }
 
     @Override
@@ -346,14 +351,6 @@ public class SignalDetailsFragment extends BaseFragment
         }
 
         binding.viewSignalStatus.onStatusChangeRequestFinished(success, newStatus);
-    }
-
-    @Override
-    public void refreshSignalDetails() {
-        FragmentTransaction fragTransaction = getFragmentManager().beginTransaction();
-        fragTransaction.detach(getFragment());
-        fragTransaction.attach(getFragment());
-        fragTransaction.commit();
     }
 
     @Override

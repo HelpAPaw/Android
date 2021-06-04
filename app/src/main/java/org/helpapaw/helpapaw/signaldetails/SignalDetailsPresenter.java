@@ -247,8 +247,9 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
         photoRepository.savePhoto(photoUri, signal.getId(), new PhotoRepository.SavePhotoCallback() {
             @Override
             public void onPhotoSaved() {
-                // refresh
-                getView().refreshSignalDetails();
+                // Show new photo
+                getView().hideUploadPhotoButton();
+                getView().showSignalPhoto(signal);
             }
 
             @Override

@@ -24,6 +24,8 @@ public interface SignalDetailsContract {
 
         void hideUploadPhotoButton();
 
+        void showSignalPhoto(Signal signal);
+
         void displayComments(List<Comment> comments);
 
         void showCommentErrorMessage();
@@ -53,8 +55,6 @@ public interface SignalDetailsContract {
         void onStatusChangeRequestFinished(boolean success, int newStatus);
 
         void openSignalPhotoScreen();
-
-        void refreshSignalDetails();
     }
 
     interface UserActionsListener {
