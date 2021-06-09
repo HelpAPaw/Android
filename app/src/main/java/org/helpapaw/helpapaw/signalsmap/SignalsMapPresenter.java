@@ -220,7 +220,7 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View>
     private void savePhoto(final String photoUri, final Signal signal) {
         photoRepository.savePhoto(photoUri, signal.getId(), new PhotoRepository.SavePhotoCallback() {
             @Override
-            public void onPhotoSaved() {
+            public void onPhotoSaved(String photoUrl) {
                 if (!isViewAvailable()) return;
                 signalsList.add(signal);
                 getView().displaySignals(signalsList, true, signal.getId(), selectedSignalTypes);

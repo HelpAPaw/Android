@@ -33,7 +33,7 @@ public class BackendlessPhotoRepository implements PhotoRepository {
                 PHOTOS_DIRECTORY, true, new AsyncCallback<BackendlessFile>() {
                     @Override
                     public void handleResponse(final BackendlessFile backendlessFile) {
-                        callback.onPhotoSaved();
+                        callback.onPhotoSaved(backendlessFile.getFileURL());
                     }
 
                     @Override

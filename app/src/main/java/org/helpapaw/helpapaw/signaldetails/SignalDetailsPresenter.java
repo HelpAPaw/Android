@@ -240,13 +240,13 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
     @Override
     public void onSignalPhotoSelected(String photoUri) {
         savePhoto(photoUri, signal);
-        signal.setPhotoUrl(photoUri);
     }
 
     private void savePhoto(final String photoUri, final Signal signal) {
         photoRepository.savePhoto(photoUri, signal.getId(), new PhotoRepository.SavePhotoCallback() {
             @Override
-            public void onPhotoSaved() {
+            public void onPhotoSaved(String photoUrl) {
+                signal.setPhotoUrl(photoUrl);
                 // Show new photo
                 getView().hideUploadPhotoButton();
                 getView().showSignalPhoto(signal);

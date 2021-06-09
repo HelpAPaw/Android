@@ -14,7 +14,7 @@ public interface PhotoRepository {
 
     interface SavePhotoCallback {
 
-        void onPhotoSaved();
+        void onPhotoSaved(String photoUrl);
 
         void onPhotoFailure(String message);
     }
