@@ -135,8 +135,6 @@ public class SignalsMapFragment extends BaseFragment
 
     private ISettingsRepository settingsRepository;
 
-    private String imageFileName;
-
     public SignalsMapFragment() {
         // Required empty public constructor
     }
@@ -757,10 +755,6 @@ public class SignalsMapFragment extends BaseFragment
         return this;
     }
 
-    public String getImageFileName() {
-        return this.imageFileName;
-    }
-
     @Override
     public void showRegistrationRequiredAlert() {
         final FragmentActivity activity = getActivity();
@@ -797,7 +791,7 @@ public class SignalsMapFragment extends BaseFragment
 
         if (requestCode == REQUEST_CAMERA) {
             if (resultCode == Activity.RESULT_OK) {
-                Uri takenPhotoUri = ImageUtils.getInstance().getPhotoFileUri(getContext(), imageFileName);
+                Uri takenPhotoUri = ImageUtils.getInstance().getPhotoFileUri(getContext(), IMAGE_FILENAME);
                 uploadPhotoActionsListener.onSignalPhotoSelected(takenPhotoUri.getPath());
             }
         }

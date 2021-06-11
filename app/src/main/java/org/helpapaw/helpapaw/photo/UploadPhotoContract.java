@@ -32,20 +32,10 @@ import java.util.Locale;
 public interface UploadPhotoContract {
     interface View {
 
-        String DATE_TIME_FORMAT = "yyyyMMdd_HHmmss";
-        String PHOTO_PREFIX = "JPEG_";
-        String PHOTO_EXTENSION = ".jpg";
-
         int REQUEST_CAMERA = 2;
         int REQUEST_GALLERY = 3;
         int READ_WRITE_EXTERNAL_STORAGE_FOR_GALLERY = 5;
-
-        default String getImageFileName() {
-            String timeStamp = new SimpleDateFormat(DATE_TIME_FORMAT, Locale.getDefault()).format(new Date());
-            String imageFileName = PHOTO_PREFIX + timeStamp + PHOTO_EXTENSION;
-
-            return imageFileName;
-        }
+        String IMAGE_FILENAME = "NewSignalPhoto.jpg";
 
         default void showSendPhotoBottomSheet(UserActionsListener actionsListener) {
             SendPhotoBottomSheet sendPhotoBottomSheet = new SendPhotoBottomSheet();
@@ -67,7 +57,7 @@ public interface UploadPhotoContract {
 
             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             if (intent.resolveActivity(context.getPackageManager()) != null) {
-                intent.putExtra(MediaStore.EXTRA_OUTPUT, ImageUtils.getInstance().getPhotoFileUri(context, getImageFileName()));
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, ImageUtils.getInstance().getPhotoFileUri(context, IMAGE_FILENAME));
                 getFragment().startActivityForResult(intent, REQUEST_CAMERA);
             }
         }

@@ -58,8 +58,6 @@ public class SignalDetailsFragment extends BaseFragment
 
     private Signal mSignal;
 
-    private String imageFileName;
-
     public SignalDetailsFragment() {
         // Required empty public constructor
     }
@@ -359,7 +357,7 @@ public class SignalDetailsFragment extends BaseFragment
 
         if (requestCode == REQUEST_CAMERA) {
             if (resultCode == Activity.RESULT_OK) {
-                Uri takenPhotoUri = ImageUtils.getInstance().getPhotoFileUri(getContext(), getImageFileName());
+                Uri takenPhotoUri = ImageUtils.getInstance().getPhotoFileUri(getContext(), IMAGE_FILENAME);
                 uploadPhotoActionsListeners.onSignalPhotoSelected(takenPhotoUri.getPath());
             }
         }
@@ -394,10 +392,6 @@ public class SignalDetailsFragment extends BaseFragment
                 actionsListener.onRequestStatusChange(status);
             }
         };
-    }
-
-    public String getImageFileName() {
-        return imageFileName;
     }
 
     /* OnClick Listeners */
