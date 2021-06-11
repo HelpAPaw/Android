@@ -232,6 +232,10 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View>
             @Override
             public void onPhotoFailure(String message) {
                 if (!isViewAvailable()) return;
+                signalsList.add(signal);
+                getView().displaySignals(signalsList, true, signal.getId(), selectedSignalTypes);
+                setSendSignalViewVisibility(false);
+                clearSignalViewData();
                 getView().showMessage(message);
             }
         });
