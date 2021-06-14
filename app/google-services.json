@@ -36,14 +36,14 @@
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "960611584456-ofmhs9rgv2mm43vn0kos3gc3msgru8q3.apps.googleusercontent.com",
+              "client_id": "960611584456-alf2cspd11f29c7d3cns1j6bi1o2f09g.apps.googleusercontent.com",
               "client_type": 3
             },
             {
-              "client_id": "960611584456-7gb4ifov4i7v8eqelp9erd2st2i3cmuj.apps.googleusercontent.com",
+              "client_id": "960611584456-611crnbo2u66a2sqs4djci6e0d2gcmph.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.HelpAPaw.HelpAPaw"
+                "bundle_id": "com.helpapaw.helpapaw"
               }
             }
           ]

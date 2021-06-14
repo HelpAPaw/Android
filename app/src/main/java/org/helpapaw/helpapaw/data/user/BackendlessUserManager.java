@@ -9,10 +9,23 @@ import com.backendless.exceptions.BackendlessException;
 import com.backendless.exceptions.BackendlessFault;
 import com.backendless.persistence.local.UserTokenStorageFactory;
 import com.facebook.login.LoginManager;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
 
 import org.helpapaw.helpapaw.R;
 import org.helpapaw.helpapaw.base.PawApplication;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.util.Objects;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.FormBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 /**
  * Created by iliyan on 7/25/16
@@ -57,6 +70,66 @@ public class BackendlessUserManager implements UserManager {
             }
         },
         true);
+    }
+
+    @Override
+    public  void loginWithGoogle(GoogleSignInAccount account, final LoginCallback loginCallback) {
+
+        // From GoogleSignInAccount we get a server authorization code through which we obtain
+        // the oAuth acccess token
+        String authCode = account.getServerAuthCode();
+        if (authCode == null) {
+            loginCallback.onLoginFailure("Authorization code is null");
+            return;
+        }
+        RequestBody requestBody = new FormBody.Builder()
+                .add("grant_type", "authorization_code")
+                .add("client_id", PawApplication.getContext().getResources().getString(R.string.google_oauth_client_id))
+                .add("client_secret", PawApplication.getContext().getResources().getString(R.string.google_oauth_client_secret))
+                .add("redirect_uri","")
+                .add("code", authCode)
+                .build();
+        final Request request = new Request.Builder()
+                .url("https://www.googleapis.com/oauth2/v4/token")
+                .post(requestBody)
+                .build();
+        OkHttpClient client = new OkHttpClient();
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                loginCallback.onLoginFailure(e.getLocalizedMessage());
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) {
+                try {
+                    if (response.body() == null) {
+                        loginCallback.onLoginFailure("Obtaining Google access token failed: Got empty response");
+                        return;
+                    }
+                    JSONObject jsonObject = new JSONObject(response.body().string());
+                    String accessToken = jsonObject.getString("access_token");
+                    // Now that we have the access token, we can log into Backendless
+                    Backendless.UserService.loginWithOAuth2("googleplus", accessToken, null, new AsyncCallback<BackendlessUser>() {
+                                @Override
+                                public void handleResponse(BackendlessUser user) {
+                                    Backendless.UserService.setCurrentUser(user);
+                                    loginCallback.onLoginSuccess(user.getUserId());
+
+                                    FirebaseCrashlytics.getInstance().setUserId(user.getUserId());
+                                }
+
+                                @Override
+                                public void handleFault(BackendlessFault fault) {
+                                    loginCallback.onLoginFailure(fault.getMessage());
+                                }
+                            },
+                            true);
+                } catch (Exception e) {
+                    loginCallback.onLoginFailure(e.getLocalizedMessage());
+                }
+            }
+        });
     }
 
     @Override
@@ -165,8 +238,7 @@ public class BackendlessUserManager implements UserManager {
 
     @Override
     public void setHasAcceptedPrivacyPolicy(boolean value, final SetUserPropertyCallback setUserPropertyCallback) {
-        try
-        {
+        try {
             BackendlessUser currentUser = Backendless.UserService.CurrentUser();
             if (currentUser == null) {
                 setUserPropertyCallback.onFailure(PawApplication.getContext().getResources().getString(R.string.txt_logged_user_not_found));
@@ -186,10 +258,9 @@ public class BackendlessUserManager implements UserManager {
                 }
             });
         }
-        catch( BackendlessException exception )
-        {
+        catch (BackendlessException exception) {
             // update failed, to get the error code, call exception.getFault().getCode()
-            Log.e(BackendlessUserManager.class.getSimpleName(), exception.getMessage());
+            Log.e(BackendlessUserManager.class.getSimpleName(), Objects.requireNonNull(exception.getMessage()));
         }
     }
 
