@@ -29,14 +29,6 @@ interface SignalsMapContract {
 
         void hideKeyboard();
 
-        void showSendPhotoBottomSheet();
-
-        void openCamera();
-
-        void openGallery();
-
-        void saveImageFromURI(Uri photoUri);
-
         void openLoginScreen();
 
         void showRegistrationRequiredAlert();
@@ -81,12 +73,6 @@ interface SignalsMapContract {
         void onFilterSignalsClicked(boolean[] selectedTypes);
 
         void onChoosePhotoIconClicked();
-
-        void onCameraOptionSelected();
-
-        void onGalleryOptionSelected();
-
-        void onSignalPhotoSelected(String photoUri);
 
         void onStoragePermissionForCameraGranted();
 

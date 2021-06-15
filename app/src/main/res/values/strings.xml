@@ -52,6 +52,7 @@
 
     <!-- Strings related to Signal Details screen -->
     <string name="txt_signal_details_title">Signal Details</string>
+    <string name="txt_upload_photo">Upload photo</string>
     <string name="txt_comments">Comments</string>
     <string name="txt_signal_from">Signal from %1$s</string>
     <string name="txt_comment_hint">Enter a comment</string>

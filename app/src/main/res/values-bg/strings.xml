@@ -48,6 +48,7 @@
 
     <!-- Strings related to Signal Details screen -->
     <string name="txt_signal_details_title">Подробности за сигнала</string>
+    <string name="txt_upload_photo">Качи снимка</string>
     <string name="txt_comments">Коментари</string>
     <string name="txt_signal_from">Сигналът е подаден от %1$s</string>
     <string name="txt_comment_hint">Напиши коментар</string>

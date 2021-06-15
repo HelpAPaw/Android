@@ -20,6 +20,12 @@ public interface SignalDetailsContract {
 
         void showSignalDetails(Signal signal);
 
+        void showUploadPhotoButton();
+
+        void hideUploadPhotoButton();
+
+        void showSignalPhoto(Signal signal);
+
         void displayComments(List<Comment> comments);
 
         void showCommentErrorMessage();
@@ -70,5 +76,7 @@ public interface SignalDetailsContract {
         void onBottomReached(boolean isBottomReached);
 
         void onSignalPhotoClicked();
+
+        void onUploadSignalPhotoClicked();
     }
 }

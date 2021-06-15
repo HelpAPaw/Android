@@ -10,6 +10,7 @@ import org.helpapaw.helpapaw.data.repositories.CommentRepository;
 import org.helpapaw.helpapaw.data.repositories.PhotoRepository;
 import org.helpapaw.helpapaw.data.repositories.SignalRepository;
 import org.helpapaw.helpapaw.data.user.UserManager;
+import org.helpapaw.helpapaw.photo.UploadPhotoContract;
 import org.helpapaw.helpapaw.utils.Injection;
 import org.helpapaw.helpapaw.utils.Utils;
 
@@ -18,7 +19,8 @@ import java.util.List;
 /**
  * Created by iliyan on 7/25/16
  */
-public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View> implements SignalDetailsContract.UserActionsListener {
+public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View>
+        implements SignalDetailsContract.UserActionsListener, UploadPhotoContract.UserActionsListener {
 
     private boolean showProgressBar;
     private List<Comment> commentList;
@@ -31,6 +33,7 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
 
     public SignalDetailsPresenter(SignalDetailsContract.View view) {
         super(view);
+
         showProgressBar = true;
         commentRepository = Injection.getCommentRepositoryInstance();
         photoRepository = Injection.getPhotoRepositoryInstance();
@@ -41,11 +44,15 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
     @Override
     public void onInitDetailsScreen(Signal signal) {
         setProgressIndicator(showProgressBar);
+
         if (signal != null) {
             FirebaseCrashlytics.getInstance().log("Show signal details for " + signal.getId());
+
             this.signal = signal;
             signal.setPhotoUrl(photoRepository.getPhotoUrl(signal.getId()));
+
             getView().showSignalDetails(signal);
+            showUploadButtonIfNeeded(signal);
 
             if (commentList != null) {
                 setProgressIndicator(false);
@@ -59,6 +66,29 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
             } else {
                 loadCommentsForSignal(signal.getId());
             }
+        }
+    }
+
+    private void showUploadButtonIfNeeded(Signal signal) {
+        if (userManager.getLoggedUserId().equals(signal.getAuthorId())) {
+            photoRepository.photoExists(signal.getId(), new PhotoRepository.PhotoExistsCallback() {
+                @Override
+                public void onPhotoExistsSuccess(boolean photoExists) {
+                    if (!isViewAvailable()) return;
+
+                    if (photoExists) {
+                        getView().hideUploadPhotoButton();
+                    }
+                    else {
+                        getView().showUploadPhotoButton();
+                    }
+                }
+
+                @Override
+                public void onPhotoExistsFailure(String message) {
+                    // Don't show an error because user doesn't have any action and will be confused
+                }
+            });
         }
     }
 
@@ -177,6 +207,13 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
     }
 
     @Override
+    public void onUploadSignalPhotoClicked() {
+        if (getView() instanceof UploadPhotoContract.View){
+            ((UploadPhotoContract.View) getView()).showSendPhotoBottomSheet(this);
+        }
+    }
+
+    @Override
     public void onSignalDetailsClosing() {
         getView().closeScreenWithResult(signal);
     }
@@ -184,6 +221,43 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
     @Override
     public void onBottomReached(boolean isBottomReached) {
         getView().setShadowVisibility(!isBottomReached);
+    }
+
+    @Override
+    public void onCameraOptionSelected() {
+        if (getView() instanceof UploadPhotoContract.View){
+            ((UploadPhotoContract.View) getView()).openCamera();
+        }
+    }
+
+    @Override
+    public void onGalleryOptionSelected() {
+        if (getView() instanceof UploadPhotoContract.View){
+            ((UploadPhotoContract.View) getView()).openGallery();
+        }
+    }
+
+    @Override
+    public void onSignalPhotoSelected(String photoUri) {
+        savePhoto(photoUri, signal);
+    }
+
+    private void savePhoto(final String photoUri, final Signal signal) {
+        photoRepository.savePhoto(photoUri, signal.getId(), new PhotoRepository.SavePhotoCallback() {
+            @Override
+            public void onPhotoSaved(String photoUrl) {
+                signal.setPhotoUrl(photoUrl);
+                // Show new photo
+                getView().hideUploadPhotoButton();
+                getView().showSignalPhoto(signal);
+            }
+
+            @Override
+            public void onPhotoFailure(String message) {
+                if (!isViewAvailable()) return;
+                getView().showMessage(message);
+            }
+        });
     }
 
     private void saveComment(String comment) {

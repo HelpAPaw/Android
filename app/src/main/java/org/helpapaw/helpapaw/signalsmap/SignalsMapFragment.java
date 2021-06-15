@@ -1,14 +1,10 @@
 package org.helpapaw.helpapaw.signalsmap;
 
 import java.io.File;
-import java.io.FileDescriptor;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import android.Manifest;
@@ -19,16 +15,12 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.ParcelFileDescriptor;
-import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -49,6 +41,7 @@ import androidx.core.content.ContextCompat;
 import androidx.core.graphics.drawable.RoundedBitmapDrawable;
 import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory;
 import androidx.core.view.MenuItemCompat;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 
@@ -86,8 +79,8 @@ import org.helpapaw.helpapaw.data.repositories.ISettingsRepository;
 import org.helpapaw.helpapaw.data.user.UserManager;
 import org.helpapaw.helpapaw.databinding.FragmentSignalsMapBinding;
 import org.helpapaw.helpapaw.filtersignal.FilterSignalTypeDialog;
+import org.helpapaw.helpapaw.photo.UploadPhotoContract;
 import org.helpapaw.helpapaw.reusable.AlertDialogFragment;
-import org.helpapaw.helpapaw.sendsignal.SendPhotoBottomSheet;
 import org.helpapaw.helpapaw.signaldetails.SignalDetailsActivity;
 import org.helpapaw.helpapaw.utils.Injection;
 import org.helpapaw.helpapaw.utils.StatusUtils;
@@ -100,21 +93,16 @@ import static org.helpapaw.helpapaw.filtersignal.FilterSignalTypeDialog.REQUEST_
 
 public class SignalsMapFragment extends BaseFragment
         implements SignalsMapContract.View,
+        UploadPhotoContract.View,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
         LocationListener {
 
     public static final String TAG = SignalsMapFragment.class.getSimpleName();
     private static final String MAP_VIEW_STATE = "mapViewSaveState";
-    private static final String DATE_TIME_FORMAT = "yyyyMMdd_HHmmss";
-    private static final String PHOTO_PREFIX = "JPEG_";
-    private static final String PHOTO_EXTENSION = ".jpg";
 
     private static final int LOCATION_PERMISSIONS_REQUEST = 1;
-    private static final int REQUEST_CAMERA = 2;
-    private static final int REQUEST_GALLERY = 3;
     private static final int READ_EXTERNAL_STORAGE_FOR_CAMERA = 4;
-    private static final int READ_WRITE_EXTERNAL_STORAGE_FOR_GALLERY = 5;
     private static final int REQUEST_SIGNAL_DETAILS = 6;
     private static final int REQUEST_CHECK_SETTINGS = 214;
     private static final String VIEW_ADD_SIGNAL = "view_add_signal";
@@ -135,6 +123,7 @@ public class SignalsMapFragment extends BaseFragment
 
     private SignalsMapPresenter signalsMapPresenter;
     private SignalsMapContract.UserActionsListener actionsListener;
+    private UploadPhotoContract.UserActionsListener uploadPhotoActionsListener;
 
     FragmentSignalsMapBinding binding;
     private Menu optionsMenu;
@@ -214,6 +203,7 @@ public class SignalsMapFragment extends BaseFragment
             signalsMapPresenter.setView(this);
         }
         actionsListener = signalsMapPresenter;
+        uploadPhotoActionsListener = signalsMapPresenter;
         settingsRepository = Injection.getSettingsRepositoryInstance();
 
         setHasOptionsMenu(true);
@@ -762,74 +752,8 @@ public class SignalsMapFragment extends BaseFragment
     }
 
     @Override
-    public void showSendPhotoBottomSheet() {
-        SendPhotoBottomSheet sendPhotoBottomSheet = new SendPhotoBottomSheet();
-        sendPhotoBottomSheet.setListener(new SendPhotoBottomSheet.PhotoTypeSelectListener() {
-            @Override
-            public void onPhotoTypeSelected(@SendPhotoBottomSheet.PhotoType int photoType) {
-                if (photoType == SendPhotoBottomSheet.PhotoType.CAMERA) {
-                    actionsListener.onCameraOptionSelected();
-                } else if (photoType == SendPhotoBottomSheet.PhotoType.GALLERY) {
-                    actionsListener.onGalleryOptionSelected();
-                }
-            }
-        });
-        sendPhotoBottomSheet.show(getFragmentManager(), SendPhotoBottomSheet.TAG);
-    }
-
-    String imageFileName;
-
-    @Override
-    public void openCamera() {
-        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            showPermissionDialog(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE, READ_EXTERNAL_STORAGE_FOR_CAMERA);
-        } else {
-            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            if (intent.resolveActivity(getContext().getPackageManager()) != null) {
-                String timeStamp = new SimpleDateFormat(DATE_TIME_FORMAT, Locale.getDefault()).format(new Date());
-                imageFileName = PHOTO_PREFIX + timeStamp + PHOTO_EXTENSION;
-                intent.putExtra(MediaStore.EXTRA_OUTPUT, ImageUtils.getInstance().getPhotoFileUri(getContext(), imageFileName));
-                startActivityForResult(intent, REQUEST_CAMERA);
-            }
-        }
-    }
-
-    @Override
-    public void openGallery() {
-        String[] permissions = {Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE};
-        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED &&
-                ContextCompat.checkSelfPermission(getContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(permissions, READ_WRITE_EXTERNAL_STORAGE_FOR_GALLERY);
-        }
-        else{
-            Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-            if (intent.resolveActivity(getContext().getPackageManager()) != null) {
-                startActivityForResult(intent, REQUEST_GALLERY);
-            }
-        }
-    }
-
-    @Override
-    public void saveImageFromURI(Uri photoUri) {
-
-        // This segment works once the permission is handled
-        try {
-            String path;
-            ParcelFileDescriptor parcelFileDesc = getActivity().getContentResolver().openFileDescriptor(photoUri, "r");
-            FileDescriptor fileDesc = parcelFileDesc.getFileDescriptor();
-            Bitmap photo = BitmapFactory.decodeFileDescriptor(fileDesc);
-            path = MediaStore.Images.Media.insertImage(getContext().getContentResolver(), photo, "temp", null);
-            File photoFile = ImageUtils.getInstance().getFromMediaUri(getContext(), getContext().getContentResolver(), Uri.parse(path));
-
-            if (photoFile != null) {
-                actionsListener.onSignalPhotoSelected(Uri.fromFile(photoFile).getPath());
-            }
-
-            parcelFileDesc.close();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    public Fragment getFragment() {
+        return this;
     }
 
     @Override
@@ -868,21 +792,21 @@ public class SignalsMapFragment extends BaseFragment
 
         if (requestCode == REQUEST_CAMERA) {
             if (resultCode == Activity.RESULT_OK) {
-                Uri takenPhotoUri = ImageUtils.getInstance().getPhotoFileUri(getContext(), imageFileName);
-                actionsListener.onSignalPhotoSelected(takenPhotoUri.getPath());
+                Uri takenPhotoUri = ImageUtils.getInstance().getPhotoFileUri(getContext(), IMAGE_FILENAME);
+                uploadPhotoActionsListener.onSignalPhotoSelected(takenPhotoUri.getPath());
             }
         }
         else if (requestCode == REQUEST_GALLERY && resultCode == Activity.RESULT_OK && data != null && data.getData() != null) {
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                saveImageFromURI(data.getData());
+                saveImageFromURI(uploadPhotoActionsListener, data.getData());
             }
 
             else {
                 // DRY!!
                 File photoFile = ImageUtils.getInstance().getFromMediaUri(getContext(), getContext().getContentResolver(), data.getData());
                 if (photoFile != null) {
-                    actionsListener.onSignalPhotoSelected(Uri.fromFile(photoFile).getPath());
+                    uploadPhotoActionsListener.onSignalPhotoSelected(Uri.fromFile(photoFile).getPath());
                 }
             }
 

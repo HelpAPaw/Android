@@ -7,11 +7,14 @@ import android.content.Intent;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.databinding.DataBindingUtil;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import com.google.android.material.snackbar.Snackbar;
+
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -31,21 +34,25 @@ import org.helpapaw.helpapaw.data.models.Comment;
 import org.helpapaw.helpapaw.data.models.Signal;
 import org.helpapaw.helpapaw.databinding.FragmentSignalDetailsBinding;
 import org.helpapaw.helpapaw.signalphoto.SignalPhotoActivity;
+import org.helpapaw.helpapaw.photo.UploadPhotoContract;
 import org.helpapaw.helpapaw.utils.Injection;
 import org.helpapaw.helpapaw.utils.StatusUtils;
 import org.helpapaw.helpapaw.utils.Utils;
+import org.helpapaw.helpapaw.utils.images.ImageUtils;
 
+import java.io.File;
 import java.util.List;
 
 import static org.helpapaw.helpapaw.data.models.Comment.COMMENT_TYPE_STATUS_CHANGE;
 
-public class SignalDetailsFragment extends BaseFragment implements SignalDetailsContract.View {
+public class SignalDetailsFragment extends BaseFragment
+        implements SignalDetailsContract.View, UploadPhotoContract.View {
 
     private final static String SIGNAL_DETAILS = "signalDetails";
-    private final static String TAG = SignalDetailsFragment.class.getSimpleName();
 
     SignalDetailsPresenter signalDetailsPresenter;
     SignalDetailsContract.UserActionsListener actionsListener;
+    UploadPhotoContract.UserActionsListener uploadPhotoActionsListeners;
 
     FragmentSignalDetailsBinding binding;
 
@@ -76,6 +83,8 @@ public class SignalDetailsFragment extends BaseFragment implements SignalDetails
         }
 
         actionsListener = signalDetailsPresenter;
+        uploadPhotoActionsListeners = signalDetailsPresenter;
+
         setHasOptionsMenu(true);
         mSignal = null;
         if (getArguments() != null) {
@@ -91,6 +100,7 @@ public class SignalDetailsFragment extends BaseFragment implements SignalDetails
         binding.imgSignalPhoto.setOnClickListener(getOnSignalPhotoClickListener());
         binding.scrollSignalDetails.setOnBottomReachedListener(getOnBottomReachedListener());
         binding.viewSignalStatus.setStatusCallback(getStatusViewCallback());
+        binding.btnUploadPhoto.setOnClickListener(getOnUploadSignalPhotoClickListener());
 
         return binding.getRoot();
     }
@@ -136,13 +146,6 @@ public class SignalDetailsFragment extends BaseFragment implements SignalDetails
             binding.btnCall.setVisibility(View.VISIBLE);
         }
 
-        int type = 0;
-        try {
-             type = signal.getType();
-        } catch (Exception e) {
-            // ignore
-        }
-
         String[] signalTypes = getResources().getStringArray(R.array.signal_types_items);
         String signalType = "-";
         if (signalTypes.length > signal.getType()) {
@@ -150,6 +153,21 @@ public class SignalDetailsFragment extends BaseFragment implements SignalDetails
         }
         binding.txtSignalType.setText(String.format(getString(R.string.txt_signal_type), signalType));
 
+        hideUploadPhotoButton();
+        showSignalPhoto(signal);
+    }
+
+    public void showUploadPhotoButton() {
+        binding.imgSignalPhoto.setVisibility(View.INVISIBLE);
+        binding.btnUploadPhoto.setVisibility(View.VISIBLE);
+    }
+
+    public void hideUploadPhotoButton() {
+        binding.imgSignalPhoto.setVisibility(View.VISIBLE);
+        binding.btnUploadPhoto.setVisibility(View.INVISIBLE);
+    }
+
+    public void showSignalPhoto(Signal signal) {
         Injection.getImageLoader().loadWithRoundedCorners(getContext(), signal.getPhotoUrl(), binding.imgSignalPhoto, R.drawable.ic_paw);
     }
 
@@ -323,19 +341,48 @@ public class SignalDetailsFragment extends BaseFragment implements SignalDetails
         startActivity(intent);
     }
 
-    public void onBackPressed() {
-        actionsListener.onSignalDetailsClosing();
+    @Override
+    public void onStatusChangeRequestFinished(boolean success, int newStatus) {
+
+        if (success) {
+            actionsListener.loadCommentsForSignal(mSignal.getId());
+        }
+
+        binding.viewSignalStatus.onStatusChangeRequestFinished(success, newStatus);
     }
 
-    /* OnClick Listeners */
-    public View.OnClickListener getOnAddCommentClickListener() {
-        return new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String commentText = binding.editComment.getText().toString();
-                actionsListener.onAddCommentButtonClicked(commentText);
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == REQUEST_CAMERA) {
+            if (resultCode == Activity.RESULT_OK) {
+                Uri takenPhotoUri = ImageUtils.getInstance().getPhotoFileUri(getContext(), IMAGE_FILENAME);
+                uploadPhotoActionsListeners.onSignalPhotoSelected(takenPhotoUri.getPath());
             }
-        };
+        }
+        else if (requestCode == REQUEST_GALLERY && resultCode == Activity.RESULT_OK && data != null && data.getData() != null) {
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                saveImageFromURI(signalDetailsPresenter, data.getData());
+            }
+
+            else {
+                File photoFile = ImageUtils.getInstance().getFromMediaUri(getContext(), getContext().getContentResolver(), data.getData());
+                if (photoFile != null) {
+                    uploadPhotoActionsListeners.onSignalPhotoSelected(Uri.fromFile(photoFile).getPath());
+                }
+            }
+        }
+    }
+
+    @Override
+    public Fragment getFragment() {
+        return this;
+    }
+
+    public void onBackPressed() {
+        actionsListener.onSignalDetailsClosing();
     }
 
     public StatusCallback getStatusViewCallback() {
@@ -347,14 +394,15 @@ public class SignalDetailsFragment extends BaseFragment implements SignalDetails
         };
     }
 
-    @Override
-    public void onStatusChangeRequestFinished(boolean success, int newStatus) {
-
-        if (success) {
-            actionsListener.loadCommentsForSignal(mSignal.getId());
-        }
-
-        binding.viewSignalStatus.onStatusChangeRequestFinished(success, newStatus);
+    /* OnClick Listeners */
+    public View.OnClickListener getOnAddCommentClickListener() {
+        return new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String commentText = binding.editComment.getText().toString();
+                actionsListener.onAddCommentButtonClicked(commentText);
+            }
+        };
     }
 
     public View.OnClickListener getOnCallButtonClickListener() {
@@ -380,6 +428,15 @@ public class SignalDetailsFragment extends BaseFragment implements SignalDetails
             @Override
             public void onClick(View view) {
                 actionsListener.onSignalPhotoClicked();
+            }
+        };
+    }
+
+    public View.OnClickListener getOnUploadSignalPhotoClickListener() {
+        return new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                actionsListener.onUploadSignalPhotoClicked();
             }
         };
     }
