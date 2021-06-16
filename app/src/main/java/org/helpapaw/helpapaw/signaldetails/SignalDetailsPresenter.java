@@ -25,6 +25,7 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
     private boolean showProgressBar;
     private List<Comment> commentList;
     private Signal signal;
+    private String photoUri;
 
     private CommentRepository commentRepository;
     private PhotoRepository photoRepository;
@@ -120,6 +121,20 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
                 getView().showNoInternetMessage();
             }
         }
+    }
+
+    @Override
+    public void onChooseCommentPhotoIconClicked() {
+        getView().hideKeyboard();
+        if (getView() instanceof UploadPhotoContract.View) {
+            ((UploadPhotoContract.View)getView()).showSendPhotoBottomSheet(this);
+        }
+    }
+
+    @Override
+    public void onPhotoSelected(String photoUri) {
+        this.photoUri = photoUri;
+        getView().setThumbnailImage(photoUri);
     }
 
     @Override

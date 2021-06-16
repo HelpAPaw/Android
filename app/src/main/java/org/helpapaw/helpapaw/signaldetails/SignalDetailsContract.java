@@ -55,6 +55,8 @@ public interface SignalDetailsContract {
         void onStatusChangeRequestFinished(boolean success, int newStatus);
 
         void openSignalPhotoScreen();
+
+        void setThumbnailImage(String photoUri);
     }
 
     interface UserActionsListener {
@@ -62,6 +64,8 @@ public interface SignalDetailsContract {
         void onInitDetailsScreen(Signal signal);
 
         void loadCommentsForSignal(String signalId);
+
+        void onChooseCommentPhotoIconClicked();
 
         void onTryToAddComment();
 
@@ -78,5 +82,7 @@ public interface SignalDetailsContract {
         void onSignalPhotoClicked();
 
         void onUploadSignalPhotoClicked();
+
+        void onPhotoSelected(String photoUri);
     }
 }

@@ -6,15 +6,22 @@ import android.content.DialogInterface;
 import android.content.Intent;
 
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.graphics.drawable.RoundedBitmapDrawable;
+import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import com.google.android.material.snackbar.Snackbar;
 
+import android.os.ParcelFileDescriptor;
+import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -41,6 +48,7 @@ import org.helpapaw.helpapaw.utils.Utils;
 import org.helpapaw.helpapaw.utils.images.ImageUtils;
 
 import java.io.File;
+import java.io.FileDescriptor;
 import java.util.List;
 
 import static org.helpapaw.helpapaw.data.models.Comment.COMMENT_TYPE_STATUS_CHANGE;
@@ -57,6 +65,8 @@ public class SignalDetailsFragment extends BaseFragment
     FragmentSignalDetailsBinding binding;
 
     private Signal mSignal;
+
+    private boolean inComment = false;
 
     public SignalDetailsFragment() {
         // Required empty public constructor
@@ -93,6 +103,7 @@ public class SignalDetailsFragment extends BaseFragment
 
         actionsListener.onInitDetailsScreen(mSignal);
 
+        binding.imgCommentPhoto.setOnClickListener(getOnCommentPhotoClickListener());
         binding.btnAddComment.setOnClickListener(getOnAddCommentClickListener());
         binding.editComment.setOnFocusChangeListener(getOnCommentEditTextFocusChangeListener());
         binding.imgCall.setOnClickListener(getOnCallButtonClickListener());
@@ -358,13 +369,21 @@ public class SignalDetailsFragment extends BaseFragment
         if (requestCode == REQUEST_CAMERA) {
             if (resultCode == Activity.RESULT_OK) {
                 Uri takenPhotoUri = ImageUtils.getInstance().getPhotoFileUri(getContext(), IMAGE_FILENAME);
-                uploadPhotoActionsListeners.onSignalPhotoSelected(takenPhotoUri.getPath());
+                if (inComment) {
+                    actionsListener.onPhotoSelected(takenPhotoUri.getPath());
+                } else {
+                    uploadPhotoActionsListeners.onSignalPhotoSelected(takenPhotoUri.getPath());
+                }
             }
         }
         else if (requestCode == REQUEST_GALLERY && resultCode == Activity.RESULT_OK && data != null && data.getData() != null) {
-
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                saveImageFromURI(signalDetailsPresenter, data.getData());
+                if (inComment) {
+                    String imageFromURI = getImageFromURI(data.getData());
+                    actionsListener.onPhotoSelected(imageFromURI);
+                } else {
+                    saveImageFromURI(signalDetailsPresenter, data.getData());
+                }
             }
 
             else {
@@ -375,6 +394,16 @@ public class SignalDetailsFragment extends BaseFragment
             }
         }
     }
+
+    @Override
+    public void setThumbnailImage(String photoUri) {
+        Resources res = getResources();
+        RoundedBitmapDrawable drawable = RoundedBitmapDrawableFactory.create(res, ImageUtils.getInstance().getRotatedBitmap(new File(photoUri)));
+        drawable.setCornerRadius(10);
+        binding.imgCommentPhoto.setScaleType(ImageView.ScaleType.FIT_XY);
+        binding.imgCommentPhoto.setImageDrawable(drawable);
+    }
+
 
     @Override
     public Fragment getFragment() {
@@ -390,6 +419,16 @@ public class SignalDetailsFragment extends BaseFragment
             @Override
             public void onRequestStatusChange(int status) {
                 actionsListener.onRequestStatusChange(status);
+            }
+        };
+    }
+
+    public View.OnClickListener getOnCommentPhotoClickListener() {
+        return new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                inComment = true;
+                actionsListener.onChooseCommentPhotoIconClicked();
             }
         };
     }
@@ -436,6 +475,7 @@ public class SignalDetailsFragment extends BaseFragment
         return new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                inComment = false;
                 actionsListener.onUploadSignalPhotoClicked();
             }
         };
@@ -450,5 +490,24 @@ public class SignalDetailsFragment extends BaseFragment
                 }
             }
         };
+    }
+
+    private String getImageFromURI(Uri photoUri) {
+        // This segment works once the permission is handled
+        try {
+            String path;
+            ParcelFileDescriptor parcelFileDesc = getActivity().getContentResolver().openFileDescriptor(photoUri, "r");
+            FileDescriptor fileDesc = parcelFileDesc.getFileDescriptor();
+            Bitmap photo = BitmapFactory.decodeFileDescriptor(fileDesc);
+            path = MediaStore.Images.Media.insertImage(getContext().getContentResolver(), photo, "temp", null);
+            File photoFile = ImageUtils.getInstance().getFromMediaUri(getContext(), getContext().getContentResolver(), Uri.parse(path));
+
+            if (photoFile != null) {
+                return Uri.fromFile(photoFile).getPath();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }
