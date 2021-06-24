@@ -1,5 +1,7 @@
 package org.helpapaw.helpapaw.data.user;
 
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+
 /**
  * Created by iliyan on 7/25/16
  */
@@ -8,6 +10,8 @@ public interface UserManager {
     void login(String email, String password, LoginCallback loginCallback);
 
     void loginWithFacebook(String accessToken, LoginCallback loginCallback);
+
+    void loginWithGoogle(GoogleSignInAccount account, LoginCallback loginCallback);
 
     void register(String email, String password, String name, String phoneNumber, RegistrationCallback registrationCallback);
 

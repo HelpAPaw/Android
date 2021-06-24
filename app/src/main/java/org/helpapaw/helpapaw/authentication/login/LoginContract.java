@@ -1,5 +1,8 @@
 package org.helpapaw.helpapaw.authentication.login;
 
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.tasks.Task;
+
 /**
  * Created by iliyan on 7/25/16
  */
@@ -47,5 +50,7 @@ public interface LoginContract {
         void onPasswordResetRequested(String email);
 
         void onLoginFbSuccess(String accessToken);
+
+        void handleSignInWithGoogleResult(Task<GoogleSignInAccount> completedTask);
     }
 }

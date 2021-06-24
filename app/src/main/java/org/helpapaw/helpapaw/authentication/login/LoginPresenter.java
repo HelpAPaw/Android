@@ -1,5 +1,9 @@
 package org.helpapaw.helpapaw.authentication.login;
 
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.tasks.Task;
+
 import org.helpapaw.helpapaw.R;
 import org.helpapaw.helpapaw.authentication.PrivacyPolicyConfirmationContract;
 import org.helpapaw.helpapaw.authentication.PrivacyPolicyConfirmationGetter;
@@ -18,7 +22,7 @@ public class LoginPresenter extends Presenter<LoginContract.View>
         PrivacyPolicyConfirmationContract.UserResponse {
     private static final int MIN_PASS_LENGTH = 6;
 
-    private UserManager userManager;
+    private final UserManager userManager;
     private boolean showProgressBar;
 
     LoginPresenter(LoginContract.View view) {
@@ -237,6 +241,32 @@ public class LoginPresenter extends Presenter<LoginContract.View>
         } else {
             getView().showNoInternetMessage();
             setProgressIndicator(false);
+        }
+    }
+
+    @Override
+    public void handleSignInWithGoogleResult(Task<GoogleSignInAccount> completedTask) {
+        try {
+            GoogleSignInAccount account = completedTask.getResult(ApiException.class);
+
+            // Signed in successfully, show authenticated UI.
+            setProgressIndicator(true);
+            userManager.loginWithGoogle(account, new UserManager.LoginCallback() {
+                @Override
+                public void onLoginSuccess(String userId) {
+                    LoginPresenter.this.onLoginSuccess();
+                }
+
+                @Override
+                public void onLoginFailure(String message) {
+                    LoginPresenter.this.onLoginFailure(message);
+                }
+            });
+        } catch (ApiException e) {
+            // The ApiException status code indicates the detailed failure reason.
+            // Please refer to the GoogleSignInStatusCodes class reference for more information.
+            if (!isViewAvailable()) return;
+            getView().showErrorMessage(e.getLocalizedMessage());
         }
     }
 }
