@@ -83,6 +83,6 @@ public interface SignalDetailsContract {
 
         void onUploadSignalPhotoClicked();
 
-        void onPhotoSelected(String photoUri);
+        void onPhotoSelected(String photoUri, boolean inComment);
     }
 }

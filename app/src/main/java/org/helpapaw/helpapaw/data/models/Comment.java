@@ -21,6 +21,7 @@ public class Comment {
     private Date   dateCreated;
     private String text;
     private String type;
+    private String photoUrl;
 
     public Comment(String objectId, String authorId, String authorName, Date dateCreated, String text, String type) {
         this.objectId = objectId;
@@ -60,6 +61,14 @@ public class Comment {
     }
 
     public String getType() { return type; }
+
+    public String getPhotoUrl() {
+        return photoUrl;
+    }
+
+    public void setPhotoUrl(String photoUrl) {
+        this.photoUrl = photoUrl;
+    }
 
     public static int getNewStatusFromStatusChangeComment(Comment comment) {
         int newStatus = 0;

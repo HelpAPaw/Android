@@ -5,11 +5,17 @@ package org.helpapaw.helpapaw.data.repositories;
  */
 public interface PhotoRepository {
 
-    void savePhoto(String photoUri, String photoName, SavePhotoCallback callback);
+    void saveSignalPhoto(String photoUri, String photoName, SavePhotoCallback callback);
 
-    String getPhotoUrl(String signalId);
+    void saveCommentPhoto(String photoUri, String photoName, SavePhotoCallback callback);
 
-    void photoExists(String signalId, PhotoExistsCallback callback);
+    String getSignalPhotoUrl(String signalId);
+
+    String getCommentPhotoUrl(String signalId);
+
+    void signalPhotoExists(String signalId, PhotoExistsCallback callback);
+
+    void commentPhotoExists(String signalId, PhotoExistsCallback callback);
 
 
     interface SavePhotoCallback {

@@ -66,7 +66,7 @@ public class SignalDetailsFragment extends BaseFragment
 
     private Signal mSignal;
 
-    private boolean inComment = false;
+    public boolean inComment = false;
 
     public SignalDetailsFragment() {
         // Required empty public constructor
@@ -370,7 +370,7 @@ public class SignalDetailsFragment extends BaseFragment
             if (resultCode == Activity.RESULT_OK) {
                 Uri takenPhotoUri = ImageUtils.getInstance().getPhotoFileUri(getContext(), IMAGE_FILENAME);
                 if (inComment) {
-                    actionsListener.onPhotoSelected(takenPhotoUri.getPath());
+                    actionsListener.onPhotoSelected(takenPhotoUri.getPath(), inComment);
                 } else {
                     uploadPhotoActionsListeners.onSignalPhotoSelected(takenPhotoUri.getPath());
                 }
@@ -380,7 +380,7 @@ public class SignalDetailsFragment extends BaseFragment
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 if (inComment) {
                     String imageFromURI = getImageFromURI(data.getData());
-                    actionsListener.onPhotoSelected(imageFromURI);
+                    actionsListener.onPhotoSelected(imageFromURI, inComment);
                 } else {
                     saveImageFromURI(signalDetailsPresenter, data.getData());
                 }
@@ -389,7 +389,7 @@ public class SignalDetailsFragment extends BaseFragment
             else {
                 File photoFile = ImageUtils.getInstance().getFromMediaUri(getContext(), getContext().getContentResolver(), data.getData());
                 if (photoFile != null) {
-                    uploadPhotoActionsListeners.onSignalPhotoSelected(Uri.fromFile(photoFile).getPath());
+                    uploadPhotoActionsListeners.onSignalPhotoSelected(Uri.fromFile(photoFile).getPath()); // TODO check if here is needed to check if in comment
                 }
             }
         }

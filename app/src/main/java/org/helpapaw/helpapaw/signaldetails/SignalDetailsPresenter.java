@@ -16,6 +16,8 @@ import org.helpapaw.helpapaw.utils.Utils;
 
 import java.util.List;
 
+import static android.text.TextUtils.isEmpty;
+
 /**
  * Created by iliyan on 7/25/16
  */
@@ -50,7 +52,7 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
             FirebaseCrashlytics.getInstance().log("Show signal details for " + signal.getId());
 
             this.signal = signal;
-            signal.setPhotoUrl(photoRepository.getPhotoUrl(signal.getId()));
+            signal.setPhotoUrl(photoRepository.getSignalPhotoUrl(signal.getId()));
 
             getView().showSignalDetails(signal);
             showUploadButtonIfNeeded(signal);
@@ -72,7 +74,7 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
 
     private void showUploadButtonIfNeeded(Signal signal) {
         if (userManager.getLoggedUserId().equals(signal.getAuthorId())) {
-            photoRepository.photoExists(signal.getId(), new PhotoRepository.PhotoExistsCallback() {
+            photoRepository.signalPhotoExists(signal.getId(), new PhotoRepository.PhotoExistsCallback() {
                 @Override
                 public void onPhotoExistsSuccess(boolean photoExists) {
                     if (!isViewAvailable()) return;
@@ -132,9 +134,11 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
     }
 
     @Override
-    public void onPhotoSelected(String photoUri) {
+    public void onPhotoSelected(String photoUri, boolean inComment) {
         this.photoUri = photoUri;
-        getView().setThumbnailImage(photoUri);
+        if (inComment) {
+            getView().setThumbnailImage(photoUri);
+        }
     }
 
     @Override
@@ -254,11 +258,11 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
 
     @Override
     public void onSignalPhotoSelected(String photoUri) {
-        savePhoto(photoUri, signal);
+        saveSignalPhoto(photoUri, signal);
     }
 
-    private void savePhoto(final String photoUri, final Signal signal) {
-        photoRepository.savePhoto(photoUri, signal.getId(), new PhotoRepository.SavePhotoCallback() {
+    private void saveSignalPhoto(final String photoUri, final Signal signal) {
+        photoRepository.saveSignalPhoto(photoUri, signal.getId(), new PhotoRepository.SavePhotoCallback() {
             @Override
             public void onPhotoSaved(String photoUrl) {
                 signal.setPhotoUrl(photoUrl);
@@ -275,12 +279,31 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
         });
     }
 
+    private void saveCommentPhoto(final String photoUri, final Comment comment) {
+        photoRepository.saveCommentPhoto(photoUri, comment.getObjectId(), new PhotoRepository.SavePhotoCallback() {
+            @Override
+            public void onPhotoSaved(String photoUrl) {
+                comment.setPhotoUrl(photoUrl);
+            }
+
+            @Override
+            public void onPhotoFailure(String message) {
+                if (!isViewAvailable()) return;
+                getView().showMessage(message);
+            }
+        });
+    }
+
+
     private void saveComment(String comment) {
         FirebaseCrashlytics.getInstance().log("Initiate save new comment for signal" + signal.getId());
         commentRepository.saveComment(comment, signal, commentList, new CommentRepository.SaveCommentCallback() {
             @Override
             public void onCommentSaved(Comment comment) {
                 if (!isViewAvailable()) return;
+                if (!isEmpty(photoUri)) {
+                    saveCommentPhoto(photoUri, comment);
+                }
                 setProgressIndicator(false);
                 commentList.add(comment);
                 getView().setNoCommentsTextVisibility(false);
