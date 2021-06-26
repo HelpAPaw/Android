@@ -59,19 +59,19 @@ public class BackendlessPhotoRepository implements PhotoRepository {
     }
 
     @Override
-    public String getCommentPhotoUrl(String signalId) {
-        return getPhotoUrl(signalId, COMMENT_PHOTOS_DIRECTORY);
+    public String getCommentPhotoUrl(String commentId) {
+        return getPhotoUrl(commentId, COMMENT_PHOTOS_DIRECTORY);
     }
 
-    private String getPhotoUrl(String signalId, String directory) {
-        if (signalId != null) {
+    private String getPhotoUrl(String id, String directory) {
+        if (id != null) {
             //https://api.backendless.com/<application id>/<REST-api-key>/files/<path>/<file name>
             return BACKENDLESS_API_DOMAIN +
                     PawApplication.getContext().getResources().getString(R.string.BACKENDLESS_APP_ID) + "/" +
                     PawApplication.getContext().getResources().getString(R.string.BACKENDLESS_REST_API_KEY) + "/" +
                     FILES_FOLDER + "/" +
                     directory + "/" +
-                    signalId +
+                    id +
                     PHOTO_EXTENSION;
         } else {
             return null;
@@ -84,13 +84,13 @@ public class BackendlessPhotoRepository implements PhotoRepository {
     }
 
     @Override
-    public void commentPhotoExists(String signalId, PhotoExistsCallback callback) {
-        photoExists(signalId, COMMENT_PHOTOS_DIRECTORY, callback);
+    public void commentPhotoExists(String commentId, PhotoExistsCallback callback) {
+        photoExists(commentId, COMMENT_PHOTOS_DIRECTORY, callback);
     }
 
-    private void photoExists(String signalId, String directory, PhotoExistsCallback callback) {
+    private void photoExists(String id, String directory, PhotoExistsCallback callback) {
 
-        String pattern = signalId + PHOTO_EXTENSION;
+        String pattern = id + PHOTO_EXTENSION;
 
         Backendless.Files.getFileCount(directory, pattern, new AsyncCallback<Integer>() {
             @Override

@@ -63,6 +63,9 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
                 if (commentList.size() == 0) {
                     getView().setNoCommentsTextVisibility(true);
                 } else {
+//                    for (Comment comment : commentList) {
+//                        addCommentPhotoUrlIfExist(comment);
+//                    }
                     getView().displayComments(commentList);
                     getView().setNoCommentsTextVisibility(false);
                 }
@@ -95,6 +98,23 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
         }
     }
 
+    private void addCommentPhotoUrlIfExist(Comment comment) {
+        photoRepository.commentPhotoExists(comment.getObjectId(), new PhotoRepository.PhotoExistsCallback() {
+            @Override
+            public void onPhotoExistsSuccess(boolean photoExists) {
+                if (!isViewAvailable()) return;
+                 if (photoExists) {
+                     comment.setPhotoUrl(photoRepository.getCommentPhotoUrl(comment.getObjectId()));
+                 }
+            }
+
+            @Override
+            public void onPhotoExistsFailure(String message) {
+                // Don't show an error because user doesn't have any action and will be confused
+            }
+        });
+    }
+
     public void loadCommentsForSignal(String signalId) {
         if(Utils.getInstance().hasNetworkConnection()) {
             commentRepository.getAllCommentsBySignalId(signalId, new CommentRepository.LoadCommentsCallback() {
@@ -107,6 +127,9 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
                     if (commentList.size() == 0) {
                         getView().setNoCommentsTextVisibility(true);
                     } else {
+                        for (Comment comment : commentList) {
+                            addCommentPhotoUrlIfExist(comment);
+                        }
                         getView().displayComments(comments);
                         getView().setNoCommentsTextVisibility(false);
                     }
@@ -294,7 +317,6 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
         });
     }
 
-
     private void saveComment(String comment) {
         FirebaseCrashlytics.getInstance().log("Initiate save new comment for signal" + signal.getId());
         commentRepository.saveComment(comment, signal, commentList, new CommentRepository.SaveCommentCallback() {
@@ -308,6 +330,7 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
                 commentList.add(comment);
                 getView().setNoCommentsTextVisibility(false);
                 getView().displayComments(commentList);
+                getView().removeThumbnailImage();
             }
 
             @Override

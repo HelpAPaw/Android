@@ -57,6 +57,8 @@ public interface SignalDetailsContract {
         void openSignalPhotoScreen();
 
         void setThumbnailImage(String photoUri);
+
+        void removeThumbnailImage();
     }
 
     interface UserActionsListener {

@@ -11,11 +11,11 @@ public interface PhotoRepository {
 
     String getSignalPhotoUrl(String signalId);
 
-    String getCommentPhotoUrl(String signalId);
+    String getCommentPhotoUrl(String commentId);
 
     void signalPhotoExists(String signalId, PhotoExistsCallback callback);
 
-    void commentPhotoExists(String signalId, PhotoExistsCallback callback);
+    void commentPhotoExists(String commentId, PhotoExistsCallback callback);
 
 
     interface SavePhotoCallback {

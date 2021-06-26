@@ -182,6 +182,17 @@ public class SignalDetailsFragment extends BaseFragment
         Injection.getImageLoader().loadWithRoundedCorners(getContext(), signal.getPhotoUrl(), binding.imgSignalPhoto, R.drawable.ic_paw);
     }
 
+    private void showCommentPhoto(Comment comment, View inflatedCommentView) {
+        ImageView commentPhoto = inflatedCommentView.findViewById(R.id.img_comment_photo);
+        Injection.getImageLoader().loadWithRoundedCorners(getContext(), comment.getPhotoUrl(), commentPhoto, R.drawable.ic_paw);
+        commentPhoto.setVisibility(View.VISIBLE);
+    }
+
+    private void hideCommentPhoto(View inflatedCommentView) {
+        ImageView commentPhoto = inflatedCommentView.findViewById(R.id.img_comment_photo);
+        commentPhoto.setVisibility(View.GONE);
+    }
+
     @Override
     public void displayComments(List<Comment> comments) {
         LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -215,6 +226,12 @@ public class SignalDetailsFragment extends BaseFragment
                 txtCommentAuthor.setText(comment.getAuthorName());
 
                 commentText = comment.getText();
+            }
+
+            if (comment.getPhotoUrl() != null) {
+                showCommentPhoto(comment, inflatedCommentView);
+            } else {
+                hideCommentPhoto(inflatedCommentView);
             }
 
             // text and date elements are common for both type of comments so they are set in common code
@@ -404,6 +421,12 @@ public class SignalDetailsFragment extends BaseFragment
         binding.imgCommentPhoto.setImageDrawable(drawable);
     }
 
+    @Override
+    public void removeThumbnailImage() {
+        int imageResource = getResources().getIdentifier("@drawable/ic_camera", "drawable", getActivity().getPackageName());
+        binding.imgCommentPhoto.setScaleType(ImageView.ScaleType.FIT_CENTER);
+        binding.imgCommentPhoto.setImageResource(imageResource);
+    }
 
     @Override
     public Fragment getFragment() {
