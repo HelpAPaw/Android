@@ -7,7 +7,7 @@ public interface PhotoRepository {
 
     void saveSignalPhoto(String photoUri, String photoName, SavePhotoCallback callback);
 
-    void saveCommentPhoto(String photoUri, String photoName, SavePhotoCallback callback);
+    void saveCommentPhoto(String commentId, String photoUri, String photoName, SavePhotoCallback callback);
 
     String getSignalPhotoUrl(String signalId);
 

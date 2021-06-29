@@ -47,6 +47,46 @@ public class BackendlessCommentRepository implements CommentRepository {
         getAllComments(callback, queryBuilder, 0);
     }
 
+//    @Override
+//    public void addPhotoToComment(final String commentId, final String photoUri) {
+//
+//        final IDataStore<FINComment> commentsStore = Backendless.Data.of(FINComment.class);
+//        FINComment byId = commentsStore.findById(commentId);
+//        byId.setPhotoUrl(photoUri);
+//        commentsStore.save(byId);
+//
+//    }
+
+    @Override
+    public void addPhotoToComment(final String commentId, final String photoUri) {
+
+        String whereClause = "objectID = '" + commentId + "'";
+        DataQueryBuilder queryBuilder = DataQueryBuilder.create();
+        queryBuilder.setWhereClause(whereClause);
+
+        Backendless.Persistence.of(FINComment.class).find(queryBuilder, new AsyncCallback<List<FINComment>>() {
+            @Override
+            public void handleResponse(List<FINComment> foundComments) {
+                FINComment currentComment = foundComments.get(0);
+                currentComment.setPhoto(photoUri);
+
+                final IDataStore<FINComment> commentsStore = Backendless.Data.of(FINComment.class);
+                commentsStore.save(currentComment, new AsyncCallback<FINComment>() {
+                    public void handleResponse(final FINComment newComment) {
+                    }
+
+                    public void handleFault(BackendlessFault fault) {
+                    }
+                });
+            }
+
+            @Override
+            public void handleFault(BackendlessFault fault) {
+//                callback.onCommentsFailure(fault.getMessage());
+            }
+        });
+    }
+
     private void getAllComments(final LoadCommentsCallback callback, final DataQueryBuilder queryBuilder, final int offset) {
         queryBuilder.setOffset(offset);
 
@@ -112,9 +152,11 @@ public class BackendlessCommentRepository implements CommentRepository {
     }
 
     @Override
-    public void saveComment(String commentText, final Signal signal, final List<Comment> currentComments, final SaveCommentCallback callback) {
+    public void saveComment(String commentText, final Signal signal, final List<Comment> currentComments,
+                            final String photoUri, final SaveCommentCallback callback) {
 
-        FINComment backendlessComment = new FINComment(commentText, signal.getId(), COMMENT_TYPE_USER_COMMENT, Backendless.UserService.CurrentUser());
+        FINComment backendlessComment = new FINComment(commentText, signal.getId(),
+                COMMENT_TYPE_USER_COMMENT, Backendless.UserService.CurrentUser());
 
         final IDataStore<FINComment> commentsStore = Backendless.Data.of(FINComment.class);
         commentsStore.save(backendlessComment, new AsyncCallback<FINComment>() {

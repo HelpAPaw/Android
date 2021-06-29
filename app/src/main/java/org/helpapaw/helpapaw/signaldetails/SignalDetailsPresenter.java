@@ -190,7 +190,7 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
                 setProgressIndicator(true);
                 getView().scrollToBottom();
                 getView().clearSendCommentView();
-                saveComment(comment);
+                saveComment(comment, photoUri);
             } else {
                 getView().showCommentErrorMessage();
             }
@@ -303,10 +303,11 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
     }
 
     private void saveCommentPhoto(final String photoUri, final Comment comment) {
-        photoRepository.saveCommentPhoto(photoUri, comment.getObjectId(), new PhotoRepository.SavePhotoCallback() {
+        photoRepository.saveCommentPhoto(comment.getObjectId(), photoUri, comment.getObjectId(), new PhotoRepository.SavePhotoCallback() {
             @Override
             public void onPhotoSaved(String photoUrl) {
                 comment.setPhotoUrl(photoUrl);
+                commentRepository.addPhotoToComment(comment.getObjectId(), photoUrl);
             }
 
             @Override
@@ -317,9 +318,9 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
         });
     }
 
-    private void saveComment(String comment) {
+    private void saveComment(String comment, String photoUri) {
         FirebaseCrashlytics.getInstance().log("Initiate save new comment for signal" + signal.getId());
-        commentRepository.saveComment(comment, signal, commentList, new CommentRepository.SaveCommentCallback() {
+        commentRepository.saveComment(comment, signal, commentList, photoUri, new CommentRepository.SaveCommentCallback() {
             @Override
             public void onCommentSaved(Comment comment) {
                 if (!isViewAvailable()) return;

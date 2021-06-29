@@ -13,6 +13,7 @@ public class FINComment {
     private String created;
     private String type;
     private BackendlessUser author;
+    private String photo;
 
     public FINComment() {
     }
@@ -40,6 +41,10 @@ public class FINComment {
         return author;
     }
 
+    public String getPhoto() {
+        return photo;
+    }
+
     public void setObjectId(String objectId) {
         this.objectId = objectId;
     }
@@ -54,6 +59,10 @@ public class FINComment {
 
     public void setAuthor(BackendlessUser author) {
         this.author = author;
+    }
+
+    public void setPhoto(String photo) {
+        this.photo = photo;
     }
 
     public String getSignalID() {
