@@ -75,7 +75,6 @@ import org.helpapaw.helpapaw.base.Presenter;
 import org.helpapaw.helpapaw.base.PresenterManager;
 import org.helpapaw.helpapaw.data.models.Signal;
 import org.helpapaw.helpapaw.data.repositories.ISettingsRepository;
-import org.helpapaw.helpapaw.data.user.UserManager;
 import org.helpapaw.helpapaw.databinding.FragmentSignalsMapBinding;
 import org.helpapaw.helpapaw.filtersignal.FilterSignalTypeDialog;
 import org.helpapaw.helpapaw.photo.UploadPhotoContract;
@@ -127,7 +126,6 @@ public class SignalsMapFragment extends BaseFragment
     FragmentSignalsMapBinding binding;
     private Menu optionsMenu;
 
-    UserManager userManager;
     private boolean mVisibilityAddSignal = false;
     private String mFocusedSignalId;
 
@@ -176,7 +174,6 @@ public class SignalsMapFragment extends BaseFragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_signals_map, container, false);
-        userManager = Injection.getUserManagerInstance();
         final Bundle mapViewSavedInstanceState = savedInstanceState != null ? savedInstanceState.getBundle(MAP_VIEW_STATE) : null;
         binding.mapSignals.onCreate(mapViewSavedInstanceState);
 
