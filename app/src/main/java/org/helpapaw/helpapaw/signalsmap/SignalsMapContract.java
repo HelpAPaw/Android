@@ -36,6 +36,8 @@ interface SignalsMapContract {
 
         void setThumbnailImage(File photoFile);
 
+        void setAuthorPhone(String phoneNumber);
+
         void clearSignalViewData();
 
         void setSignalViewProgressVisibility(boolean visibility);

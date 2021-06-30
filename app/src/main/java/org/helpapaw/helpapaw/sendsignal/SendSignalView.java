@@ -86,7 +86,6 @@ public class SendSignalView extends CardView {
         imgSignalPhoto.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
         imgSignalPhoto.setImageResource(R.drawable.ic_camera);
         editSignalDescription.setText(null);
-        editAuthorPhone.setText(null);
         setProgressVisibility(false);
         spinnerSignalType.setSelection(0);
     }

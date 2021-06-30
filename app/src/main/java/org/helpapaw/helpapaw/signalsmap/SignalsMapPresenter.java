@@ -65,6 +65,8 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View>
         if (signalsList != null && signalsList.size() > 0) {
             getView().displaySignals(signalsList, false, selectedSignalTypes);
         }
+
+        getUserPhone();
     }
 
     private void getSignal(String signalId) {
@@ -370,6 +372,32 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View>
 
     @Override
     public void onLoginAction() {
+    }
+
+    private void getUserPhone() {
+        userManager.isLoggedIn(new UserManager.LoginCallback() {
+            @Override
+            public void onLoginSuccess(String userId) {
+                // Prefill author phone field with current user's phone (if available)
+                userManager.getUserPhone(new UserManager.GetUserPropertyCallback() {
+                    @Override
+                    public void onSuccess(Object value) {
+                        if (!isViewAvailable()) return;
+                        getView().setAuthorPhone((String)value);
+                    }
+
+                    @Override
+                    public void onFailure(String message) {
+                        // Do nothing
+                    }
+                });
+            }
+
+            @Override
+            public void onLoginFailure(String message) {
+                // Do nothing
+            }
+        });
     }
 
     private boolean isViewAvailable() {
