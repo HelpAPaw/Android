@@ -26,8 +26,8 @@ public class BackendlessPhotoRepository implements PhotoRepository {
     private final static int PHOTO_QUALITY = 60;
 
     @Override
-    public void savePhoto(String photoUri, String photoName, final SavePhotoCallback callback) {
-        Bitmap photo = ImageUtils.getInstance().getRotatedBitmap(new File(photoUri));
+    public void savePhoto(File photoFile, String photoName, final SavePhotoCallback callback) {
+        Bitmap photo = ImageUtils.getInstance().getRotatedBitmap(photoFile);
         Backendless.Files.Android.upload(photo,
                 Bitmap.CompressFormat.JPEG, PHOTO_QUALITY, photoName + PHOTO_EXTENSION,
                 PHOTOS_DIRECTORY, true, new AsyncCallback<BackendlessFile>() {

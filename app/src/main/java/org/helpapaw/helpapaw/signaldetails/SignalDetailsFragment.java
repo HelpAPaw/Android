@@ -52,7 +52,7 @@ public class SignalDetailsFragment extends BaseFragment
 
     SignalDetailsPresenter signalDetailsPresenter;
     SignalDetailsContract.UserActionsListener actionsListener;
-    UploadPhotoContract.UserActionsListener uploadPhotoActionsListeners;
+    UploadPhotoContract.UserActionsListener uploadPhotoActionsListener;
 
     FragmentSignalDetailsBinding binding;
 
@@ -83,7 +83,7 @@ public class SignalDetailsFragment extends BaseFragment
         }
 
         actionsListener = signalDetailsPresenter;
-        uploadPhotoActionsListeners = signalDetailsPresenter;
+        uploadPhotoActionsListener = signalDetailsPresenter;
 
         setHasOptionsMenu(true);
         mSignal = null;
@@ -357,20 +357,20 @@ public class SignalDetailsFragment extends BaseFragment
 
         if (requestCode == REQUEST_CAMERA) {
             if (resultCode == Activity.RESULT_OK) {
-                Uri takenPhotoUri = ImageUtils.getInstance().getPhotoFileUri(getContext(), IMAGE_FILENAME);
-                uploadPhotoActionsListeners.onSignalPhotoSelected(takenPhotoUri.getPath());
+                // null because the location where the camera saves the photo is kept in the presenter
+                uploadPhotoActionsListener.onSignalPhotoSelected(null);
             }
         }
         else if (requestCode == REQUEST_GALLERY && resultCode == Activity.RESULT_OK && data != null && data.getData() != null) {
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                saveImageFromURI(signalDetailsPresenter, data.getData());
+                saveImageFromUri(uploadPhotoActionsListener, data.getData());
             }
 
             else {
-                File photoFile = ImageUtils.getInstance().getFromMediaUri(getContext(), getContext().getContentResolver(), data.getData());
+                File photoFile = ImageUtils.getInstance().getFileFromMediaUri(getContext(), getContext().getContentResolver(), data.getData());
                 if (photoFile != null) {
-                    uploadPhotoActionsListeners.onSignalPhotoSelected(Uri.fromFile(photoFile).getPath());
+                    uploadPhotoActionsListener.onSignalPhotoSelected(photoFile);
                 }
             }
         }

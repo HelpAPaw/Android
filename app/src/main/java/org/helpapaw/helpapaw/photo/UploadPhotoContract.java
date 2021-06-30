@@ -1,7 +1,6 @@
 package org.helpapaw.helpapaw.photo;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -12,17 +11,16 @@ import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
 
 import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
+import org.helpapaw.helpapaw.base.PawApplication;
 import org.helpapaw.helpapaw.sendsignal.SendPhotoBottomSheet;
 import org.helpapaw.helpapaw.utils.images.ImageUtils;
 
 import java.io.File;
 import java.io.FileDescriptor;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
 
 /**
  * Created by milen on 05/03/18.
@@ -35,7 +33,6 @@ public interface UploadPhotoContract {
         int REQUEST_CAMERA = 2;
         int REQUEST_GALLERY = 3;
         int READ_WRITE_EXTERNAL_STORAGE_FOR_GALLERY = 5;
-        String IMAGE_FILENAME = "NewSignalPhoto.jpg";
 
         default void showSendPhotoBottomSheet(UserActionsListener actionsListener) {
             SendPhotoBottomSheet sendPhotoBottomSheet = new SendPhotoBottomSheet();
@@ -52,14 +49,21 @@ public interface UploadPhotoContract {
             sendPhotoBottomSheet.show(getFragmentManager(), SendPhotoBottomSheet.TAG);
         }
 
-        default void openCamera() {
+        default File openCamera() {
             Context context = getFragment().getContext();
 
             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             if (intent.resolveActivity(context.getPackageManager()) != null) {
-                intent.putExtra(MediaStore.EXTRA_OUTPUT, ImageUtils.getInstance().getPhotoFileUri(context, IMAGE_FILENAME));
+                File photoFile = ImageUtils.getInstance().createPhotoFile(PawApplication.getContext());
+                Uri photoUri = FileProvider.getUriForFile(PawApplication.getContext(),
+                        "org.helpapaw.helpapaw.fileprovider",
+                        photoFile);
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
                 getFragment().startActivityForResult(intent, REQUEST_CAMERA);
+                return photoFile;
             }
+
+            return null;
         }
 
         default void openGallery() {
@@ -78,21 +82,23 @@ public interface UploadPhotoContract {
             }
         }
 
-        default void saveImageFromURI(UserActionsListener actionsListener, Uri photoUri) {
-            Context context = getFragment().getContext();
-            Activity activity = getFragment().getActivity();
+        default void saveImageFromUri(UserActionsListener actionsListener, Uri photoUri) {
+            Context context = getFragment().getActivity();
 
             // This segment works once the permission is handled
             try {
                 String path;
-                ParcelFileDescriptor parcelFileDesc = activity.getContentResolver().openFileDescriptor(photoUri, "r");
+                ParcelFileDescriptor parcelFileDesc = context.getContentResolver().openFileDescriptor(photoUri, "r");
                 FileDescriptor fileDesc = parcelFileDesc.getFileDescriptor();
                 Bitmap photo = BitmapFactory.decodeFileDescriptor(fileDesc);
+
+                int rotation = ImageUtils.getInstance().getRotationFromMediaUri(context, photoUri);
+                photo = ImageUtils.getInstance().getRotatedBitmap(photo, rotation);
                 path = MediaStore.Images.Media.insertImage(context.getContentResolver(), photo, "temp", null);
-                File photoFile = ImageUtils.getInstance().getFromMediaUri(context, context.getContentResolver(), Uri.parse(path));
+                File photoFile = ImageUtils.getInstance().getFileFromMediaUri(context, context.getContentResolver(), Uri.parse(path));
 
                 if (photoFile != null) {
-                    actionsListener.onSignalPhotoSelected(Uri.fromFile(photoFile).getPath());
+                    actionsListener.onSignalPhotoSelected(photoFile);
                 }
 
                 parcelFileDesc.close();
@@ -113,6 +119,6 @@ public interface UploadPhotoContract {
 
         void onGalleryOptionSelected();
 
-        void onSignalPhotoSelected(String photoUri);
+        void onSignalPhotoSelected(File photoFile);
     }
 }

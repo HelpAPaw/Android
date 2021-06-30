@@ -1,11 +1,13 @@
 package org.helpapaw.helpapaw.data.repositories;
 
+import java.io.File;
+
 /**
  * Created by iliyan on 8/1/16
  */
 public interface PhotoRepository {
 
-    void savePhoto(String photoUri, String photoName, SavePhotoCallback callback);
+    void savePhoto(File photoFile, String photoName, SavePhotoCallback callback);
 
     String getPhotoUrl(String signalId);
 

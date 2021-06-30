@@ -18,7 +18,6 @@ import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.location.Location;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -792,21 +791,20 @@ public class SignalsMapFragment extends BaseFragment
 
         if (requestCode == REQUEST_CAMERA) {
             if (resultCode == Activity.RESULT_OK) {
-                Uri takenPhotoUri = ImageUtils.getInstance().getPhotoFileUri(getContext(), IMAGE_FILENAME);
-                uploadPhotoActionsListener.onSignalPhotoSelected(takenPhotoUri.getPath());
+                // null because the location where the camera saves the photo is kept in the presenter
+                uploadPhotoActionsListener.onSignalPhotoSelected(null);
             }
         }
         else if (requestCode == REQUEST_GALLERY && resultCode == Activity.RESULT_OK && data != null && data.getData() != null) {
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                saveImageFromURI(uploadPhotoActionsListener, data.getData());
+                saveImageFromUri(uploadPhotoActionsListener, data.getData());
             }
 
             else {
-                // DRY!!
-                File photoFile = ImageUtils.getInstance().getFromMediaUri(getContext(), getContext().getContentResolver(), data.getData());
+                File photoFile = ImageUtils.getInstance().getFileFromMediaUri(getContext(), getContext().getContentResolver(), data.getData());
                 if (photoFile != null) {
-                    uploadPhotoActionsListener.onSignalPhotoSelected(Uri.fromFile(photoFile).getPath());
+                    uploadPhotoActionsListener.onSignalPhotoSelected(photoFile);
                 }
             }
 
@@ -830,9 +828,9 @@ public class SignalsMapFragment extends BaseFragment
     }
 
     @Override
-    public void setThumbnailImage(String photoUri) {
+    public void setThumbnailImage(File photoFile) {
         Resources res = getResources();
-        RoundedBitmapDrawable drawable = RoundedBitmapDrawableFactory.create(res, ImageUtils.getInstance().getRotatedBitmap(new File(photoUri)));
+        RoundedBitmapDrawable drawable = RoundedBitmapDrawableFactory.create(res, ImageUtils.getInstance().getRotatedBitmap(photoFile));
         drawable.setCornerRadius(10);
         binding.viewSendSignal.setSignalPhoto(drawable);
     }

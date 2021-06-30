@@ -14,6 +14,7 @@ import org.helpapaw.helpapaw.photo.UploadPhotoContract;
 import org.helpapaw.helpapaw.utils.Injection;
 import org.helpapaw.helpapaw.utils.Utils;
 
+import java.io.File;
 import java.util.List;
 
 /**
@@ -25,6 +26,7 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
     private boolean showProgressBar;
     private List<Comment> commentList;
     private Signal signal;
+    private File photoFile;
 
     private CommentRepository commentRepository;
     private PhotoRepository photoRepository;
@@ -225,8 +227,8 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
 
     @Override
     public void onCameraOptionSelected() {
-        if (getView() instanceof UploadPhotoContract.View){
-            ((UploadPhotoContract.View) getView()).openCamera();
+        if (getView() instanceof UploadPhotoContract.View) {
+            photoFile = ((UploadPhotoContract.View) getView()).openCamera();
         }
     }
 
@@ -238,12 +240,15 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
     }
 
     @Override
-    public void onSignalPhotoSelected(String photoUri) {
-        savePhoto(photoUri, signal);
+    public void onSignalPhotoSelected(File photoFile) {
+        if (photoFile != null) {
+            this.photoFile = photoFile;
+        }
+        savePhoto(this.photoFile, signal);
     }
 
-    private void savePhoto(final String photoUri, final Signal signal) {
-        photoRepository.savePhoto(photoUri, signal.getId(), new PhotoRepository.SavePhotoCallback() {
+    private void savePhoto(final File photoFile, final Signal signal) {
+        photoRepository.savePhoto(photoFile, signal.getId(), new PhotoRepository.SavePhotoCallback() {
             @Override
             public void onPhotoSaved(String photoUrl) {
                 signal.setPhotoUrl(photoUrl);

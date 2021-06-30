@@ -1,5 +1,6 @@
 package org.helpapaw.helpapaw.signalsmap;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -36,7 +37,7 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View>
     private double currentMapLatitude;
     private double currentMapLongitude;
 
-    private String photoUri;
+    private File photoFile;
     private boolean sendSignalViewVisibility;
     private boolean filterSignalViewVisibility;
     private List<Signal> signalsList;
@@ -55,8 +56,8 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View>
     public void onInitSignalsMap(String focusedSignalId) {
         getView().setAddSignalViewVisibility(sendSignalViewVisibility);
         getView().setFilterSignalViewVisibility(filterSignalViewVisibility);
-        if (!isEmpty(photoUri)) {
-            getView().setThumbnailImage(photoUri);
+        if (photoFile != null) {
+            getView().setThumbnailImage(photoFile);
         }
         if (focusedSignalId != null) {
             getSignal(focusedSignalId);
@@ -198,8 +199,8 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View>
             @Override
             public void onSignalSaved(Signal signal) {
                 if (!isViewAvailable()) return;
-                if (!isEmpty(photoUri)) {
-                    savePhoto(photoUri, signal);
+                if (photoFile != null) {
+                    savePhoto(photoFile, signal);
                 } else {
                     signalsList.add(signal);
 
@@ -217,8 +218,8 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View>
         });
     }
 
-    private void savePhoto(final String photoUri, final Signal signal) {
-        photoRepository.savePhoto(photoUri, signal.getId(), new PhotoRepository.SavePhotoCallback() {
+    private void savePhoto(final File photoFile, final Signal signal) {
+        photoRepository.savePhoto(photoFile, signal.getId(), new PhotoRepository.SavePhotoCallback() {
             @Override
             public void onPhotoSaved(String photoUrl) {
                 if (!isViewAvailable()) return;
@@ -249,38 +250,44 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View>
         }
     }
 
+    private void openCamera() {
+        if (getView() instanceof UploadPhotoContract.View) {
+            photoFile = ((UploadPhotoContract.View)getView()).openCamera();
+        }
+    }
+
     @Override
     public void onCameraOptionSelected() {
+        openCamera();
+    }
+
+    @Override
+    public void onStoragePermissionForCameraGranted() {
+        openCamera();
+    }
+
+    private void openGallery() {
         if (getView() instanceof UploadPhotoContract.View) {
-            ((UploadPhotoContract.View)getView()).openCamera();
+            ((UploadPhotoContract.View)getView()).openGallery();
         }
     }
 
     @Override
     public void onGalleryOptionSelected() {
-        if (getView() instanceof UploadPhotoContract.View) {
-            ((UploadPhotoContract.View)getView()).openGallery();
-        }
-    }
-
-    @Override
-    public void onSignalPhotoSelected(String photoUri) {
-        this.photoUri = photoUri;
-        getView().setThumbnailImage(photoUri);
-    }
-
-    @Override
-    public void onStoragePermissionForCameraGranted() {
-        if (getView() instanceof UploadPhotoContract.View) {
-            ((UploadPhotoContract.View)getView()).openCamera();
-        }
+        openGallery();
     }
 
     @Override
     public void onStoragePermissionForGalleryGranted() {
-        if (getView() instanceof UploadPhotoContract.View) {
-            ((UploadPhotoContract.View)getView()).openGallery();
+        openGallery();
+    }
+
+    @Override
+    public void onSignalPhotoSelected(File photoFile) {
+        if (photoFile != null) {
+            this.photoFile = photoFile;
         }
+        getView().setThumbnailImage(this.photoFile);
     }
 
     @Override
@@ -371,7 +378,7 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View>
 
     private void clearSignalViewData() {
         getView().clearSignalViewData();
-        photoUri = null;
+        photoFile = null;
     }
 
     private void setSendSignalViewVisibility(boolean visibility) {
