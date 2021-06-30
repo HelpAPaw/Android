@@ -22,7 +22,7 @@ public class SignalPhotoPresenter extends Presenter<SignalPhotoContract.View> im
     @Override
     public void onInitPhotoScreen(Signal signal) {
         if (signal != null) {
-            signal.setPhotoUrl(photoRepository.getPhotoUrl(signal.getId()));
+            signal.setPhotoUrl(photoRepository.getSignalPhotoUrl(signal.getId()));
             getView().showSignalPhoto(signal);
         }
     }

@@ -29,6 +29,7 @@ import static org.helpapaw.helpapaw.data.models.Comment.COMMENT_TYPE_USER_COMMEN
  * Created by iliyan on 8/4/16
  */
 public class BackendlessCommentRepository implements CommentRepository {
+    private static final String TAG = BackendlessCommentRepository.class.getSimpleName();
     private static final String DATE_TIME_FORMAT = "MM/dd/yyyy hh:mm:ss";
     private static final String ID_FIELD = "objectId";
     private static final String NAME_FIELD = "name";
@@ -45,6 +46,35 @@ public class BackendlessCommentRepository implements CommentRepository {
         queryBuilder.setSortBy(Collections.singletonList(CREATED_FIELD));
 
         getAllComments(callback, queryBuilder, 0);
+    }
+
+    @Override
+    public void addPhotoToComment(final String commentId, final String photoUri) {
+
+        final IDataStore<FINComment> commentsStore = Backendless.Data.of(FINComment.class);
+        commentsStore.findById(commentId, new AsyncCallback<FINComment>() {
+            @Override
+            public void handleResponse(FINComment response) {
+                response.setPhoto(photoUri);
+
+                final IDataStore<FINComment> commentsStore = Backendless.Data.of(FINComment.class);
+                commentsStore.save(response, new AsyncCallback<FINComment>() {
+                    public void handleResponse(final FINComment newComment) {
+                    }
+
+                    public void handleFault(BackendlessFault fault) {
+                        Log.d(TAG, fault.getMessage());
+                    }
+                });
+            }
+
+            @Override
+            public void handleFault(BackendlessFault fault) {
+                Log.d(TAG, fault.getMessage());
+            }
+        });
+
+
     }
 
     private void getAllComments(final LoadCommentsCallback callback, final DataQueryBuilder queryBuilder, final int offset) {
@@ -81,7 +111,9 @@ public class BackendlessCommentRepository implements CommentRepository {
                                 Log.d(BackendlessCommentRepository.class.getName(), "Failed to parse comment date.");
                             }
 
-                            Comment comment = new Comment(currentComment.getObjectId(), authorId, authorName, dateCreated, currentComment.getText(), currentComment.getType());
+                            Comment comment = new Comment(
+                                    currentComment.getObjectId(), authorId, authorName, currentComment.getPhoto(),
+                                    dateCreated, currentComment.getText(), currentComment.getType());
                             comments.add(comment);
                         }
 
@@ -112,9 +144,11 @@ public class BackendlessCommentRepository implements CommentRepository {
     }
 
     @Override
-    public void saveComment(String commentText, final Signal signal, final List<Comment> currentComments, final SaveCommentCallback callback) {
+    public void saveComment(String commentText, final Signal signal, final List<Comment> currentComments,
+                            final String photoUri, final SaveCommentCallback callback) {
 
-        FINComment backendlessComment = new FINComment(commentText, signal.getId(), COMMENT_TYPE_USER_COMMENT, Backendless.UserService.CurrentUser());
+        FINComment backendlessComment = new FINComment(commentText, signal.getId(),
+                COMMENT_TYPE_USER_COMMENT, Backendless.UserService.CurrentUser());
 
         final IDataStore<FINComment> commentsStore = Backendless.Data.of(FINComment.class);
         commentsStore.save(backendlessComment, new AsyncCallback<FINComment>() {
@@ -146,8 +180,12 @@ public class BackendlessCommentRepository implements CommentRepository {
                                 Log.d(BackendlessCommentRepository.class.getName(), "Failed to parse comment date.");
                             }
 
-                            Injection.getPushNotificationsRepositoryInstance().pushNewCommentNotification(signal, newComment.getText(), currentComments);
-                            Comment comment = new Comment(newComment.getObjectId(), authorId, authorName, dateCreated, newComment.getText(), COMMENT_TYPE_USER_COMMENT);
+                            Injection.getPushNotificationsRepositoryInstance().pushNewCommentNotification(
+                                    signal, newComment.getText(), currentComments);
+
+                            Comment comment = new Comment(
+                                    newComment.getObjectId(), authorId, authorName, newComment.getPhoto(),
+                                    dateCreated, newComment.getText(), COMMENT_TYPE_USER_COMMENT);
                             callback.onCommentSaved(comment);
                         }
 

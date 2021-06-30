@@ -3,6 +3,7 @@ package org.helpapaw.helpapaw.signaldetails;
 import org.helpapaw.helpapaw.data.models.Comment;
 import org.helpapaw.helpapaw.data.models.Signal;
 
+import java.io.File;
 import java.util.List;
 
 /**
@@ -55,6 +56,10 @@ public interface SignalDetailsContract {
         void onStatusChangeRequestFinished(boolean success, int newStatus);
 
         void openSignalPhotoScreen();
+
+        void setThumbnailImage(String photoUri);
+
+        void removeThumbnailImage();
     }
 
     interface UserActionsListener {
@@ -62,6 +67,8 @@ public interface SignalDetailsContract {
         void onInitDetailsScreen(Signal signal);
 
         void loadCommentsForSignal(String signalId);
+
+        void onChooseCommentPhotoIconClicked();
 
         void onTryToAddComment();
 
@@ -78,5 +85,7 @@ public interface SignalDetailsContract {
         void onSignalPhotoClicked();
 
         void onUploadSignalPhotoClicked();
+
+        void onPhotoSelected(File photoFile, boolean inComment);
     }
 }

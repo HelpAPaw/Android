@@ -7,11 +7,13 @@ import java.io.File;
  */
 public interface PhotoRepository {
 
-    void savePhoto(File photoFile, String photoName, SavePhotoCallback callback);
+    void saveSignalPhoto(File photoFile, String photoName, SavePhotoCallback callback);
 
-    String getPhotoUrl(String signalId);
+    void saveCommentPhoto(File photoFile, String photoName, SavePhotoCallback callback);
 
-    void photoExists(String signalId, PhotoExistsCallback callback);
+    String getSignalPhotoUrl(String signalId);
+
+    void signalPhotoExists(String signalId, PhotoExistsCallback callback);
 
 
     interface SavePhotoCallback {

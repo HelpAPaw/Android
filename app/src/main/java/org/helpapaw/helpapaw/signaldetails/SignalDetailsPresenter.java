@@ -51,7 +51,7 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
             FirebaseCrashlytics.getInstance().log("Show signal details for " + signal.getId());
 
             this.signal = signal;
-            signal.setPhotoUrl(photoRepository.getPhotoUrl(signal.getId()));
+            signal.setPhotoUrl(photoRepository.getSignalPhotoUrl(signal.getId()));
 
             getView().showSignalDetails(signal);
             showUploadButtonIfNeeded(signal);
@@ -73,7 +73,7 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
 
     private void showUploadButtonIfNeeded(Signal signal) {
         if (userManager.getLoggedUserId().equals(signal.getAuthorId())) {
-            photoRepository.photoExists(signal.getId(), new PhotoRepository.PhotoExistsCallback() {
+            photoRepository.signalPhotoExists(signal.getId(), new PhotoRepository.PhotoExistsCallback() {
                 @Override
                 public void onPhotoExistsSuccess(boolean photoExists) {
                     if (!isViewAvailable()) return;
@@ -125,6 +125,24 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
     }
 
     @Override
+    public void onChooseCommentPhotoIconClicked() {
+        getView().hideKeyboard();
+        if (getView() instanceof UploadPhotoContract.View) {
+            ((UploadPhotoContract.View)getView()).showSendPhotoBottomSheet(this);
+        }
+    }
+
+    @Override
+    public void onPhotoSelected(File photoFile, boolean inComment) {
+        if (photoFile != null) {
+            this.photoFile = photoFile;
+        }
+        if (inComment) {
+            getView().setThumbnailImage(this.photoFile.getPath());
+        }
+    }
+
+    @Override
     public void onTryToAddComment() {
         if (Utils.getInstance().hasNetworkConnection()) {
             userManager.isLoggedIn(new UserManager.LoginCallback() {
@@ -150,7 +168,7 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
                 setProgressIndicator(true);
                 getView().scrollToBottom();
                 getView().clearSendCommentView();
-                saveComment(comment);
+                saveComment(comment, photoFile);
             } else {
                 getView().showCommentErrorMessage();
             }
@@ -244,11 +262,11 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
         if (photoFile != null) {
             this.photoFile = photoFile;
         }
-        savePhoto(this.photoFile, signal);
+        saveSignalPhoto(this.photoFile, signal);
     }
 
-    private void savePhoto(final File photoFile, final Signal signal) {
-        photoRepository.savePhoto(photoFile, signal.getId(), new PhotoRepository.SavePhotoCallback() {
+    private void saveSignalPhoto(final File photoFile, final Signal signal) {
+        photoRepository.saveSignalPhoto(photoFile, signal.getId(), new PhotoRepository.SavePhotoCallback() {
             @Override
             public void onPhotoSaved(String photoUrl) {
                 signal.setPhotoUrl(photoUrl);
@@ -265,16 +283,40 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
         });
     }
 
-    private void saveComment(String comment) {
+    private void saveCommentPhoto(final File photoFile, final Comment comment) {
+        photoRepository.saveCommentPhoto(photoFile, comment.getObjectId(), new PhotoRepository.SavePhotoCallback() {
+            @Override
+            public void onPhotoSaved(String photoUrl) {
+                commentRepository.addPhotoToComment(comment.getObjectId(), photoUrl);
+                //todo add a reload comment in the view
+            }
+
+            @Override
+            public void onPhotoFailure(String message) {
+                if (!isViewAvailable()) return;
+                getView().showMessage(message);
+            }
+        });
+    }
+
+    private void saveComment(String comment, File photoFile) {
+        String photoUrl = "";
+        if (photoFile != null) {
+            photoUrl = photoFile.getPath();
+        }
         FirebaseCrashlytics.getInstance().log("Initiate save new comment for signal" + signal.getId());
-        commentRepository.saveComment(comment, signal, commentList, new CommentRepository.SaveCommentCallback() {
+        commentRepository.saveComment(comment, signal, commentList, photoUrl, new CommentRepository.SaveCommentCallback() {
             @Override
             public void onCommentSaved(Comment comment) {
                 if (!isViewAvailable()) return;
+                if (photoFile != null) {
+                    saveCommentPhoto(photoFile, comment);
+                }
                 setProgressIndicator(false);
                 commentList.add(comment);
                 getView().setNoCommentsTextVisibility(false);
                 getView().displayComments(commentList);
+                getView().removeThumbnailImage();
             }
 
             @Override

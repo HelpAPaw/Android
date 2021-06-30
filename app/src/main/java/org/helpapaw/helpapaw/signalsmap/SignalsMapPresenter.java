@@ -221,7 +221,7 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View>
     }
 
     private void savePhoto(final File photoFile, final Signal signal) {
-        photoRepository.savePhoto(photoFile, signal.getId(), new PhotoRepository.SavePhotoCallback() {
+        photoRepository.saveSignalPhoto(photoFile, signal.getId(), new PhotoRepository.SavePhotoCallback() {
             @Override
             public void onPhotoSaved(String photoUrl) {
                 if (!isViewAvailable()) return;
