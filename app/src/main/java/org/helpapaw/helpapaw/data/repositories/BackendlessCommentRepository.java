@@ -49,7 +49,7 @@ public class BackendlessCommentRepository implements CommentRepository {
     }
 
     @Override
-    public void addPhotoToComment(final String commentId, final String photoUri) {
+    public void addPhotoToComment(final String commentId, final String photoUri, final SaveCommentCallback callback) {
 
         final IDataStore<FINComment> commentsStore = Backendless.Data.of(FINComment.class);
         commentsStore.findById(commentId, new AsyncCallback<FINComment>() {
@@ -60,10 +60,15 @@ public class BackendlessCommentRepository implements CommentRepository {
                 final IDataStore<FINComment> commentsStore = Backendless.Data.of(FINComment.class);
                 commentsStore.save(response, new AsyncCallback<FINComment>() {
                     public void handleResponse(final FINComment newComment) {
+                        Comment comment = new Comment(
+                                newComment.getObjectId(), null, null, response.getPhoto(),
+                                null, response.getText(), COMMENT_TYPE_USER_COMMENT);
+                        callback.onCommentSaved(comment);
                     }
 
                     public void handleFault(BackendlessFault fault) {
                         Log.d(TAG, fault.getMessage());
+                        callback.onCommentFailure(fault.getMessage());
                     }
                 });
             }

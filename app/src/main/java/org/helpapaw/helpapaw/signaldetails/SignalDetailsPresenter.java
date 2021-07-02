@@ -287,8 +287,20 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
         photoRepository.saveCommentPhoto(photoFile, comment.getObjectId(), new PhotoRepository.SavePhotoCallback() {
             @Override
             public void onPhotoSaved(String photoUrl) {
-                commentRepository.addPhotoToComment(comment.getObjectId(), photoUrl);
-                //todo add a reload comment in the view
+                commentRepository.addPhotoToComment(comment.getObjectId(), photoUrl, new CommentRepository.SaveCommentCallback() {
+                    @Override
+                    public void onCommentSaved(Comment comment) {
+                        if (!isViewAvailable()) return;
+                        loadCommentsForSignal(signal.getId());
+//                        getView().clearSendCommentView();
+                    }
+
+                    @Override
+                    public void onCommentFailure(String message) {
+                        if (!isViewAvailable()) return;
+                        getView().showMessage(message);
+                    }
+                });
             }
 
             @Override
@@ -325,6 +337,7 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
                 getView().showMessage(message);
             }
         });
+        this.photoFile = null;
     }
 
     private void setSignalStatus(int status) {

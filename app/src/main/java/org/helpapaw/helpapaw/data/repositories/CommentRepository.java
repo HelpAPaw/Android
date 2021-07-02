@@ -14,7 +14,7 @@ public interface CommentRepository {
 
     void saveComment(String commentText, Signal signal, List<Comment> currentComments, String photoUrl, SaveCommentCallback callback);
 
-    void addPhotoToComment(String commentId, String photoUri);
+    void addPhotoToComment(String commentId, String photoUri, SaveCommentCallback callback);
 
     interface LoadCommentsCallback {
 
