@@ -13,15 +13,11 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 
 import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import com.google.android.material.snackbar.Snackbar;
 
-import android.os.ParcelFileDescriptor;
-import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -48,7 +44,6 @@ import org.helpapaw.helpapaw.utils.Utils;
 import org.helpapaw.helpapaw.utils.images.ImageUtils;
 
 import java.io.File;
-import java.io.FileDescriptor;
 import java.util.List;
 
 import static org.helpapaw.helpapaw.data.models.Comment.COMMENT_TYPE_STATUS_CHANGE;
@@ -406,6 +401,9 @@ public class SignalDetailsFragment extends BaseFragment
             else {
                 File photoFile = ImageUtils.getInstance().getFileFromMediaUri(getContext(), getContext().getContentResolver(), data.getData());
                 if (photoFile != null) {
+                    if (inComment) {
+                        actionsListener.onPhotoSelected(photoFile, inComment);
+                    }
                     uploadPhotoActionsListener.onSignalPhotoSelected(photoFile);
                 }
             }

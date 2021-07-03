@@ -283,47 +283,14 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
         });
     }
 
-    private void saveCommentPhoto(final File photoFile, final Comment comment) {
-        photoRepository.saveCommentPhoto(photoFile, comment.getObjectId(), new PhotoRepository.SavePhotoCallback() {
-            @Override
-            public void onPhotoSaved(String photoUrl) {
-                commentRepository.addPhotoToComment(comment.getObjectId(), photoUrl, new CommentRepository.SaveCommentCallback() {
-                    @Override
-                    public void onCommentSaved(Comment comment) {
-                        if (!isViewAvailable()) return;
-                        loadCommentsForSignal(signal.getId());
-//                        getView().clearSendCommentView();
-                    }
-
-                    @Override
-                    public void onCommentFailure(String message) {
-                        if (!isViewAvailable()) return;
-                        getView().showMessage(message);
-                    }
-                });
-            }
-
-            @Override
-            public void onPhotoFailure(String message) {
-                if (!isViewAvailable()) return;
-                getView().showMessage(message);
-            }
-        });
-    }
-
     private void saveComment(String comment, File photoFile) {
-        String photoUrl = "";
-        if (photoFile != null) {
-            photoUrl = photoFile.getPath();
-        }
         FirebaseCrashlytics.getInstance().log("Initiate save new comment for signal" + signal.getId());
-        commentRepository.saveComment(comment, signal, commentList, photoUrl, new CommentRepository.SaveCommentCallback() {
+        commentRepository.saveComment(comment, signal, commentList, photoRepository, photoFile,
+                new CommentRepository.SaveCommentCallback() {
             @Override
             public void onCommentSaved(Comment comment) {
                 if (!isViewAvailable()) return;
-                if (photoFile != null) {
-                    saveCommentPhoto(photoFile, comment);
-                }
+
                 setProgressIndicator(false);
                 commentList.add(comment);
                 getView().setNoCommentsTextVisibility(false);

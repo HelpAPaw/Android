@@ -14,6 +14,7 @@ import org.helpapaw.helpapaw.data.models.Signal;
 import org.helpapaw.helpapaw.data.models.backendless.FINComment;
 import org.helpapaw.helpapaw.utils.Injection;
 
+import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -29,7 +30,6 @@ import static org.helpapaw.helpapaw.data.models.Comment.COMMENT_TYPE_USER_COMMEN
  * Created by iliyan on 8/4/16
  */
 public class BackendlessCommentRepository implements CommentRepository {
-    private static final String TAG = BackendlessCommentRepository.class.getSimpleName();
     private static final String DATE_TIME_FORMAT = "MM/dd/yyyy hh:mm:ss";
     private static final String ID_FIELD = "objectId";
     private static final String NAME_FIELD = "name";
@@ -46,40 +46,6 @@ public class BackendlessCommentRepository implements CommentRepository {
         queryBuilder.setSortBy(Collections.singletonList(CREATED_FIELD));
 
         getAllComments(callback, queryBuilder, 0);
-    }
-
-    @Override
-    public void addPhotoToComment(final String commentId, final String photoUri, final SaveCommentCallback callback) {
-
-        final IDataStore<FINComment> commentsStore = Backendless.Data.of(FINComment.class);
-        commentsStore.findById(commentId, new AsyncCallback<FINComment>() {
-            @Override
-            public void handleResponse(FINComment response) {
-                response.setPhoto(photoUri);
-
-                final IDataStore<FINComment> commentsStore = Backendless.Data.of(FINComment.class);
-                commentsStore.save(response, new AsyncCallback<FINComment>() {
-                    public void handleResponse(final FINComment newComment) {
-                        Comment comment = new Comment(
-                                newComment.getObjectId(), null, null, response.getPhoto(),
-                                null, response.getText(), COMMENT_TYPE_USER_COMMENT);
-                        callback.onCommentSaved(comment);
-                    }
-
-                    public void handleFault(BackendlessFault fault) {
-                        Log.d(TAG, fault.getMessage());
-                        callback.onCommentFailure(fault.getMessage());
-                    }
-                });
-            }
-
-            @Override
-            public void handleFault(BackendlessFault fault) {
-                Log.d(TAG, fault.getMessage());
-            }
-        });
-
-
     }
 
     private void getAllComments(final LoadCommentsCallback callback, final DataQueryBuilder queryBuilder, final int offset) {
@@ -150,7 +116,8 @@ public class BackendlessCommentRepository implements CommentRepository {
 
     @Override
     public void saveComment(String commentText, final Signal signal, final List<Comment> currentComments,
-                            final String photoUri, final SaveCommentCallback callback) {
+                            final PhotoRepository photoRepository, final File photoFile,
+                            final SaveCommentCallback callback) {
 
         FINComment backendlessComment = new FINComment(commentText, signal.getId(),
                 COMMENT_TYPE_USER_COMMENT, Backendless.UserService.CurrentUser());
@@ -162,44 +129,75 @@ public class BackendlessCommentRepository implements CommentRepository {
                 ArrayList<BackendlessUser> userList = new ArrayList<>();
                 userList.add(Backendless.UserService.CurrentUser());
                 commentsStore.setRelation( newComment, "author", userList,
-                    new AsyncCallback<Integer>()
-                    {
-                        @Override
-                        public void handleResponse( Integer response )
+                        new AsyncCallback<Integer>()
                         {
-                            newComment.setAuthor(Backendless.UserService.CurrentUser());
-                            String authorId = null;
-                            String authorName = null;
-                            if (newComment.getAuthor() != null) {
-                                authorId = getToStringOrNull(newComment.getAuthor().getProperty(ID_FIELD));
-                                authorName = getToStringOrNull(newComment.getAuthor().getProperty(NAME_FIELD));
+                            @Override
+                            public void handleResponse( Integer response )
+                            {
+                                newComment.setAuthor(Backendless.UserService.CurrentUser());
+                                String authorId = null;
+                                String authorName = null;
+                                if (newComment.getAuthor() != null) {
+                                    authorId = getToStringOrNull(newComment.getAuthor().getProperty(ID_FIELD));
+                                    authorName = getToStringOrNull(newComment.getAuthor().getProperty(NAME_FIELD));
+                                }
+
+                                Date dateCreated = null;
+                                try {
+                                    String dateCreatedString = newComment.getCreated();
+                                    DateFormat dateFormat = new SimpleDateFormat(DATE_TIME_FORMAT, Locale.getDefault());
+                                    dateCreated = dateFormat.parse(dateCreatedString);
+                                }
+                                catch (Exception ex) {
+                                    Log.d(BackendlessCommentRepository.class.getName(), "Failed to parse comment date.");
+                                }
+
+                                Injection.getPushNotificationsRepositoryInstance().pushNewCommentNotification(
+                                        signal, newComment.getText(), currentComments);
+
+                                Comment comment = new Comment(
+                                        newComment.getObjectId(), authorId, authorName, newComment.getPhoto(),
+                                        dateCreated, newComment.getText(), COMMENT_TYPE_USER_COMMENT);
+
+                                if (photoFile != null) {
+                                    photoRepository.saveCommentPhoto(photoFile, backendlessComment.getObjectId(), new PhotoRepository.SavePhotoCallback() {
+                                        @Override
+                                        public void onPhotoSaved(String photoUrl) {
+                                            newComment.setPhoto(photoUrl);
+                                            comment.setPhotoUrl(photoUrl);
+                                            commentsStore.save(newComment, new AsyncCallback<FINComment>()
+                                                    {
+                                                        @Override
+                                                        public void handleResponse(final FINComment newComment )
+                                                        {
+                                                            callback.onCommentSaved(comment);
+                                                        }
+
+                                                        @Override
+                                                        public void handleFault( BackendlessFault fault )
+                                                        {
+                                                            callback.onCommentFailure(fault.getMessage());
+                                                        }
+                                                    } );
+                                        }
+
+                                        @Override
+                                        public void onPhotoFailure(String message) {
+                                            callback.onCommentFailure(message);
+                                        }
+                                    });
+                                }
+                                else {
+                                    callback.onCommentSaved(comment);
+                                }
                             }
 
-                            Date dateCreated = null;
-                            try {
-                                String dateCreatedString = newComment.getCreated();
-                                DateFormat dateFormat = new SimpleDateFormat(DATE_TIME_FORMAT, Locale.getDefault());
-                                dateCreated = dateFormat.parse(dateCreatedString);
+                            @Override
+                            public void handleFault( BackendlessFault fault )
+                            {
+                                callback.onCommentFailure(fault.getMessage());
                             }
-                            catch (Exception ex) {
-                                Log.d(BackendlessCommentRepository.class.getName(), "Failed to parse comment date.");
-                            }
-
-                            Injection.getPushNotificationsRepositoryInstance().pushNewCommentNotification(
-                                    signal, newComment.getText(), currentComments);
-
-                            Comment comment = new Comment(
-                                    newComment.getObjectId(), authorId, authorName, newComment.getPhoto(),
-                                    dateCreated, newComment.getText(), COMMENT_TYPE_USER_COMMENT);
-                            callback.onCommentSaved(comment);
-                        }
-
-                        @Override
-                        public void handleFault( BackendlessFault fault )
-                        {
-                            callback.onCommentFailure(fault.getMessage());
-                        }
-                    } );
+                        } );
             }
 
             public void handleFault(BackendlessFault fault) {

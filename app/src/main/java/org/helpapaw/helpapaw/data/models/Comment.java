@@ -67,6 +67,10 @@ public class Comment {
         return photoUrl;
     }
 
+    public void setPhotoUrl(String photoUrl) {
+        this.photoUrl = photoUrl;
+    }
+
     public static int getNewStatusFromStatusChangeComment(Comment comment) {
         int newStatus = 0;
         try {
