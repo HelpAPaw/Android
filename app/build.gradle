@@ -4,13 +4,13 @@ apply plugin: 'com.google.firebase.crashlytics'
 
 android {
     compileSdkVersion 29
-    buildToolsVersion '30.0.2'
+    buildToolsVersion '30.0.3'
     defaultConfig {
         applicationId "org.helpapaw.helpapaw"
         minSdkVersion 19
         targetSdkVersion 29
-        versionCode 72
-        versionName "4.1.0"
+        versionCode 73
+        versionName "4.1.1"
         vectorDrawables.useSupportLibrary = true
 
         multiDexEnabled true
