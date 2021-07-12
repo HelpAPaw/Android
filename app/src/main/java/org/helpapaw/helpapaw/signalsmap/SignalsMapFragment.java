@@ -423,7 +423,10 @@ public class SignalsMapFragment extends BaseFragment
             signalsGoogleMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
                 @Override
                 public void onInfoWindowClick(Marker marker) {
-                    actionsListener.onSignalInfoWindowClicked(mSignalMarkers.get(marker.getId()));
+                    Signal signal = mSignalMarkers.get(marker.getId());
+                    if (signal != null) {
+                        actionsListener.onSignalInfoWindowClicked(signal);
+                    }
                 }
             });
 
