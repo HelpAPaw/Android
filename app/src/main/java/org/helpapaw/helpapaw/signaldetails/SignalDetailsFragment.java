@@ -100,7 +100,7 @@ public class SignalDetailsFragment extends BaseFragment
 
         actionsListener.onInitDetailsScreen(mSignal);
 
-        binding.imgCommentPhoto.setOnClickListener(getOnCommentPhotoClickListener());
+        binding.imgAddCommentPhoto.setOnClickListener(getOnAddCommentPhotoClickListener());
         binding.btnAddComment.setOnClickListener(getOnAddCommentClickListener());
         binding.editComment.setOnFocusChangeListener(getOnCommentEditTextFocusChangeListener());
         binding.imgCall.setOnClickListener(getOnCallButtonClickListener());
@@ -223,6 +223,9 @@ public class SignalDetailsFragment extends BaseFragment
                 txtCommentAuthor.setText(comment.getAuthorName());
 
                 commentText = comment.getText();
+
+                ImageView imageView = inflatedCommentView.findViewById(R.id.img_comment_photo);
+                imageView.setOnClickListener(v -> actionsListener.onCommentPhotoClicked(comment.getPhotoUrl()));
             }
 
             if (comment.getPhotoUrl() != null) {
@@ -362,8 +365,13 @@ public class SignalDetailsFragment extends BaseFragment
 
     @Override
     public void openSignalPhotoScreen() {
-        Intent intent = new Intent(getContext(), SignalPhotoActivity.class);
-        intent.putExtra(SignalDetailsActivity.SIGNAL_KEY, mSignal);
+        Intent intent = SignalPhotoActivity.newIntent(getContext(), mSignal.getPhotoUrl());
+        startActivity(intent);
+    }
+
+    @Override
+    public void openCommentPhotoScreen(String photoUrl) {
+        Intent intent = SignalPhotoActivity.newIntent(getContext(), photoUrl);
         startActivity(intent);
     }
 
@@ -409,8 +417,7 @@ public class SignalDetailsFragment extends BaseFragment
                     uploadPhotoActionsListener.onGalleryOptionSelected();
                 } else {
                     // Permission Denied
-                    Toast.makeText(getContext(), R.string.txt_storage_permissions_for_gallery, Toast.LENGTH_SHORT)
-                            .show();
+                    Toast.makeText(getContext(), R.string.txt_storage_permissions_for_gallery, Toast.LENGTH_SHORT).show();
                 }
                 break;
             default:
@@ -423,14 +430,14 @@ public class SignalDetailsFragment extends BaseFragment
         Resources res = getResources();
         RoundedBitmapDrawable drawable = RoundedBitmapDrawableFactory.create(res, ImageUtils.getInstance().getRotatedBitmap(new File(photoUri)));
         drawable.setCornerRadius(10);
-        binding.imgCommentPhoto.setScaleType(ImageView.ScaleType.FIT_XY);
-        binding.imgCommentPhoto.setImageDrawable(drawable);
+        binding.imgAddCommentPhoto.setScaleType(ImageView.ScaleType.FIT_XY);
+        binding.imgAddCommentPhoto.setImageDrawable(drawable);
     }
 
     private void removeThumbnailFromCommentPhotoButton() {
         int imageResource = getResources().getIdentifier("@drawable/ic_camera", "drawable", getActivity().getPackageName());
-        binding.imgCommentPhoto.setScaleType(ImageView.ScaleType.FIT_CENTER);
-        binding.imgCommentPhoto.setImageResource(imageResource);
+        binding.imgAddCommentPhoto.setScaleType(ImageView.ScaleType.FIT_CENTER);
+        binding.imgAddCommentPhoto.setImageResource(imageResource);
     }
 
     @Override
@@ -451,7 +458,7 @@ public class SignalDetailsFragment extends BaseFragment
         };
     }
 
-    public View.OnClickListener getOnCommentPhotoClickListener() {
+    public View.OnClickListener getOnAddCommentPhotoClickListener() {
         return new View.OnClickListener() {
             @Override
             public void onClick(View v) {

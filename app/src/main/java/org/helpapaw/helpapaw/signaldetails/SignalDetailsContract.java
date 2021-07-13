@@ -57,6 +57,8 @@ public interface SignalDetailsContract {
 
         void openSignalPhotoScreen();
 
+        void openCommentPhotoScreen(String photoUrl);
+
         void setThumbnailToCommentPhotoButton(String photoUri);
     }
 
@@ -81,6 +83,8 @@ public interface SignalDetailsContract {
         void onBottomReached(boolean isBottomReached);
 
         void onSignalPhotoClicked();
+
+        void onCommentPhotoClicked(String photoUrl);
 
         void onUploadSignalPhotoClicked();
     }

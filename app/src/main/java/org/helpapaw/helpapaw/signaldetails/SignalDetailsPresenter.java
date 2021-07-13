@@ -245,6 +245,11 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
     }
 
     @Override
+    public void onCommentPhotoClicked(String photoUrl) {
+        getView().openCommentPhotoScreen(photoUrl);
+    }
+
+    @Override
     public void onUploadSignalPhotoClicked() {
         if (getView() instanceof UploadPhotoContract.View){
             photoDestination = PhotoDestination.SIGNAL;
