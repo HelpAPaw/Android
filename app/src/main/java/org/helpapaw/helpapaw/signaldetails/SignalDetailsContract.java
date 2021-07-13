@@ -15,7 +15,7 @@ public interface SignalDetailsContract {
 
         void showMessage(String message);
 
-        void setProgressIndicator(boolean active);
+        void setCommentsProgressIndicator(boolean active);
 
         void hideKeyboard();
 

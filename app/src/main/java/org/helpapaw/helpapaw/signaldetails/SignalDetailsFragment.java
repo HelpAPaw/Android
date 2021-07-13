@@ -117,7 +117,7 @@ public class SignalDetailsFragment extends BaseFragment
     }
 
     @Override
-    public void setProgressIndicator(boolean active) {
+    public void setCommentsProgressIndicator(boolean active) {
         binding.progressComments.setVisibility(active ? View.VISIBLE : View.GONE);
     }
 

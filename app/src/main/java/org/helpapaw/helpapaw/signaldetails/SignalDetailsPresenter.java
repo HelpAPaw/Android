@@ -50,7 +50,7 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
 
     @Override
     public void onInitDetailsScreen(Signal signal) {
-        setProgressIndicator(showProgressBar);
+        setCommentsProgressIndicator(showProgressBar);
 
         if (signal != null) {
             FirebaseCrashlytics.getInstance().log("Show signal details for " + signal.getId());
@@ -62,7 +62,7 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
             showUploadButtonIfNeeded(signal);
 
             if (commentList != null) {
-                setProgressIndicator(false);
+                setCommentsProgressIndicator(false);
 
                 if (commentList.size() == 0) {
                     getView().setNoCommentsTextVisibility(true);
@@ -106,7 +106,7 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
                 public void onCommentsLoaded(List<Comment> comments) {
                     if (!isViewAvailable()) return;
                     commentList = comments;
-                    setProgressIndicator(false);
+                    setCommentsProgressIndicator(false);
 
                     if (commentList.size() == 0) {
                         getView().setNoCommentsTextVisibility(true);
@@ -132,11 +132,16 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
     @Override
     public void onChooseCommentPhotoIconClicked() {
         getView().hideKeyboard();
+        getView().scrollToBottom();
+        setCommentsProgressIndicator(true);
 
         if (Utils.getInstance().hasNetworkConnection()) {
             userManager.isLoggedIn(new UserManager.LoginCallback() {
                 @Override
                 public void onLoginSuccess(String userId) {
+                    if (!isViewAvailable()) return;
+                    setCommentsProgressIndicator(false);
+
                     if (getView() instanceof UploadPhotoContract.View) {
                         photoDestination = PhotoDestination.COMMENT;
                         ((UploadPhotoContract.View)getView()).showSendPhotoBottomSheet(SignalDetailsPresenter.this);
@@ -146,10 +151,12 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
                 @Override
                 public void onLoginFailure(String message) {
                     if (!isViewAvailable()) return;
+                    setCommentsProgressIndicator(false);
                     getView().showRegistrationRequiredAlert(R.string.txt_only_registered_users_can_comment);
                 }
             });
         } else {
+            setCommentsProgressIndicator(false);
             getView().showNoInternetMessage();
         }
     }
@@ -178,7 +185,7 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
             if (comment != null && comment.trim().length() > 0) {
                 getView().hideKeyboard();
                 getView().scrollToBottom();
-                setProgressIndicator(true);
+                setCommentsProgressIndicator(true);
                 saveComment(comment, photoFile);
             } else {
                 getView().showCommentErrorMessage();
@@ -308,7 +315,7 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
             public void onCommentSaved(Comment comment) {
                 if (!isViewAvailable()) return;
 
-                setProgressIndicator(false);
+                setCommentsProgressIndicator(false);
                 getView().clearSendCommentView();
                 getView().setNoCommentsTextVisibility(false);
                 commentList.add(comment);
@@ -333,8 +340,8 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
         return getView() != null && getView().isActive();
     }
 
-    private void setProgressIndicator(boolean active) {
-        getView().setProgressIndicator(active);
+    private void setCommentsProgressIndicator(boolean active) {
+        getView().setCommentsProgressIndicator(active);
         this.showProgressBar = active;
     }
 }
