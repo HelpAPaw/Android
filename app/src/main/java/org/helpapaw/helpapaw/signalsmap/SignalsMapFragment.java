@@ -926,7 +926,7 @@ public class SignalsMapFragment extends BaseFragment
                 break;
             case READ_EXTERNAL_STORAGE_FOR_CAMERA:
                 if ((grantResults.length > 0) && (grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                    actionsListener.onStoragePermissionForCameraGranted();
+                    uploadPhotoActionsListener.onCameraOptionSelected();
                 } else {
                     // Permission Denied
                     Toast.makeText(getContext(), R.string.txt_storage_permissions_for_camera, Toast.LENGTH_SHORT)
@@ -936,7 +936,7 @@ public class SignalsMapFragment extends BaseFragment
 
             case READ_WRITE_EXTERNAL_STORAGE_FOR_GALLERY:
                 if ((grantResults.length > 0) && (grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                    actionsListener.onStoragePermissionForGalleryGranted();
+                    uploadPhotoActionsListener.onGalleryOptionSelected();
                 } else {
                     // Permission Denied
                     Toast.makeText(getContext(), R.string.txt_storage_permissions_for_gallery, Toast.LENGTH_SHORT)

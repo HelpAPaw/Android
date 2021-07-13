@@ -1,15 +1,21 @@
 package org.helpapaw.helpapaw.signaldetails;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.graphics.drawable.RoundedBitmapDrawable;
+import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 
+import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -24,6 +30,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.helpapaw.helpapaw.R;
 import org.helpapaw.helpapaw.authentication.AuthenticationActivity;
@@ -93,6 +100,7 @@ public class SignalDetailsFragment extends BaseFragment
 
         actionsListener.onInitDetailsScreen(mSignal);
 
+        binding.imgAddCommentPhoto.setOnClickListener(getOnAddCommentPhotoClickListener());
         binding.btnAddComment.setOnClickListener(getOnAddCommentClickListener());
         binding.editComment.setOnFocusChangeListener(getOnCommentEditTextFocusChangeListener());
         binding.imgCall.setOnClickListener(getOnCallButtonClickListener());
@@ -113,7 +121,7 @@ public class SignalDetailsFragment extends BaseFragment
     }
 
     @Override
-    public void setProgressIndicator(boolean active) {
+    public void setCommentsProgressIndicator(boolean active) {
         binding.progressComments.setVisibility(active ? View.VISIBLE : View.GONE);
     }
 
@@ -171,6 +179,17 @@ public class SignalDetailsFragment extends BaseFragment
         Injection.getImageLoader().loadWithRoundedCorners(getContext(), signal.getPhotoUrl(), binding.imgSignalPhoto, R.drawable.ic_paw);
     }
 
+    private void showCommentPhoto(Comment comment, View inflatedCommentView) {
+        ImageView commentPhoto = inflatedCommentView.findViewById(R.id.img_comment_photo);
+        Injection.getImageLoader().loadWithRoundedCorners(getContext(), comment.getPhotoUrl(), commentPhoto, R.drawable.ic_paw);
+        commentPhoto.setVisibility(View.VISIBLE);
+    }
+
+    private void hideCommentPhoto(View inflatedCommentView) {
+        ImageView commentPhoto = inflatedCommentView.findViewById(R.id.img_comment_photo);
+        commentPhoto.setVisibility(View.GONE);
+    }
+
     @Override
     public void displayComments(List<Comment> comments) {
         LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -204,6 +223,15 @@ public class SignalDetailsFragment extends BaseFragment
                 txtCommentAuthor.setText(comment.getAuthorName());
 
                 commentText = comment.getText();
+
+                ImageView imageView = inflatedCommentView.findViewById(R.id.img_comment_photo);
+                imageView.setOnClickListener(v -> actionsListener.onCommentPhotoClicked(comment.getPhotoUrl()));
+            }
+
+            if (comment.getPhotoUrl() != null) {
+                showCommentPhoto(comment, inflatedCommentView);
+            } else {
+                hideCommentPhoto(inflatedCommentView);
             }
 
             // text and date elements are common for both type of comments so they are set in common code
@@ -228,6 +256,7 @@ public class SignalDetailsFragment extends BaseFragment
     public void clearSendCommentView() {
         binding.editComment.setError(null);
         binding.editComment.setText(null);
+        removeThumbnailFromCommentPhotoButton();
     }
 
     @Override
@@ -336,8 +365,13 @@ public class SignalDetailsFragment extends BaseFragment
 
     @Override
     public void openSignalPhotoScreen() {
-        Intent intent = new Intent(getContext(), SignalPhotoActivity.class);
-        intent.putExtra(SignalDetailsActivity.SIGNAL_KEY, mSignal);
+        Intent intent = SignalPhotoActivity.newIntent(getContext(), mSignal.getPhotoUrl());
+        startActivity(intent);
+    }
+
+    @Override
+    public void openCommentPhotoScreen(String photoUrl) {
+        Intent intent = SignalPhotoActivity.newIntent(getContext(), photoUrl);
         startActivity(intent);
     }
 
@@ -362,11 +396,9 @@ public class SignalDetailsFragment extends BaseFragment
             }
         }
         else if (requestCode == REQUEST_GALLERY && resultCode == Activity.RESULT_OK && data != null && data.getData() != null) {
-
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 saveImageFromUri(uploadPhotoActionsListener, data.getData());
             }
-
             else {
                 File photoFile = ImageUtils.getInstance().getFileFromMediaUri(getContext(), getContext().getContentResolver(), data.getData());
                 if (photoFile != null) {
@@ -374,6 +406,38 @@ public class SignalDetailsFragment extends BaseFragment
                 }
             }
         }
+    }
+
+    @SuppressLint("MissingPermission")
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case READ_WRITE_EXTERNAL_STORAGE_FOR_GALLERY:
+                if ((grantResults.length > 0) && (grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                    uploadPhotoActionsListener.onGalleryOptionSelected();
+                } else {
+                    // Permission Denied
+                    Toast.makeText(getContext(), R.string.txt_storage_permissions_for_gallery, Toast.LENGTH_SHORT).show();
+                }
+                break;
+            default:
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+    }
+
+    @Override
+    public void setThumbnailToCommentPhotoButton(String photoUri) {
+        Resources res = getResources();
+        RoundedBitmapDrawable drawable = RoundedBitmapDrawableFactory.create(res, ImageUtils.getInstance().getRotatedBitmap(new File(photoUri)));
+        drawable.setCornerRadius(10);
+        binding.imgAddCommentPhoto.setScaleType(ImageView.ScaleType.FIT_XY);
+        binding.imgAddCommentPhoto.setImageDrawable(drawable);
+    }
+
+    private void removeThumbnailFromCommentPhotoButton() {
+        int imageResource = getResources().getIdentifier("@drawable/ic_camera", "drawable", getActivity().getPackageName());
+        binding.imgAddCommentPhoto.setScaleType(ImageView.ScaleType.FIT_CENTER);
+        binding.imgAddCommentPhoto.setImageResource(imageResource);
     }
 
     @Override
@@ -390,6 +454,15 @@ public class SignalDetailsFragment extends BaseFragment
             @Override
             public void onRequestStatusChange(int status) {
                 actionsListener.onRequestStatusChange(status);
+            }
+        };
+    }
+
+    public View.OnClickListener getOnAddCommentPhotoClickListener() {
+        return new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                actionsListener.onChooseCommentPhotoIconClicked();
             }
         };
     }

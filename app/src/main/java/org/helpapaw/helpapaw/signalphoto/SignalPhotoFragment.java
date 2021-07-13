@@ -10,7 +10,6 @@ import org.helpapaw.helpapaw.R;
 import org.helpapaw.helpapaw.base.BaseFragment;
 import org.helpapaw.helpapaw.base.Presenter;
 import org.helpapaw.helpapaw.base.PresenterManager;
-import org.helpapaw.helpapaw.data.models.Signal;
 import org.helpapaw.helpapaw.databinding.FragmentSignalPhotoBinding;
 import org.helpapaw.helpapaw.utils.Injection;
 
@@ -21,7 +20,7 @@ import org.helpapaw.helpapaw.utils.Injection;
 
 public class SignalPhotoFragment extends BaseFragment implements SignalPhotoContract.View {
 
-    private final static String SIGNAL_DETAILS = "signalDetails";
+    private final static String PHOTO_URL_KEY = "PHOTO_URL_KEY";
 
     SignalPhotoPresenter                    signalPhotoPresenter;
     SignalPhotoContract.UserActionsListener actionsListener;
@@ -32,10 +31,10 @@ public class SignalPhotoFragment extends BaseFragment implements SignalPhotoCont
         // Required empty public constructor
     }
 
-    public static SignalPhotoFragment newInstance(Signal signal) {
+    public static SignalPhotoFragment newInstance(String photoUrl) {
         SignalPhotoFragment fragment = new SignalPhotoFragment();
         Bundle              bundle   = new Bundle();
-        bundle.putParcelable(SIGNAL_DETAILS, signal);
+        bundle.putString(PHOTO_URL_KEY, photoUrl);
         fragment.setArguments(bundle);
         return fragment;
     }
@@ -53,12 +52,11 @@ public class SignalPhotoFragment extends BaseFragment implements SignalPhotoCont
         }
 
         actionsListener = signalPhotoPresenter;
-        Signal mSignal = null;
+        String photoUrl = null;
         if (getArguments() != null) {
-            mSignal = getArguments().getParcelable(SIGNAL_DETAILS);
+            photoUrl = getArguments().getString(PHOTO_URL_KEY);
         }
-
-        actionsListener.onInitPhotoScreen(mSignal);
+        actionsListener.onInitPhotoScreen(photoUrl);
 
         return binding.getRoot();
     }
@@ -68,9 +66,9 @@ public class SignalPhotoFragment extends BaseFragment implements SignalPhotoCont
     }
 
     @Override
-    public void showSignalPhoto(Signal signal) {
+    public void showSignalPhoto(String photoUrl) {
 
-        Injection.getImageLoader().load(getContext(), signal.getPhotoUrl(), binding.imgSignalPhoto, R.drawable.no_image);
+        Injection.getImageLoader().load(getContext(), photoUrl, binding.imgSignalPhoto, R.drawable.no_image);
     }
     public void onBackPressed() {
         getActivity().finish();

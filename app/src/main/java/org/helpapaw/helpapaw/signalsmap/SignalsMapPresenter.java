@@ -221,7 +221,7 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View>
     }
 
     private void savePhoto(final File photoFile, final Signal signal) {
-        photoRepository.savePhoto(photoFile, signal.getId(), new PhotoRepository.SavePhotoCallback() {
+        photoRepository.saveSignalPhoto(photoFile, signal.getId(), new PhotoRepository.SavePhotoCallback() {
             @Override
             public void onPhotoSaved(String photoUrl) {
                 if (!isViewAvailable()) return;
@@ -252,36 +252,18 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View>
         }
     }
 
-    private void openCamera() {
+    @Override
+    public void onCameraOptionSelected() {
         if (getView() instanceof UploadPhotoContract.View) {
             photoFile = ((UploadPhotoContract.View)getView()).openCamera();
         }
     }
 
     @Override
-    public void onCameraOptionSelected() {
-        openCamera();
-    }
-
-    @Override
-    public void onStoragePermissionForCameraGranted() {
-        openCamera();
-    }
-
-    private void openGallery() {
+    public void onGalleryOptionSelected() {
         if (getView() instanceof UploadPhotoContract.View) {
             ((UploadPhotoContract.View)getView()).openGallery();
         }
-    }
-
-    @Override
-    public void onGalleryOptionSelected() {
-        openGallery();
-    }
-
-    @Override
-    public void onStoragePermissionForGalleryGranted() {
-        openGallery();
     }
 
     @Override

@@ -77,10 +77,6 @@ interface SignalsMapContract {
 
         void onChoosePhotoIconClicked();
 
-        void onStoragePermissionForCameraGranted();
-
-        void onStoragePermissionForGalleryGranted();
-
         void onSignalInfoWindowClicked(Signal signal);
 
         void onBackButtonPressed();

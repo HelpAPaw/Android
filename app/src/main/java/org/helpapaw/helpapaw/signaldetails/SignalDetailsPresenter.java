@@ -23,15 +23,20 @@ import java.util.List;
 public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View>
         implements SignalDetailsContract.UserActionsListener, UploadPhotoContract.UserActionsListener {
 
+    private enum PhotoDestination {
+        SIGNAL, COMMENT
+    }
+
     private boolean showProgressBar;
     private List<Comment> commentList;
     private Signal signal;
     private File photoFile;
+    private PhotoDestination photoDestination = PhotoDestination.SIGNAL;
 
-    private CommentRepository commentRepository;
-    private PhotoRepository photoRepository;
-    private SignalRepository signalRepository;
-    private UserManager userManager;
+    private final CommentRepository commentRepository;
+    private final PhotoRepository photoRepository;
+    private final SignalRepository signalRepository;
+    private final UserManager userManager;
 
     public SignalDetailsPresenter(SignalDetailsContract.View view) {
         super(view);
@@ -45,19 +50,19 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
 
     @Override
     public void onInitDetailsScreen(Signal signal) {
-        setProgressIndicator(showProgressBar);
+        setCommentsProgressIndicator(showProgressBar);
 
         if (signal != null) {
             FirebaseCrashlytics.getInstance().log("Show signal details for " + signal.getId());
 
             this.signal = signal;
-            signal.setPhotoUrl(photoRepository.getPhotoUrl(signal.getId()));
+            signal.setPhotoUrl(photoRepository.getSignalPhotoUrl(signal.getId()));
 
             getView().showSignalDetails(signal);
             showUploadButtonIfNeeded(signal);
 
             if (commentList != null) {
-                setProgressIndicator(false);
+                setCommentsProgressIndicator(false);
 
                 if (commentList.size() == 0) {
                     getView().setNoCommentsTextVisibility(true);
@@ -73,7 +78,7 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
 
     private void showUploadButtonIfNeeded(Signal signal) {
         if (userManager.getLoggedUserId().equals(signal.getAuthorId())) {
-            photoRepository.photoExists(signal.getId(), new PhotoRepository.PhotoExistsCallback() {
+            photoRepository.signalPhotoExists(signal.getId(), new PhotoRepository.PhotoExistsCallback() {
                 @Override
                 public void onPhotoExistsSuccess(boolean photoExists) {
                     if (!isViewAvailable()) return;
@@ -101,7 +106,7 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
                 public void onCommentsLoaded(List<Comment> comments) {
                     if (!isViewAvailable()) return;
                     commentList = comments;
-                    setProgressIndicator(false);
+                    setCommentsProgressIndicator(false);
 
                     if (commentList.size() == 0) {
                         getView().setNoCommentsTextVisibility(true);
@@ -121,6 +126,38 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
             if(isViewAvailable()) {
                 getView().showNoInternetMessage();
             }
+        }
+    }
+
+    @Override
+    public void onChooseCommentPhotoIconClicked() {
+        getView().hideKeyboard();
+        getView().scrollToBottom();
+        setCommentsProgressIndicator(true);
+
+        if (Utils.getInstance().hasNetworkConnection()) {
+            userManager.isLoggedIn(new UserManager.LoginCallback() {
+                @Override
+                public void onLoginSuccess(String userId) {
+                    if (!isViewAvailable()) return;
+                    setCommentsProgressIndicator(false);
+
+                    if (getView() instanceof UploadPhotoContract.View) {
+                        photoDestination = PhotoDestination.COMMENT;
+                        ((UploadPhotoContract.View)getView()).showSendPhotoBottomSheet(SignalDetailsPresenter.this);
+                    }
+                }
+
+                @Override
+                public void onLoginFailure(String message) {
+                    if (!isViewAvailable()) return;
+                    setCommentsProgressIndicator(false);
+                    getView().showRegistrationRequiredAlert(R.string.txt_only_registered_users_can_comment);
+                }
+            });
+        } else {
+            setCommentsProgressIndicator(false);
+            getView().showNoInternetMessage();
         }
     }
 
@@ -147,10 +184,9 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
         if (Utils.getInstance().hasNetworkConnection()) {
             if (comment != null && comment.trim().length() > 0) {
                 getView().hideKeyboard();
-                setProgressIndicator(true);
                 getView().scrollToBottom();
-                getView().clearSendCommentView();
-                saveComment(comment);
+                setCommentsProgressIndicator(true);
+                saveComment(comment, photoFile);
             } else {
                 getView().showCommentErrorMessage();
             }
@@ -209,8 +245,14 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
     }
 
     @Override
+    public void onCommentPhotoClicked(String photoUrl) {
+        getView().openCommentPhotoScreen(photoUrl);
+    }
+
+    @Override
     public void onUploadSignalPhotoClicked() {
         if (getView() instanceof UploadPhotoContract.View){
+            photoDestination = PhotoDestination.SIGNAL;
             ((UploadPhotoContract.View) getView()).showSendPhotoBottomSheet(this);
         }
     }
@@ -244,11 +286,17 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
         if (photoFile != null) {
             this.photoFile = photoFile;
         }
-        savePhoto(this.photoFile, signal);
+
+        if (photoDestination == PhotoDestination.SIGNAL) {
+            saveSignalPhoto(this.photoFile, signal);
+        }
+        else if (photoDestination == PhotoDestination.COMMENT) {
+            getView().setThumbnailToCommentPhotoButton(this.photoFile.getPath());
+        }
     }
 
-    private void savePhoto(final File photoFile, final Signal signal) {
-        photoRepository.savePhoto(photoFile, signal.getId(), new PhotoRepository.SavePhotoCallback() {
+    private void saveSignalPhoto(final File photoFile, final Signal signal) {
+        photoRepository.saveSignalPhoto(photoFile, signal.getId(), new PhotoRepository.SavePhotoCallback() {
             @Override
             public void onPhotoSaved(String photoUrl) {
                 signal.setPhotoUrl(photoUrl);
@@ -265,16 +313,19 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
         });
     }
 
-    private void saveComment(String comment) {
+    private void saveComment(String comment, File photoFile) {
         FirebaseCrashlytics.getInstance().log("Initiate save new comment for signal" + signal.getId());
-        commentRepository.saveComment(comment, signal, commentList, new CommentRepository.SaveCommentCallback() {
+        commentRepository.saveComment(comment, signal, commentList, photoRepository, photoFile, new CommentRepository.SaveCommentCallback() {
             @Override
             public void onCommentSaved(Comment comment) {
                 if (!isViewAvailable()) return;
-                setProgressIndicator(false);
-                commentList.add(comment);
+
+                setCommentsProgressIndicator(false);
+                getView().clearSendCommentView();
                 getView().setNoCommentsTextVisibility(false);
+                commentList.add(comment);
                 getView().displayComments(commentList);
+                getView().scrollToBottom();
             }
 
             @Override
@@ -283,6 +334,7 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
                 getView().showMessage(message);
             }
         });
+        this.photoFile = null;
     }
 
     private void setSignalStatus(int status) {
@@ -293,8 +345,8 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
         return getView() != null && getView().isActive();
     }
 
-    private void setProgressIndicator(boolean active) {
-        getView().setProgressIndicator(active);
+    private void setCommentsProgressIndicator(boolean active) {
+        getView().setCommentsProgressIndicator(active);
         this.showProgressBar = active;
     }
 }

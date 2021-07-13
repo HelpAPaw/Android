@@ -2,6 +2,9 @@ package org.helpapaw.helpapaw.signalphoto;
 
 import android.app.ActionBar;
 import androidx.databinding.DataBindingUtil;
+
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -11,7 +14,6 @@ import android.util.Log;
 import android.view.View;
 
 import org.helpapaw.helpapaw.R;
-import org.helpapaw.helpapaw.data.models.Signal;
 import org.helpapaw.helpapaw.databinding.ActivitySignalPhotoBinding;
 
 import java.util.List;
@@ -23,8 +25,14 @@ import java.util.List;
 
 public class SignalPhotoActivity extends AppCompatActivity {
 
-    public final static String SIGNAL_KEY = "signalKey";
+    public final static String PHOTO_URL_KEY = "PHOTO_URL_KEY";
     ActivitySignalPhotoBinding binding;
+
+    public static Intent newIntent(Context context, String photoUrl) {
+        Intent intent = new Intent(context, SignalPhotoActivity.class);
+        intent.putExtra(PHOTO_URL_KEY, photoUrl);
+        return intent;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,8 +43,8 @@ public class SignalPhotoActivity extends AppCompatActivity {
         if (null == savedInstanceState) {
 
             if (getIntent() != null) {
-                Signal                signal   = getIntent().getParcelableExtra(SIGNAL_KEY);
-                SignalPhotoFragment fragment = SignalPhotoFragment.newInstance(signal);
+                String photoUrl = getIntent().getStringExtra(PHOTO_URL_KEY);
+                SignalPhotoFragment fragment = SignalPhotoFragment.newInstance(photoUrl);
                 initFragment(fragment);
             }
         }

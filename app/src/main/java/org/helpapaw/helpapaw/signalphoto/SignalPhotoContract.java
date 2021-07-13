@@ -10,11 +10,11 @@ import org.helpapaw.helpapaw.data.models.Signal;
 public interface SignalPhotoContract {
     interface View {
 
-        void showSignalPhoto(Signal signal);
+        void showSignalPhoto(String photoUrl);
     }
 
     interface UserActionsListener {
 
-        void onInitPhotoScreen(Signal signal);
+        void onInitPhotoScreen(String photoUrl);
     }
 }

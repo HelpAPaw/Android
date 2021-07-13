@@ -21,11 +21,13 @@ public class Comment {
     private Date   dateCreated;
     private String text;
     private String type;
+    private String photoUrl;
 
-    public Comment(String objectId, String authorId, String authorName, Date dateCreated, String text, String type) {
+    public Comment(String objectId, String authorId, String authorName, String photoUrl, Date dateCreated, String text, String type) {
         this.objectId = objectId;
         this.authorId = authorId;
         this.authorName = authorName;
+        this.photoUrl = photoUrl;
         this.dateCreated = dateCreated;
         this.text = text;
         this.type = type;
@@ -60,6 +62,14 @@ public class Comment {
     }
 
     public String getType() { return type; }
+
+    public String getPhotoUrl() {
+        return photoUrl;
+    }
+
+    public void setPhotoUrl(String photoUrl) {
+        this.photoUrl = photoUrl;
+    }
 
     public static int getNewStatusFromStatusChangeComment(Comment comment) {
         int newStatus = 0;

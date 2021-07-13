@@ -3,6 +3,7 @@ package org.helpapaw.helpapaw.signaldetails;
 import org.helpapaw.helpapaw.data.models.Comment;
 import org.helpapaw.helpapaw.data.models.Signal;
 
+import java.io.File;
 import java.util.List;
 
 /**
@@ -14,7 +15,7 @@ public interface SignalDetailsContract {
 
         void showMessage(String message);
 
-        void setProgressIndicator(boolean active);
+        void setCommentsProgressIndicator(boolean active);
 
         void hideKeyboard();
 
@@ -55,6 +56,10 @@ public interface SignalDetailsContract {
         void onStatusChangeRequestFinished(boolean success, int newStatus);
 
         void openSignalPhotoScreen();
+
+        void openCommentPhotoScreen(String photoUrl);
+
+        void setThumbnailToCommentPhotoButton(String photoUri);
     }
 
     interface UserActionsListener {
@@ -62,6 +67,8 @@ public interface SignalDetailsContract {
         void onInitDetailsScreen(Signal signal);
 
         void loadCommentsForSignal(String signalId);
+
+        void onChooseCommentPhotoIconClicked();
 
         void onTryToAddComment();
 
@@ -76,6 +83,8 @@ public interface SignalDetailsContract {
         void onBottomReached(boolean isBottomReached);
 
         void onSignalPhotoClicked();
+
+        void onCommentPhotoClicked(String photoUrl);
 
         void onUploadSignalPhotoClicked();
     }

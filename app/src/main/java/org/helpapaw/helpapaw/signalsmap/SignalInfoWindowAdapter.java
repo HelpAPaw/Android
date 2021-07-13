@@ -47,7 +47,7 @@ public class SignalInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
         Signal signal = signalMarkers.get(marker.getId());
         if (signal != null) {
             PhotoRepository photoRepository = Injection.getPhotoRepositoryInstance();
-            String          photoUrl        = photoRepository.getPhotoUrl(signal.getId());
+            String          photoUrl        = photoRepository.getSignalPhotoUrl(signal.getId());
 
             if (lastShownMarker == null || !lastShownMarker.getId().equals(marker.getId())) {
                 lastShownMarker = marker;
