@@ -3,6 +3,7 @@ package org.helpapaw.helpapaw.signaldetails;
 import org.helpapaw.helpapaw.data.models.Comment;
 import org.helpapaw.helpapaw.data.models.Signal;
 
+import java.io.File;
 import java.util.List;
 
 /**
@@ -85,6 +86,6 @@ public interface SignalDetailsContract {
 
         void onUploadSignalPhotoClicked();
 
-        void onPhotoSelected(String photoUri, boolean inComment);
+        void onPhotoSelected(File photoFile, boolean inComment);
     }
 }

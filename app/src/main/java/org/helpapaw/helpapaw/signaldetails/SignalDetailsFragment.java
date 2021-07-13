@@ -13,15 +13,11 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 
 import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import com.google.android.material.snackbar.Snackbar;
 
-import android.os.ParcelFileDescriptor;
-import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -48,7 +44,6 @@ import org.helpapaw.helpapaw.utils.Utils;
 import org.helpapaw.helpapaw.utils.images.ImageUtils;
 
 import java.io.File;
-import java.io.FileDescriptor;
 import java.util.List;
 
 import static org.helpapaw.helpapaw.data.models.Comment.COMMENT_TYPE_STATUS_CHANGE;
@@ -60,7 +55,7 @@ public class SignalDetailsFragment extends BaseFragment
 
     SignalDetailsPresenter signalDetailsPresenter;
     SignalDetailsContract.UserActionsListener actionsListener;
-    UploadPhotoContract.UserActionsListener uploadPhotoActionsListeners;
+    UploadPhotoContract.UserActionsListener uploadPhotoActionsListener;
 
     FragmentSignalDetailsBinding binding;
 
@@ -93,7 +88,7 @@ public class SignalDetailsFragment extends BaseFragment
         }
 
         actionsListener = signalDetailsPresenter;
-        uploadPhotoActionsListeners = signalDetailsPresenter;
+        uploadPhotoActionsListener = signalDetailsPresenter;
 
         setHasOptionsMenu(true);
         mSignal = null;
@@ -385,28 +380,31 @@ public class SignalDetailsFragment extends BaseFragment
 
         if (requestCode == REQUEST_CAMERA) {
             if (resultCode == Activity.RESULT_OK) {
-                Uri takenPhotoUri = ImageUtils.getInstance().getPhotoFileUri(getContext(), IMAGE_FILENAME);
                 if (inComment) {
-                    actionsListener.onPhotoSelected(takenPhotoUri.getPath(), inComment);
+                    actionsListener.onPhotoSelected(null, inComment);
                 } else {
-                    uploadPhotoActionsListeners.onSignalPhotoSelected(takenPhotoUri.getPath());
+                    // null because the location where the camera saves the photo is kept in the presenter
+                    uploadPhotoActionsListener.onSignalPhotoSelected(null);
                 }
             }
         }
         else if (requestCode == REQUEST_GALLERY && resultCode == Activity.RESULT_OK && data != null && data.getData() != null) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 if (inComment) {
-                    String imageFromURI = getImageFromURI(data.getData());
-                    actionsListener.onPhotoSelected(imageFromURI, inComment);
+                    File fileFromMediaUri = ImageUtils.getInstance().getFileFromMediaUri(getContext(), getContext().getContentResolver(), data.getData());
+                    actionsListener.onPhotoSelected(fileFromMediaUri, inComment);
                 } else {
-                    saveImageFromURI(signalDetailsPresenter, data.getData());
+                    saveImageFromUri(uploadPhotoActionsListener, data.getData());
                 }
             }
 
             else {
-                File photoFile = ImageUtils.getInstance().getFromMediaUri(getContext(), getContext().getContentResolver(), data.getData());
+                File photoFile = ImageUtils.getInstance().getFileFromMediaUri(getContext(), getContext().getContentResolver(), data.getData());
                 if (photoFile != null) {
-                    uploadPhotoActionsListeners.onSignalPhotoSelected(Uri.fromFile(photoFile).getPath()); // TODO check if here is needed to check if in comment
+                    if (inComment) {
+                        actionsListener.onPhotoSelected(photoFile, inComment);
+                    }
+                    uploadPhotoActionsListener.onSignalPhotoSelected(photoFile);
                 }
             }
         }
@@ -513,24 +511,5 @@ public class SignalDetailsFragment extends BaseFragment
                 }
             }
         };
-    }
-
-    private String getImageFromURI(Uri photoUri) {
-        // This segment works once the permission is handled
-        try {
-            String path;
-            ParcelFileDescriptor parcelFileDesc = getActivity().getContentResolver().openFileDescriptor(photoUri, "r");
-            FileDescriptor fileDesc = parcelFileDesc.getFileDescriptor();
-            Bitmap photo = BitmapFactory.decodeFileDescriptor(fileDesc);
-            path = MediaStore.Images.Media.insertImage(getContext().getContentResolver(), photo, "temp", null);
-            File photoFile = ImageUtils.getInstance().getFromMediaUri(getContext(), getContext().getContentResolver(), Uri.parse(path));
-
-            if (photoFile != null) {
-                return Uri.fromFile(photoFile).getPath();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
     }
 }

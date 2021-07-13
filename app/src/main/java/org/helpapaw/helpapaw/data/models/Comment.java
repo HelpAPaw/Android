@@ -23,10 +23,11 @@ public class Comment {
     private String type;
     private String photoUrl;
 
-    public Comment(String objectId, String authorId, String authorName, Date dateCreated, String text, String type) {
+    public Comment(String objectId, String authorId, String authorName, String photoUrl, Date dateCreated, String text, String type) {
         this.objectId = objectId;
         this.authorId = authorId;
         this.authorName = authorName;
+        this.photoUrl = photoUrl;
         this.dateCreated = dateCreated;
         this.text = text;
         this.type = type;

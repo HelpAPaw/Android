@@ -18,7 +18,6 @@ import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.location.Location;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -76,7 +75,6 @@ import org.helpapaw.helpapaw.base.Presenter;
 import org.helpapaw.helpapaw.base.PresenterManager;
 import org.helpapaw.helpapaw.data.models.Signal;
 import org.helpapaw.helpapaw.data.repositories.ISettingsRepository;
-import org.helpapaw.helpapaw.data.user.UserManager;
 import org.helpapaw.helpapaw.databinding.FragmentSignalsMapBinding;
 import org.helpapaw.helpapaw.filtersignal.FilterSignalTypeDialog;
 import org.helpapaw.helpapaw.photo.UploadPhotoContract;
@@ -128,7 +126,6 @@ public class SignalsMapFragment extends BaseFragment
     FragmentSignalsMapBinding binding;
     private Menu optionsMenu;
 
-    UserManager userManager;
     private boolean mVisibilityAddSignal = false;
     private String mFocusedSignalId;
 
@@ -177,7 +174,6 @@ public class SignalsMapFragment extends BaseFragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_signals_map, container, false);
-        userManager = Injection.getUserManagerInstance();
         final Bundle mapViewSavedInstanceState = savedInstanceState != null ? savedInstanceState.getBundle(MAP_VIEW_STATE) : null;
         binding.mapSignals.onCreate(mapViewSavedInstanceState);
 
@@ -668,18 +664,6 @@ public class SignalsMapFragment extends BaseFragment
     private void showAddSignalView() {
         binding.viewSendSignal.setVisibility(View.VISIBLE);
         binding.viewSendSignal.setAlpha(0.0f);
-        // Prefill author phone field with current user's phone (if available)
-        userManager.getUserPhone(new UserManager.GetUserPropertyCallback() {
-            @Override
-            public void onSuccess(Object value) {
-                binding.viewSendSignal.setAuthorPhone((String)value);
-            }
-
-            @Override
-            public void onFailure(String message) {
-                // Do nothing
-            }
-        });
 
         binding.viewSendSignal
                 .animate()
@@ -792,21 +776,20 @@ public class SignalsMapFragment extends BaseFragment
 
         if (requestCode == REQUEST_CAMERA) {
             if (resultCode == Activity.RESULT_OK) {
-                Uri takenPhotoUri = ImageUtils.getInstance().getPhotoFileUri(getContext(), IMAGE_FILENAME);
-                uploadPhotoActionsListener.onSignalPhotoSelected(takenPhotoUri.getPath());
+                // null because the location where the camera saves the photo is kept in the presenter
+                uploadPhotoActionsListener.onSignalPhotoSelected(null);
             }
         }
         else if (requestCode == REQUEST_GALLERY && resultCode == Activity.RESULT_OK && data != null && data.getData() != null) {
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                saveImageFromURI(uploadPhotoActionsListener, data.getData());
+                saveImageFromUri(uploadPhotoActionsListener, data.getData());
             }
 
             else {
-                // DRY!!
-                File photoFile = ImageUtils.getInstance().getFromMediaUri(getContext(), getContext().getContentResolver(), data.getData());
+                File photoFile = ImageUtils.getInstance().getFileFromMediaUri(getContext(), getContext().getContentResolver(), data.getData());
                 if (photoFile != null) {
-                    uploadPhotoActionsListener.onSignalPhotoSelected(Uri.fromFile(photoFile).getPath());
+                    uploadPhotoActionsListener.onSignalPhotoSelected(photoFile);
                 }
             }
 
@@ -830,11 +813,16 @@ public class SignalsMapFragment extends BaseFragment
     }
 
     @Override
-    public void setThumbnailImage(String photoUri) {
+    public void setThumbnailImage(File photoFile) {
         Resources res = getResources();
-        RoundedBitmapDrawable drawable = RoundedBitmapDrawableFactory.create(res, ImageUtils.getInstance().getRotatedBitmap(new File(photoUri)));
+        RoundedBitmapDrawable drawable = RoundedBitmapDrawableFactory.create(res, ImageUtils.getInstance().getRotatedBitmap(photoFile));
         drawable.setCornerRadius(10);
         binding.viewSendSignal.setSignalPhoto(drawable);
+    }
+
+    @Override
+    public void setAuthorPhone(String phoneNumber) {
+        binding.viewSendSignal.setAuthorPhone(phoneNumber);
     }
 
     @Override

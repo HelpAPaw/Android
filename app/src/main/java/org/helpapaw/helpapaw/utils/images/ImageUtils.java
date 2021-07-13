@@ -1,5 +1,6 @@
 package org.helpapaw.helpapaw.utils.images;
 
+import android.annotation.SuppressLint;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
@@ -19,9 +20,10 @@ import java.io.Closeable;
 import java.io.File;
 import java.io.FileDescriptor;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * Created by iliyan on 8/9/16
@@ -50,23 +52,27 @@ public class ImageUtils {
     }
 
     //Files
-    public Uri getPhotoFileUri(Context context, String fileName) {
-        String APP_TAG = "HelpAPaw";
+    public File createPhotoFile(Context context) {
         // Only continue if the SD Card is mounted
         if (isExternalStorageAvailable()) {
             // Get safe storage directory for photos
             // Use `getExternalFilesDir` on Context to access package-specific directories.
             // This way, we don't need to request external read/write runtime permissions.
-            File mediaStorageDir = new File(
-                    context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), APP_TAG);
+            File mediaStorageDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
 
             // Create the storage directory if it does not exist
-            if (!mediaStorageDir.exists() && !mediaStorageDir.mkdirs()) {
-                Log.d(APP_TAG, "failed to create directory");
+            if ((mediaStorageDir != null) && !mediaStorageDir.exists() && !mediaStorageDir.mkdirs()) {
+                Log.d(ImageUtils.class.getSimpleName(), "failed to create directory");
             }
 
-            // Return the file target for the photo based on filename
-            return Uri.fromFile(new File(mediaStorageDir.getPath() + File.separator + fileName));
+            try {
+                @SuppressLint("SimpleDateFormat")
+                String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+                String imageFileName = "JPEG_" + timeStamp + "_";
+                return File.createTempFile(imageFileName, ".jpg", mediaStorageDir);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         return null;
     }
@@ -86,7 +92,6 @@ public class ImageUtils {
 
     public Bitmap getRotatedBitmap(File src) {
         Bitmap bitmap;
-
 
         bitmap = decodeFile(src, 500, 500);
         int orientation = getExifRotation(src);
@@ -136,26 +141,47 @@ public class ImageUtils {
     }
 
     public Bitmap decodeFile(File f, int WIDTH, int HEIGHT) {
-        try {
-            //Decode image size
-            BitmapFactory.Options bitmapOptions = new BitmapFactory.Options();
-            bitmapOptions.inJustDecodeBounds = true;
-            BitmapFactory.decodeStream(new FileInputStream(f), null, bitmapOptions);
+        //Decode image size
+        BitmapFactory.Options bitmapOptions = new BitmapFactory.Options();
+        bitmapOptions.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(f.getPath(), bitmapOptions);
 
-            int scale = 1;
-            while (bitmapOptions.outWidth / scale / 2 >= WIDTH && bitmapOptions.outHeight / scale / 2 >= HEIGHT)
-                scale *= 2;
+        int scale = 1;
+        while (bitmapOptions.outWidth / scale / 2 >= WIDTH && bitmapOptions.outHeight / scale / 2 >= HEIGHT)
+            scale *= 2;
 
-            BitmapFactory.Options bitmapNewOptions = new BitmapFactory.Options();
-            bitmapNewOptions.inSampleSize = scale;
-            return BitmapFactory.decodeStream(new FileInputStream(f), null, bitmapNewOptions);
-        } catch (FileNotFoundException e) {
+        BitmapFactory.Options bitmapNewOptions = new BitmapFactory.Options();
+        bitmapNewOptions.inSampleSize = scale;
+        return BitmapFactory.decodeFile(f.getPath(), bitmapNewOptions);
+    }
+
+    public int getRotationFromMediaUri(Context context, Uri photoUri) {
+        /* it's on the external media. */
+        Cursor cursor = context.getContentResolver().query(photoUri,
+                new String[] { MediaStore.Images.ImageColumns.ORIENTATION }, null, null, null);
+
+        if (cursor.getCount() != 1) {
+            return -1;
         }
-        return null;
+
+        cursor.moveToFirst();
+        return cursor.getInt(0);
+    }
+
+    public Bitmap getRotatedBitmap(Bitmap bitmap, int rotation) {
+        if (rotation > 0) {
+            Matrix matrix = new Matrix();
+            matrix.postRotate(rotation);
+
+            bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(),
+                    bitmap.getHeight(), matrix, true);
+        }
+
+        return bitmap;
     }
 
     @Nullable
-    public File getFromMediaUri(Context context, ContentResolver resolver, Uri uri) {
+    public File getFileFromMediaUri(Context context, ContentResolver resolver, Uri uri) {
         if (uri == null) return null;
 
         if (SCHEME_FILE.equals(uri.getScheme())) {

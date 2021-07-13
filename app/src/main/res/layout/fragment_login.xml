@@ -78,18 +78,25 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_marginBottom="0dp"
                 android:layout_marginTop="4dp"
-                android:padding="18dp"
+                android:padding="16dp"
                 android:text="@string/txt_register" />
 
             <TextView
                 android:id="@+id/txt_or"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="32dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginBottom="12dp"
                 android:gravity="center"
                 android:text="@string/txt_or"
                 android:textSize="16sp" />
+
+            <com.google.android.gms.common.SignInButton
+                android:id="@+id/btn_sign_in_google"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="24dp" />
 
             <com.facebook.login.widget.LoginButton
                 android:id="@+id/btn_login_fb"
@@ -97,7 +104,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="0dp"
-                android:layout_marginBottom="30dp" />
+                android:layout_marginBottom="32dp" />
 
         </LinearLayout>
 

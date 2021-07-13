@@ -4,6 +4,7 @@ import android.net.Uri;
 
 import org.helpapaw.helpapaw.data.models.Signal;
 
+import java.io.File;
 import java.util.List;
 
 /**
@@ -33,7 +34,9 @@ interface SignalsMapContract {
 
         void showRegistrationRequiredAlert();
 
-        void setThumbnailImage(String photoUri);
+        void setThumbnailImage(File photoFile);
+
+        void setAuthorPhone(String phoneNumber);
 
         void clearSignalViewData();
 

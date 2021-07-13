@@ -1,12 +1,17 @@
 package org.helpapaw.helpapaw.base;
 
-import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.StrictMode;
 
 import androidx.multidex.MultiDex;
 import androidx.multidex.MultiDexApplication;
+import androidx.work.BackoffPolicy;
+import androidx.work.Constraints;
+import androidx.work.ExistingPeriodicWorkPolicy;
+import androidx.work.NetworkType;
+import androidx.work.PeriodicWorkRequest;
+import androidx.work.WorkManager;
 
 import com.backendless.Backendless;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
@@ -14,7 +19,9 @@ import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import org.helpapaw.helpapaw.R;
 import org.helpapaw.helpapaw.data.user.UserManager;
 import org.helpapaw.helpapaw.utils.Injection;
-import org.helpapaw.helpapaw.utils.NotificationUtils;
+import org.helpapaw.helpapaw.utils.services.BackgroundCheckWorker;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by iliyan on 7/25/16
@@ -42,12 +49,52 @@ public class PawApplication extends MultiDexApplication {
         // Register device for token
         Injection.getPushNotificationsRepositoryInstance().registerDeviceToken();
 
+        doUserSetupIfNeeded();
+
+        scheduleBackgroundChecks();
+
+        // Prevent android.os.FileUriExposedException on API 24+
+        // https://stackoverflow.com/a/45569709/2781218
+        StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+        StrictMode.setVmPolicy(builder.build());
+    }
+
+    private void doUserSetupIfNeeded() {
         // This is done in order to handle the situation where user token is saved on the device but is invalidated on the server
         final UserManager userManager = Injection.getUserManagerInstance();
         userManager.isLoggedIn(new UserManager.LoginCallback() {
             @Override
             public void onLoginSuccess(String userId) {
                 FirebaseCrashlytics.getInstance().setUserId(userId);
+
+                // Check if user has accepted privacy policy. If not - log out to force acceptance
+                userManager.getHasAcceptedPrivacyPolicy(new UserManager.GetUserPropertyCallback() {
+                    @Override
+                    public void onSuccess(Object hasAcceptedPrivacyPolicy) {
+                        try {
+                            Boolean accepted = (Boolean) hasAcceptedPrivacyPolicy;
+                            if (!accepted) {
+                                userManager.logout(new UserManager.LogoutCallback() {
+                                    @Override
+                                    public void onLogoutSuccess() {
+                                        // Do nothing
+                                    }
+
+                                    @Override
+                                    public void onLogoutFailure(String message) {
+                                        // Do nothing
+                                    }
+                                });
+                            }
+                        }
+                        catch (Exception ignored) {}
+                    }
+
+                    @Override
+                    public void onFailure(String message) {
+                        // Do nothing
+                    }
+                });
             }
 
             @Override
@@ -61,11 +108,6 @@ public class PawApplication extends MultiDexApplication {
                 });
             }
         });
-
-        // Prevent android.os.FileUriExposedException on API 24+
-        // https://stackoverflow.com/a/45569709/2781218
-        StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
-        StrictMode.setVmPolicy(builder.build());
     }
 
     public static PawApplication getContext() {
@@ -89,5 +131,26 @@ public class PawApplication extends MultiDexApplication {
     private void saveIsTestEnvironment(Boolean isTestEnvironment) {
         SharedPreferences prefs = pawApplication.getSharedPreferences("HelpAPaw", MODE_PRIVATE);
         prefs.edit().putBoolean(IS_TEST_ENVIRONMENT_KEY, isTestEnvironment).apply();
+    }
+
+    private void scheduleBackgroundChecks() {
+        // constraints that need to be satisfied for the job to run
+        Constraints workerConstraints = new Constraints.Builder()
+                //Network connectivity required
+                .setRequiredNetworkType(NetworkType.CONNECTED)
+                .build();
+
+        PeriodicWorkRequest workRequest = new PeriodicWorkRequest.Builder(BackgroundCheckWorker.class, 15, TimeUnit.MINUTES)
+                // uniquely identifies the job
+                .addTag("BackgroundCheckJobService")
+                // start in 15 minutes from now
+                .setInitialDelay(15, TimeUnit.MINUTES)
+                // retry with exponential backoff
+                .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, 3000, TimeUnit.MILLISECONDS)
+                .setConstraints(workerConstraints)
+                .build();
+
+        WorkManager.getInstance(this)
+                .enqueueUniquePeriodicWork("BackgroundCheckJobService", ExistingPeriodicWorkPolicy.REPLACE, workRequest);
     }
 }

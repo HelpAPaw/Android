@@ -14,9 +14,8 @@ import org.helpapaw.helpapaw.photo.UploadPhotoContract;
 import org.helpapaw.helpapaw.utils.Injection;
 import org.helpapaw.helpapaw.utils.Utils;
 
+import java.io.File;
 import java.util.List;
-
-import static android.text.TextUtils.isEmpty;
 
 /**
  * Created by iliyan on 7/25/16
@@ -27,7 +26,7 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
     private boolean showProgressBar;
     private List<Comment> commentList;
     private Signal signal;
-    private String photoUri;
+    private File photoFile;
 
     private CommentRepository commentRepository;
     private PhotoRepository photoRepository;
@@ -63,9 +62,6 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
                 if (commentList.size() == 0) {
                     getView().setNoCommentsTextVisibility(true);
                 } else {
-//                    for (Comment comment : commentList) {
-//                        addCommentPhotoUrlIfExist(comment);
-//                    }
                     getView().displayComments(commentList);
                     getView().setNoCommentsTextVisibility(false);
                 }
@@ -98,23 +94,6 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
         }
     }
 
-    private void addCommentPhotoUrlIfExist(Comment comment) {
-        photoRepository.commentPhotoExists(comment.getObjectId(), new PhotoRepository.PhotoExistsCallback() {
-            @Override
-            public void onPhotoExistsSuccess(boolean photoExists) {
-                if (!isViewAvailable()) return;
-                 if (photoExists) {
-                     comment.setPhotoUrl(photoRepository.getCommentPhotoUrl(comment.getObjectId()));
-                 }
-            }
-
-            @Override
-            public void onPhotoExistsFailure(String message) {
-                // Don't show an error because user doesn't have any action and will be confused
-            }
-        });
-    }
-
     public void loadCommentsForSignal(String signalId) {
         if(Utils.getInstance().hasNetworkConnection()) {
             commentRepository.getAllCommentsBySignalId(signalId, new CommentRepository.LoadCommentsCallback() {
@@ -127,9 +106,6 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
                     if (commentList.size() == 0) {
                         getView().setNoCommentsTextVisibility(true);
                     } else {
-                        for (Comment comment : commentList) {
-                            addCommentPhotoUrlIfExist(comment);
-                        }
                         getView().displayComments(comments);
                         getView().setNoCommentsTextVisibility(false);
                     }
@@ -157,10 +133,12 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
     }
 
     @Override
-    public void onPhotoSelected(String photoUri, boolean inComment) {
-        this.photoUri = photoUri;
+    public void onPhotoSelected(File photoFile, boolean inComment) {
+        if (photoFile != null) {
+            this.photoFile = photoFile;
+        }
         if (inComment) {
-            getView().setThumbnailImage(photoUri);
+            getView().setThumbnailImage(this.photoFile.getPath());
         }
     }
 
@@ -190,7 +168,7 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
                 setProgressIndicator(true);
                 getView().scrollToBottom();
                 getView().clearSendCommentView();
-                saveComment(comment, photoUri);
+                saveComment(comment, photoFile);
             } else {
                 getView().showCommentErrorMessage();
             }
@@ -267,8 +245,8 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
 
     @Override
     public void onCameraOptionSelected() {
-        if (getView() instanceof UploadPhotoContract.View){
-            ((UploadPhotoContract.View) getView()).openCamera();
+        if (getView() instanceof UploadPhotoContract.View) {
+            photoFile = ((UploadPhotoContract.View) getView()).openCamera();
         }
     }
 
@@ -280,12 +258,15 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
     }
 
     @Override
-    public void onSignalPhotoSelected(String photoUri) {
-        saveSignalPhoto(photoUri, signal);
+    public void onSignalPhotoSelected(File photoFile) {
+        if (photoFile != null) {
+            this.photoFile = photoFile;
+        }
+        saveSignalPhoto(this.photoFile, signal);
     }
 
-    private void saveSignalPhoto(final String photoUri, final Signal signal) {
-        photoRepository.saveSignalPhoto(photoUri, signal.getId(), new PhotoRepository.SavePhotoCallback() {
+    private void saveSignalPhoto(final File photoFile, final Signal signal) {
+        photoRepository.saveSignalPhoto(photoFile, signal.getId(), new PhotoRepository.SavePhotoCallback() {
             @Override
             public void onPhotoSaved(String photoUrl) {
                 signal.setPhotoUrl(photoUrl);
@@ -302,31 +283,14 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
         });
     }
 
-    private void saveCommentPhoto(final String photoUri, final Comment comment) {
-        photoRepository.saveCommentPhoto(comment.getObjectId(), photoUri, comment.getObjectId(), new PhotoRepository.SavePhotoCallback() {
-            @Override
-            public void onPhotoSaved(String photoUrl) {
-                comment.setPhotoUrl(photoUrl);
-                commentRepository.addPhotoToComment(comment.getObjectId(), photoUrl);
-            }
-
-            @Override
-            public void onPhotoFailure(String message) {
-                if (!isViewAvailable()) return;
-                getView().showMessage(message);
-            }
-        });
-    }
-
-    private void saveComment(String comment, String photoUri) {
+    private void saveComment(String comment, File photoFile) {
         FirebaseCrashlytics.getInstance().log("Initiate save new comment for signal" + signal.getId());
-        commentRepository.saveComment(comment, signal, commentList, photoUri, new CommentRepository.SaveCommentCallback() {
+        commentRepository.saveComment(comment, signal, commentList, photoRepository, photoFile,
+                new CommentRepository.SaveCommentCallback() {
             @Override
             public void onCommentSaved(Comment comment) {
                 if (!isViewAvailable()) return;
-                if (!isEmpty(photoUri)) {
-                    saveCommentPhoto(photoUri, comment);
-                }
+
                 setProgressIndicator(false);
                 commentList.add(comment);
                 getView().setNoCommentsTextVisibility(false);
@@ -340,6 +304,7 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
                 getView().showMessage(message);
             }
         });
+        this.photoFile = null;
     }
 
     private void setSignalStatus(int status) {

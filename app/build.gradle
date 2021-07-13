@@ -9,8 +9,8 @@ android {
         applicationId "org.helpapaw.helpapaw"
         minSdkVersion 19
         targetSdkVersion 29
-        versionCode 69
-        versionName "4.0.1"
+        versionCode 72
+        versionName "4.1.0"
         vectorDrawables.useSupportLibrary = true
 
         multiDexEnabled true
@@ -55,6 +55,7 @@ dependencies {
     implementation "com.google.android.gms:play-services-maps:17.0.1"
     implementation "com.google.android.gms:play-services-location:18.0.0"
     implementation "com.google.android.gms:play-services-places:17.0.0"
+    implementation 'com.google.android.gms:play-services-auth:19.0.0'
     implementation 'com.squareup.picasso:picasso:2.8'
     implementation 'de.hdodenhof:circleimageview:3.1.0'
     implementation 'com.backendless:backendless:6.2.1'
