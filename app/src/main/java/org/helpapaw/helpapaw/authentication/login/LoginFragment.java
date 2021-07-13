@@ -149,8 +149,6 @@ public class LoginFragment extends AuthenticationFragment implements LoginContra
     public void closeLoginScreen() {
         if (getActivity() != null) {
             Toast.makeText(getActivity(), R.string.txt_login_successful, Toast.LENGTH_LONG).show();
-            Intent intent = new Intent(getContext(), SignalsMapActivity.class);
-            startActivity(intent);
             getActivity().finish();
         }
     }
