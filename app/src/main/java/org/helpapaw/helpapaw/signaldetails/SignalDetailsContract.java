@@ -85,7 +85,5 @@ public interface SignalDetailsContract {
         void onSignalPhotoClicked();
 
         void onUploadSignalPhotoClicked();
-
-        void onPhotoSelected(File photoFile, boolean inComment);
     }
 }

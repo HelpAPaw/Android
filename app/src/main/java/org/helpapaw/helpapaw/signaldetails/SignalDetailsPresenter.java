@@ -23,15 +23,20 @@ import java.util.List;
 public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View>
         implements SignalDetailsContract.UserActionsListener, UploadPhotoContract.UserActionsListener {
 
+    private enum PhotoDestination {
+        SIGNAL, COMMENT
+    }
+
     private boolean showProgressBar;
     private List<Comment> commentList;
     private Signal signal;
     private File photoFile;
+    private PhotoDestination photoDestination = PhotoDestination.SIGNAL;
 
-    private CommentRepository commentRepository;
-    private PhotoRepository photoRepository;
-    private SignalRepository signalRepository;
-    private UserManager userManager;
+    private final CommentRepository commentRepository;
+    private final PhotoRepository photoRepository;
+    private final SignalRepository signalRepository;
+    private final UserManager userManager;
 
     public SignalDetailsPresenter(SignalDetailsContract.View view) {
         super(view);
@@ -133,6 +138,7 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
                 @Override
                 public void onLoginSuccess(String userId) {
                     if (getView() instanceof UploadPhotoContract.View) {
+                        photoDestination = PhotoDestination.COMMENT;
                         ((UploadPhotoContract.View)getView()).showSendPhotoBottomSheet(SignalDetailsPresenter.this);
                     }
                 }
@@ -145,16 +151,6 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
             });
         } else {
             getView().showNoInternetMessage();
-        }
-    }
-
-    @Override
-    public void onPhotoSelected(File photoFile, boolean inComment) {
-        if (photoFile != null) {
-            this.photoFile = photoFile;
-        }
-        if (inComment) {
-            getView().setThumbnailImage(this.photoFile.getPath());
         }
     }
 
@@ -245,6 +241,7 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
     @Override
     public void onUploadSignalPhotoClicked() {
         if (getView() instanceof UploadPhotoContract.View){
+            photoDestination = PhotoDestination.SIGNAL;
             ((UploadPhotoContract.View) getView()).showSendPhotoBottomSheet(this);
         }
     }
@@ -278,7 +275,13 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
         if (photoFile != null) {
             this.photoFile = photoFile;
         }
-        saveSignalPhoto(this.photoFile, signal);
+
+        if (photoDestination == PhotoDestination.SIGNAL) {
+            saveSignalPhoto(this.photoFile, signal);
+        }
+        else if (photoDestination == PhotoDestination.COMMENT) {
+            getView().setThumbnailImage(this.photoFile.getPath());
+        }
     }
 
     private void saveSignalPhoto(final File photoFile, final Signal signal) {

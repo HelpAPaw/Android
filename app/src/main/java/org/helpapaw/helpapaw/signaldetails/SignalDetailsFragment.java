@@ -61,8 +61,6 @@ public class SignalDetailsFragment extends BaseFragment
 
     private Signal mSignal;
 
-    public boolean inComment = false;
-
     public SignalDetailsFragment() {
         // Required empty public constructor
     }
@@ -380,30 +378,17 @@ public class SignalDetailsFragment extends BaseFragment
 
         if (requestCode == REQUEST_CAMERA) {
             if (resultCode == Activity.RESULT_OK) {
-                if (inComment) {
-                    actionsListener.onPhotoSelected(null, inComment);
-                } else {
-                    // null because the location where the camera saves the photo is kept in the presenter
-                    uploadPhotoActionsListener.onSignalPhotoSelected(null);
-                }
+                // null because the location where the camera saves the photo is kept in the presenter
+                uploadPhotoActionsListener.onSignalPhotoSelected(null);
             }
         }
         else if (requestCode == REQUEST_GALLERY && resultCode == Activity.RESULT_OK && data != null && data.getData() != null) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                if (inComment) {
-                    File fileFromMediaUri = ImageUtils.getInstance().getFileFromMediaUri(getContext(), getContext().getContentResolver(), data.getData());
-                    actionsListener.onPhotoSelected(fileFromMediaUri, inComment);
-                } else {
-                    saveImageFromUri(uploadPhotoActionsListener, data.getData());
-                }
+                saveImageFromUri(uploadPhotoActionsListener, data.getData());
             }
-
             else {
                 File photoFile = ImageUtils.getInstance().getFileFromMediaUri(getContext(), getContext().getContentResolver(), data.getData());
                 if (photoFile != null) {
-                    if (inComment) {
-                        actionsListener.onPhotoSelected(photoFile, inComment);
-                    }
                     uploadPhotoActionsListener.onSignalPhotoSelected(photoFile);
                 }
             }
@@ -448,7 +433,6 @@ public class SignalDetailsFragment extends BaseFragment
         return new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                inComment = true;
                 actionsListener.onChooseCommentPhotoIconClicked();
             }
         };
@@ -496,7 +480,6 @@ public class SignalDetailsFragment extends BaseFragment
         return new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                inComment = false;
                 actionsListener.onUploadSignalPhotoClicked();
             }
         };
