@@ -232,7 +232,7 @@
                 android:id="@+id/img_comment_photo"
                 android:layout_width="@dimen/thumbnail_size"
                 android:layout_height="@dimen/thumbnail_size"
-                android:layout_marginEnd="5dp"
+                android:layout_marginStart="4dp"
                 android:padding="2dp"
                 android:layout_gravity="center"
                 android:src="@drawable/ic_camera" />
@@ -241,7 +241,7 @@
                 android:id="@+id/edit_comment"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
+                android:layout_marginStart="4dp"
                 android:layout_weight="1"
                 android:hint="@string/txt_comment_hint"
                 android:inputType="textAutoComplete|textAutoCorrect|textCapSentences|textMultiLine" />
@@ -251,7 +251,8 @@
                 style="@style/Widget.AppCompat.Button.Colored"
                 android:layout_width="80dp"
                 android:layout_height="match_parent"
-                android:layout_marginRight="5dp"
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="4dp"
                 android:text="@string/txt_send"
                 android:textSize="12sp"/>
         </LinearLayout>
