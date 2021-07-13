@@ -127,8 +127,24 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
     @Override
     public void onChooseCommentPhotoIconClicked() {
         getView().hideKeyboard();
-        if (getView() instanceof UploadPhotoContract.View) {
-            ((UploadPhotoContract.View)getView()).showSendPhotoBottomSheet(this);
+
+        if (Utils.getInstance().hasNetworkConnection()) {
+            userManager.isLoggedIn(new UserManager.LoginCallback() {
+                @Override
+                public void onLoginSuccess(String userId) {
+                    if (getView() instanceof UploadPhotoContract.View) {
+                        ((UploadPhotoContract.View)getView()).showSendPhotoBottomSheet(SignalDetailsPresenter.this);
+                    }
+                }
+
+                @Override
+                public void onLoginFailure(String message) {
+                    if (!isViewAvailable()) return;
+                    getView().showRegistrationRequiredAlert(R.string.txt_only_registered_users_can_comment);
+                }
+            });
+        } else {
+            getView().showNoInternetMessage();
         }
     }
 
