@@ -249,6 +249,7 @@ public class SignalDetailsFragment extends BaseFragment
     public void clearSendCommentView() {
         binding.editComment.setError(null);
         binding.editComment.setText(null);
+        removeThumbnailFromCommentPhotoButton();
     }
 
     @Override
@@ -396,7 +397,7 @@ public class SignalDetailsFragment extends BaseFragment
     }
 
     @Override
-    public void setThumbnailImage(String photoUri) {
+    public void setThumbnailToCommentPhotoButton(String photoUri) {
         Resources res = getResources();
         RoundedBitmapDrawable drawable = RoundedBitmapDrawableFactory.create(res, ImageUtils.getInstance().getRotatedBitmap(new File(photoUri)));
         drawable.setCornerRadius(10);
@@ -404,8 +405,7 @@ public class SignalDetailsFragment extends BaseFragment
         binding.imgCommentPhoto.setImageDrawable(drawable);
     }
 
-    @Override
-    public void removeThumbnailImage() {
+    private void removeThumbnailFromCommentPhotoButton() {
         int imageResource = getResources().getIdentifier("@drawable/ic_camera", "drawable", getActivity().getPackageName());
         binding.imgCommentPhoto.setScaleType(ImageView.ScaleType.FIT_CENTER);
         binding.imgCommentPhoto.setImageResource(imageResource);

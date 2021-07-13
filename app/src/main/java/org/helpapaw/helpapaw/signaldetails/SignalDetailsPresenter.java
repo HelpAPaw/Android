@@ -177,9 +177,8 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
         if (Utils.getInstance().hasNetworkConnection()) {
             if (comment != null && comment.trim().length() > 0) {
                 getView().hideKeyboard();
-                setProgressIndicator(true);
                 getView().scrollToBottom();
-                getView().clearSendCommentView();
+                setProgressIndicator(true);
                 saveComment(comment, photoFile);
             } else {
                 getView().showCommentErrorMessage();
@@ -280,7 +279,7 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
             saveSignalPhoto(this.photoFile, signal);
         }
         else if (photoDestination == PhotoDestination.COMMENT) {
-            getView().setThumbnailImage(this.photoFile.getPath());
+            getView().setThumbnailToCommentPhotoButton(this.photoFile.getPath());
         }
     }
 
@@ -304,17 +303,17 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
 
     private void saveComment(String comment, File photoFile) {
         FirebaseCrashlytics.getInstance().log("Initiate save new comment for signal" + signal.getId());
-        commentRepository.saveComment(comment, signal, commentList, photoRepository, photoFile,
-                new CommentRepository.SaveCommentCallback() {
+        commentRepository.saveComment(comment, signal, commentList, photoRepository, photoFile, new CommentRepository.SaveCommentCallback() {
             @Override
             public void onCommentSaved(Comment comment) {
                 if (!isViewAvailable()) return;
 
                 setProgressIndicator(false);
-                commentList.add(comment);
+                getView().clearSendCommentView();
                 getView().setNoCommentsTextVisibility(false);
+                commentList.add(comment);
                 getView().displayComments(commentList);
-                getView().removeThumbnailImage();
+                getView().scrollToBottom();
             }
 
             @Override
