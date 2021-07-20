@@ -21,6 +21,7 @@ import org.helpapaw.helpapaw.utils.images.ImageUtils;
 
 import java.io.File;
 import java.io.FileDescriptor;
+import java.io.FileOutputStream;
 
 /**
  * Created by milen on 05/03/18.
@@ -87,23 +88,26 @@ public interface UploadPhotoContract {
 
             // This segment works once the permission is handled
             try {
-                String path;
                 ParcelFileDescriptor parcelFileDesc = context.getContentResolver().openFileDescriptor(photoUri, "r");
                 FileDescriptor fileDesc = parcelFileDesc.getFileDescriptor();
                 Bitmap photo = BitmapFactory.decodeFileDescriptor(fileDesc);
+                parcelFileDesc.close();
 
                 int rotation = ImageUtils.getInstance().getRotationFromMediaUri(context, photoUri);
                 photo = ImageUtils.getInstance().getRotatedBitmap(photo, rotation);
-                path = MediaStore.Images.Media.insertImage(context.getContentResolver(), photo, "temp", null);
-                File photoFile = ImageUtils.getInstance().getFileFromMediaUri(context, context.getContentResolver(), Uri.parse(path));
 
-                if (photoFile != null) {
-                    actionsListener.onSignalPhotoSelected(photoFile);
-                }
+                //https://stackoverflow.com/questions/58539583/android-q-get-image-from-gallery-and-process-it
+                String filename = photoUri.getLastPathSegment();
+                File dir = context.getCacheDir();
+                File dest = new File(dir, filename);
+                FileOutputStream out = new FileOutputStream(dest);
+                photo.compress(Bitmap.CompressFormat.JPEG, 100, out);
+                out.flush();
+                out.close();
 
-                parcelFileDesc.close();
-
-            } catch (Exception e) {
+                actionsListener.onSignalPhotoSelected(dest);
+            }
+            catch (Exception e) {
                 e.printStackTrace();
             }
         }
