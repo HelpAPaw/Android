@@ -331,6 +331,8 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
             @Override
             public void onCommentFailure(String message) {
                 if (!isViewAvailable()) return;
+                // Refresh comments in case a comment was submitted but its photo failed
+                loadCommentsForSignal(signal.getId());
                 getView().showMessage(message);
             }
         });
