@@ -224,14 +224,14 @@ public class SignalDetailsFragment extends BaseFragment
 
                 commentText = comment.getText();
 
-                ImageView imageView = inflatedCommentView.findViewById(R.id.img_comment_photo);
-                imageView.setOnClickListener(v -> actionsListener.onCommentPhotoClicked(comment.getPhotoUrl()));
-            }
+                if (comment.getPhotoUrl() != null) {
+                    showCommentPhoto(comment, inflatedCommentView);
 
-            if (comment.getPhotoUrl() != null) {
-                showCommentPhoto(comment, inflatedCommentView);
-            } else {
-                hideCommentPhoto(inflatedCommentView);
+                    ImageView imageView = inflatedCommentView.findViewById(R.id.img_comment_photo);
+                    imageView.setOnClickListener(v -> actionsListener.onCommentPhotoClicked(comment.getPhotoUrl()));
+                } else {
+                    hideCommentPhoto(inflatedCommentView);
+                }
             }
 
             // text and date elements are common for both type of comments so they are set in common code
