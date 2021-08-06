@@ -13,6 +13,7 @@ import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
 
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
@@ -109,6 +110,7 @@ public class SignalDetailsFragment extends BaseFragment
         binding.scrollSignalDetails.setOnBottomReachedListener(getOnBottomReachedListener());
         binding.viewSignalStatus.setStatusCallback(getStatusViewCallback());
         binding.btnUploadPhoto.setOnClickListener(getOnUploadSignalPhotoClickListener());
+        binding.btnEditDescription.setOnClickListener(getOnChangeSignalDescriptionClickListener());
 
         return binding.getRoot();
     }
@@ -165,14 +167,21 @@ public class SignalDetailsFragment extends BaseFragment
         showSignalPhoto(signal);
     }
 
+    @Override
     public void showUploadPhotoButton() {
         binding.imgSignalPhoto.setVisibility(View.INVISIBLE);
         binding.btnUploadPhoto.setVisibility(View.VISIBLE);
     }
 
+    @Override
     public void hideUploadPhotoButton() {
         binding.imgSignalPhoto.setVisibility(View.VISIBLE);
         binding.btnUploadPhoto.setVisibility(View.INVISIBLE);
+    }
+
+    @Override
+    public void showEditSignalDescriptionButton() {
+        binding.btnEditDescription.setVisibility(View.VISIBLE);
     }
 
     public void showSignalPhoto(Signal signal) {
@@ -370,6 +379,14 @@ public class SignalDetailsFragment extends BaseFragment
     }
 
     @Override
+    public void editSignalDescription() {
+        FragmentManager fm = getChildFragmentManager();
+
+        SignalDescriptionDialog signalDescriptionDialog = SignalDescriptionDialog.newInstance(mSignal);
+        signalDescriptionDialog.show(fm, SignalDescriptionDialog.EDIT_SIGNAL_DESCRIPTION_TAG);
+    }
+
+    @Override
     public void openCommentPhotoScreen(String photoUrl) {
         Intent intent = SignalPhotoActivity.newIntent(getContext(), photoUrl);
         startActivity(intent);
@@ -510,6 +527,15 @@ public class SignalDetailsFragment extends BaseFragment
             @Override
             public void onClick(View view) {
                 actionsListener.onUploadSignalPhotoClicked();
+            }
+        };
+    }
+
+    public View.OnClickListener getOnChangeSignalDescriptionClickListener() {
+        return new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                actionsListener.onChangeSignalDescriptionClicked();
             }
         };
     }

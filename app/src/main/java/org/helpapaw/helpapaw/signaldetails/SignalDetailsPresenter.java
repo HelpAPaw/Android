@@ -78,6 +78,7 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
 
     private void showUploadButtonIfNeeded(Signal signal) {
         if (userManager.getLoggedUserId().equals(signal.getAuthorId())) {
+            getView().showEditSignalDescriptionButton();
             photoRepository.signalPhotoExists(signal.getId(), new PhotoRepository.PhotoExistsCallback() {
                 @Override
                 public void onPhotoExistsSuccess(boolean photoExists) {
@@ -255,6 +256,11 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
             photoDestination = PhotoDestination.SIGNAL;
             ((UploadPhotoContract.View) getView()).showSendPhotoBottomSheet(this);
         }
+    }
+
+    @Override
+    public void onChangeSignalDescriptionClicked() {
+        getView().editSignalDescription();
     }
 
     @Override

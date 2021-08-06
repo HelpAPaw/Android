@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical">
+    <EditText
+        android:id="@+id/txt_edit_signal_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="5dp"
+        android:textSize="22sp"
+        android:textAlignment="center"
+        android:textIsSelectable="true"
+        android:autoLink="all"
+        android:linksClickable="true"
+        android:backgroundTint="@color/transparent_white"
+        tools:text="This is a title but it is very, very, very, VERY long and expands way much more that it should. However the important thing is that it is fully displayed and no part of it is hidden or hard to read! Right!?"/>
+
+</LinearLayout>

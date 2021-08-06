@@ -3,7 +3,6 @@ package org.helpapaw.helpapaw.signaldetails;
 import org.helpapaw.helpapaw.data.models.Comment;
 import org.helpapaw.helpapaw.data.models.Signal;
 
-import java.io.File;
 import java.util.List;
 
 /**
@@ -24,6 +23,8 @@ public interface SignalDetailsContract {
         void showUploadPhotoButton();
 
         void hideUploadPhotoButton();
+
+        void showEditSignalDescriptionButton();
 
         void showSignalPhoto(Signal signal);
 
@@ -57,6 +58,8 @@ public interface SignalDetailsContract {
 
         void openSignalPhotoScreen();
 
+        void editSignalDescription();
+
         void openCommentPhotoScreen(String photoUrl);
 
         void setThumbnailToCommentPhotoButton(String photoUri);
@@ -87,5 +90,7 @@ public interface SignalDetailsContract {
         void onCommentPhotoClicked(String photoUrl);
 
         void onUploadSignalPhotoClicked();
+
+        void onChangeSignalDescriptionClicked();
     }
 }
