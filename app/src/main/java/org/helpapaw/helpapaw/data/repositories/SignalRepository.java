@@ -20,6 +20,8 @@ public interface SignalRepository {
 
     void updateSignalStatus(String signalId, int status, List<Comment> currentComments, UpdateStatusCallback callback);
 
+    void updateSignalTitle(String signalId, String title, UpdateTitleCallback callback);
+
     void markSignalsAsSeen(List<Signal> signals);
 
 
@@ -42,6 +44,13 @@ public interface SignalRepository {
         void onStatusUpdated(int status);
 
         void onStatusFailure(String message);
+    }
+
+    interface UpdateTitleCallback {
+
+        void onTitleUpdated(String title);
+
+        void onTitleFailure(String message);
     }
 }
 

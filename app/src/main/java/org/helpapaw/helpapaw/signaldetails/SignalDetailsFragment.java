@@ -382,7 +382,7 @@ public class SignalDetailsFragment extends BaseFragment
     public void editSignalDescription() {
         FragmentManager fm = getChildFragmentManager();
 
-        SignalDescriptionDialog signalDescriptionDialog = SignalDescriptionDialog.newInstance(mSignal);
+        SignalDescriptionDialog signalDescriptionDialog = SignalDescriptionDialog.newInstance(mSignal, this.signalDetailsPresenter);
         signalDescriptionDialog.show(fm, SignalDescriptionDialog.EDIT_SIGNAL_DESCRIPTION_TAG);
     }
 

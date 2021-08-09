@@ -313,6 +313,34 @@ public class BackendlessSpatialSignalRepository implements SignalRepository {
         });
     }
 
+    @Override
+    public void updateSignalTitle(final String signalId, final String title, final UpdateTitleCallback callback) {
+
+        Map<String, Object> dataMap = new HashMap<>();
+        dataMap.put(OBJECT_ID_FIELD, signalId);
+        dataMap.put(SIGNAL_TITLE, title);
+
+        Backendless.Data.of(getTableName()).save(dataMap, new AsyncCallback<Map>() {
+            @Override
+            public void handleResponse(Map saveResponse) {
+                // Update signal in database
+                List<Signal> signalsFromDB = signalsDatabase.signalDao().getSignal(signalId);
+                if (signalsFromDB.size() > 0) {
+                    Signal signal = signalsFromDB.get(0);
+                    signal.setTitle(title);
+                    signalsDatabase.signalDao().saveSignal(signal);
+                }
+
+                callback.onTitleUpdated(title);
+            }
+
+            @Override
+            public void handleFault(BackendlessFault fault) {
+                callback.onTitleFailure(fault.getMessage());
+            }
+        });
+    }
+
     public void markSignalsAsSeen(List<Signal> signals) {
         String[] signalIds = new String[signals.size()];
         for (int i = 0; i < signals.size(); i++) {

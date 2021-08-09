@@ -79,6 +79,8 @@ public interface SignalDetailsContract {
 
         void onRequestStatusChange(int status);
 
+        void onUpdateTitle(String title);
+
         void onCallButtonClicked();
 
         void onSignalDetailsClosing();

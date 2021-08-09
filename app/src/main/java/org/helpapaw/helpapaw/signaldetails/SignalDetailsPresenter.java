@@ -235,6 +235,26 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
     }
 
     @Override
+    public void onUpdateTitle(final String newTitle) {
+        FirebaseCrashlytics.getInstance().log("Initiate title change for signal " + signal.getId());
+        signalRepository.updateSignalTitle(signal.getId(), newTitle, new SignalRepository.UpdateTitleCallback() {
+            @Override
+            public void onTitleUpdated(String title) {
+                if(!isViewAvailable()) return;
+                signal.setTitle(title);
+                getView().showSignalDetails(signal);
+                showUploadButtonIfNeeded(signal);
+            }
+
+            @Override
+            public void onTitleFailure(String message) {
+                if (!isViewAvailable()) return;
+                getView().showMessage(message);
+            }
+        });
+    }
+
+    @Override
     public void onCallButtonClicked() {
         String phoneNumber = signal.getAuthorPhone();
         getView().openNumberDialer(phoneNumber);

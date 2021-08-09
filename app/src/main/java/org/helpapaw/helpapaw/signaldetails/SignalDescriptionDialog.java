@@ -18,16 +18,19 @@ public class SignalDescriptionDialog extends DialogFragment {
     public static final String EDIT_SIGNAL_DESCRIPTION_TAG = "editSignalDescription";
 
     private Signal signal;
+    private SignalDetailsPresenter presenter;
 
-    public static SignalDescriptionDialog newInstance(Signal signal) {
+    public static SignalDescriptionDialog newInstance(Signal signal, SignalDetailsPresenter presenter) {
         SignalDescriptionDialog signalDescriptionDialog = new SignalDescriptionDialog();
         signalDescriptionDialog.signal = signal;
+        signalDescriptionDialog.presenter = presenter;
         return signalDescriptionDialog;
     }
 
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+
         AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity());
         dialog.setTitle(R.string.txt_edit_title_dialog);
 
@@ -39,8 +42,8 @@ public class SignalDescriptionDialog extends DialogFragment {
         dialog.setView(view);
 
         dialog.setPositiveButton("Save", (dialog1, which) -> {
-
-            // save the signal to the db
+            String newTitle = editText.getText().toString();
+            presenter.onUpdateTitle(newTitle);
 
             dismiss();
         });
