@@ -55,6 +55,8 @@
     <string name="txt_upload_photo">Upload photo</string>
     <string name="txt_edit_title">Edit</string>
     <string name="txt_edit_title_dialog">Signal description:</string>
+    <string name="txt_delete_signal">Delete</string>
+    <string name="txt_delete_signal_dialog">Are you sure you want to delete the signal?</string>
     <string name="txt_comments">Comments</string>
     <string name="txt_signal_from">Signal from %1$s</string>
     <string name="txt_comment_hint">Enter a comment</string>

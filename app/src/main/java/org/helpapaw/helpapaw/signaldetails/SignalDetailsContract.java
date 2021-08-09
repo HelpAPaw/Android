@@ -60,6 +60,8 @@ public interface SignalDetailsContract {
 
         void editSignalDescription();
 
+        void deleteSignal();
+
         void openCommentPhotoScreen(String photoUrl);
 
         void setThumbnailToCommentPhotoButton(String photoUri);
@@ -94,5 +96,7 @@ public interface SignalDetailsContract {
         void onUploadSignalPhotoClicked();
 
         void onChangeSignalDescriptionClicked();
+
+        void onDeleteSignalClicked();
     }
 }

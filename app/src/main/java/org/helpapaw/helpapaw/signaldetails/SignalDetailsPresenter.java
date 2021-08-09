@@ -284,6 +284,12 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
     }
 
     @Override
+    public void onDeleteSignalClicked() {
+        getView().deleteSignal();
+//        photoRepository.deleteSignal(signal);
+    }
+
+    @Override
     public void onSignalDetailsClosing() {
         getView().closeScreenWithResult(signal);
     }

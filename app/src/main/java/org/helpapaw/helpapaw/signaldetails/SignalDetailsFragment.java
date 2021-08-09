@@ -111,6 +111,7 @@ public class SignalDetailsFragment extends BaseFragment
         binding.viewSignalStatus.setStatusCallback(getStatusViewCallback());
         binding.btnUploadPhoto.setOnClickListener(getOnUploadSignalPhotoClickListener());
         binding.btnEditDescription.setOnClickListener(getOnChangeSignalDescriptionClickListener());
+        binding.btnDeleteSignal.setOnClickListener(getOnDeleteSignalClickListener());
 
         return binding.getRoot();
     }
@@ -387,6 +388,14 @@ public class SignalDetailsFragment extends BaseFragment
     }
 
     @Override
+    public void deleteSignal() {
+        FragmentManager fm = getChildFragmentManager();
+
+        DeleteSignalDialog deleteSignalDialog = DeleteSignalDialog.newInstance(mSignal, this.signalDetailsPresenter);
+        deleteSignalDialog.show(fm, DeleteSignalDialog.DELETE_SIGNAL_TAG);
+    }
+
+    @Override
     public void openCommentPhotoScreen(String photoUrl) {
         Intent intent = SignalPhotoActivity.newIntent(getContext(), photoUrl);
         startActivity(intent);
@@ -536,6 +545,15 @@ public class SignalDetailsFragment extends BaseFragment
             @Override
             public void onClick(View view) {
                 actionsListener.onChangeSignalDescriptionClicked();
+            }
+        };
+    }
+
+    public View.OnClickListener getOnDeleteSignalClickListener() {
+        return new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                actionsListener.onDeleteSignalClicked();
             }
         };
     }

@@ -69,16 +69,33 @@
                             android:linksClickable="true"
                             tools:text="This is a title but it is very, very, very, VERY long and expands way much more that it should. However the important thing is that it is fully displayed and no part of it is hidden or hard to read! Right!?"/>
 
-                        <Button
-                            android:id="@+id/btn_editDescription"
-                            style="@style/Widget.AppCompat.Button.Borderless.Colored"
-                            android:layout_width="wrap_content"
+                        <RelativeLayout
+                            android:id="@+id/owner_buttons_layout"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_gravity="bottom|right"
-                            android:text="@string/txt_edit_title"
-                            android:drawableStart="@drawable/ic_edit"
-                            android:visibility="invisible" />
+                            android:orientation="horizontal">
 
+                            <Button
+                                android:id="@+id/btn_deleteSignal"
+                                style="@style/Widget.AppCompat.Button.Borderless.Colored"
+                                android:textColor="@color/color_emergency"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentLeft="true"
+                                android:text="@string/txt_delete_signal"
+                                android:drawableStart="@drawable/ic_delete"
+                                android:visibility="visible" />
+
+                            <Button
+                                android:id="@+id/btn_editDescription"
+                                style="@style/Widget.AppCompat.Button.Borderless.Colored"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentRight="true"
+                                android:drawableStart="@drawable/ic_edit"
+                                android:text="@string/txt_edit_title"
+                                android:visibility="visible" />
+                        </RelativeLayout>
                         <TextView
                             android:id="@+id/txt_signal_type"
                             android:layout_width="wrap_content"
