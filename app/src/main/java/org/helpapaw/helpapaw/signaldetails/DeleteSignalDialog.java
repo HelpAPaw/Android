@@ -35,7 +35,7 @@ public class DeleteSignalDialog extends DialogFragment {
         dialog.setTitle(R.string.txt_delete_signal_dialog);
 
         dialog.setPositiveButton("Delete", (dialog1, which) -> {
-//            presenter.onUpdateTitle(newTitle);
+            presenter.onDeleteSignal();
 
             dismiss();
         });

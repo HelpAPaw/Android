@@ -255,6 +255,26 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
     }
 
     @Override
+    public void onDeleteSignal() {
+        FirebaseCrashlytics.getInstance().log("Initiate title change for signal " + signal.getId());
+        signalRepository.deleteSignal(signal.getId(), new SignalRepository.DeleteSignalCallback() {
+            @Override
+            public void onSignalDeleted() {
+                if(!isViewAvailable()) return;
+//                signal.setIsDeleted(1);
+                getView().closeScreenWithResult(signal);
+            }
+
+            @Override
+            public void onSignalDeletedFailed(String message) {
+                if (!isViewAvailable()) return;
+                getView().showMessage(message);
+            }
+        });
+    }
+
+
+    @Override
     public void onCallButtonClicked() {
         String phoneNumber = signal.getAuthorPhone();
         getView().openNumberDialer(phoneNumber);

@@ -24,6 +24,8 @@ public interface SignalRepository {
 
     void markSignalsAsSeen(List<Signal> signals);
 
+    void deleteSignal(String signalId, DeleteSignalCallback callback);
+
 
     interface LoadSignalsCallback {
 
@@ -51,6 +53,13 @@ public interface SignalRepository {
         void onTitleUpdated(String title);
 
         void onTitleFailure(String message);
+    }
+
+    interface DeleteSignalCallback {
+
+        void onSignalDeleted();
+
+        void onSignalDeletedFailed(String message);
     }
 }
 

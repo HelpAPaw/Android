@@ -83,6 +83,8 @@ public interface SignalDetailsContract {
 
         void onUpdateTitle(String title);
 
+        void onDeleteSignal();
+
         void onCallButtonClicked();
 
         void onSignalDetailsClosing();
