@@ -78,13 +78,14 @@
                             <Button
                                 android:id="@+id/btn_deleteSignal"
                                 style="@style/Widget.AppCompat.Button.Borderless.Colored"
-                                android:textColor="@color/color_emergency"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_alignParentLeft="true"
-                                android:text="@string/txt_delete_signal"
+                                android:layout_marginLeft="-1dp"
                                 android:drawableStart="@drawable/ic_delete"
-                                android:visibility="visible" />
+                                android:text="@string/txt_delete_signal"
+                                android:textColor="@color/color_emergency"
+                                android:visibility="invisible" />
 
                             <Button
                                 android:id="@+id/btn_editDescription"
@@ -94,7 +95,7 @@
                                 android:layout_alignParentRight="true"
                                 android:drawableStart="@drawable/ic_edit"
                                 android:text="@string/txt_edit_title"
-                                android:visibility="visible" />
+                                android:visibility="invisible" />
                         </RelativeLayout>
                         <TextView
                             android:id="@+id/txt_signal_type"

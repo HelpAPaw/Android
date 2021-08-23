@@ -71,7 +71,7 @@ public class BackendlessSpatialSignalRepository implements SignalRepository {
         calendar.add(Calendar.DATE, -timeout);
         Date dateSubmitted = calendar.getTime();
         String whereClause2 = String.format(Locale.ENGLISH, "%s > %d", CREATED_FIELD, dateSubmitted.getTime());
-        String whereClause3 = String.format(Locale.ENGLISH, "%s = %s", DELETED, 0);
+        String whereClause3 = String.format(Locale.ENGLISH, "%s = %s", DELETED, "FALSE");
 
         String joinedWhereClause = String.format(Locale.ENGLISH, "(%s) AND (%s) AND (%s)", whereClause1, whereClause2, whereClause3);
 
@@ -89,7 +89,7 @@ public class BackendlessSpatialSignalRepository implements SignalRepository {
         calendar.add(Calendar.DATE, -timeout);
         Date dateSubmitted = calendar.getTime();
         String whereClause2 = String.format(Locale.ENGLISH, "%s > %d", CREATED_FIELD, dateSubmitted.getTime());
-        String whereClause3 = String.format(Locale.ENGLISH, "%s = %s", DELETED, 0);
+        String whereClause3 = String.format(Locale.ENGLISH, "%s = %s", DELETED, "FALSE");
         String joinedWhereClause;
 
         if (selectedTypes != null && !Utils.allSelected(selectedTypes)) {
@@ -349,7 +349,7 @@ public class BackendlessSpatialSignalRepository implements SignalRepository {
 
         Map<String, Object> dataMap = new HashMap<>();
         dataMap.put(OBJECT_ID_FIELD, signalId);
-        dataMap.put(DELETED, 1);
+        dataMap.put(DELETED, true);
 
         Backendless.Data.of(getTableName()).save(dataMap, new AsyncCallback<Map>() {
             @Override
@@ -358,7 +358,7 @@ public class BackendlessSpatialSignalRepository implements SignalRepository {
                 List<Signal> signalsFromDB = signalsDatabase.signalDao().getSignal(signalId);
                 if (signalsFromDB.size() > 0) {
                     Signal signal = signalsFromDB.get(0);
-                    signal.setIsDeleted(1);
+                    signal.setIsDeleted(true);
                     signalsDatabase.signalDao().saveSignal(signal);
                 }
 

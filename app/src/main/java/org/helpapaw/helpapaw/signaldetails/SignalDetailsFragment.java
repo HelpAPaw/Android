@@ -183,6 +183,7 @@ public class SignalDetailsFragment extends BaseFragment
     @Override
     public void showEditSignalDescriptionButton() {
         binding.btnEditDescription.setVisibility(View.VISIBLE);
+        binding.btnDeleteSignal.setVisibility(View.VISIBLE);
     }
 
     public void showSignalPhoto(Signal signal) {
