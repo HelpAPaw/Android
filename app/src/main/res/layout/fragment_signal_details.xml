@@ -76,7 +76,7 @@
                             android:orientation="horizontal">
 
                             <Button
-                                android:id="@+id/btn_deleteSignal"
+                                android:id="@+id/btn_cancelEditDescription"
                                 style="@style/Widget.AppCompat.Button.Borderless.Colored"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -88,7 +88,7 @@
                                 android:visibility="invisible" />
 
                             <Button
-                                android:id="@+id/btn_editDescription"
+                                android:id="@+id/btn_saveEditDescription"
                                 style="@style/Widget.AppCompat.Button.Borderless.Colored"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"

@@ -110,8 +110,8 @@ public class SignalDetailsFragment extends BaseFragment
         binding.scrollSignalDetails.setOnBottomReachedListener(getOnBottomReachedListener());
         binding.viewSignalStatus.setStatusCallback(getStatusViewCallback());
         binding.btnUploadPhoto.setOnClickListener(getOnUploadSignalPhotoClickListener());
-        binding.btnEditDescription.setOnClickListener(getOnChangeSignalDescriptionClickListener());
-        binding.btnDeleteSignal.setOnClickListener(getOnDeleteSignalClickListener());
+//        binding.btnEditDescription.setOnClickListener(getOnChangeSignalDescriptionClickListener());
+//        binding.btnDeleteSignal.setOnClickListener(getOnDeleteSignalClickListener());
 
         return binding.getRoot();
     }
@@ -181,9 +181,13 @@ public class SignalDetailsFragment extends BaseFragment
     }
 
     @Override
-    public void showEditSignalDescriptionButton() {
-        binding.btnEditDescription.setVisibility(View.VISIBLE);
-        binding.btnDeleteSignal.setVisibility(View.VISIBLE);
+    public void showSignalOwnerActions() {
+        this.setMenuVisibility(true);
+    }
+
+    @Override
+    public void hideSignalOwnerActions() {
+        this.setMenuVisibility(false);
     }
 
     public void showSignalPhoto(Signal signal) {
@@ -347,7 +351,14 @@ public class SignalDetailsFragment extends BaseFragment
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
+        if (item.getItemId() == R.id.btn_deleteSignal) {
+            actionsListener.onDeleteSignalClicked();
+            return true;
+        }
+        if (item.getItemId() == R.id.btn_editDescription) {
+            actionsListener.onChangeSignalDescriptionClicked();
+            return true;
+        }
         return super.onOptionsItemSelected(item);
     }
 

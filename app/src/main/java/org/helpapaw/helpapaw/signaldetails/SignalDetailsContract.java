@@ -24,7 +24,9 @@ public interface SignalDetailsContract {
 
         void hideUploadPhotoButton();
 
-        void showEditSignalDescriptionButton();
+        void showSignalOwnerActions();
+
+        void hideSignalOwnerActions();
 
         void showSignalPhoto(Signal signal);
 
