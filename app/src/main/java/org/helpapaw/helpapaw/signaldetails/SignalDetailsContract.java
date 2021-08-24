@@ -28,6 +28,12 @@ public interface SignalDetailsContract {
 
         void hideSignalOwnerActions();
 
+        void showEditSignalActions();
+
+        void hideEditSignalActions();
+
+        void showEditSignalDetailsButtons();
+
         void showSignalPhoto(Signal signal);
 
         void displayComments(List<Comment> comments);
@@ -61,6 +67,10 @@ public interface SignalDetailsContract {
         void openSignalPhotoScreen();
 
         void editSignalDescription();
+
+        void saveEditSignalDescription();
+
+        void cancelEditSignalDescription(String originalDescription);
 
         void deleteSignal();
 
@@ -99,8 +109,12 @@ public interface SignalDetailsContract {
 
         void onUploadSignalPhotoClicked();
 
-        void onChangeSignalDescriptionClicked();
+        void onEditSignalDescriptionClicked();
 
         void onDeleteSignalClicked();
+
+        void onSaveEditSignalDescriptionClicked();
+
+        void onCancelEditSignalDescriptionClicked(String originalText);
     }
 }

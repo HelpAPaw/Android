@@ -264,7 +264,7 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
             @Override
             public void onSignalDeleted() {
                 if(!isViewAvailable()) return;
-//                signal.setIsDeleted(1);
+
                 getView().closeScreenWithResult(signal);
             }
 
@@ -275,7 +275,6 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
             }
         });
     }
-
 
     @Override
     public void onCallButtonClicked() {
@@ -302,14 +301,23 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
     }
 
     @Override
-    public void onChangeSignalDescriptionClicked() {
+    public void onEditSignalDescriptionClicked() {
         getView().editSignalDescription();
     }
 
     @Override
     public void onDeleteSignalClicked() {
         getView().deleteSignal();
-//        photoRepository.deleteSignal(signal);
+    }
+
+    @Override
+    public void onSaveEditSignalDescriptionClicked() {
+        getView().saveEditSignalDescription();
+    }
+
+    @Override
+    public void onCancelEditSignalDescriptionClicked(String originalDescription) {
+        getView().cancelEditSignalDescription(originalDescription);
     }
 
     @Override
