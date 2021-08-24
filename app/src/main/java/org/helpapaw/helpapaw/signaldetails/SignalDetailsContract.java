@@ -28,9 +28,7 @@ public interface SignalDetailsContract {
 
         void hideSignalOwnerActions();
 
-        void showEditSignalActions();
-
-        void hideEditSignalActions();
+        void changeEditSignalTitleActions(int visibility);
 
         void showEditSignalDetailsButtons();
 
@@ -66,11 +64,11 @@ public interface SignalDetailsContract {
 
         void openSignalPhotoScreen();
 
-        void editSignalDescription();
+        void editSignalTitle();
 
-        void saveEditSignalDescription();
+        void saveEditSignalTitle();
 
-        void cancelEditSignalDescription(String originalDescription);
+        void cancelEditSignalTitle(String originalTitle);
 
         void deleteSignal();
 
@@ -109,12 +107,12 @@ public interface SignalDetailsContract {
 
         void onUploadSignalPhotoClicked();
 
-        void onEditSignalDescriptionClicked();
+        void onEditSignalTitleClicked();
 
         void onDeleteSignalClicked();
 
-        void onSaveEditSignalDescriptionClicked();
+        void onSaveEditSignalTitleClicked();
 
-        void onCancelEditSignalDescriptionClicked(String originalText);
+        void onCancelEditSignalTitleClicked(String originalText);
     }
 }

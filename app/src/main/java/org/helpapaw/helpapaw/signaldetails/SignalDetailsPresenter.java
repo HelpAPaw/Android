@@ -301,8 +301,8 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
     }
 
     @Override
-    public void onEditSignalDescriptionClicked() {
-        getView().editSignalDescription();
+    public void onEditSignalTitleClicked() {
+        getView().editSignalTitle();
     }
 
     @Override
@@ -311,13 +311,13 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
     }
 
     @Override
-    public void onSaveEditSignalDescriptionClicked() {
-        getView().saveEditSignalDescription();
+    public void onSaveEditSignalTitleClicked() {
+        getView().saveEditSignalTitle();
     }
 
     @Override
-    public void onCancelEditSignalDescriptionClicked(String originalDescription) {
-        getView().cancelEditSignalDescription(originalDescription);
+    public void onCancelEditSignalTitleClicked(String originalTitle) {
+        getView().cancelEditSignalTitle(originalTitle);
     }
 
     @Override

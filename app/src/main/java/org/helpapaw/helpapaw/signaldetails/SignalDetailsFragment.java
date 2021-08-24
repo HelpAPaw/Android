@@ -114,8 +114,8 @@ public class SignalDetailsFragment extends BaseFragment
         binding.scrollSignalDetails.setOnBottomReachedListener(getOnBottomReachedListener());
         binding.viewSignalStatus.setStatusCallback(getStatusViewCallback());
         binding.btnUploadPhoto.setOnClickListener(getOnUploadSignalPhotoClickListener());
-        binding.btnSaveEditDescription.setOnClickListener(getOnSaveEditSignalDescriptionClickListener());
-        binding.btnCancelEditDescription.setOnClickListener(getOnCancelEditSignalDescriptionClickListener());
+        binding.btnSaveEditTitle.setOnClickListener(getOnSaveEditSignalTitleClickListener());
+        binding.btnCancelEditTitle.setOnClickListener(getOnCancelEditSignalTitleClickListener());
 
         return binding.getRoot();
     }
@@ -195,15 +195,9 @@ public class SignalDetailsFragment extends BaseFragment
     }
 
     @Override
-    public void showEditSignalActions() {
-        binding.btnSaveEditDescription.setVisibility(View.VISIBLE);
-        binding.btnCancelEditDescription.setVisibility(View.VISIBLE);
-    }
-
-    @Override
-    public void hideEditSignalActions() {
-        binding.btnSaveEditDescription.setVisibility(View.GONE);
-        binding.btnCancelEditDescription.setVisibility(View.GONE);
+    public void changeEditSignalTitleActions(int visibility) {
+        binding.btnSaveEditTitle.setVisibility(visibility);
+        binding.btnCancelEditTitle.setVisibility(visibility);
     }
 
     @Override
@@ -379,7 +373,7 @@ public class SignalDetailsFragment extends BaseFragment
             return true;
         }
         if (item.getItemId() == R.id.btn_editDescription) {
-            actionsListener.onEditSignalDescriptionClicked();
+            actionsListener.onEditSignalTitleClicked();
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -415,11 +409,11 @@ public class SignalDetailsFragment extends BaseFragment
     }
 
     @Override
-    public void editSignalDescription() {
+    public void editSignalTitle() {
         disableScreenRotation();
 
         binding.grpAddComment.setVisibility(View.GONE);
-        showEditSignalActions();
+        changeEditSignalTitleActions(View.VISIBLE);
 
         EditText txtSignalTitle = binding.txtSignalTitle;
         txtSignalTitle.setEnabled(true);
@@ -434,19 +428,19 @@ public class SignalDetailsFragment extends BaseFragment
     }
 
     @Override
-    public void saveEditSignalDescription() {
+    public void saveEditSignalTitle() {
         EditText txtSignalTitle = binding.txtSignalTitle;
         signalDetailsPresenter.onUpdateTitle(txtSignalTitle.getText().toString());
 
-        closeEditSignalDescriptionScreen(txtSignalTitle);
+        closeEditSignalTitleScreen(txtSignalTitle);
     }
 
     @Override
-    public void cancelEditSignalDescription(String originalDescription) {
+    public void cancelEditSignalTitle(String originalTitle) {
         EditText txtSignalTitle = binding.txtSignalTitle;
-        txtSignalTitle.setText(originalDescription);
+        txtSignalTitle.setText(originalTitle);
 
-        closeEditSignalDescriptionScreen(txtSignalTitle);
+        closeEditSignalTitleScreen(txtSignalTitle);
     }
 
     @Override
@@ -546,11 +540,11 @@ public class SignalDetailsFragment extends BaseFragment
         };
     }
 
-    private void closeEditSignalDescriptionScreen(EditText txtSignalTitle){
+    private void closeEditSignalTitleScreen(EditText txtSignalTitle){
         txtSignalTitle.setEnabled(false);
 
         hideKeyboard();
-        hideEditSignalActions();
+        changeEditSignalTitleActions(View.GONE);
 
         enableScreenRotation();
     }
@@ -627,20 +621,20 @@ public class SignalDetailsFragment extends BaseFragment
         };
     }
 
-    public View.OnClickListener getOnSaveEditSignalDescriptionClickListener() {
+    public View.OnClickListener getOnSaveEditSignalTitleClickListener() {
         return new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                actionsListener.onSaveEditSignalDescriptionClicked();
+                actionsListener.onSaveEditSignalTitleClicked();
             }
         };
     }
 
-    public View.OnClickListener getOnCancelEditSignalDescriptionClickListener() {
+    public View.OnClickListener getOnCancelEditSignalTitleClickListener() {
         return new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                actionsListener.onCancelEditSignalDescriptionClicked(mSignal.getTitle());
+                actionsListener.onCancelEditSignalTitleClicked(mSignal.getTitle());
             }
         };
     }
