@@ -301,6 +301,7 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
             public void onPhotoSaved(String photoUrl) {
                 signal.setPhotoUrl(photoUrl);
                 // Show new photo
+                if (!isViewAvailable()) return;
                 getView().hideUploadPhotoButton();
                 getView().showSignalPhoto(signal);
             }
