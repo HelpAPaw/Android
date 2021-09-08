@@ -253,6 +253,7 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
             public void onTitleFailure(String message) {
                 if (!isViewAvailable()) return;
                 getView().showMessage(message);
+                getView().editSignalTitle();
             }
         });
     }
