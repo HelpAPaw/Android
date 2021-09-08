@@ -24,13 +24,11 @@ public interface SignalDetailsContract {
 
         void hideUploadPhotoButton();
 
-        void showSignalOwnerActions();
+        void showSignalAuthorActions();
 
-        void hideSignalOwnerActions();
+        void hideSignalAuthorActions();
 
-        void changeEditSignalTitleActions(int visibility);
-
-        void showEditSignalDetailsButtons();
+        void setEditSignalTitleButtonsVisibility(int visibility);
 
         void showSignalPhoto(Signal signal);
 

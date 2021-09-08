@@ -78,7 +78,7 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
 
     private void showUploadButtonIfNeeded(Signal signal) {
         if (userManager.getLoggedUserId().equals(signal.getAuthorId())) {
-            getView().showSignalOwnerActions();
+            getView().showSignalAuthorActions();
             photoRepository.signalPhotoExists(signal.getId(), new PhotoRepository.PhotoExistsCallback() {
                 @Override
                 public void onPhotoExistsSuccess(boolean photoExists) {
@@ -99,7 +99,7 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
             });
         }
         else {
-            getView().hideSignalOwnerActions();
+            getView().hideSignalAuthorActions();
         }
     }
 
@@ -260,7 +260,7 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
 
     @Override
     public void onDeleteSignal() {
-        FirebaseCrashlytics.getInstance().log("Initiate title change for signal " + signal.getId());
+        FirebaseCrashlytics.getInstance().log("Initiate delete for signal " + signal.getId());
         signalRepository.deleteSignal(signal.getId(), new SignalRepository.DeleteSignalCallback() {
             @Override
             public void onSignalDeleted() {

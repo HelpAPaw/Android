@@ -185,25 +185,19 @@ public class SignalDetailsFragment extends BaseFragment
     }
 
     @Override
-    public void showSignalOwnerActions() {
+    public void showSignalAuthorActions() {
         this.setMenuVisibility(true);
     }
 
     @Override
-    public void hideSignalOwnerActions() {
+    public void hideSignalAuthorActions() {
         this.setMenuVisibility(false);
     }
 
     @Override
-    public void changeEditSignalTitleActions(int visibility) {
+    public void setEditSignalTitleButtonsVisibility(int visibility) {
         binding.btnSaveEditTitle.setVisibility(visibility);
         binding.btnCancelEditTitle.setVisibility(visibility);
-    }
-
-    @Override
-    public void showEditSignalDetailsButtons() {
-        binding.imgSignalPhoto.setVisibility(View.VISIBLE);
-        binding.btnUploadPhoto.setVisibility(View.INVISIBLE);
     }
 
     @Override
@@ -413,7 +407,7 @@ public class SignalDetailsFragment extends BaseFragment
         disableScreenRotation();
 
         binding.grpAddComment.setVisibility(View.GONE);
-        changeEditSignalTitleActions(View.VISIBLE);
+        setEditSignalTitleButtonsVisibility(View.VISIBLE);
 
         EditText txtSignalTitle = binding.txtSignalTitle;
         txtSignalTitle.setEnabled(true);
@@ -544,7 +538,7 @@ public class SignalDetailsFragment extends BaseFragment
         txtSignalTitle.setEnabled(false);
 
         hideKeyboard();
-        changeEditSignalTitleActions(View.GONE);
+        setEditSignalTitleButtonsVisibility(View.GONE);
 
         enableScreenRotation();
     }

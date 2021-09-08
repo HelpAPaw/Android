@@ -74,7 +74,7 @@
                             tools:text="This is a title but it is very, very, very, VERY long and expands way much more that it should. However the important thing is that it is fully displayed and no part of it is hidden or hard to read! Right!?"/>
 
                         <RelativeLayout
-                            android:id="@+id/owner_buttons_layout"
+                            android:id="@+id/author_buttons_layout"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:orientation="horizontal">
