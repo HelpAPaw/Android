@@ -404,8 +404,6 @@ public class SignalDetailsFragment extends BaseFragment
 
     @Override
     public void editSignalTitle() {
-        disableScreenRotation();
-
         binding.grpAddComment.setVisibility(View.GONE);
         setEditSignalTitleButtonsVisibility(View.VISIBLE);
 
@@ -423,18 +421,16 @@ public class SignalDetailsFragment extends BaseFragment
 
     @Override
     public void saveEditSignalTitle() {
-        EditText txtSignalTitle = binding.txtSignalTitle;
-        signalDetailsPresenter.onUpdateTitle(txtSignalTitle.getText().toString());
+        signalDetailsPresenter.onUpdateTitle(binding.txtSignalTitle.getText().toString());
 
-        closeEditSignalTitleScreen(txtSignalTitle);
+        endEditSignalTitleMode();
     }
 
     @Override
     public void cancelEditSignalTitle(String originalTitle) {
-        EditText txtSignalTitle = binding.txtSignalTitle;
-        txtSignalTitle.setText(originalTitle);
+        binding.txtSignalTitle.setText(originalTitle);
 
-        closeEditSignalTitleScreen(txtSignalTitle);
+        endEditSignalTitleMode();
     }
 
     @Override
@@ -534,29 +530,11 @@ public class SignalDetailsFragment extends BaseFragment
         };
     }
 
-    private void closeEditSignalTitleScreen(EditText txtSignalTitle){
-        txtSignalTitle.setEnabled(false);
+    private void endEditSignalTitleMode() {
+        binding.txtSignalTitle.setEnabled(false);
 
         hideKeyboard();
         setEditSignalTitleButtonsVisibility(View.GONE);
-
-        enableScreenRotation();
-    }
-
-    private void disableScreenRotation() {
-        // disable screen rotation while the dialog is open
-        int currentOrientation = getResources().getConfiguration().orientation;
-        if (currentOrientation == Configuration.ORIENTATION_LANDSCAPE) {
-            this.getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
-        }
-        else {
-            this.getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT);
-        }
-    }
-
-    private void enableScreenRotation() {
-        // disable screen rotation depending of the user preferences
-        getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_USER);
     }
 
     /* OnClick Listeners */
