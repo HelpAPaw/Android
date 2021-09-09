@@ -20,7 +20,11 @@ public interface SignalRepository {
 
     void updateSignalStatus(String signalId, int status, List<Comment> currentComments, UpdateStatusCallback callback);
 
+    void updateSignalTitle(String signalId, String title, UpdateTitleCallback callback);
+
     void markSignalsAsSeen(List<Signal> signals);
+
+    void deleteSignal(String signalId, DeleteSignalCallback callback);
 
 
     interface LoadSignalsCallback {
@@ -42,6 +46,20 @@ public interface SignalRepository {
         void onStatusUpdated(int status);
 
         void onStatusFailure(String message);
+    }
+
+    interface UpdateTitleCallback {
+
+        void onTitleUpdated(String title);
+
+        void onTitleFailure(String message);
+    }
+
+    interface DeleteSignalCallback {
+
+        void onSignalDeleted();
+
+        void onSignalDeletedFailed(String message);
     }
 }
 

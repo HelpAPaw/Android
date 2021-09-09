@@ -75,7 +75,8 @@
         </activity>
         <activity
             android:name=".signalsmap.SignalsMapActivity"
-            android:windowSoftInputMode="stateHidden">
+            android:windowSoftInputMode="stateHidden"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -86,7 +87,8 @@
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".signaldetails.SignalDetailsActivity"
-            android:windowSoftInputMode="stateHidden" />
+            android:windowSoftInputMode="stateHidden"
+            android:configChanges="keyboardHidden|orientation|screenSize"/>
         <activity
             android:name=".signalphoto.SignalPhotoActivity"
             android:windowSoftInputMode="stateHidden" />

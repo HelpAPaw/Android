@@ -78,6 +78,7 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
 
     private void showUploadButtonIfNeeded(Signal signal) {
         if (userManager.getLoggedUserId().equals(signal.getAuthorId())) {
+            getView().showSignalAuthorActions();
             photoRepository.signalPhotoExists(signal.getId(), new PhotoRepository.PhotoExistsCallback() {
                 @Override
                 public void onPhotoExistsSuccess(boolean photoExists) {
@@ -96,6 +97,9 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
                     // Don't show an error because user doesn't have any action and will be confused
                 }
             });
+        }
+        else {
+            getView().hideSignalAuthorActions();
         }
     }
 
@@ -234,6 +238,46 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
     }
 
     @Override
+    public void onUpdateTitle(final String newTitle) {
+        FirebaseCrashlytics.getInstance().log("Initiate title change for signal " + signal.getId());
+        signalRepository.updateSignalTitle(signal.getId(), newTitle, new SignalRepository.UpdateTitleCallback() {
+            @Override
+            public void onTitleUpdated(String title) {
+                if(!isViewAvailable()) return;
+                signal.setTitle(title);
+                getView().showSignalDetails(signal);
+                showUploadButtonIfNeeded(signal);
+            }
+
+            @Override
+            public void onTitleFailure(String message) {
+                if (!isViewAvailable()) return;
+                getView().showMessage(message);
+                getView().editSignalTitle();
+            }
+        });
+    }
+
+    @Override
+    public void onDeleteSignal() {
+        FirebaseCrashlytics.getInstance().log("Initiate delete for signal " + signal.getId());
+        signalRepository.deleteSignal(signal.getId(), new SignalRepository.DeleteSignalCallback() {
+            @Override
+            public void onSignalDeleted() {
+                if(!isViewAvailable()) return;
+
+                getView().closeScreenWithResult(signal);
+            }
+
+            @Override
+            public void onSignalDeletedFailed(String message) {
+                if (!isViewAvailable()) return;
+                getView().showMessage(message);
+            }
+        });
+    }
+
+    @Override
     public void onCallButtonClicked() {
         String phoneNumber = signal.getAuthorPhone();
         getView().openNumberDialer(phoneNumber);
@@ -255,6 +299,26 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
             photoDestination = PhotoDestination.SIGNAL;
             ((UploadPhotoContract.View) getView()).showSendPhotoBottomSheet(this);
         }
+    }
+
+    @Override
+    public void onEditSignalTitleClicked() {
+        getView().editSignalTitle();
+    }
+
+    @Override
+    public void onDeleteSignalClicked() {
+        getView().deleteSignal();
+    }
+
+    @Override
+    public void onSaveEditSignalTitleClicked() {
+        getView().saveEditSignalTitle();
+    }
+
+    @Override
+    public void onCancelEditSignalTitleClicked(String originalTitle) {
+        getView().cancelEditSignalTitle(originalTitle);
     }
 
     @Override

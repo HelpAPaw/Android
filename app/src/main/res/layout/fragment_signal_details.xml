@@ -52,11 +52,11 @@
                                 android:layout_gravity="center"
                                 android:layout_marginStart="4dp"
                                 android:layout_marginTop="4dp"
+                                android:drawableStart="@drawable/ic_cloud_upload_24"
                                 android:text="@string/txt_upload_photo"
-                                android:visibility="invisible"
-                                android:drawableStart="@drawable/ic_cloud_upload_24" />
+                                android:visibility="invisible" />
                         </FrameLayout>
-                        <TextView
+                        <EditText
                             android:id="@+id/txt_signal_title"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -64,11 +64,38 @@
                             android:padding="0dp"
                             android:textSize="22sp"
                             android:textAlignment="center"
-                            android:textIsSelectable="true"
                             android:autoLink="all"
                             android:linksClickable="true"
+                            android:inputType="none"
+                            android:textIsSelectable="true"
+                            android:enabled="false"
+                            android:textColor="#000000"
+                            android:backgroundTint="@color/light_gray"
                             tools:text="This is a title but it is very, very, very, VERY long and expands way much more that it should. However the important thing is that it is fully displayed and no part of it is hidden or hard to read! Right!?"/>
 
+                        <RelativeLayout
+                            android:id="@+id/author_buttons_layout"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+
+                            <Button
+                                android:id="@+id/btn_cancelEditTitle"
+                                style="@style/Widget.AppCompat.Button.Borderless.Colored"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentLeft="true"
+                                android:text="@string/txt_cancel"
+                                android:visibility="gone" />
+                            <Button
+                                android:id="@+id/btn_saveEditTitle"
+                                style="@style/Widget.AppCompat.Button.Borderless.Colored"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentRight="true"
+                                android:text="@string/txt_save"
+                                android:visibility="gone" />
+                        </RelativeLayout>
                         <TextView
                             android:id="@+id/txt_signal_type"
                             android:layout_width="wrap_content"

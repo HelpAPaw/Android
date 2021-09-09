@@ -3,7 +3,6 @@ package org.helpapaw.helpapaw.signaldetails;
 import org.helpapaw.helpapaw.data.models.Comment;
 import org.helpapaw.helpapaw.data.models.Signal;
 
-import java.io.File;
 import java.util.List;
 
 /**
@@ -24,6 +23,12 @@ public interface SignalDetailsContract {
         void showUploadPhotoButton();
 
         void hideUploadPhotoButton();
+
+        void showSignalAuthorActions();
+
+        void hideSignalAuthorActions();
+
+        void setEditSignalTitleButtonsVisibility(int visibility);
 
         void showSignalPhoto(Signal signal);
 
@@ -57,6 +62,14 @@ public interface SignalDetailsContract {
 
         void openSignalPhotoScreen();
 
+        void editSignalTitle();
+
+        void saveEditSignalTitle();
+
+        void cancelEditSignalTitle(String originalTitle);
+
+        void deleteSignal();
+
         void openCommentPhotoScreen(String photoUrl);
 
         void setThumbnailToCommentPhotoButton(String photoUri);
@@ -76,6 +89,10 @@ public interface SignalDetailsContract {
 
         void onRequestStatusChange(int status);
 
+        void onUpdateTitle(String title);
+
+        void onDeleteSignal();
+
         void onCallButtonClicked();
 
         void onSignalDetailsClosing();
@@ -87,5 +104,13 @@ public interface SignalDetailsContract {
         void onCommentPhotoClicked(String photoUrl);
 
         void onUploadSignalPhotoClicked();
+
+        void onEditSignalTitleClicked();
+
+        void onDeleteSignalClicked();
+
+        void onSaveEditSignalTitleClicked();
+
+        void onCancelEditSignalTitleClicked(String originalText);
     }
 }

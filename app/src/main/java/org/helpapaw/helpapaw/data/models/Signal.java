@@ -53,6 +53,9 @@ public class Signal implements Parcelable {
     private boolean seen;
     @ColumnInfo(name = "signalType")
     private int type;
+    @ColumnInfo(name = "isDeleted")
+    private boolean isDeleted;
+
 
     public Signal() {
     }
@@ -155,6 +158,10 @@ public class Signal implements Parcelable {
         this.longitude = longitude;
     }
 
+    public void setIsDeleted(boolean isDeleted) {
+        this.isDeleted = isDeleted;
+    }
+
     public String getTitle() {
         return title;
     }
@@ -194,6 +201,10 @@ public class Signal implements Parcelable {
 
     public String getAuthorPhone() {
         return authorPhone;
+    }
+
+    public boolean getIsDeleted() {
+        return isDeleted;
     }
 
     public void setStatus(int status) {

@@ -13,8 +13,11 @@ import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
 
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Build;
@@ -27,6 +30,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -109,6 +114,8 @@ public class SignalDetailsFragment extends BaseFragment
         binding.scrollSignalDetails.setOnBottomReachedListener(getOnBottomReachedListener());
         binding.viewSignalStatus.setStatusCallback(getStatusViewCallback());
         binding.btnUploadPhoto.setOnClickListener(getOnUploadSignalPhotoClickListener());
+        binding.btnSaveEditTitle.setOnClickListener(getOnSaveEditSignalTitleClickListener());
+        binding.btnCancelEditTitle.setOnClickListener(getOnCancelEditSignalTitleClickListener());
 
         return binding.getRoot();
     }
@@ -165,16 +172,35 @@ public class SignalDetailsFragment extends BaseFragment
         showSignalPhoto(signal);
     }
 
+    @Override
     public void showUploadPhotoButton() {
         binding.imgSignalPhoto.setVisibility(View.INVISIBLE);
         binding.btnUploadPhoto.setVisibility(View.VISIBLE);
     }
 
+    @Override
     public void hideUploadPhotoButton() {
         binding.imgSignalPhoto.setVisibility(View.VISIBLE);
         binding.btnUploadPhoto.setVisibility(View.INVISIBLE);
     }
 
+    @Override
+    public void showSignalAuthorActions() {
+        this.setMenuVisibility(true);
+    }
+
+    @Override
+    public void hideSignalAuthorActions() {
+        this.setMenuVisibility(false);
+    }
+
+    @Override
+    public void setEditSignalTitleButtonsVisibility(int visibility) {
+        binding.btnSaveEditTitle.setVisibility(visibility);
+        binding.btnCancelEditTitle.setVisibility(visibility);
+    }
+
+    @Override
     public void showSignalPhoto(Signal signal) {
         Injection.getImageLoader().loadWithRoundedCorners(getContext(), signal.getPhotoUrl(), binding.imgSignalPhoto, R.drawable.ic_paw);
     }
@@ -336,7 +362,14 @@ public class SignalDetailsFragment extends BaseFragment
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
+        if (item.getItemId() == R.id.btn_deleteSignal) {
+            actionsListener.onDeleteSignalClicked();
+            return true;
+        }
+        if (item.getItemId() == R.id.btn_editDescription) {
+            actionsListener.onEditSignalTitleClicked();
+            return true;
+        }
         return super.onOptionsItemSelected(item);
     }
 
@@ -367,6 +400,45 @@ public class SignalDetailsFragment extends BaseFragment
     public void openSignalPhotoScreen() {
         Intent intent = SignalPhotoActivity.newIntent(getContext(), mSignal.getPhotoUrl());
         startActivity(intent);
+    }
+
+    @Override
+    public void editSignalTitle() {
+        binding.grpAddComment.setVisibility(View.GONE);
+        setEditSignalTitleButtonsVisibility(View.VISIBLE);
+
+        EditText txtSignalTitle = binding.txtSignalTitle;
+        txtSignalTitle.setEnabled(true);
+        txtSignalTitle.requestFocus();
+
+        // place the cursor at the end of the string
+        txtSignalTitle.setSelection(txtSignalTitle.getText().length());
+
+        // open keyboard
+        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
+        imm.showSoftInput(txtSignalTitle, InputMethodManager.SHOW_IMPLICIT);
+    }
+
+    @Override
+    public void saveEditSignalTitle() {
+        signalDetailsPresenter.onUpdateTitle(binding.txtSignalTitle.getText().toString());
+
+        endEditSignalTitleMode();
+    }
+
+    @Override
+    public void cancelEditSignalTitle(String originalTitle) {
+        binding.txtSignalTitle.setText(originalTitle);
+
+        endEditSignalTitleMode();
+    }
+
+    @Override
+    public void deleteSignal() {
+        FragmentManager fm = getChildFragmentManager();
+
+        DeleteSignalDialog deleteSignalDialog = DeleteSignalDialog.newInstance(mSignal, this.signalDetailsPresenter);
+        deleteSignalDialog.show(fm, DeleteSignalDialog.DELETE_SIGNAL_TAG);
     }
 
     @Override
@@ -458,6 +530,14 @@ public class SignalDetailsFragment extends BaseFragment
         };
     }
 
+    private void endEditSignalTitleMode() {
+        binding.txtSignalTitle.setEnabled(false);
+
+        hideKeyboard();
+        setEditSignalTitleButtonsVisibility(View.GONE);
+    }
+
+    /* OnClick Listeners */
     public View.OnClickListener getOnAddCommentPhotoClickListener() {
         return new View.OnClickListener() {
             @Override
@@ -467,7 +547,6 @@ public class SignalDetailsFragment extends BaseFragment
         };
     }
 
-    /* OnClick Listeners */
     public View.OnClickListener getOnAddCommentClickListener() {
         return new View.OnClickListener() {
             @Override
@@ -510,6 +589,24 @@ public class SignalDetailsFragment extends BaseFragment
             @Override
             public void onClick(View view) {
                 actionsListener.onUploadSignalPhotoClicked();
+            }
+        };
+    }
+
+    public View.OnClickListener getOnSaveEditSignalTitleClickListener() {
+        return new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                actionsListener.onSaveEditSignalTitleClicked();
+            }
+        };
+    }
+
+    public View.OnClickListener getOnCancelEditSignalTitleClickListener() {
+        return new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                actionsListener.onCancelEditSignalTitleClicked(mSignal.getTitle());
             }
         };
     }

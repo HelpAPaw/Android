@@ -46,6 +46,7 @@ public class BackendlessSpatialSignalRepository implements SignalRepository {
     private static final String OBJECT_ID_FIELD = "objectId";
     private static final String CREATED_FIELD = "created";
     private static final String SIGNAL_TYPE = "signalType";
+    private static final String DELETED = "isDeleted";
 
     private static final int PAGE_SIZE = 100;
 
@@ -70,8 +71,9 @@ public class BackendlessSpatialSignalRepository implements SignalRepository {
         calendar.add(Calendar.DATE, -timeout);
         Date dateSubmitted = calendar.getTime();
         String whereClause2 = String.format(Locale.ENGLISH, "%s > %d", CREATED_FIELD, dateSubmitted.getTime());
+        String whereClause3 = String.format(Locale.ENGLISH, "%s = %s", DELETED, "FALSE");
 
-        String joinedWhereClause = String.format(Locale.ENGLISH, "(%s) AND (%s)", whereClause1, whereClause2);
+        String joinedWhereClause = String.format(Locale.ENGLISH, "(%s) AND (%s) AND (%s)", whereClause1, whereClause2, whereClause3);
 
         getSignals(joinedWhereClause, callback);
     }
@@ -87,16 +89,17 @@ public class BackendlessSpatialSignalRepository implements SignalRepository {
         calendar.add(Calendar.DATE, -timeout);
         Date dateSubmitted = calendar.getTime();
         String whereClause2 = String.format(Locale.ENGLISH, "%s > %d", CREATED_FIELD, dateSubmitted.getTime());
+        String whereClause3 = String.format(Locale.ENGLISH, "%s = %s", DELETED, "FALSE");
         String joinedWhereClause;
 
         if (selectedTypes != null && !Utils.allSelected(selectedTypes)) {
-            String whereClause3 = createWhereClauseForType(selectedTypes);
+            String whereClause4 = createWhereClauseForType(selectedTypes);
 
-            joinedWhereClause= String.format(Locale.ENGLISH, "(%s) AND (%s) AND (%s)",
-                    whereClause1, whereClause2, whereClause3);
+            joinedWhereClause= String.format(Locale.ENGLISH, "(%s) AND (%s) AND (%s) AND (%s)",
+                    whereClause1, whereClause2, whereClause3, whereClause4);
         } else {
-            joinedWhereClause = String.format(Locale.ENGLISH, "(%s) AND (%s)",
-                    whereClause1, whereClause2);
+            joinedWhereClause = String.format(Locale.ENGLISH, "(%s) AND (%s) AND (%s)",
+                    whereClause1, whereClause2, whereClause3);
         }
 
         getSignals(joinedWhereClause, callback);
@@ -309,6 +312,62 @@ public class BackendlessSpatialSignalRepository implements SignalRepository {
             @Override
             public void handleFault(BackendlessFault fault) {
                 callback.onStatusFailure(fault.getMessage());
+            }
+        });
+    }
+
+    @Override
+    public void updateSignalTitle(final String signalId, final String title, final UpdateTitleCallback callback) {
+
+        Map<String, Object> dataMap = new HashMap<>();
+        dataMap.put(OBJECT_ID_FIELD, signalId);
+        dataMap.put(SIGNAL_TITLE, title);
+
+        Backendless.Data.of(getTableName()).save(dataMap, new AsyncCallback<Map>() {
+            @Override
+            public void handleResponse(Map saveResponse) {
+                // Update signal in database
+                List<Signal> signalsFromDB = signalsDatabase.signalDao().getSignal(signalId);
+                if (signalsFromDB.size() > 0) {
+                    Signal signal = signalsFromDB.get(0);
+                    signal.setTitle(title);
+                    signalsDatabase.signalDao().saveSignal(signal);
+                }
+
+                callback.onTitleUpdated(title);
+            }
+
+            @Override
+            public void handleFault(BackendlessFault fault) {
+                callback.onTitleFailure(fault.getMessage());
+            }
+        });
+    }
+
+    @Override
+    public void deleteSignal(final String signalId, final DeleteSignalCallback callback) {
+
+        Map<String, Object> dataMap = new HashMap<>();
+        dataMap.put(OBJECT_ID_FIELD, signalId);
+        dataMap.put(DELETED, true);
+
+        Backendless.Data.of(getTableName()).save(dataMap, new AsyncCallback<Map>() {
+            @Override
+            public void handleResponse(Map saveResponse) {
+                // Update signal in database
+                List<Signal> signalsFromDB = signalsDatabase.signalDao().getSignal(signalId);
+                if (signalsFromDB.size() > 0) {
+                    Signal signal = signalsFromDB.get(0);
+                    signal.setIsDeleted(true);
+                    signalsDatabase.signalDao().saveSignal(signal);
+                }
+
+                callback.onSignalDeleted();
+            }
+
+            @Override
+            public void handleFault(BackendlessFault fault) {
+                callback.onSignalDeletedFailed(fault.getMessage());
             }
         });
     }
