@@ -108,6 +108,10 @@
             android:parentActivityName=".signalsmap.SignalsMapActivity"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".share.ShareActivity"
+            android:parentActivityName=".signalsmap.SignalsMapActivity"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".settings.SettingsActivity"
             android:parentActivityName=".signalsmap.SignalsMapActivity"
             android:screenOrientation="portrait" />

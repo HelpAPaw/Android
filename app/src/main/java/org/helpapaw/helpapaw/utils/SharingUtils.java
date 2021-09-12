@@ -15,4 +15,14 @@ public class SharingUtils {
         Intent chooserIntent = Intent.createChooser(emailIntent, context.getString(R.string.string_support_email));
         context.startActivity(chooserIntent);
     }
+
+    public static void shareSupport(Context context) {
+        Intent sendIntent = new Intent();
+        sendIntent.setAction(Intent.ACTION_SEND);
+        sendIntent.putExtra(Intent.EXTRA_TEXT,
+                String.format(context.getString(R.string.string_share_app_text),
+                        context.getString(R.string.string_share_link)));
+        sendIntent.setType("text/plain");
+        context.startActivity(sendIntent);
+    }
 }
