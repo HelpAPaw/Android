@@ -8,16 +8,13 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 
-import org.helpapaw.helpapaw.BuildConfig;
 import org.helpapaw.helpapaw.R;
-import org.helpapaw.helpapaw.databinding.ActivityAboutBinding;
 import org.helpapaw.helpapaw.databinding.ActivityShareBinding;
 import org.helpapaw.helpapaw.utils.SharingUtils;
 
 /**
- * Created by Alex on 10/29/2017.
+ * Created by Niya on 15/09/2021.
  */
-
 public class ShareActivity extends AppCompatActivity {
     ActivityShareBinding binding;
 

@@ -13,6 +13,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Color;
@@ -79,11 +80,14 @@ import org.helpapaw.helpapaw.databinding.FragmentSignalsMapBinding;
 import org.helpapaw.helpapaw.filtersignal.FilterSignalTypeDialog;
 import org.helpapaw.helpapaw.photo.UploadPhotoContract;
 import org.helpapaw.helpapaw.reusable.AlertDialogFragment;
+import org.helpapaw.helpapaw.share.ShareAppDialog;
 import org.helpapaw.helpapaw.signaldetails.SignalDetailsActivity;
 import org.helpapaw.helpapaw.utils.Injection;
 import org.helpapaw.helpapaw.utils.StatusUtils;
 import org.helpapaw.helpapaw.utils.images.ImageUtils;
 
+import static org.helpapaw.helpapaw.base.PawApplication.APP_OPEN_COUNTER;
+import static org.helpapaw.helpapaw.base.PawApplication.APP_OPEN_MAX_COUNTER;
 import static org.helpapaw.helpapaw.filtersignal.FilterSignalTypeDialog.EXTRA_SIGNAL_TYPE_SELECTION;
 import static org.helpapaw.helpapaw.filtersignal.FilterSignalTypeDialog.FILTER_TAG;
 import static org.helpapaw.helpapaw.filtersignal.FilterSignalTypeDialog.REQUEST_UPDATE_SIGNAL_TYPE_SELECTION;
@@ -207,7 +211,9 @@ public class SignalsMapFragment extends BaseFragment
         binding.fabAddSignal.setOnClickListener(getFabAddSignalClickListener());
         binding.viewSendSignal.setOnSignalSendClickListener(getOnSignalSendClickListener());
         binding.viewSendSignal.setOnSignalPhotoClickListener(getOnSignalPhotoClickListener());
-        
+
+        shareAppReminder();
+
         return binding.getRoot();
     }
 
@@ -283,6 +289,18 @@ public class SignalsMapFragment extends BaseFragment
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void shareAppReminder() {
+        SharedPreferences prefs = this.getActivity().getSharedPreferences("HelpAPaw", Context.MODE_PRIVATE);
+        int counter = prefs.getInt(APP_OPEN_COUNTER, 0);
+
+        if (counter == APP_OPEN_MAX_COUNTER) {
+            FragmentManager fm = ((FragmentActivity) getContext()).getSupportFragmentManager();
+
+            ShareAppDialog shareAppDialog = ShareAppDialog.newInstance(this.getContext());
+            shareAppDialog.show(fm, ShareAppDialog.SHARE_APP_TAG);
+        }
     }
 
     /* Google Maps */
