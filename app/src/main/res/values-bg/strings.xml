@@ -80,6 +80,7 @@
     <string name="txt_faqs_view_title">Често задавани въпроси</string>
     <string name="txt_user_changed_status_to">%1$s промени статуса на \'%2$s\'</string>
     <string name="txt_new_status_icon">Икона на новия статус</string>
+    <string name="text_my_signals">Моите Сигнали</string>
     <string name="string_about_title">Относно</string>r
     <string name="string_about_contact">Свържете се с нас</string>
     <string name="string_about_milen">© Милен Маринов 2021</string>
@@ -128,6 +129,7 @@
     <string name="txt_only_registered_users_can_comment">Само регистрирани потребители могат да пишат коментари</string>
     <string name="txt_only_registered_users_can_change_status">Само регистрирани потребители могат да променят статуса на сигнал</string>
     <string name="txt_only_registered_users_can_submit_signals">Само регистрирани потребители могат да подават сигнали</string>
+    <string name="txt_only_registered_users_can_see_my_signals">Само регистрирани потребители могат да виждат тази секция.</string>
     <string name="txt_confirm_password_reset">"Ако вече сте се регистрирали, но сте забравили паролата си, можете да я промените. Желаете ли да продължите</string>
     <string name="txt_password_reset_successful">Изпратихме Ви имейл с линк, от който можете да промените паролата си</string>
     <string name="txt_yes">Да</string>
