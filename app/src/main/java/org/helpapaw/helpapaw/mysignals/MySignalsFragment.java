@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -21,17 +22,17 @@ import org.helpapaw.helpapaw.authentication.AuthenticationActivity;
 import org.helpapaw.helpapaw.base.BaseFragment;
 import org.helpapaw.helpapaw.base.Presenter;
 import org.helpapaw.helpapaw.data.models.Signal;
-import org.helpapaw.helpapaw.data.user.UserManager;
 import org.helpapaw.helpapaw.databinding.FragmentMySignalsBinding;
-import org.helpapaw.helpapaw.settings.SettingsPresenter;
 
 import java.util.List;
 
+
 public class MySignalsFragment extends BaseFragment implements MySignalsContract.View {
 
-    FragmentMySignalsBinding binding;
-    MySignalsPresenter mySignalsPresenter;
-    MySignalsContract.UserActionsListener actionsListener;
+    private FragmentMySignalsBinding binding;
+    private MySignalsPresenter mySignalsPresenter;
+    private MySignalsContract.UserActionsListener actionsListener;
+    private MySignalsCustomAdapter customAdapter;
 
     public static MySignalsFragment newInstance() {
         return new MySignalsFragment();
@@ -40,17 +41,11 @@ public class MySignalsFragment extends BaseFragment implements MySignalsContract
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setRetainInstance(true);
     }
 
     @Override
     protected Presenter getPresenter() {
         return mySignalsPresenter;
-    }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
     }
 
     @Nullable
@@ -68,10 +63,10 @@ public class MySignalsFragment extends BaseFragment implements MySignalsContract
                 binding.toolbarTitle.setText(getString(R.string.text_my_signals));
             }
         }
+
         mySignalsPresenter = new MySignalsPresenter(this);
         mySignalsPresenter.setView(this);
         actionsListener = mySignalsPresenter;
-
         actionsListener.onOpenMySignalsScreen();
 
         return binding.getRoot();
@@ -80,17 +75,6 @@ public class MySignalsFragment extends BaseFragment implements MySignalsContract
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        AppCompatActivity appCompatActivity = (AppCompatActivity) getActivity();
-    }
-
-    @Override
-    public List<Signal> getMySignals() {
-        return null;
-    }
-
-    @Override
-    public List<Signal> getCommentedSignals() {
-        return null;
     }
 
     @Override
@@ -116,5 +100,19 @@ public class MySignalsFragment extends BaseFragment implements MySignalsContract
     public void openLoginScreen() {
         Intent intent = new Intent(getContext(), AuthenticationActivity.class);
         startActivity(intent);
+    }
+
+    @Override
+    public void displaySignals(List<Signal> signals) {
+
+        Signal[] signalsArray = new Signal[signals.size()];
+        for (int i = 0; i < signals.size(); i++) {
+            signalsArray[i] = signals.get(i);
+        }
+
+        ListView mySignalsListView = binding.mySignalsListView;
+        customAdapter = new MySignalsCustomAdapter(getContext(), signalsArray);
+        mySignalsListView.setAdapter(customAdapter);
+        binding.notifyChange();
     }
 }

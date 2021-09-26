@@ -47,6 +47,7 @@ public class BackendlessSpatialSignalRepository implements SignalRepository {
     private static final String CREATED_FIELD = "created";
     private static final String SIGNAL_TYPE = "signalType";
     private static final String DELETED = "isDeleted";
+    private static final String OWNER_ID = "ownerId";
 
     private static final int PAGE_SIZE = 100;
 
@@ -128,6 +129,13 @@ public class BackendlessSpatialSignalRepository implements SignalRepository {
         }
 
         return whereClause3.toString();
+    }
+
+    @Override
+    public void getSignalsByOwnerId(String ownerId, LoadSignalsCallback callback) {
+        String whereClause = String.format(Locale.ENGLISH, "%s = '%s'", OWNER_ID, ownerId);
+
+        getSignals(whereClause, callback);
     }
 
     @Override

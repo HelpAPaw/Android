@@ -6,13 +6,11 @@ import java.util.List;
 
 public interface MySignalsContract {
     interface View {
-        List<Signal> getMySignals();
-
-        List<Signal> getCommentedSignals();
-
         void showRegistrationRequiredAlert();
 
         void openLoginScreen();
+
+        void displaySignals(List<Signal> signals);
     }
 
     interface UserActionsListener {
