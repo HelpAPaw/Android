@@ -10,10 +10,18 @@ public interface MySignalsContract {
 
         void openLoginScreen();
 
-        void displaySignals(List<Signal> signals);
+        void displaySubmittedSignals(List<Signal> signals);
+
+        void displayCommentedSignals(List<Signal> signals);
+
+        void showMessage(String message);
+
+        void showNoInternetMessage();
     }
 
     interface UserActionsListener {
         void onOpenMySignalsScreen();
+
+        void onLoadMySignals();
     }
 }

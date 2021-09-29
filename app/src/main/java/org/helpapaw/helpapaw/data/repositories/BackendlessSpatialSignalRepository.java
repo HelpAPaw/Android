@@ -1,6 +1,12 @@
 package org.helpapaw.helpapaw.data.repositories;
 
+import static org.helpapaw.helpapaw.base.PawApplication.getContext;
+
 import android.annotation.SuppressLint;
+import android.os.Build;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 
 import com.backendless.Backendless;
 import com.backendless.BackendlessUser;
@@ -24,8 +30,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-
-import static org.helpapaw.helpapaw.base.PawApplication.getContext;
+import java.util.Set;
 
 /**
  * Created by iliyan on 7/28/16
@@ -48,6 +53,8 @@ public class BackendlessSpatialSignalRepository implements SignalRepository {
     private static final String SIGNAL_TYPE = "signalType";
     private static final String DELETED = "isDeleted";
     private static final String OWNER_ID = "ownerId";
+
+    private static final String SORT_DATE_CREATED_DESCENDING = "created DESC";
 
     private static final int PAGE_SIZE = 100;
 
@@ -144,6 +151,25 @@ public class BackendlessSpatialSignalRepository implements SignalRepository {
         getSignals(whereClause, callback);
     }
 
+    @Override
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    public void getSignalsByListOfIdsExcludingCurrentUser(Set<String> signalsIds, final LoadSignalsCallback callback) {
+        String whereClause = buildWhereClauseForListOfSignalsIdsExclusingCurrentUser(signalsIds);
+        getSignals(whereClause, callback);
+    }
+
+    @NonNull
+    private String buildWhereClauseForListOfSignalsIdsExclusingCurrentUser(Set<String> signalsIds) {
+        BackendlessUser currentUser = Backendless.UserService.CurrentUser();
+        String whereClause = OWNER_ID + " != '" + currentUser.getUserId() + "' AND ";
+        whereClause = whereClause + OBJECT_ID_FIELD + " = '";
+        String delimiter ="' OR " + whereClause;
+        if (signalsIds != null && signalsIds.size() > 0) {
+            whereClause = whereClause + String.join(delimiter, signalsIds) + "'";
+        }
+        return whereClause;
+    }
+
     private void getSignals(String whereClause, final LoadSignalsCallback callback) {
         getSignals(whereClause, 0, callback);
     }
@@ -153,6 +179,7 @@ public class BackendlessSpatialSignalRepository implements SignalRepository {
         queryBuilder.setWhereClause(whereClause);
         queryBuilder.setPageSize(PAGE_SIZE);
         queryBuilder.setOffset(offset);
+        queryBuilder.setSortBy(SORT_DATE_CREATED_DESCENDING);
         Backendless.Data.of(getTableName()).find(queryBuilder, new AsyncCallback<List<Map>>() {
             @Override
             public void handleResponse(List<Map> response)

@@ -10,7 +10,6 @@ import androidx.fragment.app.FragmentTransaction;
 import org.helpapaw.helpapaw.R;
 import org.helpapaw.helpapaw.databinding.ActivityMySignalsBinding;
 
-
 public class MySignalsActivity extends AppCompatActivity {
 
     ActivityMySignalsBinding binding;

@@ -17,7 +17,6 @@ import org.helpapaw.helpapaw.signaldetails.SignalDetailsActivity;
 import org.helpapaw.helpapaw.utils.Injection;
 import org.helpapaw.helpapaw.utils.Utils;
 
-
 public class MySignalsCustomAdapter extends BaseAdapter {
 
     private final Context context;

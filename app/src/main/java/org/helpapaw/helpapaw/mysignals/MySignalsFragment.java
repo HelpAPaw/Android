@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 
 import androidx.annotation.NonNull;
@@ -17,6 +18,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.FragmentActivity;
 
+import com.google.android.material.snackbar.Snackbar;
+
 import org.helpapaw.helpapaw.R;
 import org.helpapaw.helpapaw.authentication.AuthenticationActivity;
 import org.helpapaw.helpapaw.base.BaseFragment;
@@ -25,7 +28,6 @@ import org.helpapaw.helpapaw.data.models.Signal;
 import org.helpapaw.helpapaw.databinding.FragmentMySignalsBinding;
 
 import java.util.List;
-
 
 public class MySignalsFragment extends BaseFragment implements MySignalsContract.View {
 
@@ -66,8 +68,10 @@ public class MySignalsFragment extends BaseFragment implements MySignalsContract
 
         mySignalsPresenter = new MySignalsPresenter(this);
         mySignalsPresenter.setView(this);
+
         actionsListener = mySignalsPresenter;
         actionsListener.onOpenMySignalsScreen();
+        actionsListener.onLoadMySignals();
 
         return binding.getRoot();
     }
@@ -75,6 +79,14 @@ public class MySignalsFragment extends BaseFragment implements MySignalsContract
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+    }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        actionsListener.onLoadMySignals();
     }
 
     @Override
@@ -103,16 +115,56 @@ public class MySignalsFragment extends BaseFragment implements MySignalsContract
     }
 
     @Override
-    public void displaySignals(List<Signal> signals) {
+    public void displaySubmittedSignals(List<Signal> signals) {
+        displaySignals(signals, binding.submittedSignalsListView);
+    }
 
+    @Override
+    public void displayCommentedSignals(List<Signal> signals) {
+        displaySignals(signals, binding.commentedSignalsListView);
+    }
+
+    @Override
+    public void showMessage(String message) {
+        if (getView() != null) {
+            Snackbar.make(getView(), message, Snackbar.LENGTH_LONG).show();
+        }
+    }
+
+    @Override
+    public void showNoInternetMessage() {
+        showMessage(getString(R.string.txt_no_internet));
+    }
+
+    private void displaySignals(List<Signal> signals, ListView listView) {
         Signal[] signalsArray = new Signal[signals.size()];
         for (int i = 0; i < signals.size(); i++) {
             signalsArray[i] = signals.get(i);
         }
 
-        ListView mySignalsListView = binding.mySignalsListView;
         customAdapter = new MySignalsCustomAdapter(getContext(), signalsArray);
-        mySignalsListView.setAdapter(customAdapter);
+        listView.setAdapter(customAdapter);
+        setDynamicHeight(listView);
+
         binding.notifyChange();
+    }
+
+    public static void setDynamicHeight(ListView mListView) {
+        ListAdapter mListAdapter = mListView.getAdapter();
+        if (mListAdapter == null) {
+            // when adapter is null
+            return;
+        }
+        int height = 0;
+        int desiredWidth = View.MeasureSpec.makeMeasureSpec(mListView.getWidth(), View.MeasureSpec.UNSPECIFIED);
+        for (int i = 0; i < mListAdapter.getCount(); i++) {
+            View listItem = mListAdapter.getView(i, null, mListView);
+            listItem.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
+            height += listItem.getMeasuredHeight();
+        }
+        ViewGroup.LayoutParams params = mListView.getLayoutParams();
+        params.height = height + (mListView.getDividerHeight() * (mListAdapter.getCount() - 1));
+        mListView.setLayoutParams(params);
+        mListView.requestLayout();
     }
 }
