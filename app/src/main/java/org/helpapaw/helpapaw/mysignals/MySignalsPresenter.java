@@ -1,8 +1,11 @@
 package org.helpapaw.helpapaw.mysignals;
 
 import android.app.ProgressDialog;
+import android.view.View;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
+
+import androidx.transition.Visibility;
 
 import org.helpapaw.helpapaw.R;
 import org.helpapaw.helpapaw.base.Presenter;
@@ -58,6 +61,10 @@ public class MySignalsPresenter extends Presenter<MySignalsContract.View> implem
     private void getSubmittedSignalsfromDb(String ownerId) {
         if (Utils.getInstance().hasNetworkConnection()) {
 
+            if (userManager.isLoggedIn()) {
+                getView().setProgressVisibility(View.VISIBLE);
+            }
+
             signalRepository.getSignalsByOwnerId(ownerId,
                     new SignalRepository.LoadSignalsCallback() {
                         @Override
@@ -69,6 +76,7 @@ public class MySignalsPresenter extends Presenter<MySignalsContract.View> implem
                             }
 
                             getView().displaySubmittedSignals(signals);
+                            getView().setProgressVisibility(View.GONE);
                         }
 
                         @Override
@@ -85,6 +93,10 @@ public class MySignalsPresenter extends Presenter<MySignalsContract.View> implem
 
     private void getCommentedSignalsfromDb(String ownerId) {
         if (Utils.getInstance().hasNetworkConnection()) {
+
+            if (userManager.isLoggedIn()) {
+                getView().setProgressVisibility(View.VISIBLE);
+            }
 
             commentRepository.getCommentsByAuthorId(ownerId, new CommentRepository.LoadCommentsCallback() {
                 @Override
@@ -105,6 +117,7 @@ public class MySignalsPresenter extends Presenter<MySignalsContract.View> implem
                             }
 
                             getView().displayCommentedSignals(signals);
+                            getView().setProgressVisibility(View.GONE);
                         }
 
                         @Override

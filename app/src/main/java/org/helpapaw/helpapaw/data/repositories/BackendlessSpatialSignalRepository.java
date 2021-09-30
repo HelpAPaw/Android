@@ -140,9 +140,13 @@ public class BackendlessSpatialSignalRepository implements SignalRepository {
 
     @Override
     public void getSignalsByOwnerId(String ownerId, LoadSignalsCallback callback) {
-        String whereClause = String.format(Locale.ENGLISH, "%s = '%s'", OWNER_ID, ownerId);
+        String whereClause1 = String.format(Locale.ENGLISH, "%s = %s", DELETED, "FALSE");
+        String whereClause2 = String.format(Locale.ENGLISH, "%s = '%s'", OWNER_ID, ownerId);
 
-        getSignals(whereClause, callback);
+        String joinedWhereClause = String.format(Locale.ENGLISH, "(%s) AND (%s)",
+                whereClause1, whereClause2);
+
+        getSignals(joinedWhereClause, callback);
     }
 
     @Override
@@ -161,13 +165,20 @@ public class BackendlessSpatialSignalRepository implements SignalRepository {
     @NonNull
     private String buildWhereClauseForListOfSignalsIdsExclusingCurrentUser(Set<String> signalsIds) {
         BackendlessUser currentUser = Backendless.UserService.CurrentUser();
-        String whereClause = OWNER_ID + " != '" + currentUser.getUserId() + "' AND ";
-        whereClause = whereClause + OBJECT_ID_FIELD + " = '";
-        String delimiter ="' OR " + whereClause;
+
+        String whereClause1 = String.format(Locale.ENGLISH, "%s = %s", DELETED, "FALSE");
+
+        String whereClause2 = OWNER_ID + " != '" + currentUser.getUserId() + "' AND ";
+        whereClause2 = whereClause2 + OBJECT_ID_FIELD + " = '";
+        String delimiter ="' OR " + whereClause2;
         if (signalsIds != null && signalsIds.size() > 0) {
-            whereClause = whereClause + String.join(delimiter, signalsIds) + "'";
+            whereClause2 = whereClause2 + String.join(delimiter, signalsIds) + "'";
         }
-        return whereClause;
+
+        String joinedWhereClause = String.format(Locale.ENGLISH, "(%s) AND (%s)",
+                whereClause1, whereClause2);
+
+        return joinedWhereClause;
     }
 
     private void getSignals(String whereClause, final LoadSignalsCallback callback) {

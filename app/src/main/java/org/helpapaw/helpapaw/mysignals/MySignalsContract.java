@@ -17,6 +17,8 @@ public interface MySignalsContract {
         void showMessage(String message);
 
         void showNoInternetMessage();
+
+        void setProgressVisibility(int visibility);
     }
 
     interface UserActionsListener {

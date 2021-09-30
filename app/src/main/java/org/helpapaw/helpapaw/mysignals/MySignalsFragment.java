@@ -2,12 +2,16 @@ package org.helpapaw.helpapaw.mysignals;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -15,6 +19,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.MenuItemCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.FragmentActivity;
 
@@ -134,6 +139,11 @@ public class MySignalsFragment extends BaseFragment implements MySignalsContract
     @Override
     public void showNoInternetMessage() {
         showMessage(getString(R.string.txt_no_internet));
+    }
+
+    @Override
+    public void setProgressVisibility(int visibility) {
+        binding.progressBar.setVisibility(visibility);
     }
 
     private void displaySignals(List<Signal> signals, ListView listView) {
