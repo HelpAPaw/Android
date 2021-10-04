@@ -81,6 +81,8 @@
     <string name="text_my_signals">My Signals</string>
     <string name="text_my_submitted_signals">Submitted Signals</string>
     <string name="text_my_commented_signals">Commented Signals</string>
+    <string name="text_my_notifications">My notifications</string>
+    <string name="txt_delete_notifications_dialog">Are you sure you want to delete all the notifications?</string>
     <string name="text_faqs">FAQs</string>
     <string name="text_about">About</string>
     <string name="text_feedback">Feedback</string>

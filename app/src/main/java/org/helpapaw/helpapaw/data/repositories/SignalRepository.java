@@ -17,6 +17,8 @@ public interface SignalRepository {
 
     void getSignalsByOwnerId(String ownerId, LoadSignalsCallback callback);
 
+    void getSignalsByListOfIds(Set<String> signalsIds, final LoadSignalsCallback callback);
+
     void getSignalsByListOfIdsExcludingCurrentUser(Set<String> signalsIds, final LoadSignalsCallback callback);
 
     void getSignal(String signalId, final LoadSignalsCallback callback);

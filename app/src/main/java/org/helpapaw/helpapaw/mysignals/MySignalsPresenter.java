@@ -1,13 +1,7 @@
 package org.helpapaw.helpapaw.mysignals;
 
-import android.app.ProgressDialog;
 import android.view.View;
-import android.webkit.WebChromeClient;
-import android.webkit.WebView;
 
-import androidx.transition.Visibility;
-
-import org.helpapaw.helpapaw.R;
 import org.helpapaw.helpapaw.base.Presenter;
 import org.helpapaw.helpapaw.data.models.Comment;
 import org.helpapaw.helpapaw.data.models.Signal;
@@ -15,7 +9,6 @@ import org.helpapaw.helpapaw.data.repositories.CommentRepository;
 import org.helpapaw.helpapaw.data.repositories.PhotoRepository;
 import org.helpapaw.helpapaw.data.repositories.SignalRepository;
 import org.helpapaw.helpapaw.data.user.UserManager;
-import org.helpapaw.helpapaw.privacypolicy.PrivacyPolicyActivity;
 import org.helpapaw.helpapaw.utils.Injection;
 import org.helpapaw.helpapaw.utils.Utils;
 

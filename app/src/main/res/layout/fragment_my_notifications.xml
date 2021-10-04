@@ -45,45 +45,19 @@
             android:paddingTop="@dimen/activity_vertical_margin"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-            <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:fillViewport="true" >
-
                 <LinearLayout
-                android:id="@+id/grp_login"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="4dp"
-                        android:textColor="@color/color_primary_dark"
-                        android:text="@string/text_my_submitted_signals"
-                        android:textSize="18sp" />
+                    android:id="@+id/grp_notifications"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
 
                     <ListView
-                        android:id="@+id/submitted_signals_list_view"
+                        android:id="@+id/my_notifications_list_view"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_weight="1"
                         android:divider="@null" />
 
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginBottom="4dp"
-                        android:textColor="@color/color_primary_dark"
-                        android:text="@string/text_my_commented_signals"
-                        android:textSize="18sp" />
-
-                    <ListView
-                        android:id="@+id/commented_signals_list_view"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:divider="@null"/>
 
                     <ProgressBar
                         android:id="@+id/progress_bar"
@@ -92,7 +66,7 @@
                         android:layout_gravity="center"
                         android:visibility="gone"/>
                 </LinearLayout>
-            </ScrollView>
         </RelativeLayout>
+
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>

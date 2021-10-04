@@ -24,6 +24,7 @@ import org.helpapaw.helpapaw.data.user.UserManager;
 import org.helpapaw.helpapaw.databinding.ActivityBaseBinding;
 import org.helpapaw.helpapaw.faq.FAQsView;
 import org.helpapaw.helpapaw.mysignals.MySignalsActivity;
+import org.helpapaw.helpapaw.mynotifications.MyNotificationsActivity;
 import org.helpapaw.helpapaw.privacypolicy.PrivacyPolicyActivity;
 import org.helpapaw.helpapaw.reusable.AlertDialogFragment;
 import org.helpapaw.helpapaw.settings.SettingsActivity;
@@ -85,6 +86,10 @@ public abstract class BaseActivity extends AppCompatActivity {
 
                     case R.id.nav_item_my_signals:
                         navigateMySignalsSection();
+                        break;
+
+                    case R.id.nav_item_my_notifications:
+                        navigateMyNotificationsSection();
                         break;
 
                     case R.id.nav_item_faqs:
@@ -160,6 +165,11 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     private void navigateMySignalsSection() {
         Intent intent = new Intent(this, MySignalsActivity.class);
+        startActivity(intent);
+    }
+
+    private void navigateMyNotificationsSection() {
+        Intent intent = new Intent(this, MyNotificationsActivity.class);
         startActivity(intent);
     }
 

@@ -4,6 +4,8 @@
               android:title="@string/txt_log_out"/>
         <item android:id="@+id/nav_item_my_signals"
             android:title="@string/text_my_signals"/>
+        <item android:id="@+id/nav_item_my_notifications"
+            android:title="@string/text_my_notifications"/>
         <item android:id="@+id/nav_item_faqs"
               android:title="@string/text_faqs"/>
         <item android:id="@+id/nav_item_settings"

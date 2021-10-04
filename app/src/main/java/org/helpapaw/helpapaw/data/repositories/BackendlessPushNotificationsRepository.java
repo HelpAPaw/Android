@@ -15,7 +15,9 @@ import com.backendless.push.DeviceRegistrationResult;
 import org.helpapaw.helpapaw.R;
 import org.helpapaw.helpapaw.base.PawApplication;
 import org.helpapaw.helpapaw.data.models.Comment;
+import org.helpapaw.helpapaw.data.models.Notification;
 import org.helpapaw.helpapaw.data.models.Signal;
+import org.helpapaw.helpapaw.db.NotificationsDatabase;
 import org.helpapaw.helpapaw.utils.Injection;
 import org.helpapaw.helpapaw.utils.Utils;
 
@@ -44,6 +46,8 @@ public class BackendlessPushNotificationsRepository implements PushNotifications
     private static Location lastKnownDeviceLocation;
     private static final int pageSize = 100;
 
+    private NotificationsDatabase notificationsDatabase;
+
     private String getNotificationChannel() {
         if (PawApplication.getIsTestEnvironment()) {
             return debugChannel;
@@ -51,6 +55,17 @@ public class BackendlessPushNotificationsRepository implements PushNotifications
         else {
             return productionChannel;
         }
+    }
+
+    public BackendlessPushNotificationsRepository() {
+        notificationsDatabase = NotificationsDatabase.getDatabase(getContext());
+    }
+
+    @Override
+    protected void finalize() throws Throwable {
+        super.finalize();
+
+        NotificationsDatabase.destroyInstance();
     }
 
     @Override
@@ -191,6 +206,11 @@ public class BackendlessPushNotificationsRepository implements PushNotifications
         pushNewSignalNotifications(signal, localToken, queryBuilder, 0);
     }
 
+    private void saveNotificationToDb(Signal signal, String newSignalString) {
+        Notification notification = new Notification(signal.getId(), signal.getPhotoUrl(), newSignalString);
+        notificationsDatabase.notificationDao().saveNotification(notification);
+    }
+
     /*
      * Private method that recursively sends a notification to all interested devices
      */
@@ -208,12 +228,13 @@ public class BackendlessPushNotificationsRepository implements PushNotifications
                 for (Map device : devices) {
                     String deviceToken = device.get("deviceToken").toString();
 
-                    if(!deviceToken.equals(localToken)) {
+                    // TODO uncomment this
+//                    if(!deviceToken.equals(localToken)) {
                         int signalTypesSetting = (int) device.get("signalTypes");
 
                         if (Utils.shouldNotifyAboutSignalType(signal.getType(), signalTypesSetting)) {
                             notifiedDevices.add(device.get("deviceId").toString());
-                        }
+//                        }
                     }
                 }
 
@@ -221,6 +242,8 @@ public class BackendlessPushNotificationsRepository implements PushNotifications
                 if (notifiedDevices.size() > 0) {
 
                     String newSignalString = PawApplication.getContext().getString(R.string.txt_new_signal);
+                    String notificationText = newSignalString + ": " + signal.getTitle();
+                    saveNotificationToDb(signal, notificationText);
 
                     // Creates delivery options
                     DeliveryOptions deliveryOptions = new DeliveryOptions();
@@ -272,6 +295,16 @@ public class BackendlessPushNotificationsRepository implements PushNotifications
         pushSignalUpdatedNotification(signal, currentComments, SignalUpdate.NEW_STATUS, newStatus, null);
     }
 
+    @Override
+    public List<Notification> getAllNotifications() {
+        return notificationsDatabase.notificationDao().getAll();
+    }
+
+    @Override
+    public void deleteNotifications() {
+        notificationsDatabase.notificationDao().deleteAll();
+    }
+
     /*
      * Public method that sends a notification to all users interested in a signal (author and all commenters)
      * This method is triggered in two situations (differentiated by the SignalUpdate parameter) - new comment or new status
@@ -293,7 +326,8 @@ public class BackendlessPushNotificationsRepository implements PushNotifications
             }
         }
         // Remove current user
-        interestedUserIds.remove(Backendless.UserService.CurrentUser().getObjectId());
+        // TODO uncomment this before merge
+//        interestedUserIds.remove(Backendless.UserService.CurrentUser().getObjectId());
 
         if (interestedUserIds.size() == 0) {
             return;
@@ -359,6 +393,9 @@ public class BackendlessPushNotificationsRepository implements PushNotifications
                                     updateContent = PawApplication.getContext().getString(R.string.txt_solved);
                                 }
                             }
+
+                            String notificationText = updateType + ": " + updateContent;
+                            saveNotificationToDb(signal, notificationText);
 
                             // Creates publish options
                             PublishOptions publishOptions = new PublishOptions();

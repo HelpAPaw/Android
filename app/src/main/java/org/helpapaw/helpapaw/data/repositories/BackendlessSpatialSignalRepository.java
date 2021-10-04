@@ -54,6 +54,8 @@ public class BackendlessSpatialSignalRepository implements SignalRepository {
     private static final String DELETED = "isDeleted";
     private static final String OWNER_ID = "ownerId";
 
+    private static final String WHERE_CLAUSE_NOT_DELETED = String.format(Locale.ENGLISH, "%s = %s", DELETED, "FALSE");
+
     private static final String SORT_DATE_CREATED_DESCENDING = "created DESC";
 
     private static final int PAGE_SIZE = 100;
@@ -157,6 +159,15 @@ public class BackendlessSpatialSignalRepository implements SignalRepository {
 
     @Override
     @RequiresApi(api = Build.VERSION_CODES.O)
+    public void getSignalsByListOfIds(Set<String> signalsIds, final LoadSignalsCallback callback) {
+        // TODO maybe include here clause that the signal is not deleted?
+        //  Otherwise when displaying the signal, there should be an indication that is has been
+        //  deleted (in the signal details view)
+        getSignals(whereClauseSignalsIds(signalsIds), callback);
+    }
+
+    @Override
+    @RequiresApi(api = Build.VERSION_CODES.O)
     public void getSignalsByListOfIdsExcludingCurrentUser(Set<String> signalsIds, final LoadSignalsCallback callback) {
         String whereClause = buildWhereClauseForListOfSignalsIdsExclusingCurrentUser(signalsIds);
         getSignals(whereClause, callback);
@@ -164,21 +175,27 @@ public class BackendlessSpatialSignalRepository implements SignalRepository {
 
     @NonNull
     private String buildWhereClauseForListOfSignalsIdsExclusingCurrentUser(Set<String> signalsIds) {
-        BackendlessUser currentUser = Backendless.UserService.CurrentUser();
-
-        String whereClause1 = String.format(Locale.ENGLISH, "%s = %s", DELETED, "FALSE");
-
-        String whereClause2 = OWNER_ID + " != '" + currentUser.getUserId() + "' AND ";
-        whereClause2 = whereClause2 + OBJECT_ID_FIELD + " = '";
-        String delimiter ="' OR " + whereClause2;
-        if (signalsIds != null && signalsIds.size() > 0) {
-            whereClause2 = whereClause2 + String.join(delimiter, signalsIds) + "'";
-        }
-
-        String joinedWhereClause = String.format(Locale.ENGLISH, "(%s) AND (%s)",
-                whereClause1, whereClause2);
+        String joinedWhereClause = String.format(Locale.ENGLISH, "(%s) AND (%s) AND (%s)",
+                WHERE_CLAUSE_NOT_DELETED, whereClauseExcludeCurrentUser(), whereClauseSignalsIds(signalsIds));
 
         return joinedWhereClause;
+    }
+
+    private String whereClauseSignalsIds(Set<String> signalsIds) {
+        String whereClause = OBJECT_ID_FIELD + " = '";
+        String delimiter ="' OR " + whereClause;
+        if (signalsIds != null && signalsIds.size() > 0) {
+            whereClause = whereClause + String.join(delimiter, signalsIds) + "'";
+        }
+
+        return whereClause;
+    }
+
+    private String whereClauseExcludeCurrentUser() {
+        BackendlessUser currentUser = Backendless.UserService.CurrentUser();
+
+        String where = OWNER_ID + " != '" + currentUser.getUserId() + "'";
+        return where;
     }
 
     private void getSignals(String whereClause, final LoadSignalsCallback callback) {

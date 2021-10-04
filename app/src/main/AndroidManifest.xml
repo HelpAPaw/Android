@@ -106,6 +106,9 @@
             android:name=".mysignals.MySignalsActivity"
             android:parentActivityName=".signalsmap.SignalsMapActivity" />
         <activity
+            android:name=".mynotifications.MyNotificationsActivity"
+            android:parentActivityName=".signalsmap.SignalsMapActivity" />
+        <activity
             android:name=".faq.FAQsView"
             android:parentActivityName=".signalsmap.SignalsMapActivity" />
         <activity
