@@ -76,7 +76,8 @@
         <activity
             android:name=".signalsmap.SignalsMapActivity"
             android:windowSoftInputMode="stateHidden"
-            android:exported="true">
+            android:exported="true"
+            android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -93,14 +94,14 @@
             android:name=".signalphoto.SignalPhotoActivity"
             android:windowSoftInputMode="stateHidden" />
 
-        <service
-            android:name=".utils.services.BackgroundCheckWorker"
-            android:exported="false"
-            android:permission="android.permission.BIND_JOB_SERVICE">
-            <intent-filter>
-                <action android:name="com.firebase.jobdispatcher.ACTION_EXECUTE" />
-            </intent-filter>
-        </service>
+<!--        <service-->
+<!--            android:name=".utils.services.BackgroundCheckWorker"-->
+<!--            android:exported="false"-->
+<!--            android:permission="android.permission.BIND_JOB_SERVICE">-->
+<!--            <intent-filter>-->
+<!--                <action android:name="com.firebase.jobdispatcher.ACTION_EXECUTE" />-->
+<!--            </intent-filter>-->
+<!--        </service>-->
 
         <activity
             android:name=".faq.FAQsView"
