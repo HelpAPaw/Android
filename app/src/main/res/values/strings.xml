@@ -78,6 +78,9 @@
     <string name="txt_new_comment">New comment</string>
     <string name="txt_new_status">New status</string>
     <string name="error_facebook_not_installed">Facebook not installed</string>
+    <string name="text_my_signals">My Signals</string>
+    <string name="text_my_submitted_signals">Submitted Signals</string>
+    <string name="text_my_commented_signals">Commented Signals</string>
     <string name="text_faqs">FAQs</string>
     <string name="text_about">About</string>
     <string name="text_feedback">Feedback</string>
@@ -132,6 +135,7 @@
     <string name="txt_registration_required">Registration required</string>
     <string name="txt_only_registered_users_can_comment">Only registered users can write comments</string>
     <string name="txt_only_registered_users_can_change_status">Only registered users can change signal status</string>
+    <string name="txt_only_registered_users_can_see_my_signals">Only registered users can see this section</string>
     <string name="txt_confirm_password_reset">If you have already registered but have forgotten your password you can reset it. Do you want to continue?</string>
     <string name="txt_password_reset_successful">We sent you an email with a link from which you can reset your password</string>
     <string name="txt_yes">Yes</string>

@@ -4,6 +4,7 @@ import org.helpapaw.helpapaw.data.models.Comment;
 import org.helpapaw.helpapaw.data.models.Signal;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by iliyan on 7/28/16
@@ -13,6 +14,10 @@ public interface SignalRepository {
     void getAllSignals(double latitude, double longitude, double radius, int timeout, LoadSignalsCallback callback);
 
     void getFilteredSignals(double latitude, double longitude, double radius, int timeout, boolean[] selection, LoadSignalsCallback callback);
+
+    void getSignalsByOwnerId(String ownerId, LoadSignalsCallback callback);
+
+    void getSignalsByListOfIdsExcludingCurrentUser(Set<String> signalsIds, final LoadSignalsCallback callback);
 
     void getSignal(String signalId, final LoadSignalsCallback callback);
 
