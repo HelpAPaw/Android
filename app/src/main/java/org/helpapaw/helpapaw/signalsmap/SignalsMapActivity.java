@@ -2,15 +2,24 @@ package org.helpapaw.helpapaw.signalsmap;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.core.view.GravityCompat;
 import androidx.appcompat.widget.Toolbar;
 
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.dynamiclinks.FirebaseDynamicLinks;
+import com.google.firebase.dynamiclinks.PendingDynamicLinkData;
 
 import org.helpapaw.helpapaw.R;
 import org.helpapaw.helpapaw.base.BaseActivity;
@@ -80,28 +89,80 @@ public class SignalsMapActivity extends BaseActivity {
 
     private void initFragment() {
         if (mSignalsMapFragment == null) {
-            Intent intent = getIntent();
-            if (intent.hasExtra(Signal.KEY_SIGNAL_ID)) {
-                mSignalsMapFragment = SignalsMapFragment.newInstance(intent.getStringExtra(Signal.KEY_SIGNAL_ID));
-                intent.removeExtra(Signal.KEY_SIGNAL_ID);
-            } else {
-                mSignalsMapFragment = SignalsMapFragment.newInstance();
-            }
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            FragmentTransaction transaction = fragmentManager.beginTransaction();
-            transaction.add(R.id.grp_content_frame, mSignalsMapFragment);
-            transaction.commit();
+            commonInitFragment();
         }
     }
 
     private void reinitFragment() {
+        commonInitFragment();
+    }
+
+    private void commonInitFragment() {
         Intent intent = getIntent();
         if (intent.hasExtra(Signal.KEY_SIGNAL_ID)) {
             mSignalsMapFragment = SignalsMapFragment.newInstance(intent.getStringExtra(Signal.KEY_SIGNAL_ID));
             intent.removeExtra(Signal.KEY_SIGNAL_ID);
-        } else {
-            mSignalsMapFragment = SignalsMapFragment.newInstance();
+            replaceFragment();
         }
+        else {
+            Uri intentData = intent.getData();
+            if (intentData != null) {
+                String targetUrlString = intentData.getQueryParameter("target_url");
+                if (targetUrlString != null) {
+                    Uri targetUrl = Uri.parse(targetUrlString);
+                    if (targetUrl != null) {
+                        String linkUrlString = targetUrl.getQueryParameter("link");
+                        if (linkUrlString != null) {
+                            Uri linkUrl = Uri.parse(linkUrlString);
+                            //TODO: DRY
+                            if (linkUrl != null) {
+                                String signalId = linkUrl.getQueryParameter("signal");
+                                if (signalId != null) {
+                                    mSignalsMapFragment = SignalsMapFragment.newInstance(signalId);
+                                    replaceFragment();
+                                    return;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            FirebaseDynamicLinks.getInstance()
+                .getDynamicLink(getIntent())
+                .addOnSuccessListener(this, new OnSuccessListener<PendingDynamicLinkData>() {
+                    @Override
+                    public void onSuccess(PendingDynamicLinkData pendingDynamicLinkData) {
+                        // Get deep link from result (may be null if no link is found)
+                        if (pendingDynamicLinkData != null) {
+                            Uri deepLink = pendingDynamicLinkData.getLink();
+                            if (deepLink != null) {
+                                String signalId = deepLink.getQueryParameter("signal");
+                                if (signalId != null) {
+                                    mSignalsMapFragment = SignalsMapFragment.newInstance(signalId);
+                                    replaceFragment();
+                                }
+                            }
+                        }
+
+                        if (mSignalsMapFragment == null) {
+                            mSignalsMapFragment = SignalsMapFragment.newInstance();
+                            replaceFragment();
+                        }
+                    }
+                })
+                .addOnFailureListener(this, new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(SignalsMapActivity.this.getClass().getSimpleName(), "getDynamicLink:onFailure", e);
+                        mSignalsMapFragment = SignalsMapFragment.newInstance();
+                        replaceFragment();
+                    }
+                });
+        }
+    }
+
+    private void replaceFragment() {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.replace(R.id.grp_content_frame, mSignalsMapFragment);

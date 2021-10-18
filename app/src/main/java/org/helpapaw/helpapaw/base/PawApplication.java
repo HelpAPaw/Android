@@ -14,6 +14,7 @@ import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
 
 import com.backendless.Backendless;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
 
 import org.helpapaw.helpapaw.R;
@@ -50,6 +51,7 @@ public class PawApplication extends MultiDexApplication {
         Injection.getPushNotificationsRepositoryInstance().registerDeviceToken();
 
         doUserSetupIfNeeded();
+        FirebaseAnalytics.getInstance(this);
 
         scheduleBackgroundChecks();
 
