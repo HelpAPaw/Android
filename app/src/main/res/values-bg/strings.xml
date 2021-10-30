@@ -84,8 +84,8 @@
     <string name="text_my_submitted_signals">Подадени Сигнали</string>
     <string name="text_my_commented_signals">Коментирани Сигнали</string>
     <string name="string_about_title">Относно</string>r
-    <string name="text_my_notifications">Моите нотификации</string>
-    <string name="txt_delete_notifications_dialog">Сигурни ли сте, че искате да изтриете всички нотификации?</string>
+    <string name="text_my_notifications">Моите Известия</string>
+    <string name="txt_delete_notifications_dialog">Сигурни ли сте, че искате да изтриете всички известия?</string>
     <string name="string_about_contact">Свържете се с нас</string>
     <string name="string_about_milen">© Милен Маринов 2021</string>
     <string name="error_empty_signal_response">Получихме празен отговор! Може би сигналът не същестува вече!?</string>
