@@ -158,7 +158,6 @@ public class BackendlessSpatialSignalRepository implements SignalRepository {
     }
 
     @Override
-    @RequiresApi(api = Build.VERSION_CODES.O)
     public void getSignalsByListOfIds(Set<String> signalsIds, final LoadSignalsCallback callback) {
         // TODO maybe include here clause that the signal is not deleted?
         //  Otherwise when displaying the signal, there should be an indication that is has been
@@ -167,7 +166,6 @@ public class BackendlessSpatialSignalRepository implements SignalRepository {
     }
 
     @Override
-    @RequiresApi(api = Build.VERSION_CODES.O)
     public void getSignalsByListOfIdsExcludingCurrentUser(Set<String> signalsIds, final LoadSignalsCallback callback) {
         String whereClause = buildWhereClauseForListOfSignalsIdsExclusingCurrentUser(signalsIds);
         getSignals(whereClause, callback);

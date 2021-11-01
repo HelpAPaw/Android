@@ -59,6 +59,7 @@ public class MyNotificationsPresenter extends Presenter<MyNotificationsContract.
         mapSignalsToIds = new HashMap<>();
 
         getView().displayNotifications(notificationList, mapSignalsToIds);
+        getView().onNoNotificationsToBeListed(true);
     }
 
     private void getNotificationsFromLocalDb() {
@@ -81,6 +82,7 @@ public class MyNotificationsPresenter extends Presenter<MyNotificationsContract.
                         }
                         getView().displayNotifications(notificationList, mapSignalsToIds);
                         getView().setProgressVisibility(View.GONE);
+                        getView().onNoNotificationsToBeListed(false);
                     }
 
                     @Override
@@ -88,6 +90,9 @@ public class MyNotificationsPresenter extends Presenter<MyNotificationsContract.
                         getView().showMessage(message);
                     }
                 });
+            }
+            else {
+                getView().onNoNotificationsToBeListed(true);
             }
         } else {
             getView().showNoInternetMessage();

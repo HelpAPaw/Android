@@ -16,7 +16,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
-import androidx.fragment.app.FragmentManager;
 
 import com.google.android.material.snackbar.Snackbar;
 
@@ -26,7 +25,6 @@ import org.helpapaw.helpapaw.base.Presenter;
 import org.helpapaw.helpapaw.data.models.Notification;
 import org.helpapaw.helpapaw.data.models.Signal;
 import org.helpapaw.helpapaw.databinding.FragmentMyNotificationsBinding;
-import org.helpapaw.helpapaw.signaldetails.DeleteSignalDialog;
 
 import java.util.List;
 import java.util.Map;
@@ -143,6 +141,17 @@ public class MyNotificationsFragment extends BaseFragment implements MyNotificat
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onNoNotificationsToBeListed(boolean zeroNotifications) {
+        setHasOptionsMenu(!zeroNotifications);
+        if (zeroNotifications) {
+            binding.noNotificationsMessage.setVisibility(View.VISIBLE);
+        }
+        else {
+            binding.noNotificationsMessage.setVisibility(View.GONE);
+        }
     }
 
     private void displayNotifications(List<Notification> notifications,

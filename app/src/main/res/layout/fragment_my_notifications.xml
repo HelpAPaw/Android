@@ -40,6 +40,18 @@
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
             android:orientation="vertical">
 
+            <TextView
+                android:id="@+id/no_notifications_message"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="30dp"
+                android:layout_marginVertical="30dp"
+                android:textSize="26sp"
+                android:layout_gravity="center_horizontal"
+                android:textAlignment="center"
+                android:visibility="gone"
+                android:text="@string/no_notifications_message"/>
+
             <ListView
                 android:id="@+id/my_notifications_list_view"
                 android:layout_width="match_parent"

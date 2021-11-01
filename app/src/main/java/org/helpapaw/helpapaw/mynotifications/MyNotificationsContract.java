@@ -18,6 +18,8 @@ public class MyNotificationsContract {
         void showNoInternetMessage();
 
         void setProgressVisibility(int visibility);
+
+        void onNoNotificationsToBeListed(boolean zeroNotifications);
     }
 
     interface UserActionsListener {

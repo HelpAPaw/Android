@@ -85,6 +85,7 @@
     <string name="text_my_commented_signals">Коментирани Сигнали</string>
     <string name="string_about_title">Относно</string>r
     <string name="text_my_notifications">Моите Известия</string>
+    <string name="no_notifications_message">Вие нямате известия.</string>
     <string name="txt_delete_notifications_dialog">Сигурни ли сте, че искате да изтриете всички известия?</string>
     <string name="string_about_contact">Свържете се с нас</string>
     <string name="string_about_milen">© Милен Маринов 2021</string>
