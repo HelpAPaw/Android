@@ -15,7 +15,4 @@ public interface PushNotificationsRepository {
     void pushNewSignalNotification(final Signal signal);
     void pushNewCommentNotification(final Signal signal, final String newComment, final List<Comment> currentComments);
     void pushNewStatusNotification(final Signal signal, final int newStatus, final List<Comment> currentComments);
-
-    List<Notification> getAllNotifications();
-    void deleteNotifications();
 }
