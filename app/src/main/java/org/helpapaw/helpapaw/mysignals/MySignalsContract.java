@@ -6,9 +6,6 @@ import java.util.List;
 
 public interface MySignalsContract {
     interface View {
-        void showRegistrationRequiredAlert();
-
-        void openLoginScreen();
 
         void displaySubmittedSignals(List<Signal> signals);
 
@@ -22,8 +19,6 @@ public interface MySignalsContract {
     }
 
     interface UserActionsListener {
-        void onOpenMySignalsScreen();
-
         void onLoadMySignals();
     }
 }

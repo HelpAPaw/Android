@@ -36,13 +36,6 @@ public class MySignalsPresenter extends Presenter<MySignalsContract.View> implem
     }
 
     @Override
-    public void onOpenMySignalsScreen() {
-        if (!userManager.isLoggedIn()) {
-            getView().showRegistrationRequiredAlert();
-        }
-    }
-
-    @Override
     public void onLoadMySignals() {
         if (userManager.isLoggedIn()) {
             String loggedUserId = userManager.getLoggedUserId();
