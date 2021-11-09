@@ -1,10 +1,5 @@
 package org.helpapaw.helpapaw.utils;
 
-import androidx.annotation.NonNull;
-import androidx.room.DatabaseConfiguration;
-import androidx.room.InvalidationTracker;
-import androidx.sqlite.db.SupportSQLiteOpenHelper;
-
 import org.helpapaw.helpapaw.data.repositories.BackendlessCommentRepository;
 import org.helpapaw.helpapaw.data.repositories.BackendlessPhotoRepository;
 import org.helpapaw.helpapaw.data.repositories.BackendlessPushNotificationsRepository;
@@ -17,8 +12,6 @@ import org.helpapaw.helpapaw.data.repositories.SettingsRepository;
 import org.helpapaw.helpapaw.data.repositories.SignalRepository;
 import org.helpapaw.helpapaw.data.user.BackendlessUserManager;
 import org.helpapaw.helpapaw.data.user.UserManager;
-import org.helpapaw.helpapaw.db.NotificationDao;
-import org.helpapaw.helpapaw.db.NotificationsDatabase;
 import org.helpapaw.helpapaw.utils.images.ImageLoader;
 import org.helpapaw.helpapaw.utils.images.PicassoImageLoader;
 

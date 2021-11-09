@@ -81,9 +81,12 @@
     <string name="txt_user_changed_status_to">%1$s промени статуса на \'%2$s\'</string>
     <string name="txt_new_status_icon">Икона на новия статус</string>
     <string name="text_my_signals">Моите Сигнали</string>
-    <string name="text_my_submitted_signals">Подадени Сигнали</string>
-    <string name="text_my_commented_signals">Коментирани Сигнали</string>
-    <string name="string_about_title">Относно</string>r
+    <string name="no_signals_message">Вие нямате сигнали.</string>
+    <string-array name="my_signal_items">
+        <item>Подадени Сигнали</item>
+        <item>Коментирани Сигнали</item>
+    </string-array>
+    <string name="string_about_title">Относно</string>
     <string name="text_my_notifications">Моите Известия</string>
     <string name="no_notifications_message">Вие нямате известия.</string>
     <string name="txt_delete_notifications_dialog">Сигурни ли сте, че искате да изтриете всички известия?</string>

@@ -16,7 +16,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class MySignalsPresenter extends Presenter<MySignalsContract.View> implements MySignalsContract.UserActionsListener {
+public class MyCommentedSignalsPresenter extends Presenter<MySignalsContract.View> implements MySignalsContract.UserActionsListener {
 
     private SignalRepository signalRepository;
     private CommentRepository commentRepository;
@@ -25,7 +25,7 @@ public class MySignalsPresenter extends Presenter<MySignalsContract.View> implem
 
     private Set<String> commentedSignalsIds;;
 
-    MySignalsPresenter(MySignalsContract.View view) {
+    MyCommentedSignalsPresenter(MySignalsContract.View view) {
         super(view);
         signalRepository = Injection.getSignalRepositoryInstance();
         commentRepository = Injection.getCommentRepositoryInstance();
@@ -39,41 +39,8 @@ public class MySignalsPresenter extends Presenter<MySignalsContract.View> implem
     public void onLoadMySignals() {
         if (userManager.isLoggedIn()) {
             String loggedUserId = userManager.getLoggedUserId();
-            getSubmittedSignalsfromDb(loggedUserId);
+
             getCommentedSignalsfromDb(loggedUserId);
-        }
-    }
-
-    private void getSubmittedSignalsfromDb(String ownerId) {
-        if (Utils.getInstance().hasNetworkConnection()) {
-
-            if (userManager.isLoggedIn()) {
-                getView().setProgressVisibility(View.VISIBLE);
-            }
-
-            signalRepository.getSignalsByOwnerId(ownerId,
-                    new SignalRepository.LoadSignalsCallback() {
-                        @Override
-                        public void onSignalsLoaded(List<Signal> signals) {
-                            if (!isViewAvailable()) return;
-
-                            for (Signal signal : signals) {
-                                signal.setPhotoUrl(photoRepository.getSignalPhotoUrl(signal.getId()));
-                            }
-
-                            getView().displaySubmittedSignals(signals);
-                            getView().setProgressVisibility(View.GONE);
-                        }
-
-                        @Override
-                        public void onSignalsFailure(String message) {
-                            if (!isViewAvailable()) return;
-                            getView().showMessage(message);
-                        }
-                    });
-
-        } else {
-            getView().showNoInternetMessage();
         }
     }
 
@@ -98,12 +65,17 @@ public class MySignalsPresenter extends Presenter<MySignalsContract.View> implem
                         public void onSignalsLoaded(List<Signal> signals) {
                             if (!isViewAvailable()) return;
 
-                            for (Signal signal : signals) {
-                                signal.setPhotoUrl(photoRepository.getSignalPhotoUrl(signal.getId()));
-                            }
+                            if (signals.size() != 0) {
+                                for (Signal signal : signals) {
+                                    signal.setPhotoUrl(photoRepository.getSignalPhotoUrl(signal.getId()));
+                                }
 
-                            getView().displayCommentedSignals(signals);
-                            getView().setProgressVisibility(View.GONE);
+                                getView().displaySignals(signals);
+                                getView().setProgressVisibility(View.GONE);
+                                getView().onNoSignalsToBeListed(false);
+                            } else {
+                                getView().onNoSignalsToBeListed(true);
+                            }
                         }
 
                         @Override

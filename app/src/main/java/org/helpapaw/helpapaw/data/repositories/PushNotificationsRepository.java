@@ -3,7 +3,6 @@ package org.helpapaw.helpapaw.data.repositories;
 import android.location.Location;
 
 import org.helpapaw.helpapaw.data.models.Comment;
-import org.helpapaw.helpapaw.data.models.Notification;
 import org.helpapaw.helpapaw.data.models.Signal;
 
 import java.util.List;

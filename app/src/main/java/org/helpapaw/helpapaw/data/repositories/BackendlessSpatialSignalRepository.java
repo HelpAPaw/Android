@@ -3,10 +3,7 @@ package org.helpapaw.helpapaw.data.repositories;
 import static org.helpapaw.helpapaw.base.PawApplication.getContext;
 
 import android.annotation.SuppressLint;
-import android.os.Build;
-
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 
 import com.backendless.Backendless;
 import com.backendless.BackendlessUser;
@@ -81,9 +78,8 @@ public class BackendlessSpatialSignalRepository implements SignalRepository {
         calendar.add(Calendar.DATE, -timeout);
         Date dateSubmitted = calendar.getTime();
         String whereClause2 = String.format(Locale.ENGLISH, "%s > %d", CREATED_FIELD, dateSubmitted.getTime());
-        String whereClause3 = String.format(Locale.ENGLISH, "%s = %s", DELETED, "FALSE");
 
-        String joinedWhereClause = String.format(Locale.ENGLISH, "(%s) AND (%s) AND (%s)", whereClause1, whereClause2, whereClause3);
+        String joinedWhereClause = String.format(Locale.ENGLISH, "(%s) AND (%s) AND (%s)", whereClause1, whereClause2, WHERE_CLAUSE_NOT_DELETED);
 
         getSignals(joinedWhereClause, callback);
     }
@@ -99,17 +95,16 @@ public class BackendlessSpatialSignalRepository implements SignalRepository {
         calendar.add(Calendar.DATE, -timeout);
         Date dateSubmitted = calendar.getTime();
         String whereClause2 = String.format(Locale.ENGLISH, "%s > %d", CREATED_FIELD, dateSubmitted.getTime());
-        String whereClause3 = String.format(Locale.ENGLISH, "%s = %s", DELETED, "FALSE");
         String joinedWhereClause;
 
         if (selectedTypes != null && !Utils.allSelected(selectedTypes)) {
             String whereClause4 = createWhereClauseForType(selectedTypes);
 
             joinedWhereClause= String.format(Locale.ENGLISH, "(%s) AND (%s) AND (%s) AND (%s)",
-                    whereClause1, whereClause2, whereClause3, whereClause4);
+                    whereClause1, whereClause2, WHERE_CLAUSE_NOT_DELETED, whereClause4);
         } else {
             joinedWhereClause = String.format(Locale.ENGLISH, "(%s) AND (%s) AND (%s)",
-                    whereClause1, whereClause2, whereClause3);
+                    whereClause1, whereClause2, WHERE_CLAUSE_NOT_DELETED);
         }
 
         getSignals(joinedWhereClause, callback);
@@ -142,13 +137,9 @@ public class BackendlessSpatialSignalRepository implements SignalRepository {
 
     @Override
     public void getSignalsByOwnerId(String ownerId, LoadSignalsCallback callback) {
-        String whereClause1 = String.format(Locale.ENGLISH, "%s = %s", DELETED, "FALSE");
-        String whereClause2 = String.format(Locale.ENGLISH, "%s = '%s'", OWNER_ID, ownerId);
+        String whereClause = String.format(Locale.ENGLISH, "%s = '%s'", OWNER_ID, ownerId);
 
-        String joinedWhereClause = String.format(Locale.ENGLISH, "(%s) AND (%s)",
-                whereClause1, whereClause2);
-
-        getSignals(joinedWhereClause, callback);
+        getSignals(whereClause, callback);
     }
 
     @Override
@@ -159,9 +150,6 @@ public class BackendlessSpatialSignalRepository implements SignalRepository {
 
     @Override
     public void getSignalsByListOfIds(Set<String> signalsIds, final LoadSignalsCallback callback) {
-        // TODO maybe include here clause that the signal is not deleted?
-        //  Otherwise when displaying the signal, there should be an indication that is has been
-        //  deleted (in the signal details view)
         getSignals(whereClauseSignalsIds(signalsIds), callback);
     }
 
@@ -173,8 +161,8 @@ public class BackendlessSpatialSignalRepository implements SignalRepository {
 
     @NonNull
     private String buildWhereClauseForListOfSignalsIdsExclusingCurrentUser(Set<String> signalsIds) {
-        String joinedWhereClause = String.format(Locale.ENGLISH, "(%s) AND (%s) AND (%s)",
-                WHERE_CLAUSE_NOT_DELETED, whereClauseExcludeCurrentUser(), whereClauseSignalsIds(signalsIds));
+        String joinedWhereClause = String.format(Locale.ENGLISH, "(%s) AND (%s)",
+                whereClauseExcludeCurrentUser(), whereClauseSignalsIds(signalsIds));
 
         return joinedWhereClause;
     }

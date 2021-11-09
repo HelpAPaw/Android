@@ -4,14 +4,10 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 
 import com.google.android.material.snackbar.Snackbar;
@@ -24,15 +20,14 @@ import org.helpapaw.helpapaw.databinding.FragmentMySignalsBinding;
 
 import java.util.List;
 
-public class MySignalsFragment extends BaseFragment implements MySignalsContract.View {
+public class MyCommentedSignalsFragment extends BaseFragment implements MySignalsContract.View {
 
     private FragmentMySignalsBinding binding;
-    private MySignalsPresenter mySignalsPresenter;
+    private MyCommentedSignalsPresenter presenter;
     private MySignalsContract.UserActionsListener actionsListener;
     private MySignalsCustomAdapter customAdapter;
 
-    public static MySignalsFragment newInstance() {
-        return new MySignalsFragment();
+    public MyCommentedSignalsFragment() {
     }
 
     @Override
@@ -42,29 +37,18 @@ public class MySignalsFragment extends BaseFragment implements MySignalsContract
 
     @Override
     protected Presenter getPresenter() {
-        return mySignalsPresenter;
+        return presenter;
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_my_signals, container, false);
-        AppCompatActivity appCompatActivity = (AppCompatActivity) getActivity();
-        if (appCompatActivity != null) {
-            appCompatActivity.setSupportActionBar(binding.toolbar);
-            ActionBar supportActionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
 
-            if (supportActionBar != null) {
-                supportActionBar.setDisplayHomeAsUpEnabled(true);
-                supportActionBar.setDisplayShowTitleEnabled(false);
-                binding.toolbarTitle.setText(getString(R.string.text_my_signals));
-            }
-        }
+        presenter = new MyCommentedSignalsPresenter(this);
+        presenter.setView(this);
 
-        mySignalsPresenter = new MySignalsPresenter(this);
-        mySignalsPresenter.setView(this);
-
-        actionsListener = mySignalsPresenter;
+        actionsListener = presenter;
         actionsListener.onLoadMySignals();
 
         return binding.getRoot();
@@ -84,13 +68,8 @@ public class MySignalsFragment extends BaseFragment implements MySignalsContract
     }
 
     @Override
-    public void displaySubmittedSignals(List<Signal> signals) {
-        displaySignals(signals, binding.submittedSignalsListView);
-    }
-
-    @Override
-    public void displayCommentedSignals(List<Signal> signals) {
-        displaySignals(signals, binding.commentedSignalsListView);
+    public void displaySignals(List<Signal> signals) {
+        displaySignals(signals, binding.signalsListView);
     }
 
     @Override
@@ -110,6 +89,18 @@ public class MySignalsFragment extends BaseFragment implements MySignalsContract
         binding.progressBar.setVisibility(visibility);
     }
 
+    @Override
+    public void onNoSignalsToBeListed(boolean zeroSignals) {
+        setHasOptionsMenu(!zeroSignals);
+        if (zeroSignals) {
+            binding.noSignalsMessage.setVisibility(View.VISIBLE);
+            binding.progressBar.setVisibility(View.GONE);
+        }
+        else {
+            binding.noSignalsMessage.setVisibility(View.GONE);
+        }
+    }
+
     private void displaySignals(List<Signal> signals, ListView listView) {
         Signal[] signalsArray = new Signal[signals.size()];
         for (int i = 0; i < signals.size(); i++) {
@@ -118,27 +109,7 @@ public class MySignalsFragment extends BaseFragment implements MySignalsContract
 
         customAdapter = new MySignalsCustomAdapter(getContext(), signalsArray);
         listView.setAdapter(customAdapter);
-        setDynamicHeight(listView);
 
         binding.notifyChange();
-    }
-
-    public static void setDynamicHeight(ListView mListView) {
-        ListAdapter mListAdapter = mListView.getAdapter();
-        if (mListAdapter == null) {
-            // when adapter is null
-            return;
-        }
-        int height = 0;
-        int desiredWidth = View.MeasureSpec.makeMeasureSpec(mListView.getWidth(), View.MeasureSpec.UNSPECIFIED);
-        for (int i = 0; i < mListAdapter.getCount(); i++) {
-            View listItem = mListAdapter.getView(i, null, mListView);
-            listItem.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
-            height += listItem.getMeasuredHeight();
-        }
-        ViewGroup.LayoutParams params = mListView.getLayoutParams();
-        params.height = height + (mListView.getDividerHeight() * (mListAdapter.getCount() - 1));
-        mListView.setLayoutParams(params);
-        mListView.requestLayout();
     }
 }

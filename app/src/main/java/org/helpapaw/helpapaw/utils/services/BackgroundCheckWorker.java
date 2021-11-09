@@ -40,6 +40,7 @@ import static org.helpapaw.helpapaw.data.models.Signal.SOLVED;
 public class BackgroundCheckWorker extends ListenableWorker {
     private SignalsDatabase database;
     public static final String TAG = BackgroundCheckWorker.class.getSimpleName();
+    static final String CURRENT_NOTIFICATION_IDS = "CurrentNotificationIds";
 
     HashSet<String> mCurrentNotificationIds = new HashSet<>();
     NotificationManager mNotificationManager;
@@ -51,6 +52,7 @@ public class BackgroundCheckWorker extends ListenableWorker {
     public BackgroundCheckWorker(@NonNull Context appContext, @NonNull WorkerParameters workerParams) {
         super(appContext, workerParams);
     }
+//    SharedPreferences mSharedPreferences;
 
     @NonNull
     @Override
@@ -60,6 +62,7 @@ public class BackgroundCheckWorker extends ListenableWorker {
         Log.d(TAG, "onStartJob called");
 
         mNotificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
+//        mSharedPreferences = getApplicationContext().getSharedPreferences(TAG, Context.MODE_PRIVATE);
 
         // Do some work here
         return CallbackToFutureAdapter.getFuture(completer -> {
@@ -129,6 +132,21 @@ public class BackgroundCheckWorker extends ListenableWorker {
                         }
                     }
                 }
+
+                // Cancel all previous notifications that are not currently present
+//                Set<String> oldNotificationIds = mSharedPreferences.getStringSet(CURRENT_NOTIFICATION_IDS, null);
+//                if (oldNotificationIds != null) {
+//                    for (String id : oldNotificationIds) {
+//                        if (!mCurrentNotificationIds.contains(id)) {
+//                            mNotificationManager.cancel(id.hashCode());
+//                        }
+//                    }
+//                }
+
+                // Save ids of current notifications
+//                SharedPreferences.Editor editor = mSharedPreferences.edit();
+//                editor.putStringSet(CURRENT_NOTIFICATION_IDS, mCurrentNotificationIds);
+//                editor.apply();
 
                 completer.set(Result.success());
             }

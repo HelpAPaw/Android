@@ -10,7 +10,6 @@ import org.helpapaw.helpapaw.base.Presenter;
 import org.helpapaw.helpapaw.data.models.Notification;
 import org.helpapaw.helpapaw.data.models.Signal;
 import org.helpapaw.helpapaw.data.repositories.PhotoRepository;
-import org.helpapaw.helpapaw.data.repositories.PushNotificationsRepository;
 import org.helpapaw.helpapaw.data.repositories.SignalRepository;
 import org.helpapaw.helpapaw.db.NotificationsDatabase;
 import org.helpapaw.helpapaw.utils.Injection;
