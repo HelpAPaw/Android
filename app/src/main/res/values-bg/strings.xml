@@ -50,6 +50,7 @@
     <string name="txt_save">Запази</string>
     <string name="txt_cancel">Откажи</string>
     <string name="txt_signal_details_title">Подробности за сигнала</string>
+    <string name="txt_signal_was_deleted">Сигналът беше изтрит!</string>
     <string name="txt_upload_photo">Качи снимка</string>
     <string name="txt_edit_title">Промени</string>
     <string name="txt_delete_signal">Изтрий</string>

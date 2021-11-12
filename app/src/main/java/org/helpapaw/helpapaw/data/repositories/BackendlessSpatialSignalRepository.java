@@ -214,6 +214,8 @@ public class BackendlessSpatialSignalRepository implements SignalRepository {
                         Integer status = (Integer) signalMap.get(SIGNAL_STATUS);
                         String signalAuthorPhone = (String) signalMap.get(SIGNAL_AUTHOR_PHONE);
                         Point location = (Point) signalMap.get(SIGNAL_LOCATION);
+                        Boolean deleted = (Boolean) signalMap.get(DELETED);
+
                         Integer type = 0;
                         if (signalMap.get(SIGNAL_TYPE) != null) {
                             type = (Integer) signalMap.get(SIGNAL_TYPE);
@@ -231,6 +233,7 @@ public class BackendlessSpatialSignalRepository implements SignalRepository {
                         Signal newSignal = new Signal(objectId, signalTitle, dateCreated, status,
                                 signalAuthorId, signalAuthorName, signalAuthorPhone, location.getLatitude(),
                                 location.getLongitude(), false, type);
+                        newSignal.setIsDeleted(deleted);
 
                         // If signal is already in DB - keep seen status
                         List<Signal> signalsFromDB = signalsDatabase.signalDao().getSignal(objectId);

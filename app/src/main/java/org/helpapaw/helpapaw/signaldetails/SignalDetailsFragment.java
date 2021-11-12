@@ -15,9 +15,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 
-import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
-import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Build;
@@ -170,6 +168,18 @@ public class SignalDetailsFragment extends BaseFragment
 
         hideUploadPhotoButton();
         showSignalPhoto(signal);
+
+        if(signal.getIsDeleted()) {
+            deletedSignalView();
+        }
+    }
+
+    private void deletedSignalView() {
+        binding.txtSignalIsDeleted.setVisibility(View.VISIBLE);
+        binding.btnUploadPhoto.setVisibility(View.INVISIBLE);
+        binding.viewSignalStatus.setVisibility(View.GONE);
+        binding.btnAddComment.setEnabled(false);
+        binding.imgAddCommentPhoto.setEnabled(false);
     }
 
     @Override
