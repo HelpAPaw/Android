@@ -155,12 +155,12 @@ public class BackendlessSpatialSignalRepository implements SignalRepository {
 
     @Override
     public void getSignalsByListOfIdsExcludingCurrentUser(Set<String> signalsIds, final LoadSignalsCallback callback) {
-        String whereClause = buildWhereClauseForListOfSignalsIdsExclusingCurrentUser(signalsIds);
+        String whereClause = buildWhereClauseForListOfSignalsIdsExcludingCurrentUser(signalsIds);
         getSignals(whereClause, callback);
     }
 
     @NonNull
-    private String buildWhereClauseForListOfSignalsIdsExclusingCurrentUser(Set<String> signalsIds) {
+    private String buildWhereClauseForListOfSignalsIdsExcludingCurrentUser(Set<String> signalsIds) {
         String joinedWhereClause = String.format(Locale.ENGLISH, "(%s) AND (%s)",
                 whereClauseExcludeCurrentUser(), whereClauseSignalsIds(signalsIds));
 
