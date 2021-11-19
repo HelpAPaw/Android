@@ -3,6 +3,8 @@ package org.helpapaw.helpapaw.data.repositories;
 import static org.helpapaw.helpapaw.base.PawApplication.getContext;
 
 import android.annotation.SuppressLint;
+import android.text.TextUtils;
+
 import androidx.annotation.NonNull;
 
 import com.backendless.Backendless;
@@ -171,7 +173,7 @@ public class BackendlessSpatialSignalRepository implements SignalRepository {
         String whereClause = OBJECT_ID_FIELD + " = '";
         String delimiter ="' OR " + whereClause;
         if (signalsIds != null && signalsIds.size() > 0) {
-            whereClause = whereClause + String.join(delimiter, signalsIds) + "'";
+            whereClause = whereClause + TextUtils.join(delimiter, signalsIds) + "'";
         }
 
         return whereClause;
