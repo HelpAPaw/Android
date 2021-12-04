@@ -23,8 +23,8 @@ import org.helpapaw.helpapaw.R;
 import org.helpapaw.helpapaw.data.models.Notification;
 import org.helpapaw.helpapaw.data.models.Signal;
 import org.helpapaw.helpapaw.data.repositories.ISettingsRepository;
+import org.helpapaw.helpapaw.data.repositories.ReceivedNotificationsRepository;
 import org.helpapaw.helpapaw.data.repositories.SignalRepository;
-import org.helpapaw.helpapaw.db.NotificationsDatabase;
 import org.helpapaw.helpapaw.db.SignalsDatabase;
 import org.helpapaw.helpapaw.utils.Injection;
 import org.helpapaw.helpapaw.utils.NotificationUtils;
@@ -42,7 +42,7 @@ import static org.helpapaw.helpapaw.data.models.Signal.SOLVED;
 
 public class BackgroundCheckWorker extends ListenableWorker {
     private SignalsDatabase signalsDatabase;
-    private NotificationsDatabase notificationDatabase;
+    private ReceivedNotificationsRepository notificationDatabase;
 
     public static final String TAG = BackgroundCheckWorker.class.getSimpleName();
     static final String CURRENT_NOTIFICATION_IDS = "CurrentNotificationIds";
@@ -63,7 +63,7 @@ public class BackgroundCheckWorker extends ListenableWorker {
     @Override
     public ListenableFuture<ListenableWorker.Result> startWork() {
         signalsDatabase = SignalsDatabase.getDatabase(getApplicationContext());
-        notificationDatabase = NotificationsDatabase.getDatabase(getApplicationContext());
+        notificationDatabase = Injection.getReceivedNotificationsRepositoryInstance();
 
         Log.d(TAG, "onStartJob called");
 
@@ -134,7 +134,7 @@ public class BackgroundCheckWorker extends ListenableWorker {
 
                                     String notificationText = getApplicationContext().getString(R.string.txt_new_signal) + ": " + signal.getTitle();
                                     Notification notification = new Notification(signal.getId(), signal.getPhotoUrl(), notificationText);
-                                    notificationDatabase.notificationDao().saveNotification(notification);
+                                    notificationDatabase.saveNotification(notification);
 
                                     signalFromDb.setSeen(true);
                                     signalsDatabase.signalDao().saveSignal(signalFromDb);

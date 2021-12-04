@@ -1,7 +1,5 @@
 package org.helpapaw.helpapaw.mynotifications;
 
-import static org.helpapaw.helpapaw.base.PawApplication.getContext;
-
 import android.view.View;
 
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
@@ -10,8 +8,8 @@ import org.helpapaw.helpapaw.base.Presenter;
 import org.helpapaw.helpapaw.data.models.Notification;
 import org.helpapaw.helpapaw.data.models.Signal;
 import org.helpapaw.helpapaw.data.repositories.PhotoRepository;
+import org.helpapaw.helpapaw.data.repositories.ReceivedNotificationsRepository;
 import org.helpapaw.helpapaw.data.repositories.SignalRepository;
-import org.helpapaw.helpapaw.db.NotificationsDatabase;
 import org.helpapaw.helpapaw.utils.Injection;
 import org.helpapaw.helpapaw.utils.Utils;
 
@@ -30,13 +28,13 @@ public class MyNotificationsPresenter extends Presenter<MyNotificationsContract.
 
     private SignalRepository signalRepository;
     private PhotoRepository photoRepository;
-    private NotificationsDatabase notificationsDatabase;
+    private ReceivedNotificationsRepository notificationsDatabase;
 
     MyNotificationsPresenter(MyNotificationsContract.View view) {
         super(view);
         signalRepository = Injection.getSignalRepositoryInstance();
         photoRepository = Injection.getPhotoRepositoryInstance();
-        notificationsDatabase = NotificationsDatabase.getDatabase(getContext());
+        notificationsDatabase = Injection.getReceivedNotificationsRepositoryInstance();
 
         notificationList = new ArrayList<>();
         signalsIds = new HashSet<>();
@@ -44,7 +42,7 @@ public class MyNotificationsPresenter extends Presenter<MyNotificationsContract.
     }
 
     @Override
-    public void onOpenMyNotificationsScreen() {
+    public void onViewResume() {
         getNotificationsFromLocalDb();
     }
 
@@ -56,7 +54,7 @@ public class MyNotificationsPresenter extends Presenter<MyNotificationsContract.
     @Override
     public void onDeleteMyNotifications() {
         FirebaseCrashlytics.getInstance().log("Initiate delete notifications ");
-        notificationsDatabase.notificationDao().deleteAll();
+        notificationsDatabase.deleteAll();
         notificationList = new ArrayList<>();
         mapSignalsToIds = new HashMap<>();
 
@@ -66,7 +64,7 @@ public class MyNotificationsPresenter extends Presenter<MyNotificationsContract.
 
     private void getNotificationsFromLocalDb() {
         if (Utils.getInstance().hasNetworkConnection()) {
-            notificationList = notificationsDatabase.notificationDao().getAll();
+            notificationList = notificationsDatabase.getAll();
 
             if (notificationList.size() != 0) {
                 getView().setProgressVisibility(View.VISIBLE);

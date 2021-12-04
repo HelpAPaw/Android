@@ -70,7 +70,6 @@ public class MyNotificationsFragment extends BaseFragment implements MyNotificat
         presenter.setView(this);
 
         actionsListener = presenter;
-        actionsListener.onOpenMyNotificationsScreen();
 
         setHasOptionsMenu(true);
 
@@ -86,7 +85,7 @@ public class MyNotificationsFragment extends BaseFragment implements MyNotificat
     public void onResume() {
         super.onResume();
 
-        actionsListener.onOpenMyNotificationsScreen();
+        actionsListener.onViewResume();
     }
 
     @Override

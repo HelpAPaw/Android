@@ -30,6 +30,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -170,13 +171,14 @@ public class SignalDetailsFragment extends BaseFragment
         showSignalPhoto(signal);
 
         if(signal.getIsDeleted()) {
-            deletedSignalView();
+            setupSignalAsDeleted();
         }
     }
 
-    private void deletedSignalView() {
+    private void setupSignalAsDeleted() {
         binding.txtSignalIsDeleted.setVisibility(View.VISIBLE);
         binding.btnUploadPhoto.setVisibility(View.INVISIBLE);
+        binding.statusLabel.setVisibility(View.GONE);
         binding.viewSignalStatus.setVisibility(View.GONE);
         binding.btnAddComment.setEnabled(false);
         binding.imgAddCommentPhoto.setEnabled(false);

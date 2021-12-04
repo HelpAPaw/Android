@@ -27,8 +27,4 @@ public abstract class NotificationsDatabase extends RoomDatabase {
         }
         return INSTANCE;
     }
-
-    public static void destroyInstance() {
-        INSTANCE = null;
-    }
 }

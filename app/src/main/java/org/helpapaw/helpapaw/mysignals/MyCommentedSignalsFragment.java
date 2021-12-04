@@ -49,7 +49,6 @@ public class MyCommentedSignalsFragment extends BaseFragment implements MySignal
         presenter.setView(this);
 
         actionsListener = presenter;
-        actionsListener.onLoadMySignals();
 
         return binding.getRoot();
     }
@@ -64,7 +63,7 @@ public class MyCommentedSignalsFragment extends BaseFragment implements MySignal
     public void onResume() {
         super.onResume();
 
-        actionsListener.onLoadMySignals();
+        actionsListener.onViewResume();
     }
 
     @Override

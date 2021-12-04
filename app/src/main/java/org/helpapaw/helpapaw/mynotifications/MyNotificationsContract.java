@@ -23,7 +23,7 @@ public class MyNotificationsContract {
     }
 
     interface UserActionsListener {
-        void onOpenMyNotificationsScreen();
+        void onViewResume();
 
         void onDeleteMyNotificationsClicked();
 

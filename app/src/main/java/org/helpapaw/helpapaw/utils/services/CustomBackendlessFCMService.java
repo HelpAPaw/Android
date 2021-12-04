@@ -10,12 +10,13 @@ import com.backendless.push.BackendlessFCMService;
 
 import org.helpapaw.helpapaw.data.models.Notification;
 import org.helpapaw.helpapaw.data.models.Signal;
-import org.helpapaw.helpapaw.db.NotificationsDatabase;
+import org.helpapaw.helpapaw.data.repositories.ReceivedNotificationsRepository;
 import org.helpapaw.helpapaw.db.SignalsDatabase;
+import org.helpapaw.helpapaw.utils.Injection;
 
 public class CustomBackendlessFCMService extends BackendlessFCMService {
 
-    private NotificationsDatabase notificationsDatabase;
+    private ReceivedNotificationsRepository notificationsDatabase;
     private SignalsDatabase signalsDatabase;
 
     @Override
@@ -23,8 +24,8 @@ public class CustomBackendlessFCMService extends BackendlessFCMService {
     {
         Notification notification = createNotificationFromIntent(appContext, msgIntent);
 
-        notificationsDatabase = NotificationsDatabase.getDatabase(appContext);
-        notificationsDatabase.notificationDao().saveNotification(notification);
+        notificationsDatabase = Injection.getReceivedNotificationsRepositoryInstance();
+        notificationsDatabase.saveNotification(notification);
 
         return true;
     }

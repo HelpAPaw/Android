@@ -36,7 +36,7 @@ public class MyCommentedSignalsPresenter extends Presenter<MySignalsContract.Vie
     }
 
     @Override
-    public void onLoadMySignals() {
+    public void onViewResume() {
         if (userManager.isLoggedIn()) {
             String loggedUserId = userManager.getLoggedUserId();
 

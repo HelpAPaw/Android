@@ -10,7 +10,6 @@ import org.helpapaw.helpapaw.data.user.UserManager;
 import org.helpapaw.helpapaw.utils.Injection;
 import org.helpapaw.helpapaw.utils.Utils;
 
-import java.util.HashSet;
 import java.util.List;
 
 public class MySubmittedSignalsPresenter extends Presenter<MySignalsContract.View> implements MySignalsContract.UserActionsListener {
@@ -27,15 +26,15 @@ public class MySubmittedSignalsPresenter extends Presenter<MySignalsContract.Vie
     }
 
     @Override
-    public void onLoadMySignals() {
+    public void onViewResume() {
         if (userManager.isLoggedIn()) {
             String loggedUserId = userManager.getLoggedUserId();
 
-            getSubmittedSignalsfromDb(loggedUserId);
+            getSubmittedSignals(loggedUserId);
         }
     }
 
-    private void getSubmittedSignalsfromDb(String ownerId) {
+    private void getSubmittedSignals(String ownerId) {
         if (Utils.getInstance().hasNetworkConnection()) {
 
             if (userManager.isLoggedIn()) {

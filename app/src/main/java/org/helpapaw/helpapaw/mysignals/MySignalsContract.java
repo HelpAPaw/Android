@@ -19,6 +19,6 @@ public interface MySignalsContract {
     }
 
     interface UserActionsListener {
-        void onLoadMySignals();
+        void onViewResume();
     }
 }
