@@ -87,7 +87,7 @@ import org.helpapaw.helpapaw.utils.StatusUtils;
 import org.helpapaw.helpapaw.utils.images.ImageUtils;
 
 import static org.helpapaw.helpapaw.base.PawApplication.APP_OPEN_COUNTER;
-import static org.helpapaw.helpapaw.base.PawApplication.APP_OPEN_MAX_COUNTER;
+import static org.helpapaw.helpapaw.base.PawApplication.APP_OPENINGS_TO_ASK_FOR_SHARE;
 import static org.helpapaw.helpapaw.filtersignal.FilterSignalTypeDialog.EXTRA_SIGNAL_TYPE_SELECTION;
 import static org.helpapaw.helpapaw.filtersignal.FilterSignalTypeDialog.FILTER_TAG;
 import static org.helpapaw.helpapaw.filtersignal.FilterSignalTypeDialog.REQUEST_UPDATE_SIGNAL_TYPE_SELECTION;
@@ -212,7 +212,7 @@ public class SignalsMapFragment extends BaseFragment
         binding.viewSendSignal.setOnSignalSendClickListener(getOnSignalSendClickListener());
         binding.viewSendSignal.setOnSignalPhotoClickListener(getOnSignalPhotoClickListener());
 
-        shareAppReminder();
+        showShareAppReminderIfNeeded();
 
         return binding.getRoot();
     }
@@ -291,11 +291,11 @@ public class SignalsMapFragment extends BaseFragment
         return super.onOptionsItemSelected(item);
     }
 
-    private void shareAppReminder() {
+    private void showShareAppReminderIfNeeded() {
         SharedPreferences prefs = this.getActivity().getSharedPreferences("HelpAPaw", Context.MODE_PRIVATE);
         int counter = prefs.getInt(APP_OPEN_COUNTER, 0);
 
-        if (counter == APP_OPEN_MAX_COUNTER) {
+        if (counter == APP_OPENINGS_TO_ASK_FOR_SHARE) {
             FragmentManager fm = ((FragmentActivity) getContext()).getSupportFragmentManager();
 
             ShareAppDialog shareAppDialog = ShareAppDialog.newInstance(this.getContext());

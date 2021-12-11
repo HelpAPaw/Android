@@ -29,7 +29,7 @@ import java.util.concurrent.TimeUnit;
 public class PawApplication extends MultiDexApplication {
 
     public static final String APP_OPEN_COUNTER = "APP_OPEN_COUNTER_KEY";
-    public static final int APP_OPEN_MAX_COUNTER = 30;
+    public static final int APP_OPENINGS_TO_ASK_FOR_SHARE = 10;
 
     private static final String IS_TEST_ENVIRONMENT_KEY = "IS_TEST_ENVIRONMENT_KEY";
 
@@ -115,7 +115,7 @@ public class PawApplication extends MultiDexApplication {
         SharedPreferences prefs = getSharedPreferences("HelpAPaw", MODE_PRIVATE);
         int counter = prefs.getInt(APP_OPEN_COUNTER, 0);
 
-        if (counter >= APP_OPEN_MAX_COUNTER) {
+        if (counter >= APP_OPENINGS_TO_ASK_FOR_SHARE) {
             counter = 0;
         } else {
             counter++;
