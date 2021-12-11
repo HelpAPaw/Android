@@ -73,6 +73,11 @@ public class MySubmittedSignalsFragment extends BaseFragment implements MySignal
     }
 
     @Override
+    public boolean isActive() {
+        return isAdded();
+    }
+
+    @Override
     public void showMessage(String message) {
         if (getView() != null) {
             Snackbar.make(getView(), message, Snackbar.LENGTH_LONG).show();

@@ -73,6 +73,6 @@ public class MySubmittedSignalsPresenter extends Presenter<MySignalsContract.Vie
     }
 
     private boolean isViewAvailable() {
-        return getView() != null;
+        return getView() != null && getView().isActive();
     }
 }
