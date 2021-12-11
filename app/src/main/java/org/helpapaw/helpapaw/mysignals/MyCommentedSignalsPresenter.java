@@ -40,11 +40,11 @@ public class MyCommentedSignalsPresenter extends Presenter<MySignalsContract.Vie
         if (userManager.isLoggedIn()) {
             String loggedUserId = userManager.getLoggedUserId();
 
-            getCommentedSignalsForUserId(loggedUserId);
+            getCommentedSignals(loggedUserId);
         }
     }
 
-    private void getCommentedSignalsForUserId(String ownerId) {
+    private void getCommentedSignals(String ownerId) {
         if (Utils.getInstance().hasNetworkConnection()) {
 
             getView().setProgressVisibility(View.VISIBLE);
