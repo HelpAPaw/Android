@@ -76,6 +76,8 @@ public class MyNotificationsPresenter extends Presenter<MyNotificationsContract.
                 signalRepository.getSignalsByListOfIds(signalsIds, new SignalRepository.LoadSignalsCallback() {
                     @Override
                     public void onSignalsLoaded(List<Signal> signals) {
+                        if (!isViewAvailable()) return;
+
                         for (Signal signal : signals) {
                             signal.setPhotoUrl(photoRepository.getSignalPhotoUrl(signal.getId()));
                             mapSignalsToIds.put(signal.getId(), signal);
@@ -87,6 +89,8 @@ public class MyNotificationsPresenter extends Presenter<MyNotificationsContract.
 
                     @Override
                     public void onSignalsFailure(String message) {
+                        if (!isViewAvailable()) return;
+                        getView().setProgressVisibility(View.GONE);
                         getView().showMessage(message);
                     }
                 });
@@ -97,5 +101,9 @@ public class MyNotificationsPresenter extends Presenter<MyNotificationsContract.
         } else {
             getView().showNoInternetMessage();
         }
+    }
+
+    private boolean isViewAvailable() {
+        return getView() != null && getView().isActive();
     }
 }
