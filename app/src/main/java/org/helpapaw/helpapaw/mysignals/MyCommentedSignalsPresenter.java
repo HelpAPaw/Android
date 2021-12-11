@@ -40,16 +40,14 @@ public class MyCommentedSignalsPresenter extends Presenter<MySignalsContract.Vie
         if (userManager.isLoggedIn()) {
             String loggedUserId = userManager.getLoggedUserId();
 
-            getCommentedSignalsfromDb(loggedUserId);
+            getCommentedSignalsForUserId(loggedUserId);
         }
     }
 
-    private void getCommentedSignalsfromDb(String ownerId) {
+    private void getCommentedSignalsForUserId(String ownerId) {
         if (Utils.getInstance().hasNetworkConnection()) {
 
-            if (userManager.isLoggedIn()) {
-                getView().setProgressVisibility(View.VISIBLE);
-            }
+            getView().setProgressVisibility(View.VISIBLE);
 
             commentRepository.getCommentsByAuthorId(ownerId, new CommentRepository.LoadCommentsCallback() {
                 @Override
@@ -81,6 +79,7 @@ public class MyCommentedSignalsPresenter extends Presenter<MySignalsContract.Vie
                         @Override
                         public void onSignalsFailure(String message) {
                             if (!isViewAvailable()) return;
+                            getView().setProgressVisibility(View.GONE);
                             getView().showMessage(message);
                         }
                     });
@@ -88,7 +87,9 @@ public class MyCommentedSignalsPresenter extends Presenter<MySignalsContract.Vie
 
                 @Override
                 public void onCommentsFailure(String message) {
-                  getView().showMessage(message);
+                    if (!isViewAvailable()) return;
+                    getView().setProgressVisibility(View.GONE);
+                    getView().showMessage(message);
                 }
             });
 
