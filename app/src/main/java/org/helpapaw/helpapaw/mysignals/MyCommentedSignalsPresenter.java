@@ -18,12 +18,12 @@ import java.util.Set;
 
 public class MyCommentedSignalsPresenter extends Presenter<MySignalsContract.View> implements MySignalsContract.UserActionsListener {
 
-    private SignalRepository signalRepository;
-    private CommentRepository commentRepository;
-    private PhotoRepository photoRepository;
-    private UserManager userManager;
+    private final SignalRepository signalRepository;
+    private final CommentRepository commentRepository;
+    private final PhotoRepository photoRepository;
+    private final UserManager userManager;
 
-    private Set<String> commentedSignalsIds;;
+    private final Set<String> commentedSignalsIds;
 
     MyCommentedSignalsPresenter(MySignalsContract.View view) {
         super(view);

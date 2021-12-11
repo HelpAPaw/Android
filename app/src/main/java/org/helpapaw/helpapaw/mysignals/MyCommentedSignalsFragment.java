@@ -25,7 +25,6 @@ public class MyCommentedSignalsFragment extends BaseFragment implements MySignal
     private FragmentMySignalsBinding binding;
     private MyCommentedSignalsPresenter presenter;
     private MySignalsContract.UserActionsListener actionsListener;
-    private MySignalsCustomAdapter customAdapter;
 
     public MyCommentedSignalsFragment() {
     }
@@ -36,7 +35,7 @@ public class MyCommentedSignalsFragment extends BaseFragment implements MySignal
     }
 
     @Override
-    protected Presenter getPresenter() {
+    protected Presenter<MySignalsContract.View> getPresenter() {
         return presenter;
     }
 
@@ -106,7 +105,7 @@ public class MyCommentedSignalsFragment extends BaseFragment implements MySignal
             signalsArray[i] = signals.get(i);
         }
 
-        customAdapter = new MySignalsCustomAdapter(getContext(), signalsArray);
+        MySignalsCustomAdapter customAdapter = new MySignalsCustomAdapter(getContext(), signalsArray);
         listView.setAdapter(customAdapter);
 
         binding.notifyChange();
