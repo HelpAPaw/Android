@@ -72,6 +72,7 @@ public class MyCommentedSignalsPresenter extends Presenter<MySignalsContract.Vie
                                 getView().setProgressVisibility(View.GONE);
                                 getView().onNoSignalsToBeListed(false);
                             } else {
+                                getView().setProgressVisibility(View.GONE);
                                 getView().onNoSignalsToBeListed(true);
                             }
                         }

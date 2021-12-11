@@ -92,7 +92,6 @@ public class MyCommentedSignalsFragment extends BaseFragment implements MySignal
         setHasOptionsMenu(!zeroSignals);
         if (zeroSignals) {
             binding.noSignalsMessage.setVisibility(View.VISIBLE);
-            binding.progressBar.setVisibility(View.GONE);
         }
         else {
             binding.noSignalsMessage.setVisibility(View.GONE);
