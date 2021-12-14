@@ -76,16 +76,26 @@
         <activity
             android:name=".signalsmap.SignalsMapActivity"
             android:windowSoftInputMode="stateHidden"
+            android:launchMode="singleTask"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <!-- Branch URI scheme -->
             <intent-filter>
-                <action android:name="android.intent.action.VIEW"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-                <category android:name="android.intent.category.BROWSABLE"/>
-                <data android:host="app.helpapaw.org" android:scheme="https"/>
+                <data android:scheme="helpapaw" android:host="open" />
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+            </intent-filter>
+
+            <!-- Branch App Links -->
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="https" android:host="helpapaw.app.link" />
             </intent-filter>
         </activity>
         <activity
@@ -126,6 +136,12 @@
         <activity
             android:name=".privacypolicy.PrivacyPolicyActivity"
             android:parentActivityName=".signalsmap.SignalsMapActivity"/>
+
+        <!-- Branch init -->
+        <meta-data android:name="io.branch.sdk.BranchKey" android:value="@string/branch_key_live" />
+        <!-- Branch testing (TestMode "true" to simulate fresh installs on dev environment) -->
+        <meta-data android:name="io.branch.sdk.TestMode" android:value="false" />
+
     </application>
 
 </manifest>

@@ -1,11 +1,9 @@
 package org.helpapaw.helpapaw.signaldetails;
 
-import android.net.Uri;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
-import com.google.firebase.dynamiclinks.DynamicLink;
-import com.google.firebase.dynamiclinks.FirebaseDynamicLinks;
 
 import org.helpapaw.helpapaw.R;
+import org.helpapaw.helpapaw.base.PawApplication;
 import org.helpapaw.helpapaw.base.Presenter;
 import org.helpapaw.helpapaw.data.models.Comment;
 import org.helpapaw.helpapaw.data.models.Signal;
@@ -19,6 +17,10 @@ import org.helpapaw.helpapaw.utils.Utils;
 
 import java.io.File;
 import java.util.List;
+
+import io.branch.indexing.BranchUniversalObject;
+import io.branch.referral.util.ContentMetadata;
+import io.branch.referral.util.LinkProperties;
 
 /**
  * Created by iliyan on 7/25/16
@@ -327,48 +329,21 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
     @Override
     public void onShareSignalClicked() {
 
-        Uri link = Uri.parse("http://www.helpapaw.org/app");
-        link = link.buildUpon().appendQueryParameter("signal", signal.getId()).build();
-        DynamicLink dynamicLink = FirebaseDynamicLinks.getInstance().createDynamicLink()
-                .setLink(link)
-                .setDomainUriPrefix("https://app.helpapaw.org")
-                // Open links with this app on Android
-                .setAndroidParameters(new DynamicLink.AndroidParameters.Builder().build())
-                // Open links with com.example.ios on iOS
-                .setIosParameters(new DynamicLink.IosParameters.Builder("com.helpapaw.helpapaw")
-                        .setAppStoreId("1234893764")
-                        .setCustomScheme("com.helpapaw.helpapaw")
-                        .build())
-//                .setSocialMetaTagParameters(new DynamicLink.SocialMetaTagParameters.Builder()
-//                    .setTitle(signal.getTitle())
-//                        //TODO: get real type
-//                    .setDescription("Lost or found")
-//                    .setImageUrl(Uri.parse(photoRepository.getSignalPhotoUrl(signal.getId())))
-//                    .build())
-//                .setNavigationInfoParameters(new DynamicLink.NavigationInfoParameters.Builder().setForcedRedirectEnabled(true).build())
-                .buildDynamicLink();
+        BranchUniversalObject buo = new BranchUniversalObject()
+                .setCanonicalIdentifier("signal/" + signal.getId())
+                .setTitle(signal.getTitle())
+                .setContentImageUrl(photoRepository.getSignalPhotoUrl(signal.getId()))
+                .setContentIndexingMode(BranchUniversalObject.CONTENT_INDEX_MODE.PUBLIC)
+                .setLocalIndexMode(BranchUniversalObject.CONTENT_INDEX_MODE.PUBLIC)
+                .setContentMetadata(new ContentMetadata().addCustomMetadata("signalId", signal.getId()));
 
-        Uri dynamicLinkUri = dynamicLink.getUri();
+        LinkProperties linkProperties = new LinkProperties();
 
-//        Task<ShortDynamicLink> shortLinkTask = FirebaseDynamicLinks.getInstance().createDynamicLink()
-//                .setLongLink(dynamicLinkUri)
-//                .buildShortDynamicLink()
-//                .addOnCompleteListener(new OnCompleteListener<ShortDynamicLink>() {
-//                    @Override
-//                    public void onComplete(@NonNull Task<ShortDynamicLink> task) {
-//                        if (task.isSuccessful()) {
-//                            // Short link created
-//                            Uri shortLink = task.getResult().getShortLink();
-//                            getView().shareSignalLink(shortLink.toString());
-////                            Uri flowchartLink = task.getResult().getPreviewLink();
-//                        } else {
-//                            // Error
-//                            // ...
-//                        }
-//                    }
-//                });
-
-        getView().shareSignalLink(dynamicLinkUri.toString());
+        buo.generateShortUrl(PawApplication.getContext(), linkProperties, (url, error) -> {
+            if (error == null) {
+                getView().shareSignalLink(url);
+            }
+        });
     }
 
     @Override

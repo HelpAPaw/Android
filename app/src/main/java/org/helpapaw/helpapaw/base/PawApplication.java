@@ -24,6 +24,8 @@ import org.helpapaw.helpapaw.utils.services.BackgroundCheckWorker;
 
 import java.util.concurrent.TimeUnit;
 
+import io.branch.referral.Branch;
+
 /**
  * Created by iliyan on 7/25/16
  */
@@ -46,6 +48,12 @@ public class PawApplication extends MultiDexApplication {
         pawApplication = this;
         isTestEnvironment = loadIsTestEnvironment();
         Backendless.initApp(this, getResources().getString(R.string.BACKENDLESS_APP_ID), getResources().getString(R.string.BACKENDLESS_ANDROID_API_KEY));
+
+        // Branch logging for debugging
+        Branch.enableLogging();
+
+        // Initialize the Branch object
+        Branch.getAutoInstance(this);
 
         // Register device for token
         Injection.getPushNotificationsRepositoryInstance().registerDeviceToken();
