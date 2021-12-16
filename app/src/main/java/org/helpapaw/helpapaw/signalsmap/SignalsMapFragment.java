@@ -11,7 +11,6 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
@@ -54,7 +53,6 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResult;
-import com.google.android.gms.location.LocationSettingsStates;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.location.places.Places;
 import com.google.android.gms.maps.CameraUpdate;
@@ -111,8 +109,8 @@ public class SignalsMapFragment extends BaseFragment
     private LocationRequest locationRequest;
     private GoogleMap signalsGoogleMap;
     private ArrayList<Signal> mDisplayedSignals = new ArrayList<>();
-    private ArrayList<Marker> mDisplayedMarkers = new ArrayList<>();
-    private Map<String, Signal> mSignalMarkers = new HashMap<>();
+    private final ArrayList<Marker> mDisplayedMarkers = new ArrayList<>();
+    private final Map<String, Signal> mSignalMarkers = new HashMap<>();
     private Signal mCurrentlyShownInfoWindowSignal;
 
     private double mCurrentLat;
@@ -128,8 +126,6 @@ public class SignalsMapFragment extends BaseFragment
 
     private boolean mVisibilityAddSignal = false;
     private String mFocusedSignalId;
-
-    private FilterSignalTypeDialog filterSignalTypeDialog;
 
     private ISettingsRepository settingsRepository;
 
@@ -171,7 +167,7 @@ public class SignalsMapFragment extends BaseFragment
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_signals_map, container, false);
         final Bundle mapViewSavedInstanceState = savedInstanceState != null ? savedInstanceState.getBundle(MAP_VIEW_STATE) : null;
@@ -180,9 +176,7 @@ public class SignalsMapFragment extends BaseFragment
         //noinspection SimplifiableConditionalExpression
         mVisibilityAddSignal = savedInstanceState != null ? savedInstanceState.getBoolean(VIEW_ADD_SIGNAL) : false;
 
-        if (binding.mapSignals != null) {
-            binding.mapSignals.getMapAsync(getMapReadyCallback());
-        }
+        binding.mapSignals.getMapAsync(getMapReadyCallback());
 
         if (savedInstanceState == null || PresenterManager.getInstance().getPresenter(getScreenId()) == null) {
             signalsMapPresenter = new SignalsMapPresenter(this);
@@ -264,7 +258,7 @@ public class SignalsMapFragment extends BaseFragment
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    public void onCreateOptionsMenu(@NonNull Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_signals_map, menu);
 
         this.optionsMenu = menu;
@@ -290,7 +284,7 @@ public class SignalsMapFragment extends BaseFragment
     private OnMapReadyCallback getMapReadyCallback() {
         return new OnMapReadyCallback() {
             @Override
-            public void onMapReady(GoogleMap googleMap) {
+            public void onMapReady(@NonNull GoogleMap googleMap) {
                 signalsGoogleMap = googleMap;
                 actionsListener.onInitSignalsMap(mFocusedSignalId);
                 signalsGoogleMap.setPadding(0, PADDING_TOP, 0, PADDING_BOTTOM);
@@ -301,9 +295,9 @@ public class SignalsMapFragment extends BaseFragment
         };
     }
 
-    private GoogleMap.OnMapClickListener mapClickListener = new GoogleMap.OnMapClickListener() {
+    private final GoogleMap.OnMapClickListener mapClickListener = new GoogleMap.OnMapClickListener() {
         @Override
-        public void onMapClick(LatLng latLng) {
+        public void onMapClick(@NonNull LatLng latLng) {
 
             // Clicking on the map closes any open info window
             mCurrentlyShownInfoWindowSignal = null;
@@ -312,7 +306,7 @@ public class SignalsMapFragment extends BaseFragment
         }
     };
 
-    private GoogleMap.OnMarkerClickListener mapMarkerClickListener = new GoogleMap.OnMarkerClickListener() {
+    private final GoogleMap.OnMarkerClickListener mapMarkerClickListener = new GoogleMap.OnMarkerClickListener() {
         @Override
         public boolean onMarkerClick(Marker marker) {
             // Save the signal for the currently shown info window in case it should be reopen
@@ -323,7 +317,7 @@ public class SignalsMapFragment extends BaseFragment
         }
     };
 
-    private GoogleMap.OnCameraIdleListener mapCameraIdleListener = new GoogleMap.OnCameraIdleListener() {
+    private final GoogleMap.OnCameraIdleListener mapCameraIdleListener = new GoogleMap.OnCameraIdleListener() {
         @Override
         public void onCameraIdle() {
             CameraPosition cameraPosition = signalsGoogleMap.getCameraPosition();
@@ -460,7 +454,7 @@ public class SignalsMapFragment extends BaseFragment
     /* Location API */
 
     @Override
-    public void onLocationChanged(Location location) {
+    public void onLocationChanged(@NonNull Location location) {
         handleNewLocation(location);
     }
 
@@ -489,7 +483,6 @@ public class SignalsMapFragment extends BaseFragment
             @Override
             public void onResult(@NonNull LocationSettingsResult locationSettingsResult) {
                 final Status status = locationSettingsResult.getStatus();
-                final LocationSettingsStates states = locationSettingsResult.getLocationSettingsStates();
                 switch (status.getStatusCode()) {
                     case LocationSettingsStatusCodes.SUCCESS:
                         // All location settings are satisfied. The client can
@@ -620,12 +613,9 @@ public class SignalsMapFragment extends BaseFragment
     }
 
     public View.OnClickListener getFabAddSignalClickListener() {
-        return new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                boolean visibility = binding.viewSendSignal.getVisibility() == View.VISIBLE;
-                actionsListener.onAddSignalClicked(visibility);
-            }
+        return v -> {
+            boolean visibility = binding.viewSendSignal.getVisibility() == View.VISIBLE;
+            actionsListener.onAddSignalClicked(visibility);
         };
     }
 
@@ -686,12 +676,7 @@ public class SignalsMapFragment extends BaseFragment
                 .setInterpolator(new AccelerateDecelerateInterpolator())
                 .setDuration(300)
                 .translationY(-(binding.viewSendSignal.getHeight() * 1.2f))
-                .withEndAction(new Runnable() {
-                    @Override
-                    public void run() {
-                        binding.viewSendSignal.setVisibility(View.INVISIBLE);
-                    }
-                });
+                .withEndAction(() -> binding.viewSendSignal.setVisibility(View.INVISIBLE));
     }
 
     private void showAddSignalPin() {
@@ -713,18 +698,13 @@ public class SignalsMapFragment extends BaseFragment
                 .setInterpolator(new AccelerateDecelerateInterpolator())
                 .setDuration(200)
                 .alpha(0.0f)
-                .withEndAction(new Runnable() {
-                    @Override
-                    public void run() {
-                        binding.addSignalPin.setVisibility(View.INVISIBLE);
-                    }
-                });
+                .withEndAction(() -> binding.addSignalPin.setVisibility(View.INVISIBLE));
     }
 
     private void showFilterSignalView() {
         FragmentManager fm = getChildFragmentManager();
 
-        filterSignalTypeDialog = FilterSignalTypeDialog.newInstance(SignalsMapPresenter.selectedSignalTypes);
+        FilterSignalTypeDialog filterSignalTypeDialog = FilterSignalTypeDialog.newInstance(SignalsMapPresenter.selectedSignalTypes);
         filterSignalTypeDialog.show(fm, FILTER_TAG);
     }
 
@@ -755,12 +735,7 @@ public class SignalsMapFragment extends BaseFragment
                 .setTitle(R.string.txt_registration_required)
                 .setMessage(R.string.txt_only_registered_users_can_submit_signals)
                 .setCancelable(false)
-                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        openLoginScreen();
-                    }
-                })
+                .setPositiveButton(android.R.string.ok, (dialogInterface, i) -> openLoginScreen())
                 .setNegativeButton(android.R.string.cancel, null);
         alertBuilder.create().show();
     }
@@ -964,24 +939,16 @@ public class SignalsMapFragment extends BaseFragment
     }
 
     public View.OnClickListener getOnSignalSendClickListener() {
-        return new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String description = binding.viewSendSignal.getSignalDescription();
-                String authorPhone = binding.viewSendSignal.getAuthorPhone();
-                int type = binding.viewSendSignal.getSignalType();
+        return v -> {
+            String description = binding.viewSendSignal.getSignalDescription();
+            String authorPhone = binding.viewSendSignal.getAuthorPhone();
+            int type = binding.viewSendSignal.getSignalType();
 
-                actionsListener.onSendSignalClicked(description, authorPhone, type);
-            }
+            actionsListener.onSendSignalClicked(description, authorPhone, type);
         };
     }
 
     public View.OnClickListener getOnSignalPhotoClickListener() {
-        return new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                actionsListener.onChoosePhotoIconClicked();
-            }
-        };
+        return v -> actionsListener.onChoosePhotoIconClicked();
     }
 }
