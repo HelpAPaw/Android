@@ -359,37 +359,40 @@ public class SignalsMapFragment extends BaseFragment
     @Override
     public void displaySignals(List<Signal> signals, boolean showPopup, boolean[] selectedTypes) {
 
-        Signal signal;
         Marker markerToFocus = null;
         Signal signalToFocus = null;
         Marker markerToReShow = null;
 
-        mDisplayedSignals.clear();
-
-        // Add new signals to the currently displayed ones
+        // Add new signals and replace already present ones with fresher versions
         for (Signal newSignal : signals) {
-            Signal signalToRemove = null;
+            Signal alreadyPresent = null;
             for (Signal presentSignal : mDisplayedSignals) {
                 if (newSignal.getId().equals(presentSignal.getId())) {
-                    signalToRemove = presentSignal;
-                    break;
-                }
-                if ((selectedTypes != null) && (selectedTypes.length > presentSignal.getType()) &&
-                        !selectedTypes[presentSignal.getType()]) {
-                    signalToRemove = presentSignal;
+                    alreadyPresent = presentSignal;
                     break;
                 }
             }
 
-            if (signalToRemove != null) {
-                mDisplayedSignals.remove(signalToRemove);
+            if (alreadyPresent != null) {
+                mDisplayedSignals.remove(alreadyPresent);
             }
-
             mDisplayedSignals.add(newSignal);
         }
 
-        if (signals.size() == 0) {
-            mDisplayedSignals.clear();
+        // Remove signals that do not are not included in current filter
+        if (selectedTypes != null) {
+            ArrayList<Signal> filteredSignals = new ArrayList<>();
+            for (Signal signal : mDisplayedSignals) {
+                // Protection for older app versions when new signal types are available in backend
+                if (signal.getType() > selectedTypes.length) continue;
+
+                boolean signalTypeIsInFilter = selectedTypes[signal.getType()];
+                // Only add signal if its type is in current filter OR if it is focused
+                if (signalTypeIsInFilter || (signal.getId().equals(mFocusedSignalId))) {
+                    filteredSignals.add(signal);
+                }
+            }
+            mDisplayedSignals = filteredSignals;
         }
 
         if (signalsGoogleMap != null) {
@@ -398,7 +401,7 @@ public class SignalsMapFragment extends BaseFragment
 
             signalsGoogleMap.setPadding(0, PADDING_TOP, 0, PADDING_BOTTOM);
             for (int i = 0; i < mDisplayedSignals.size(); i++) {
-                signal = mDisplayedSignals.get(i);
+                Signal signal = mDisplayedSignals.get(i);
 
                 Marker marker = addMarkerToMap(signal);
 
@@ -422,7 +425,7 @@ public class SignalsMapFragment extends BaseFragment
 
             signalsGoogleMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
                 @Override
-                public void onInfoWindowClick(Marker marker) {
+                public void onInfoWindowClick(@NonNull Marker marker) {
                     Signal signal = mSignalMarkers.get(marker.getId());
                     if (signal != null) {
                         actionsListener.onSignalInfoWindowClicked(signal);
