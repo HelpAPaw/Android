@@ -279,6 +279,11 @@ public class SignalsMapFragment extends BaseFragment
         return super.onOptionsItemSelected(item);
     }
 
+    public void setFocusedSignalId(String focusedSignalId) {
+        mFocusedSignalId = focusedSignalId;
+        actionsListener.onInitSignalsMap(mFocusedSignalId);
+    }
+
     /* Google Maps */
 
     private OnMapReadyCallback getMapReadyCallback() {

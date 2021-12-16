@@ -64,8 +64,7 @@ public class SignalsMapActivity extends BaseActivity {
                 if (referringParams != null) {
                     String signalId = referringParams.optString("signalId");
                     if (!signalId.equals("")) {
-                        mSignalsMapFragment = SignalsMapFragment.newInstance(signalId);
-                        replaceFragment();
+                        mSignalsMapFragment.setFocusedSignalId(signalId);
                     }
                 }
             } else {
