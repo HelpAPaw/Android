@@ -341,7 +341,14 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
 
         buo.generateShortUrl(PawApplication.getContext(), linkProperties, (url, error) -> {
             if (error == null) {
-                getView().shareSignalLink(url);
+                // Set original short url as parameter of desktop_url - this way it can be used to
+                // generate a QR which can be scanned with a smartphone
+                linkProperties.addControlParameter("$desktop_url", "https://www.helpapaw.org/signal.html?link=" + url);
+                buo.generateShortUrl(PawApplication.getContext(), linkProperties, (url2, error2) -> {
+                    if (error2 == null) {
+                        getView().shareSignalLink(url2);
+                    }
+                });
             }
         });
     }
