@@ -77,7 +77,6 @@ public class MyNotificationsPresenter extends Presenter<MyNotificationsContract.
                     @Override
                     public void onSignalsLoaded(List<Signal> signals) {
                         for (Signal signal : signals) {
-                            signal.setPhotoUrl(photoRepository.getSignalPhotoUrl(signal.getId()));
                             mapSignalsToIds.put(signal.getId(), signal);
                         }
                         getView().displayNotifications(notificationList, mapSignalsToIds);

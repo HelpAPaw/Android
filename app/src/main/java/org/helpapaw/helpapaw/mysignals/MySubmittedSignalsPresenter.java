@@ -48,11 +48,6 @@ public class MySubmittedSignalsPresenter extends Presenter<MySignalsContract.Vie
                             if (!isViewAvailable()) return;
 
                             if (signals.size() != 0) {
-
-                                for (Signal signal : signals) {
-                                    signal.setPhotoUrl(photoRepository.getSignalPhotoUrl(signal.getId()));
-                                }
-
                                 getView().displaySignals(signals);
                                 getView().setProgressVisibility(View.GONE);
                                 getView().onNoSignalsToBeListed(false);

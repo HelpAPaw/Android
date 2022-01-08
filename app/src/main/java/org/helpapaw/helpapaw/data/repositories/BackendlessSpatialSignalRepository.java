@@ -37,6 +37,7 @@ import java.util.Set;
 public class BackendlessSpatialSignalRepository implements SignalRepository {
 
     private SignalsDatabase signalsDatabase;
+    private PhotoRepository photoRepository;
 
     private static final String SIGNALS_TABLE = "Signals";
     private static final String TEST_SIGNALS_TABLE = "SignalsTest";
@@ -61,6 +62,7 @@ public class BackendlessSpatialSignalRepository implements SignalRepository {
 
     public BackendlessSpatialSignalRepository() {
         signalsDatabase = SignalsDatabase.getDatabase(getContext());
+        photoRepository = Injection.getPhotoRepositoryInstance();
     }
 
     @Override
@@ -236,11 +238,13 @@ public class BackendlessSpatialSignalRepository implements SignalRepository {
                                 signalAuthorId, signalAuthorName, signalAuthorPhone, location.getLatitude(),
                                 location.getLongitude(), false, type);
                         newSignal.setIsDeleted(deleted);
+                        newSignal.setPhotoUrl(photoRepository.getSignalPhotoUrl(newSignal.getId()));
 
                         // If signal is already in DB - keep seen status
                         List<Signal> signalsFromDB = signalsDatabase.signalDao().getSignal(objectId);
                         if (signalsFromDB.size() > 0) {
                             Signal signalFromDb = signalsFromDB.get(0);
+                            signalFromDb.setPhotoUrl(newSignal.getPhotoUrl());
                             newSignal.setSeen(signalFromDb.getSeen());
                         }
                         signalsDatabase.signalDao().saveSignal(newSignal);

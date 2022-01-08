@@ -57,21 +57,8 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
 
             this.signal = signal;
 
-            signalRepository.getSignal(signal.getId(), new SignalRepository.LoadSignalsCallback() {
-
-                @Override
-                public void onSignalsLoaded(List<Signal> signals) {
-                    Signal signalFromDb = signals.get(0);
-                    signalFromDb.setPhotoUrl(photoRepository.getSignalPhotoUrl(signal.getId()));
-                    getView().showSignalDetails(signalFromDb);
-                    showUploadButtonIfNeeded(signalFromDb);
-                }
-
-                @Override
-                public void onSignalsFailure(String message) {
-                    getView().showMessage(message);
-                }
-            });
+            getView().showSignalDetails(this.signal);
+            showUploadButtonIfNeeded(this.signal);
 
             if (commentList != null) {
                 setCommentsProgressIndicator(false);
