@@ -18,12 +18,12 @@ import java.util.Set;
 
 public class MyCommentedSignalsPresenter extends Presenter<MySignalsContract.View> implements MySignalsContract.UserActionsListener {
 
-    private SignalRepository signalRepository;
-    private CommentRepository commentRepository;
-    private PhotoRepository photoRepository;
-    private UserManager userManager;
+    private final SignalRepository signalRepository;
+    private final CommentRepository commentRepository;
+    private final PhotoRepository photoRepository;
+    private final UserManager userManager;
 
-    private Set<String> commentedSignalsIds;;
+    private final Set<String> commentedSignalsIds;
 
     MyCommentedSignalsPresenter(MySignalsContract.View view) {
         super(view);
@@ -40,16 +40,14 @@ public class MyCommentedSignalsPresenter extends Presenter<MySignalsContract.Vie
         if (userManager.isLoggedIn()) {
             String loggedUserId = userManager.getLoggedUserId();
 
-            getCommentedSignalsfromDb(loggedUserId);
+            getCommentedSignals(loggedUserId);
         }
     }
 
-    private void getCommentedSignalsfromDb(String ownerId) {
+    private void getCommentedSignals(String ownerId) {
         if (Utils.getInstance().hasNetworkConnection()) {
 
-            if (userManager.isLoggedIn()) {
-                getView().setProgressVisibility(View.VISIBLE);
-            }
+            getView().setProgressVisibility(View.VISIBLE);
 
             commentRepository.getCommentsByAuthorId(ownerId, new CommentRepository.LoadCommentsCallback() {
                 @Override
@@ -70,6 +68,7 @@ public class MyCommentedSignalsPresenter extends Presenter<MySignalsContract.Vie
                                 getView().setProgressVisibility(View.GONE);
                                 getView().onNoSignalsToBeListed(false);
                             } else {
+                                getView().setProgressVisibility(View.GONE);
                                 getView().onNoSignalsToBeListed(true);
                             }
                         }
@@ -77,6 +76,7 @@ public class MyCommentedSignalsPresenter extends Presenter<MySignalsContract.Vie
                         @Override
                         public void onSignalsFailure(String message) {
                             if (!isViewAvailable()) return;
+                            getView().setProgressVisibility(View.GONE);
                             getView().showMessage(message);
                         }
                     });
@@ -84,7 +84,9 @@ public class MyCommentedSignalsPresenter extends Presenter<MySignalsContract.Vie
 
                 @Override
                 public void onCommentsFailure(String message) {
-                  getView().showMessage(message);
+                    if (!isViewAvailable()) return;
+                    getView().setProgressVisibility(View.GONE);
+                    getView().showMessage(message);
                 }
             });
 
@@ -94,6 +96,6 @@ public class MyCommentedSignalsPresenter extends Presenter<MySignalsContract.Vie
     }
 
     private boolean isViewAvailable() {
-        return getView() != null;
+        return getView() != null && getView().isActive();
     }
 }

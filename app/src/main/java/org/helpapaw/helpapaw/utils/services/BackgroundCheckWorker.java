@@ -107,6 +107,7 @@ public class BackgroundCheckWorker extends ListenableWorker {
     @Override
     public void onStopped() {
         signalsDatabase = null;
+        notificationDatabase = null;
     }
 
     private void getSignalsForLastKnownLocation(Location location, final CallbackToFutureAdapter.Completer<ListenableWorker.Result> completer) {
@@ -132,9 +133,7 @@ public class BackgroundCheckWorker extends ListenableWorker {
                                     NotificationUtils.showNotificationForSignal(signal, getApplicationContext());
                                     mCurrentNotificationIds.add(signal.getId());
 
-                                    String notificationText = getApplicationContext().getString(R.string.txt_new_signal) + ": " + signal.getTitle();
-                                    Notification notification = new Notification(signal.getId(), signal.getPhotoUrl(), notificationText);
-                                    notificationDatabase.saveNotification(notification);
+                                    saveNotification(signal);
 
                                     signalFromDb.setSeen(true);
                                     signalsDatabase.signalDao().saveSignal(signalFromDb);
@@ -168,5 +167,13 @@ public class BackgroundCheckWorker extends ListenableWorker {
                 completer.set(Result.failure());
             }
         });
+    }
+
+    private void saveNotification(Signal signal) {
+        if (notificationDatabase != null) {
+            String notificationText = getApplicationContext().getString(R.string.txt_new_signal) + ": " + signal.getTitle();
+            Notification notification = new Notification(signal.getId(), signal.getPhotoUrl(), notificationText);
+            notificationDatabase.saveNotification(notification);
+        }
     }
 }

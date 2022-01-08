@@ -25,7 +25,6 @@ public class MyCommentedSignalsFragment extends BaseFragment implements MySignal
     private FragmentMySignalsBinding binding;
     private MyCommentedSignalsPresenter presenter;
     private MySignalsContract.UserActionsListener actionsListener;
-    private MySignalsCustomAdapter customAdapter;
 
     public MyCommentedSignalsFragment() {
     }
@@ -36,7 +35,7 @@ public class MyCommentedSignalsFragment extends BaseFragment implements MySignal
     }
 
     @Override
-    protected Presenter getPresenter() {
+    protected Presenter<MySignalsContract.View> getPresenter() {
         return presenter;
     }
 
@@ -72,6 +71,11 @@ public class MyCommentedSignalsFragment extends BaseFragment implements MySignal
     }
 
     @Override
+    public boolean isActive() {
+        return isAdded();
+    }
+
+    @Override
     public void showMessage(String message) {
         if (getView() != null) {
             Snackbar.make(getView(), message, Snackbar.LENGTH_LONG).show();
@@ -93,7 +97,6 @@ public class MyCommentedSignalsFragment extends BaseFragment implements MySignal
         setHasOptionsMenu(!zeroSignals);
         if (zeroSignals) {
             binding.noSignalsMessage.setVisibility(View.VISIBLE);
-            binding.progressBar.setVisibility(View.GONE);
         }
         else {
             binding.noSignalsMessage.setVisibility(View.GONE);
@@ -106,7 +109,7 @@ public class MyCommentedSignalsFragment extends BaseFragment implements MySignal
             signalsArray[i] = signals.get(i);
         }
 
-        customAdapter = new MySignalsCustomAdapter(getContext(), signalsArray);
+        MySignalsCustomAdapter customAdapter = new MySignalsCustomAdapter(getContext(), signalsArray);
         listView.setAdapter(customAdapter);
 
         binding.notifyChange();

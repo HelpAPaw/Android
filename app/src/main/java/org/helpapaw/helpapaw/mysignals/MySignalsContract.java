@@ -16,6 +16,8 @@ public interface MySignalsContract {
         void setProgressVisibility(int visibility);
 
         void onNoSignalsToBeListed(boolean zeroSignals);
+
+        boolean isActive();
     }
 
     interface UserActionsListener {

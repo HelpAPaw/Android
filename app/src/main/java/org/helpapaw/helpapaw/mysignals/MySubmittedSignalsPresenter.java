@@ -14,9 +14,9 @@ import java.util.List;
 
 public class MySubmittedSignalsPresenter extends Presenter<MySignalsContract.View> implements MySignalsContract.UserActionsListener {
 
-    private SignalRepository signalRepository;
-    private PhotoRepository photoRepository;
-    private UserManager userManager;
+    private final SignalRepository signalRepository;
+    private final PhotoRepository photoRepository;
+    private final UserManager userManager;
 
     MySubmittedSignalsPresenter(MySignalsContract.View view) {
         super(view);
@@ -37,9 +37,7 @@ public class MySubmittedSignalsPresenter extends Presenter<MySignalsContract.Vie
     private void getSubmittedSignals(String ownerId) {
         if (Utils.getInstance().hasNetworkConnection()) {
 
-            if (userManager.isLoggedIn()) {
-                getView().setProgressVisibility(View.VISIBLE);
-            }
+            getView().setProgressVisibility(View.VISIBLE);
 
             signalRepository.getSignalsByOwnerId(ownerId,
                     new SignalRepository.LoadSignalsCallback() {
@@ -59,6 +57,7 @@ public class MySubmittedSignalsPresenter extends Presenter<MySignalsContract.Vie
                         @Override
                         public void onSignalsFailure(String message) {
                             if (!isViewAvailable()) return;
+                            getView().setProgressVisibility(View.GONE);
                             getView().showMessage(message);
                         }
                     });
@@ -69,6 +68,6 @@ public class MySubmittedSignalsPresenter extends Presenter<MySignalsContract.Vie
     }
 
     private boolean isViewAvailable() {
-        return getView() != null;
+        return getView() != null && getView().isActive();
     }
 }

@@ -20,6 +20,8 @@ public class MyNotificationsContract {
         void setProgressVisibility(int visibility);
 
         void onNoNotificationsToBeListed(boolean zeroNotifications);
+
+        boolean isActive();
     }
 
     interface UserActionsListener {
