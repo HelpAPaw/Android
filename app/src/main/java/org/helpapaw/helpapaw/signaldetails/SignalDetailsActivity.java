@@ -40,6 +40,7 @@ public class SignalDetailsActivity extends AppCompatActivity {
 
             if (getIntent() != null) {
                 Signal signal = getIntent().getParcelableExtra(SIGNAL_KEY);
+                //TODO: If signal is null - finish activity
                 SignalDetailsFragment fragment = SignalDetailsFragment.newInstance(signal);
                 initFragment(fragment);
             }

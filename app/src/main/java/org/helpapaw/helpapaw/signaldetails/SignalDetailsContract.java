@@ -70,6 +70,8 @@ public interface SignalDetailsContract {
 
         void deleteSignal();
 
+        void shareSignalLink(String link);
+
         void openCommentPhotoScreen(String photoUrl);
 
         void setThumbnailToCommentPhotoButton(String photoUri);
@@ -108,6 +110,8 @@ public interface SignalDetailsContract {
         void onEditSignalTitleClicked();
 
         void onDeleteSignalClicked();
+
+        void onShareSignalClicked();
 
         void onSaveEditSignalTitleClicked();
 
