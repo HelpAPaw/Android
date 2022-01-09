@@ -20,7 +20,6 @@ public class MyCommentedSignalsPresenter extends Presenter<MySignalsContract.Vie
 
     private final SignalRepository signalRepository;
     private final CommentRepository commentRepository;
-    private final PhotoRepository photoRepository;
     private final UserManager userManager;
 
     private final Set<String> commentedSignalsIds;
@@ -29,7 +28,6 @@ public class MyCommentedSignalsPresenter extends Presenter<MySignalsContract.Vie
         super(view);
         signalRepository = Injection.getSignalRepositoryInstance();
         commentRepository = Injection.getCommentRepositoryInstance();
-        photoRepository = Injection.getPhotoRepositoryInstance();
         userManager = Injection.getUserManagerInstance();
 
         commentedSignalsIds = new HashSet<>();

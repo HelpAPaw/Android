@@ -208,13 +208,12 @@ public class BackendlessPushNotificationsRepository implements PushNotifications
                 for (Map device : devices) {
                     String deviceToken = device.get("deviceToken").toString();
 
-                    // TODO uncomment this
-//                    if(!deviceToken.equals(localToken)) {
+                    if(!deviceToken.equals(localToken)) {
                         int signalTypesSetting = (int) device.get("signalTypes");
 
                         if (Utils.shouldNotifyAboutSignalType(signal.getType(), signalTypesSetting)) {
                             notifiedDevices.add(device.get("deviceId").toString());
-//                        }
+                        }
                     }
                 }
 
@@ -294,8 +293,7 @@ public class BackendlessPushNotificationsRepository implements PushNotifications
             }
         }
         // Remove current user
-        // TODO uncomment this before merge
-//        interestedUserIds.remove(Backendless.UserService.CurrentUser().getObjectId());
+        interestedUserIds.remove(Backendless.UserService.CurrentUser().getObjectId());
 
         if (interestedUserIds.size() == 0) {
             return;
