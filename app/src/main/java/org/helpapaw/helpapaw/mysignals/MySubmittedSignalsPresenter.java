@@ -4,7 +4,6 @@ import android.view.View;
 
 import org.helpapaw.helpapaw.base.Presenter;
 import org.helpapaw.helpapaw.data.models.Signal;
-import org.helpapaw.helpapaw.data.repositories.PhotoRepository;
 import org.helpapaw.helpapaw.data.repositories.SignalRepository;
 import org.helpapaw.helpapaw.data.user.UserManager;
 import org.helpapaw.helpapaw.utils.Injection;
@@ -15,13 +14,11 @@ import java.util.List;
 public class MySubmittedSignalsPresenter extends Presenter<MySignalsContract.View> implements MySignalsContract.UserActionsListener {
 
     private final SignalRepository signalRepository;
-    private final PhotoRepository photoRepository;
     private final UserManager userManager;
 
     MySubmittedSignalsPresenter(MySignalsContract.View view) {
         super(view);
         signalRepository = Injection.getSignalRepositoryInstance();
-        photoRepository = Injection.getPhotoRepositoryInstance();
         userManager = Injection.getUserManagerInstance();
     }
 

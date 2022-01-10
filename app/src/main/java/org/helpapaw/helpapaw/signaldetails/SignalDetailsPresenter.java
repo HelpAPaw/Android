@@ -56,22 +56,8 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
             FirebaseCrashlytics.getInstance().log("Show signal details for " + signal.getId());
 
             this.signal = signal;
-
-            signalRepository.getSignal(signal.getId(), new SignalRepository.LoadSignalsCallback() {
-
-                @Override
-                public void onSignalsLoaded(List<Signal> signals) {
-                    Signal signalFromDb = signals.get(0);
-                    
-                    getView().showSignalDetails(signalFromDb);
-                    showUploadButtonIfNeeded(signalFromDb);
-                }
-
-                @Override
-                public void onSignalsFailure(String message) {
-                    getView().showMessage(message);
-                }
-            });
+            getView().showSignalDetails(signal);
+            showAuthorActionsIfNeeded(signal);
 
             if (commentList != null) {
                 setCommentsProgressIndicator(false);
@@ -88,7 +74,7 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
         }
     }
 
-    private void showUploadButtonIfNeeded(Signal signal) {
+    private void showAuthorActionsIfNeeded(Signal signal) {
         if (userManager.getLoggedUserId().equals(signal.getAuthorId())) {
             if (signal.getIsDeleted()) {
                 getView().hideSignalAuthorActions();
@@ -262,7 +248,7 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
                 if(!isViewAvailable()) return;
                 signal.setTitle(title);
                 getView().showSignalDetails(signal);
-                showUploadButtonIfNeeded(signal);
+                showAuthorActionsIfNeeded(signal);
             }
 
             @Override
