@@ -34,16 +34,29 @@ public class BackendlessCommentRepository implements CommentRepository {
     private static final String ID_FIELD = "objectId";
     private static final String NAME_FIELD = "name";
     private static final String CREATED_FIELD = "created";
+    private static final String SIGNAL_ID = "signalID";
+    private static final String OWNER_ID = "ownerID";
     private static final int pageSize = 100;
 
     @Override
     public void getAllCommentsBySignalId(String signalId, final LoadCommentsCallback callback) {
 
-        String whereClause = "signalID = '" + signalId + "'";
+        String whereClause = SIGNAL_ID + " = '" + signalId + "'";
         DataQueryBuilder queryBuilder = DataQueryBuilder.create();
         queryBuilder.setWhereClause(whereClause);
         queryBuilder.setPageSize(pageSize);
         queryBuilder.setSortBy(Collections.singletonList(CREATED_FIELD));
+
+        getAllComments(callback, queryBuilder, 0);
+    }
+
+    @Override
+    public void getCommentsByAuthorId(String authorId, final LoadCommentsCallback callback) {
+
+        String whereClause = OWNER_ID + " = '" + authorId + "'";
+        DataQueryBuilder queryBuilder = DataQueryBuilder.create();
+        queryBuilder.setWhereClause(whereClause);
+        queryBuilder.setPageSize(pageSize);
 
         getAllComments(callback, queryBuilder, 0);
     }
@@ -83,7 +96,7 @@ public class BackendlessCommentRepository implements CommentRepository {
                             }
 
                             Comment comment = new Comment(
-                                    currentComment.getObjectId(), authorId, authorName, currentComment.getPhoto(),
+                                    currentComment.getObjectId(), currentComment.getSignalID(), authorId, authorName, currentComment.getPhoto(),
                                     dateCreated, currentComment.getText(), currentComment.getType());
                             comments.add(comment);
                         }
@@ -156,7 +169,7 @@ public class BackendlessCommentRepository implements CommentRepository {
                                         signal, newComment.getText(), currentComments);
 
                                 Comment comment = new Comment(
-                                        newComment.getObjectId(), authorId, authorName, newComment.getPhoto(),
+                                        newComment.getObjectId(), signal.getId(), authorId, authorName, newComment.getPhoto(),
                                         dateCreated, newComment.getText(), COMMENT_TYPE_USER_COMMENT);
 
                                 if (photoFile != null) {

@@ -13,6 +13,8 @@ public interface CommentRepository {
 
     void getAllCommentsBySignalId(String signalId, LoadCommentsCallback callback);
 
+    void getCommentsByAuthorId(String authorId, LoadCommentsCallback callback);
+
     void saveComment(String commentText, Signal signal, List<Comment> currentComments,
                      PhotoRepository photoRepository, File photoFile, SaveCommentCallback callback);
 

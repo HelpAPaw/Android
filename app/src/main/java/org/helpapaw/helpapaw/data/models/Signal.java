@@ -107,7 +107,25 @@ public class Signal implements Parcelable {
         latitude = in.readDouble();
         longitude = in.readDouble();
         seen = in.readByte() != 0;
+        isDeleted = in.readByte() != 0;
         type = in.readInt();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(id);
+        dest.writeString(title);
+        dest.writeLong(dateSubmitted.getTime());
+        dest.writeString(authorId);
+        dest.writeString(authorName);
+        dest.writeString(authorPhone);
+        dest.writeString(photoUrl);
+        dest.writeInt(status);
+        dest.writeDouble(latitude);
+        dest.writeDouble(longitude);
+        dest.writeByte((byte) (seen ? 1 : 0));
+        dest.writeByte((byte) (isDeleted ? 1 : 0));
+        dest.writeInt(type);
     }
 
     public static final Creator<Signal> CREATOR = new Creator<Signal>() {
@@ -121,6 +139,11 @@ public class Signal implements Parcelable {
             return new Signal[size];
         }
     };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
 
     public void setId(@NonNull String id) {
         this.id = id;
@@ -218,25 +241,4 @@ public class Signal implements Parcelable {
     public int getType() { return type; }
 
     public void setType(int type) { this.type = type; }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(id);
-        dest.writeString(title);
-        dest.writeLong(dateSubmitted.getTime());
-        dest.writeString(authorId);
-        dest.writeString(authorName);
-        dest.writeString(authorPhone);
-        dest.writeString(photoUrl);
-        dest.writeInt(status);
-        dest.writeDouble(latitude);
-        dest.writeDouble(longitude);
-        dest.writeByte((byte) (seen ? 1 : 0));
-        dest.writeInt(type);
-    }
 }

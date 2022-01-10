@@ -19,8 +19,11 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.common.util.concurrent.ListenableFuture;
 
+import org.helpapaw.helpapaw.R;
+import org.helpapaw.helpapaw.data.models.Notification;
 import org.helpapaw.helpapaw.data.models.Signal;
 import org.helpapaw.helpapaw.data.repositories.ISettingsRepository;
+import org.helpapaw.helpapaw.data.repositories.ReceivedNotificationsRepository;
 import org.helpapaw.helpapaw.data.repositories.SignalRepository;
 import org.helpapaw.helpapaw.db.SignalsDatabase;
 import org.helpapaw.helpapaw.utils.Injection;
@@ -38,7 +41,9 @@ import static org.helpapaw.helpapaw.data.models.Signal.SOLVED;
  */
 
 public class BackgroundCheckWorker extends ListenableWorker {
-    private SignalsDatabase database;
+    private SignalsDatabase signalsDatabase;
+    private ReceivedNotificationsRepository notificationDatabase;
+
     public static final String TAG = BackgroundCheckWorker.class.getSimpleName();
     static final String CURRENT_NOTIFICATION_IDS = "CurrentNotificationIds";
 
@@ -57,7 +62,8 @@ public class BackgroundCheckWorker extends ListenableWorker {
     @NonNull
     @Override
     public ListenableFuture<ListenableWorker.Result> startWork() {
-        database = SignalsDatabase.getDatabase(getApplicationContext());
+        signalsDatabase = SignalsDatabase.getDatabase(getApplicationContext());
+        notificationDatabase = Injection.getReceivedNotificationsRepositoryInstance();
 
         Log.d(TAG, "onStartJob called");
 
@@ -100,7 +106,8 @@ public class BackgroundCheckWorker extends ListenableWorker {
 
     @Override
     public void onStopped() {
-        database = null;
+        signalsDatabase = null;
+        notificationDatabase = null;
     }
 
     private void getSignalsForLastKnownLocation(Location location, final CallbackToFutureAdapter.Completer<ListenableWorker.Result> completer) {
@@ -112,21 +119,24 @@ public class BackgroundCheckWorker extends ListenableWorker {
 
                 Log.d(TAG, "got signals");
 
-                if (signals != null && !signals.isEmpty() && database != null) {
+                if (signals != null && !signals.isEmpty() && signalsDatabase != null) {
 
                     int signalTypesSetting = settingsRepository.getSignalTypes();
 
                     for (Signal signal : signals) {
                         // Notify user only if signal is not solved and user has subscribed for that signal type
                         if ((signal.getStatus() < SOLVED) && (Utils.shouldNotifyAboutSignalType(signal.getType(), signalTypesSetting))) {
-                            List<Signal> signalsFromDB = database.signalDao().getSignal(signal.getId());
+                            List<Signal> signalsFromDB = signalsDatabase.signalDao().getSignal(signal.getId());
                             if (signalsFromDB.size() > 0) {
                                 Signal signalFromDb = signalsFromDB.get(0);
                                 if (!signalFromDb.getSeen()) {
                                     NotificationUtils.showNotificationForSignal(signal, getApplicationContext());
                                     mCurrentNotificationIds.add(signal.getId());
+
+                                    saveNotification(signal);
+
                                     signalFromDb.setSeen(true);
-                                    database.signalDao().saveSignal(signalFromDb);
+                                    signalsDatabase.signalDao().saveSignal(signalFromDb);
                                 }
                             }
                         }
@@ -157,5 +167,13 @@ public class BackgroundCheckWorker extends ListenableWorker {
                 completer.set(Result.failure());
             }
         });
+    }
+
+    private void saveNotification(Signal signal) {
+        if (notificationDatabase != null) {
+            String notificationText = getApplicationContext().getString(R.string.txt_new_signal) + ": " + signal.getTitle();
+            Notification notification = new Notification(signal.getId(), signal.getPhotoUrl(), notificationText);
+            notificationDatabase.saveNotification(notification);
+        }
     }
 }

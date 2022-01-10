@@ -1,12 +1,17 @@
 package org.helpapaw.helpapaw.base;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
+
+import androidx.appcompat.app.AlertDialog;
 import androidx.databinding.DataBindingUtil;
 import android.os.Bundle;
 import androidx.annotation.Nullable;
+
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
+
 import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.core.view.GravityCompat;
@@ -23,6 +28,8 @@ import org.helpapaw.helpapaw.authentication.AuthenticationActivity;
 import org.helpapaw.helpapaw.data.user.UserManager;
 import org.helpapaw.helpapaw.databinding.ActivityBaseBinding;
 import org.helpapaw.helpapaw.faq.FAQsView;
+import org.helpapaw.helpapaw.mysignals.MySignalsActivity;
+import org.helpapaw.helpapaw.mynotifications.MyNotificationsActivity;
 import org.helpapaw.helpapaw.privacypolicy.PrivacyPolicyActivity;
 import org.helpapaw.helpapaw.reusable.AlertDialogFragment;
 import org.helpapaw.helpapaw.settings.SettingsActivity;
@@ -34,6 +41,9 @@ import org.helpapaw.helpapaw.utils.Utils;
  * Created by iliyan on 6/22/16
  */
 public abstract class BaseActivity extends AppCompatActivity {
+
+    private static final int RC_MY_SIGNALS = 321;
+
     protected ActivityBaseBinding binding;
     private ActionBarDrawerToggle drawerToggle;
     protected UserManager userManager;
@@ -82,6 +92,18 @@ public abstract class BaseActivity extends AppCompatActivity {
                         }
                         break;
 
+                    case R.id.nav_item_my_signals:
+                        if (userManager.isLoggedIn()) {
+                            navigateMySignalsSection();
+                        } else {
+                            showRegistrationRequiredAlert();
+                        }
+                        break;
+
+                    case R.id.nav_item_my_notifications:
+                        navigateMyNotificationsSection();
+                        break;
+
                     case R.id.nav_item_faqs:
                         menuItem.setChecked(false);
                         navigateFAQsSection();
@@ -110,8 +132,6 @@ public abstract class BaseActivity extends AppCompatActivity {
                         break;
                 }
 
-                // Closing drawer on item click
-            //    binding.drawer.closeDrawers();
                 return true;
             }
         };
@@ -150,6 +170,32 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     private void navigateFAQsSection() {
         Intent intent = new Intent(this, FAQsView.class);
+        startActivity(intent);
+    }
+
+    private void navigateMySignalsSection() {
+        Intent intent = new Intent(this, MySignalsActivity.class);
+        startActivity(intent);
+    }
+
+    private void showRegistrationRequiredAlert() {
+        AlertDialog.Builder alertBuilder = new AlertDialog.Builder(this)
+                .setTitle(R.string.txt_registration_required)
+                .setMessage(R.string.txt_only_registered_users_can_see_my_signals)
+                .setCancelable(false)
+                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        Intent intent = new Intent(PawApplication.getContext(), AuthenticationActivity.class);
+                        startActivityForResult(intent, RC_MY_SIGNALS);
+                    }
+                })
+                .setNegativeButton(android.R.string.cancel, null);
+        alertBuilder.create().show();
+    }
+
+    private void navigateMyNotificationsSection() {
+        Intent intent = new Intent(this, MyNotificationsActivity.class);
         startActivity(intent);
     }
 
@@ -219,6 +265,16 @@ public abstract class BaseActivity extends AppCompatActivity {
             binding.drawer.closeDrawers();
         } else {
             super.onBackPressed();
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == RC_MY_SIGNALS) {
+            Intent intent = new Intent(this, MySignalsActivity.class);
+            startActivity(intent);
         }
     }
 

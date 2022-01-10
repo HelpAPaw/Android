@@ -61,10 +61,8 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
             FirebaseCrashlytics.getInstance().log("Show signal details for " + signal.getId());
 
             this.signal = signal;
-            signal.setPhotoUrl(photoRepository.getSignalPhotoUrl(signal.getId()));
-
             getView().showSignalDetails(signal);
-            showUploadButtonIfNeeded(signal);
+            showAuthorActionsIfNeeded(signal);
 
             if (commentList != null) {
                 setCommentsProgressIndicator(false);
@@ -81,15 +79,19 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
         }
     }
 
-    private void showUploadButtonIfNeeded(Signal signal) {
+    private void showAuthorActionsIfNeeded(Signal signal) {
         if (userManager.getLoggedUserId().equals(signal.getAuthorId())) {
-            getView().showSignalAuthorActions();
+            if (signal.getIsDeleted()) {
+                getView().hideSignalAuthorActions();
+            } else {
+                getView().showSignalAuthorActions();
+            }
             photoRepository.signalPhotoExists(signal.getId(), new PhotoRepository.PhotoExistsCallback() {
                 @Override
                 public void onPhotoExistsSuccess(boolean photoExists) {
                     if (!isViewAvailable()) return;
 
-                    if (photoExists) {
+                if (photoExists || signal.getIsDeleted()) {
                         getView().hideUploadPhotoButton();
                     }
                     else {
@@ -251,7 +253,7 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
                 if(!isViewAvailable()) return;
                 signal.setTitle(title);
                 getView().showSignalDetails(signal);
-                showUploadButtonIfNeeded(signal);
+                showAuthorActionsIfNeeded(signal);
             }
 
             @Override
@@ -270,7 +272,7 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
             @Override
             public void onSignalDeleted() {
                 if(!isViewAvailable()) return;
-
+                signal.setIsDeleted(true);
                 getView().closeScreenWithResult(signal);
             }
 

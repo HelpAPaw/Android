@@ -18,13 +18,15 @@ public class Comment {
     private String objectId;
     private String authorId;
     private String authorName;
+    private String signalId;
     private Date   dateCreated;
     private String text;
     private String type;
     private String photoUrl;
 
-    public Comment(String objectId, String authorId, String authorName, String photoUrl, Date dateCreated, String text, String type) {
+    public Comment(String objectId, String signalId, String authorId, String authorName, String photoUrl, Date dateCreated, String text, String type) {
         this.objectId = objectId;
+        this.signalId = signalId;
         this.authorId = authorId;
         this.authorName = authorName;
         this.photoUrl = photoUrl;
@@ -59,6 +61,10 @@ public class Comment {
 
     public String getAuthorName() {
         return authorName;
+    }
+
+    public String getSignalId() {
+        return signalId;
     }
 
     public String getType() { return type; }

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="8dp">
+
+    <ImageView
+        android:id="@+id/notification_item_signal_img"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:layout_gravity="start"
+        android:background="@drawable/ic_paw"
+        android:contentDescription="@string/txt_signal_photo_description" />
+
+    <TextView
+        android:id="@+id/notification_item_text"
+        android:layout_width="180dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="10dp"
+        android:layout_gravity="center_horizontal"
+        android:gravity="center_vertical"
+        android:textSize="16sp"
+        tools:text="Title" />
+
+    <TextView
+        android:id="@+id/notification_item_date"
+        android:layout_width='wrap_content'
+        android:layout_height="50dp"
+        android:layout_gravity="end"
+        android:layout_marginStart="10dp"
+        android:paddingTop="5dp"
+        android:gravity="center_vertical"
+        android:textSize="10sp"
+        tools:text="Date" />
+</LinearLayout>

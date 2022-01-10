@@ -170,6 +170,19 @@ public class SignalDetailsFragment extends BaseFragment
 
         hideUploadPhotoButton();
         showSignalPhoto(signal);
+
+        if(signal.getIsDeleted()) {
+            setupSignalAsDeleted();
+        }
+    }
+
+    private void setupSignalAsDeleted() {
+        binding.txtSignalIsDeleted.setVisibility(View.VISIBLE);
+        binding.btnUploadPhoto.setVisibility(View.INVISIBLE);
+        binding.statusLabel.setVisibility(View.GONE);
+        binding.viewSignalStatus.setVisibility(View.GONE);
+        binding.btnAddComment.setEnabled(false);
+        binding.imgAddCommentPhoto.setEnabled(false);
     }
 
     @Override

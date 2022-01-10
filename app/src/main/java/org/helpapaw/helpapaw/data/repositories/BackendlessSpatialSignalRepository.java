@@ -1,6 +1,11 @@
 package org.helpapaw.helpapaw.data.repositories;
 
+import static org.helpapaw.helpapaw.base.PawApplication.getContext;
+
 import android.annotation.SuppressLint;
+import android.text.TextUtils;
+
+import androidx.annotation.NonNull;
 
 import com.backendless.Backendless;
 import com.backendless.BackendlessUser;
@@ -24,8 +29,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-
-import static org.helpapaw.helpapaw.base.PawApplication.getContext;
+import java.util.Set;
 
 /**
  * Created by iliyan on 7/28/16
@@ -33,6 +37,7 @@ import static org.helpapaw.helpapaw.base.PawApplication.getContext;
 public class BackendlessSpatialSignalRepository implements SignalRepository {
 
     private SignalsDatabase signalsDatabase;
+    private PhotoRepository photoRepository;
 
     private static final String SIGNALS_TABLE = "Signals";
     private static final String TEST_SIGNALS_TABLE = "SignalsTest";
@@ -47,11 +52,17 @@ public class BackendlessSpatialSignalRepository implements SignalRepository {
     private static final String CREATED_FIELD = "created";
     private static final String SIGNAL_TYPE = "signalType";
     private static final String DELETED = "isDeleted";
+    private static final String OWNER_ID = "ownerId";
+
+    private static final String WHERE_CLAUSE_NOT_DELETED = String.format(Locale.ENGLISH, "%s = %s", DELETED, "FALSE");
+
+    private static final String SORT_DATE_CREATED_DESCENDING = "created DESC";
 
     private static final int PAGE_SIZE = 100;
 
     public BackendlessSpatialSignalRepository() {
         signalsDatabase = SignalsDatabase.getDatabase(getContext());
+        photoRepository = Injection.getPhotoRepositoryInstance();
     }
 
     @Override
@@ -71,9 +82,8 @@ public class BackendlessSpatialSignalRepository implements SignalRepository {
         calendar.add(Calendar.DATE, -timeout);
         Date dateSubmitted = calendar.getTime();
         String whereClause2 = String.format(Locale.ENGLISH, "%s > %d", CREATED_FIELD, dateSubmitted.getTime());
-        String whereClause3 = String.format(Locale.ENGLISH, "%s = %s", DELETED, "FALSE");
 
-        String joinedWhereClause = String.format(Locale.ENGLISH, "(%s) AND (%s) AND (%s)", whereClause1, whereClause2, whereClause3);
+        String joinedWhereClause = String.format(Locale.ENGLISH, "(%s) AND (%s) AND (%s)", whereClause1, whereClause2, WHERE_CLAUSE_NOT_DELETED);
 
         getSignals(joinedWhereClause, callback);
     }
@@ -89,17 +99,16 @@ public class BackendlessSpatialSignalRepository implements SignalRepository {
         calendar.add(Calendar.DATE, -timeout);
         Date dateSubmitted = calendar.getTime();
         String whereClause2 = String.format(Locale.ENGLISH, "%s > %d", CREATED_FIELD, dateSubmitted.getTime());
-        String whereClause3 = String.format(Locale.ENGLISH, "%s = %s", DELETED, "FALSE");
         String joinedWhereClause;
 
         if (selectedTypes != null && !Utils.allSelected(selectedTypes)) {
             String whereClause4 = createWhereClauseForType(selectedTypes);
 
             joinedWhereClause= String.format(Locale.ENGLISH, "(%s) AND (%s) AND (%s) AND (%s)",
-                    whereClause1, whereClause2, whereClause3, whereClause4);
+                    whereClause1, whereClause2, WHERE_CLAUSE_NOT_DELETED, whereClause4);
         } else {
             joinedWhereClause = String.format(Locale.ENGLISH, "(%s) AND (%s) AND (%s)",
-                    whereClause1, whereClause2, whereClause3);
+                    whereClause1, whereClause2, WHERE_CLAUSE_NOT_DELETED);
         }
 
         getSignals(joinedWhereClause, callback);
@@ -131,9 +140,52 @@ public class BackendlessSpatialSignalRepository implements SignalRepository {
     }
 
     @Override
+    public void getSignalsByOwnerId(String ownerId, LoadSignalsCallback callback) {
+        String whereClause = String.format(Locale.ENGLISH, "%s = '%s'", OWNER_ID, ownerId);
+
+        getSignals(whereClause, callback);
+    }
+
+    @Override
     public void getSignal(String signalId, final LoadSignalsCallback callback) {
         String whereClause = String.format(Locale.ENGLISH, "%s='%s'", OBJECT_ID_FIELD, signalId);
         getSignals(whereClause, callback);
+    }
+
+    @Override
+    public void getSignalsByListOfIds(Set<String> signalsIds, final LoadSignalsCallback callback) {
+        getSignals(whereClauseSignalsIds(signalsIds), callback);
+    }
+
+    @Override
+    public void getSignalsByListOfIdsExcludingCurrentUser(Set<String> signalsIds, final LoadSignalsCallback callback) {
+        String whereClause = buildWhereClauseForListOfSignalsIdsExcludingCurrentUser(signalsIds);
+        getSignals(whereClause, callback);
+    }
+
+    @NonNull
+    private String buildWhereClauseForListOfSignalsIdsExcludingCurrentUser(Set<String> signalsIds) {
+        String joinedWhereClause = String.format(Locale.ENGLISH, "(%s) AND (%s)",
+                whereClauseExcludeCurrentUser(), whereClauseSignalsIds(signalsIds));
+
+        return joinedWhereClause;
+    }
+
+    private String whereClauseSignalsIds(Set<String> signalsIds) {
+        String whereClause = OBJECT_ID_FIELD + " = '";
+        String delimiter ="' OR " + whereClause;
+        if (signalsIds != null && signalsIds.size() > 0) {
+            whereClause = whereClause + TextUtils.join(delimiter, signalsIds) + "'";
+        }
+
+        return whereClause;
+    }
+
+    private String whereClauseExcludeCurrentUser() {
+        BackendlessUser currentUser = Backendless.UserService.CurrentUser();
+
+        String where = OWNER_ID + " != '" + currentUser.getUserId() + "'";
+        return where;
     }
 
     private void getSignals(String whereClause, final LoadSignalsCallback callback) {
@@ -145,6 +197,7 @@ public class BackendlessSpatialSignalRepository implements SignalRepository {
         queryBuilder.setWhereClause(whereClause);
         queryBuilder.setPageSize(PAGE_SIZE);
         queryBuilder.setOffset(offset);
+        queryBuilder.setSortBy(SORT_DATE_CREATED_DESCENDING);
         Backendless.Data.of(getTableName()).find(queryBuilder, new AsyncCallback<List<Map>>() {
             @Override
             public void handleResponse(List<Map> response)
@@ -165,6 +218,8 @@ public class BackendlessSpatialSignalRepository implements SignalRepository {
                         Integer status = (Integer) signalMap.get(SIGNAL_STATUS);
                         String signalAuthorPhone = (String) signalMap.get(SIGNAL_AUTHOR_PHONE);
                         Point location = (Point) signalMap.get(SIGNAL_LOCATION);
+                        Boolean deleted = (Boolean) signalMap.get(DELETED);
+
                         Integer type = 0;
                         if (signalMap.get(SIGNAL_TYPE) != null) {
                             type = (Integer) signalMap.get(SIGNAL_TYPE);
@@ -182,11 +237,14 @@ public class BackendlessSpatialSignalRepository implements SignalRepository {
                         Signal newSignal = new Signal(objectId, signalTitle, dateCreated, status,
                                 signalAuthorId, signalAuthorName, signalAuthorPhone, location.getLatitude(),
                                 location.getLongitude(), false, type);
+                        newSignal.setIsDeleted(deleted);
+                        newSignal.setPhotoUrl(photoRepository.getSignalPhotoUrl(newSignal.getId()));
 
                         // If signal is already in DB - keep seen status
                         List<Signal> signalsFromDB = signalsDatabase.signalDao().getSignal(objectId);
                         if (signalsFromDB.size() > 0) {
                             Signal signalFromDb = signalsFromDB.get(0);
+                            signalFromDb.setPhotoUrl(newSignal.getPhotoUrl());
                             newSignal.setSeen(signalFromDb.getSeen());
                         }
                         signalsDatabase.signalDao().saveSignal(newSignal);

@@ -6,8 +6,10 @@ import org.helpapaw.helpapaw.data.repositories.BackendlessPushNotificationsRepos
 import org.helpapaw.helpapaw.data.repositories.BackendlessSpatialSignalRepository;
 import org.helpapaw.helpapaw.data.repositories.CommentRepository;
 import org.helpapaw.helpapaw.data.repositories.ISettingsRepository;
+import org.helpapaw.helpapaw.data.repositories.LocalReceivedNotificationsRepository;
 import org.helpapaw.helpapaw.data.repositories.PhotoRepository;
 import org.helpapaw.helpapaw.data.repositories.PushNotificationsRepository;
+import org.helpapaw.helpapaw.data.repositories.ReceivedNotificationsRepository;
 import org.helpapaw.helpapaw.data.repositories.SettingsRepository;
 import org.helpapaw.helpapaw.data.repositories.SignalRepository;
 import org.helpapaw.helpapaw.data.user.BackendlessUserManager;
@@ -26,6 +28,7 @@ public class Injection {
     private static CommentRepository commentRepository;
     private static SettingsRepository settingsRepository;
     private static PushNotificationsRepository pushNotificationsRepository;
+    private static ReceivedNotificationsRepository receivedNotificationsRepository;
 
     public synchronized static ImageLoader getImageLoader() {
         if (imageLoader == null) {
@@ -76,5 +79,13 @@ public class Injection {
         }
 
         return pushNotificationsRepository;
+    }
+
+    public synchronized static ReceivedNotificationsRepository getReceivedNotificationsRepositoryInstance() {
+        if (receivedNotificationsRepository == null) {
+            receivedNotificationsRepository = new LocalReceivedNotificationsRepository();
+        }
+
+        return receivedNotificationsRepository;
     }
 }
