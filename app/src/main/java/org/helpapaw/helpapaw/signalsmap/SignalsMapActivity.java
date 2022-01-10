@@ -9,7 +9,7 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.core.view.GravityCompat;
 import androidx.appcompat.widget.Toolbar;
 
-import android.view.View;
+import android.util.Log;
 import android.widget.Toast;
 
 import org.helpapaw.helpapaw.R;
@@ -19,6 +19,8 @@ import org.helpapaw.helpapaw.data.models.Signal;
 import org.helpapaw.helpapaw.utils.Injection;
 
 import java.util.List;
+
+import io.branch.referral.Branch;
 
 public class SignalsMapActivity extends BaseActivity {
 
@@ -47,6 +49,8 @@ public class SignalsMapActivity extends BaseActivity {
     protected void onStart() {
         super.onStart();
 
+        setupBranchSDK();
+
         if (!restoringActivity) {
             initFragment();
         }
@@ -54,15 +58,27 @@ public class SignalsMapActivity extends BaseActivity {
         setupEnvironmentSwitching();
     }
 
-    private void setupEnvironmentSwitching() {
-        binding.toolbarTitle.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                numberOfTitleClicks++;
-                if (numberOfTitleClicks >= 7) {
-                    switchEnvironment();
-                    numberOfTitleClicks = 0;
+    private void setupBranchSDK() {
+        Branch.sessionBuilder(this).withCallback((referringParams, error) -> {
+            if (error == null) {
+                if (referringParams != null) {
+                    String signalId = referringParams.optString("signalId");
+                    if (!signalId.equals("")) {
+                        mSignalsMapFragment.setFocusedSignalId(signalId);
+                    }
                 }
+            } else {
+                Log.i("BRANCH SDK", error.getMessage());
+            }
+        }).withData(this.getIntent().getData()).init();
+    }
+
+    private void setupEnvironmentSwitching() {
+        binding.toolbarTitle.setOnClickListener(v -> {
+            numberOfTitleClicks++;
+            if (numberOfTitleClicks >= 7) {
+                switchEnvironment();
+                numberOfTitleClicks = 0;
             }
         });
     }
@@ -80,21 +96,15 @@ public class SignalsMapActivity extends BaseActivity {
 
     private void initFragment() {
         if (mSignalsMapFragment == null) {
-            Intent intent = getIntent();
-            if (intent.hasExtra(Signal.KEY_SIGNAL_ID)) {
-                mSignalsMapFragment = SignalsMapFragment.newInstance(intent.getStringExtra(Signal.KEY_SIGNAL_ID));
-                intent.removeExtra(Signal.KEY_SIGNAL_ID);
-            } else {
-                mSignalsMapFragment = SignalsMapFragment.newInstance();
-            }
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            FragmentTransaction transaction = fragmentManager.beginTransaction();
-            transaction.add(R.id.grp_content_frame, mSignalsMapFragment);
-            transaction.commit();
+            commonInitFragment();
         }
     }
 
     private void reinitFragment() {
+        commonInitFragment();
+    }
+
+    private void commonInitFragment() {
         Intent intent = getIntent();
         if (intent.hasExtra(Signal.KEY_SIGNAL_ID)) {
             mSignalsMapFragment = SignalsMapFragment.newInstance(intent.getStringExtra(Signal.KEY_SIGNAL_ID));
@@ -102,6 +112,13 @@ public class SignalsMapActivity extends BaseActivity {
         } else {
             mSignalsMapFragment = SignalsMapFragment.newInstance();
         }
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        transaction.replace(R.id.grp_content_frame, mSignalsMapFragment);
+        transaction.commit();
+    }
+
+    private void replaceFragment() {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.replace(R.id.grp_content_frame, mSignalsMapFragment);
@@ -121,11 +138,9 @@ public class SignalsMapActivity extends BaseActivity {
         } else {
             //noinspection RestrictedApi
             List<Fragment> fragmentList = getSupportFragmentManager().getFragments();
-            if (fragmentList != null) {
-                for (Fragment fragment : fragmentList) {
-                    if (fragment instanceof SignalsMapFragment) {
-                        ((SignalsMapFragment) fragment).onBackPressed();
-                    }
+            for (Fragment fragment : fragmentList) {
+                if (fragment instanceof SignalsMapFragment) {
+                    ((SignalsMapFragment) fragment).onBackPressed();
                 }
             }
         }

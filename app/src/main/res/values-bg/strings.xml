@@ -52,6 +52,7 @@
     <string name="txt_signal_details_title">Подробности за сигнала</string>
     <string name="txt_signal_was_deleted">Сигналът беше изтрит!</string>
     <string name="txt_upload_photo">Качи снимка</string>
+    <string name="txt_share">Сподели</string>
     <string name="txt_edit_title">Промени</string>
     <string name="txt_delete_signal">Изтрий</string>
     <string name="txt_delete_signal_dialog">Сигурни ли сте, че искате да изтриете сиганала?</string>
