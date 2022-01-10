@@ -8,6 +8,7 @@ import android.content.Intent;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.ShareCompat;
 import androidx.core.graphics.drawable.RoundedBitmapDrawable;
 import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory;
 import androidx.databinding.DataBindingUtil;
@@ -67,6 +68,7 @@ public class SignalDetailsFragment extends BaseFragment
     FragmentSignalDetailsBinding binding;
 
     private Signal mSignal;
+    private boolean authorActionsAreVisible = false;
 
     public SignalDetailsFragment() {
         // Required empty public constructor
@@ -197,12 +199,14 @@ public class SignalDetailsFragment extends BaseFragment
 
     @Override
     public void showSignalAuthorActions() {
-        this.setMenuVisibility(true);
+        authorActionsAreVisible = true;
+        getActivity().invalidateOptionsMenu();
     }
 
     @Override
     public void hideSignalAuthorActions() {
-        this.setMenuVisibility(false);
+        authorActionsAreVisible = false;
+        getActivity().invalidateOptionsMenu();
     }
 
     @Override
@@ -368,6 +372,13 @@ public class SignalDetailsFragment extends BaseFragment
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_signal_details, menu);
 
+        if (!authorActionsAreVisible) {
+            MenuItem editTitle = menu.findItem(R.id.btn_editDescription);
+            editTitle.setVisible(false);
+            MenuItem deleteSignal = menu.findItem(R.id.btn_deleteSignal);
+            deleteSignal.setVisible(false);
+        }
+
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -377,8 +388,12 @@ public class SignalDetailsFragment extends BaseFragment
             actionsListener.onDeleteSignalClicked();
             return true;
         }
-        if (item.getItemId() == R.id.btn_editDescription) {
+        else if (item.getItemId() == R.id.btn_editDescription) {
             actionsListener.onEditSignalTitleClicked();
+            return true;
+        }
+        else if (item.getItemId() == R.id.btn_share) {
+            actionsListener.onShareSignalClicked();
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -450,6 +465,15 @@ public class SignalDetailsFragment extends BaseFragment
 
         DeleteSignalDialog deleteSignalDialog = DeleteSignalDialog.newInstance(mSignal, this.signalDetailsPresenter);
         deleteSignalDialog.show(fm, DeleteSignalDialog.DELETE_SIGNAL_TAG);
+    }
+
+    @Override
+    public void shareSignalLink(String link) {
+        new ShareCompat.IntentBuilder(getActivity())
+                .setType("text/plain")
+                .setChooserTitle("Share signal")
+                .setText(link)
+                .startChooser();
     }
 
     @Override
