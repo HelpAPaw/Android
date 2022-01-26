@@ -95,6 +95,7 @@
     <string name="string_share_app_reminder_title">Share the application!</string>
     <string name="string_share_app_reminder_message">We\'ve noticed that you often use the application. Do you want to share it with your friends?</string>
     <string name="string_share_button">Share</string>
+    <string name="string_share_later">Later</string>
     <string name="string_support_email" translatable="false">help.a.paw@outlook.com‌</string>
     <string name="string_share_link" translatable="false">http://www.helpapaw.org‌</string>
     <string name="string_mail_chooser_title" translatable="false">help.a.paw@outlook.com‌</string>

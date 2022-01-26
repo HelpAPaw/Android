@@ -115,13 +115,10 @@ public class PawApplication extends MultiDexApplication {
         SharedPreferences prefs = getSharedPreferences("HelpAPaw", MODE_PRIVATE);
         int counter = prefs.getInt(APP_OPEN_COUNTER, 0);
 
-        if (counter >= APP_OPENINGS_TO_ASK_FOR_SHARE) {
-            counter = 0;
-        } else {
+        if (counter <= APP_OPENINGS_TO_ASK_FOR_SHARE) {
             counter++;
+            prefs.edit().putInt(APP_OPEN_COUNTER, counter).commit();
         }
-
-        prefs.edit().putInt(APP_OPEN_COUNTER, counter).commit();
     }
 
     private void doUserSetupIfNeeded() {

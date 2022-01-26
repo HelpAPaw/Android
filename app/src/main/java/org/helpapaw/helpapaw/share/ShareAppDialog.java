@@ -40,6 +40,11 @@ public class ShareAppDialog extends DialogFragment {
             dismiss();
         });
 
+        dialog.setNeutralButton(getString(R.string.string_share_later), (dialog1, which) -> {
+            SharingUtils.resetCounter(context, 0);
+            dismiss();
+        });
+
         dialog.setNegativeButton(getString(R.string.txt_cancel), (dialog1, which) -> {
             dismiss();
         });

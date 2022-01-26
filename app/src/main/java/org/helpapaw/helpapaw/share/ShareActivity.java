@@ -1,5 +1,7 @@
 package org.helpapaw.helpapaw.share;
 
+import static org.helpapaw.helpapaw.base.PawApplication.APP_OPENINGS_TO_ASK_FOR_SHARE;
+
 import android.os.Bundle;
 import android.view.View;
 
@@ -36,6 +38,7 @@ public class ShareActivity extends AppCompatActivity {
         binding.btnShareContacts.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                SharingUtils.resetCounter(ShareActivity.this, APP_OPENINGS_TO_ASK_FOR_SHARE + 1);
                 SharingUtils.shareSupport(ShareActivity.this);
             }
         });

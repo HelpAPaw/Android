@@ -1,7 +1,12 @@
 package org.helpapaw.helpapaw.utils;
 
+import static android.content.Context.MODE_PRIVATE;
+import static org.helpapaw.helpapaw.base.PawApplication.APP_OPENINGS_TO_ASK_FOR_SHARE;
+import static org.helpapaw.helpapaw.base.PawApplication.APP_OPEN_COUNTER;
+
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 
 import org.helpapaw.helpapaw.R;
@@ -24,5 +29,11 @@ public class SharingUtils {
                         context.getString(R.string.string_share_link)));
         sendIntent.setType("text/plain");
         context.startActivity(sendIntent);
+    }
+
+    public static void resetCounter(Context context, int counterResetValue) {
+        SharedPreferences prefs = context.getSharedPreferences("HelpAPaw", MODE_PRIVATE);
+
+        prefs.edit().putInt(APP_OPEN_COUNTER, counterResetValue).commit();
     }
 }
