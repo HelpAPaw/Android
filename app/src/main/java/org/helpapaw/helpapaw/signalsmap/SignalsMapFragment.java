@@ -98,6 +98,7 @@ public class SignalsMapFragment extends BaseFragment
     private static final String MAP_VIEW_STATE = "mapViewSaveState";
 
     private static final int LOCATION_PERMISSIONS_REQUEST = 1;
+    private static final int BACKGROUND_LOCATION_PERMISSIONS_REQUEST = 2;
     private static final int READ_EXTERNAL_STORAGE_FOR_CAMERA = 4;
     private static final int REQUEST_SIGNAL_DETAILS = 6;
     private static final int REQUEST_CHECK_SETTINGS = 214;
@@ -106,7 +107,6 @@ public class SignalsMapFragment extends BaseFragment
     private static final int PADDING_BOTTOM = 160;
 
     private GoogleApiClient googleApiClient;
-    private LocationRequest locationRequest;
     private GoogleMap signalsGoogleMap;
     private ArrayList<Signal> mDisplayedSignals = new ArrayList<>();
     private final ArrayList<Marker> mDisplayedMarkers = new ArrayList<>();
@@ -159,6 +159,8 @@ public class SignalsMapFragment extends BaseFragment
 
         //Initialize location api
         initLocationApi();
+        //TODO: get permission for background location
+//        showPermissionDialog(getActivity(), new String[] {Manifest.permission.ACCESS_BACKGROUND_LOCATION}, BACKGROUND_LOCATION_PERMISSIONS_REQUEST);
     }
 
     @Override
@@ -470,17 +472,17 @@ public class SignalsMapFragment extends BaseFragment
                 .addApi(LocationServices.API)
                 .addApi(Places.GEO_DATA_API)
                 .build();
-
-        // Create the LocationRequest object
-        locationRequest = LocationRequest.create()
-                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-                .setInterval(30 * 1000)        // 30 seconds, in milliseconds
-                .setFastestInterval(10 * 1000); // 10 seconds, in milliseconds
     }
 
     @Override
     public void onConnected(Bundle bundle) {
-        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder().addLocationRequest(new LocationRequest());
+        // Create the LocationRequest object
+        // 30 seconds, in milliseconds
+        LocationRequest locationRequest = LocationRequest.create()
+                .setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY)
+                .setInterval(30 * 1000)        // 30 seconds, in milliseconds
+                .setFastestInterval(10 * 1000); // 10 seconds, in milliseconds
+        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder().addLocationRequest(locationRequest);
 
         PendingResult<LocationSettingsResult> result = LocationServices.SettingsApi.checkLocationSettings(googleApiClient, builder.build());
 
@@ -520,8 +522,12 @@ public class SignalsMapFragment extends BaseFragment
             Log.e(TAG, "Context is null, exiting...");
             return;
         }
-        if (ContextCompat.checkSelfPermission(cont, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            showPermissionDialog(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION, LOCATION_PERMISSIONS_REQUEST);
+        if (   (ContextCompat.checkSelfPermission(cont, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)
+            && (ContextCompat.checkSelfPermission(cont, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)   ) {
+            requestPermissions(
+                    new String[] {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION},
+                    LOCATION_PERMISSIONS_REQUEST
+            );
         } else {
             setAddSignalViewVisibility(mVisibilityAddSignal);
             if (signalsGoogleMap != null) {
@@ -535,13 +541,7 @@ public class SignalsMapFragment extends BaseFragment
     private void setLastLocation() {
         if (!mVisibilityAddSignal) {
             Location location = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
-            if (location == null) {
-                if (googleApiClient.isConnected()) {
-                    LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, this);
-                }
-            } else {
-                handleNewLocation(location);
-            }
+            handleNewLocation(location);
         }
     }
 
@@ -863,7 +863,7 @@ public class SignalsMapFragment extends BaseFragment
                 if (visibility) {
                     MenuItemCompat.setActionView(refreshItem, R.layout.toolbar_progress);
                     if (refreshItem.getActionView() != null) {
-                        ProgressBar progressBar = (ProgressBar) refreshItem.getActionView().findViewById(R.id.toolbar_progress_bar);
+                        ProgressBar progressBar = refreshItem.getActionView().findViewById(R.id.toolbar_progress_bar);
                         if (progressBar != null) {
                             progressBar.getIndeterminateDrawable().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN);
                         }
@@ -896,16 +896,17 @@ public class SignalsMapFragment extends BaseFragment
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode) {
             case LOCATION_PERMISSIONS_REQUEST:
-                if ((grantResults.length > 0) && (grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                    if (signalsGoogleMap != null) {
-                        signalsGoogleMap.setMyLocationEnabled(true);
+                for (int grantResult : grantResults) {
+                    if (grantResult == PackageManager.PERMISSION_GRANTED) {
+                        if (signalsGoogleMap != null) {
+                            signalsGoogleMap.setMyLocationEnabled(true);
+                        }
+                        setLastLocation();
+                        return;
                     }
-                    setLastLocation();
-                } else {
-                    // Permission Denied
-                    Toast.makeText(getContext(), R.string.txt_location_permissions_for_map, Toast.LENGTH_SHORT)
-                            .show();
                 }
+                // Permission Denied
+                Toast.makeText(getContext(), R.string.txt_location_permissions_for_map, Toast.LENGTH_SHORT).show();
                 break;
             case READ_EXTERNAL_STORAGE_FOR_CAMERA:
                 if ((grantResults.length > 0) && (grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
@@ -928,12 +929,6 @@ public class SignalsMapFragment extends BaseFragment
                 break;
             default:
                 super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        }
-    }
-
-    public void showPermissionDialog(Activity activity, String permission, int permissionCode) {
-        if (ContextCompat.checkSelfPermission(activity, permission) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[]{permission}, permissionCode);
         }
     }
 
