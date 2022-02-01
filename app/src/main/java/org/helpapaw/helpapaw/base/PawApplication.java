@@ -31,7 +31,10 @@ import io.branch.referral.Branch;
  */
 public class PawApplication extends MultiDexApplication {
 
-    private static final String IS_TEST_ENVIRONMENT_KEY     = "IS_TEST_ENVIRONMENT_KEY";
+    public static final String APP_OPEN_COUNTER = "APP_OPEN_COUNTER_KEY";
+    public static final int APP_OPENINGS_TO_ASK_FOR_SHARE = 10;
+
+    private static final String IS_TEST_ENVIRONMENT_KEY = "IS_TEST_ENVIRONMENT_KEY";
 
     private static Boolean isTestEnvironment;
     private static PawApplication pawApplication;
@@ -67,6 +70,65 @@ public class PawApplication extends MultiDexApplication {
         // https://stackoverflow.com/a/45569709/2781218
         StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
         StrictMode.setVmPolicy(builder.build());
+
+        // This counts how many times the application has been opened.
+        // After APP_OPEN_MAX_COUNTER the counter will be set to 0 again
+        // and the user will receive a reminder to share the application.
+        updateApplicationCounter();
+    }
+
+    public static PawApplication getContext() {
+        return pawApplication;
+    }
+
+    public static Boolean getIsTestEnvironment() {
+        return isTestEnvironment;
+    }
+
+    public static void setIsTestEnvironment(Boolean isTestEnvironment) {
+        PawApplication.isTestEnvironment = isTestEnvironment;
+        pawApplication.saveIsTestEnvironment(isTestEnvironment);
+    }
+
+    private Boolean loadIsTestEnvironment() {
+        SharedPreferences prefs = getSharedPreferences("HelpAPaw", MODE_PRIVATE);
+        return prefs.getBoolean(IS_TEST_ENVIRONMENT_KEY, false);
+    }
+
+    private void saveIsTestEnvironment(Boolean isTestEnvironment) {
+        SharedPreferences prefs = pawApplication.getSharedPreferences("HelpAPaw", MODE_PRIVATE);
+        prefs.edit().putBoolean(IS_TEST_ENVIRONMENT_KEY, isTestEnvironment).apply();
+    }
+
+    private void scheduleBackgroundChecks() {
+        // constraints that need to be satisfied for the job to run
+        Constraints workerConstraints = new Constraints.Builder()
+                //Network connectivity required
+                .setRequiredNetworkType(NetworkType.CONNECTED)
+                .build();
+
+        PeriodicWorkRequest workRequest = new PeriodicWorkRequest.Builder(BackgroundCheckWorker.class, 15, TimeUnit.MINUTES)
+                // uniquely identifies the job
+                .addTag("BackgroundCheckJobService")
+                // start in 15 minutes from now
+                .setInitialDelay(15, TimeUnit.MINUTES)
+                // retry with exponential backoff
+                .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, 3000, TimeUnit.MILLISECONDS)
+                .setConstraints(workerConstraints)
+                .build();
+
+        WorkManager.getInstance(this)
+                .enqueueUniquePeriodicWork("BackgroundCheckJobService", ExistingPeriodicWorkPolicy.REPLACE, workRequest);
+    }
+
+    private void updateApplicationCounter() {
+        SharedPreferences prefs = getSharedPreferences("HelpAPaw", MODE_PRIVATE);
+        int counter = prefs.getInt(APP_OPEN_COUNTER, 0);
+
+        if (counter <= APP_OPENINGS_TO_ASK_FOR_SHARE) {
+            counter++;
+            prefs.edit().putInt(APP_OPEN_COUNTER, counter).commit();
+        }
     }
 
     private void doUserSetupIfNeeded() {
@@ -118,49 +180,5 @@ public class PawApplication extends MultiDexApplication {
                 });
             }
         });
-    }
-
-    public static PawApplication getContext() {
-        return pawApplication;
-    }
-
-    public static Boolean getIsTestEnvironment() {
-        return isTestEnvironment;
-    }
-
-    public static void setIsTestEnvironment(Boolean isTestEnvironment) {
-        PawApplication.isTestEnvironment = isTestEnvironment;
-        pawApplication.saveIsTestEnvironment(isTestEnvironment);
-    }
-
-    private Boolean loadIsTestEnvironment() {
-        SharedPreferences prefs = getSharedPreferences("HelpAPaw", MODE_PRIVATE);
-        return prefs.getBoolean(IS_TEST_ENVIRONMENT_KEY, false);
-    }
-
-    private void saveIsTestEnvironment(Boolean isTestEnvironment) {
-        SharedPreferences prefs = pawApplication.getSharedPreferences("HelpAPaw", MODE_PRIVATE);
-        prefs.edit().putBoolean(IS_TEST_ENVIRONMENT_KEY, isTestEnvironment).apply();
-    }
-
-    private void scheduleBackgroundChecks() {
-        // constraints that need to be satisfied for the job to run
-        Constraints workerConstraints = new Constraints.Builder()
-                //Network connectivity required
-                .setRequiredNetworkType(NetworkType.CONNECTED)
-                .build();
-
-        PeriodicWorkRequest workRequest = new PeriodicWorkRequest.Builder(BackgroundCheckWorker.class, 15, TimeUnit.MINUTES)
-                // uniquely identifies the job
-                .addTag("BackgroundCheckJobService")
-                // start in 15 minutes from now
-                .setInitialDelay(15, TimeUnit.MINUTES)
-                // retry with exponential backoff
-                .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, 3000, TimeUnit.MILLISECONDS)
-                .setConstraints(workerConstraints)
-                .build();
-
-        WorkManager.getInstance(this)
-                .enqueueUniquePeriodicWork("BackgroundCheckJobService", ExistingPeriodicWorkPolicy.REPLACE, workRequest);
     }
 }

@@ -91,6 +91,7 @@
     <string name="txt_delete_notifications_dialog">Are you sure you want to delete all the notifications?</string>
     <string name="text_faqs">FAQs</string>
     <string name="text_about">About</string>
+    <string name="text_share">Share</string>
     <string name="text_feedback">Feedback</string>
     <string name="txt_faqs_view_title">FAQs</string>
     <string name="text_settings">Settings</string>
@@ -100,7 +101,14 @@
     <string name="string_about_title">About</string>
     <string name="string_about_contact">Contact us</string>
     <string name="string_about_milen">© Milen Marinov 2021</string>
+    <string name="string_share_text">Do you like the application? Share it with your friends!</string>
+    <string name="string_share_app_text">Do you want ot help animals in need? Check out this app: %s</string>
+    <string name="string_share_app_reminder_title">Share the application!</string>
+    <string name="string_share_app_reminder_message">We\'ve noticed that you often use the application. Do you want to share it with your friends?</string>
+    <string name="string_share_button">Share</string>
+    <string name="string_share_later">Later</string>
     <string name="string_support_email" translatable="false">help.a.paw@outlook.com‌</string>
+    <string name="string_share_link" translatable="false">https://helpapaw.app.link/install</string>
     <string name="string_mail_chooser_title" translatable="false">help.a.paw@outlook.com‌</string>
     <string name="error_empty_signal_response">Got empty response! Signal not present anymore!?</string>
     <string name="txt_channel_description_help_needed">"Shows signals for animals near you that are in (urgent) need of help"</string>
