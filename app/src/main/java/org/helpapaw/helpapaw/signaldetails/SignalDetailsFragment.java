@@ -8,6 +8,7 @@ import android.content.Intent;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.ShareCompat;
 import androidx.core.graphics.drawable.RoundedBitmapDrawable;
 import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory;
 import androidx.databinding.DataBindingUtil;
@@ -15,9 +16,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 
-import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
-import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Build;
@@ -69,6 +68,7 @@ public class SignalDetailsFragment extends BaseFragment
     FragmentSignalDetailsBinding binding;
 
     private Signal mSignal;
+    private boolean authorActionsAreVisible = false;
 
     public SignalDetailsFragment() {
         // Required empty public constructor
@@ -170,6 +170,19 @@ public class SignalDetailsFragment extends BaseFragment
 
         hideUploadPhotoButton();
         showSignalPhoto(signal);
+
+        if(signal.getIsDeleted()) {
+            setupSignalAsDeleted();
+        }
+    }
+
+    private void setupSignalAsDeleted() {
+        binding.txtSignalIsDeleted.setVisibility(View.VISIBLE);
+        binding.btnUploadPhoto.setVisibility(View.INVISIBLE);
+        binding.statusLabel.setVisibility(View.GONE);
+        binding.viewSignalStatus.setVisibility(View.GONE);
+        binding.btnAddComment.setEnabled(false);
+        binding.imgAddCommentPhoto.setEnabled(false);
     }
 
     @Override
@@ -186,12 +199,14 @@ public class SignalDetailsFragment extends BaseFragment
 
     @Override
     public void showSignalAuthorActions() {
-        this.setMenuVisibility(true);
+        authorActionsAreVisible = true;
+        getActivity().invalidateOptionsMenu();
     }
 
     @Override
     public void hideSignalAuthorActions() {
-        this.setMenuVisibility(false);
+        authorActionsAreVisible = false;
+        getActivity().invalidateOptionsMenu();
     }
 
     @Override
@@ -357,6 +372,13 @@ public class SignalDetailsFragment extends BaseFragment
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_signal_details, menu);
 
+        if (!authorActionsAreVisible) {
+            MenuItem editTitle = menu.findItem(R.id.btn_editDescription);
+            editTitle.setVisible(false);
+            MenuItem deleteSignal = menu.findItem(R.id.btn_deleteSignal);
+            deleteSignal.setVisible(false);
+        }
+
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -366,8 +388,12 @@ public class SignalDetailsFragment extends BaseFragment
             actionsListener.onDeleteSignalClicked();
             return true;
         }
-        if (item.getItemId() == R.id.btn_editDescription) {
+        else if (item.getItemId() == R.id.btn_editDescription) {
             actionsListener.onEditSignalTitleClicked();
+            return true;
+        }
+        else if (item.getItemId() == R.id.btn_share) {
+            actionsListener.onShareSignalClicked();
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -404,8 +430,6 @@ public class SignalDetailsFragment extends BaseFragment
 
     @Override
     public void editSignalTitle() {
-        disableScreenRotation();
-
         binding.grpAddComment.setVisibility(View.GONE);
         setEditSignalTitleButtonsVisibility(View.VISIBLE);
 
@@ -423,18 +447,16 @@ public class SignalDetailsFragment extends BaseFragment
 
     @Override
     public void saveEditSignalTitle() {
-        EditText txtSignalTitle = binding.txtSignalTitle;
-        signalDetailsPresenter.onUpdateTitle(txtSignalTitle.getText().toString());
+        signalDetailsPresenter.onUpdateTitle(binding.txtSignalTitle.getText().toString());
 
-        closeEditSignalTitleScreen(txtSignalTitle);
+        endEditSignalTitleMode();
     }
 
     @Override
     public void cancelEditSignalTitle(String originalTitle) {
-        EditText txtSignalTitle = binding.txtSignalTitle;
-        txtSignalTitle.setText(originalTitle);
+        binding.txtSignalTitle.setText(originalTitle);
 
-        closeEditSignalTitleScreen(txtSignalTitle);
+        endEditSignalTitleMode();
     }
 
     @Override
@@ -443,6 +465,15 @@ public class SignalDetailsFragment extends BaseFragment
 
         DeleteSignalDialog deleteSignalDialog = DeleteSignalDialog.newInstance(mSignal, this.signalDetailsPresenter);
         deleteSignalDialog.show(fm, DeleteSignalDialog.DELETE_SIGNAL_TAG);
+    }
+
+    @Override
+    public void shareSignalLink(String link) {
+        new ShareCompat.IntentBuilder(getActivity())
+                .setType("text/plain")
+                .setChooserTitle("Share signal")
+                .setText(link)
+                .startChooser();
     }
 
     @Override
@@ -534,29 +565,11 @@ public class SignalDetailsFragment extends BaseFragment
         };
     }
 
-    private void closeEditSignalTitleScreen(EditText txtSignalTitle){
-        txtSignalTitle.setEnabled(false);
+    private void endEditSignalTitleMode() {
+        binding.txtSignalTitle.setEnabled(false);
 
         hideKeyboard();
         setEditSignalTitleButtonsVisibility(View.GONE);
-
-        enableScreenRotation();
-    }
-
-    private void disableScreenRotation() {
-        // disable screen rotation while the dialog is open
-        int currentOrientation = getResources().getConfiguration().orientation;
-        if (currentOrientation == Configuration.ORIENTATION_LANDSCAPE) {
-            this.getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
-        }
-        else {
-            this.getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT);
-        }
-    }
-
-    private void enableScreenRotation() {
-        // disable screen rotation depending of the user preferences
-        getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_USER);
     }
 
     /* OnClick Listeners */

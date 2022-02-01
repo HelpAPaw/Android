@@ -1,12 +1,18 @@
 package org.helpapaw.helpapaw.settings;
 
+import static org.helpapaw.helpapaw.base.PawApplication.getContext;
+
+import org.helpapaw.helpapaw.R;
 import org.helpapaw.helpapaw.base.Presenter;
 import org.helpapaw.helpapaw.data.repositories.ISettingsRepository;
 import org.helpapaw.helpapaw.utils.Injection;
 
 public class SettingsPresenter extends Presenter<SettingsContract.View> implements SettingsContract.UserActionsListener {
 
-    private ISettingsRepository settingsRepository;
+    private double SCALE_COEFFICIENT_B;
+    private double SCALE_COEFFICIENT_A;
+
+    private final ISettingsRepository settingsRepository;
     private int radius;
     private int timeout;
     private int signalTypes;
@@ -21,6 +27,11 @@ public class SettingsPresenter extends Presenter<SettingsContract.View> implemen
         radius = settingsRepository.getRadius();
         timeout = settingsRepository.getTimeout();
         signalTypes = settingsRepository.getSignalTypes();
+
+        int radiusMin = getContext().getResources().getInteger(R.integer.radius_value_min);
+        int radiusMax = getContext().getResources().getInteger(R.integer.radius_value_max);
+        SCALE_COEFFICIENT_B = Math.log((float) radiusMax / radiusMin)/(radiusMax - radiusMin);
+        SCALE_COEFFICIENT_A = radiusMax /Math.exp(SCALE_COEFFICIENT_B* radiusMax);
 
         getView().setRadius(radius);
         getView().setTimeout(timeout);
@@ -56,4 +67,13 @@ public class SettingsPresenter extends Presenter<SettingsContract.View> implemen
     public int getSignalTypes() {
         return signalTypes;
     }
+
+    int scaleLogarithmic(final int unscaled) {
+        return (int) (SCALE_COEFFICIENT_A * Math.exp(SCALE_COEFFICIENT_B*unscaled));
+    }
+
+    int unscaleLogarithmic(int scaled) {
+        return (int) ((Math.log(scaled/SCALE_COEFFICIENT_A))/SCALE_COEFFICIENT_B);
+    }
+
 }

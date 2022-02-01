@@ -3,6 +3,7 @@ package org.helpapaw.helpapaw.signaldetails;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
 
 import org.helpapaw.helpapaw.R;
+import org.helpapaw.helpapaw.base.PawApplication;
 import org.helpapaw.helpapaw.base.Presenter;
 import org.helpapaw.helpapaw.data.models.Comment;
 import org.helpapaw.helpapaw.data.models.Signal;
@@ -16,6 +17,10 @@ import org.helpapaw.helpapaw.utils.Utils;
 
 import java.io.File;
 import java.util.List;
+
+import io.branch.indexing.BranchUniversalObject;
+import io.branch.referral.util.ContentMetadata;
+import io.branch.referral.util.LinkProperties;
 
 /**
  * Created by iliyan on 7/25/16
@@ -56,10 +61,8 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
             FirebaseCrashlytics.getInstance().log("Show signal details for " + signal.getId());
 
             this.signal = signal;
-            signal.setPhotoUrl(photoRepository.getSignalPhotoUrl(signal.getId()));
-
             getView().showSignalDetails(signal);
-            showUploadButtonIfNeeded(signal);
+            showAuthorActionsIfNeeded(signal);
 
             if (commentList != null) {
                 setCommentsProgressIndicator(false);
@@ -76,15 +79,19 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
         }
     }
 
-    private void showUploadButtonIfNeeded(Signal signal) {
+    private void showAuthorActionsIfNeeded(Signal signal) {
         if (userManager.getLoggedUserId().equals(signal.getAuthorId())) {
-            getView().showSignalAuthorActions();
+            if (signal.getIsDeleted()) {
+                getView().hideSignalAuthorActions();
+            } else {
+                getView().showSignalAuthorActions();
+            }
             photoRepository.signalPhotoExists(signal.getId(), new PhotoRepository.PhotoExistsCallback() {
                 @Override
                 public void onPhotoExistsSuccess(boolean photoExists) {
                     if (!isViewAvailable()) return;
 
-                    if (photoExists) {
+                if (photoExists || signal.getIsDeleted()) {
                         getView().hideUploadPhotoButton();
                     }
                     else {
@@ -246,7 +253,7 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
                 if(!isViewAvailable()) return;
                 signal.setTitle(title);
                 getView().showSignalDetails(signal);
-                showUploadButtonIfNeeded(signal);
+                showAuthorActionsIfNeeded(signal);
             }
 
             @Override
@@ -265,7 +272,7 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
             @Override
             public void onSignalDeleted() {
                 if(!isViewAvailable()) return;
-
+                signal.setIsDeleted(true);
                 getView().closeScreenWithResult(signal);
             }
 
@@ -322,6 +329,33 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
     }
 
     @Override
+    public void onShareSignalClicked() {
+
+        BranchUniversalObject buo = new BranchUniversalObject()
+                .setCanonicalIdentifier("signal/" + signal.getId())
+                .setTitle(signal.getTitle())
+                .setContentImageUrl(photoRepository.getSignalPhotoUrl(signal.getId()))
+                .setContentIndexingMode(BranchUniversalObject.CONTENT_INDEX_MODE.PUBLIC)
+                .setLocalIndexMode(BranchUniversalObject.CONTENT_INDEX_MODE.PUBLIC)
+                .setContentMetadata(new ContentMetadata().addCustomMetadata("signalId", signal.getId()));
+
+        LinkProperties linkProperties = new LinkProperties();
+
+        buo.generateShortUrl(PawApplication.getContext(), linkProperties, (url, error) -> {
+            if (error == null) {
+                // Set original short url as parameter of desktop_url - this way it can be used to
+                // generate a QR which can be scanned with a smartphone
+                linkProperties.addControlParameter("$desktop_url", "https://www.helpapaw.org/signal.html?link=" + url);
+                buo.generateShortUrl(PawApplication.getContext(), linkProperties, (url2, error2) -> {
+                    if (error2 == null) {
+                        getView().shareSignalLink(url2);
+                    }
+                });
+            }
+        });
+    }
+
+    @Override
     public void onSignalDetailsClosing() {
         getView().closeScreenWithResult(signal);
     }
@@ -365,6 +399,7 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
             public void onPhotoSaved(String photoUrl) {
                 signal.setPhotoUrl(photoUrl);
                 // Show new photo
+                if (!isViewAvailable()) return;
                 getView().hideUploadPhotoButton();
                 getView().showSignalPhoto(signal);
             }
