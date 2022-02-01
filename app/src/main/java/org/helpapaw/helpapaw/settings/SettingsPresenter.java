@@ -9,12 +9,10 @@ import org.helpapaw.helpapaw.utils.Injection;
 
 public class SettingsPresenter extends Presenter<SettingsContract.View> implements SettingsContract.UserActionsListener {
 
-    private int radiusMin;
-    private int radiusMax;
     private double SCALE_COEFFICIENT_B;
     private double SCALE_COEFFICIENT_A;
 
-    private ISettingsRepository settingsRepository;
+    private final ISettingsRepository settingsRepository;
     private int radius;
     private int timeout;
     private int signalTypes;
@@ -30,10 +28,10 @@ public class SettingsPresenter extends Presenter<SettingsContract.View> implemen
         timeout = settingsRepository.getTimeout();
         signalTypes = settingsRepository.getSignalTypes();
 
-        radiusMin = getContext().getResources().getInteger(R.integer.radius_value_min);
-        radiusMax = getContext().getResources().getInteger(R.integer.radius_value_max);
-        SCALE_COEFFICIENT_B = Math.log(radiusMax /radiusMin)/(radiusMax - radiusMin);
-        SCALE_COEFFICIENT_A = radiusMax /Math.exp(SCALE_COEFFICIENT_B*radiusMax);
+        int radiusMin = getContext().getResources().getInteger(R.integer.radius_value_min);
+        int radiusMax = getContext().getResources().getInteger(R.integer.radius_value_max);
+        SCALE_COEFFICIENT_B = Math.log((float) radiusMax / radiusMin)/(radiusMax - radiusMin);
+        SCALE_COEFFICIENT_A = radiusMax /Math.exp(SCALE_COEFFICIENT_B* radiusMax);
 
         getView().setRadius(radius);
         getView().setTimeout(timeout);
@@ -71,15 +69,11 @@ public class SettingsPresenter extends Presenter<SettingsContract.View> implemen
     }
 
     int scaleLogarithmic(final int unscaled) {
-        int scaled = (int) (SCALE_COEFFICIENT_A * Math.exp(SCALE_COEFFICIENT_B*unscaled));
-
-        return scaled;
+        return (int) (SCALE_COEFFICIENT_A * Math.exp(SCALE_COEFFICIENT_B*unscaled));
     }
 
     int unscaleLogarithmic(int scaled) {
-        int unscaled = (int) ((Math.log(scaled/SCALE_COEFFICIENT_A))/SCALE_COEFFICIENT_B);
-
-        return unscaled;
+        return (int) ((Math.log(scaled/SCALE_COEFFICIENT_A))/SCALE_COEFFICIENT_B);
     }
 
 }

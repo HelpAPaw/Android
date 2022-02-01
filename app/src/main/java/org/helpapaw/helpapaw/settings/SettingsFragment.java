@@ -49,10 +49,12 @@ public class SettingsFragment extends BaseFragment implements SettingsContract.V
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
 
-        radiusMin = getContext().getResources().getInteger(R.integer.radius_value_min);
-        radiusMax = getContext().getResources().getInteger(R.integer.radius_value_max);
-        timeoutMin = getContext().getResources().getInteger(R.integer.timeout_value_min);
-        
+        if (getContext() != null) {
+            radiusMin = getContext().getResources().getInteger(R.integer.radius_value_min);
+            radiusMax = getContext().getResources().getInteger(R.integer.radius_value_max);
+            timeoutMin = getContext().getResources().getInteger(R.integer.timeout_value_min);
+        }
+
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
     }
@@ -210,22 +212,22 @@ public class SettingsFragment extends BaseFragment implements SettingsContract.V
     }
 
     private void updateRadius(int value) {
+        String result;
         if (value == radiusMin) {
-            String result = String.format(Locale.getDefault(), getString(R.string.radius_output_single), value);
-            binding.radiusOutput.setText(result);
+            result = String.format(Locale.getDefault(), getString(R.string.radius_output_single), value);
         } else {
-            String result = String.format(Locale.getDefault(), getString(R.string.radius_output), value);
-            binding.radiusOutput.setText(result);
+            result = String.format(Locale.getDefault(), getString(R.string.radius_output), value);
         }
+        binding.radiusOutput.setText(result);
     }
 
     private void updateTimeout(int value) {
+        String result;
         if (value == timeoutMin) {
-            String result = String.format(Locale.getDefault(), getString(R.string.timeout_output_single), value);
-            binding.timeoutOutput.setText(result);
+            result = String.format(Locale.getDefault(), getString(R.string.timeout_output_single), value);
         } else {
-            String result = String.format(Locale.getDefault(), getString(R.string.timeout_output), value);
-            binding.timeoutOutput.setText(result);
+            result = String.format(Locale.getDefault(), getString(R.string.timeout_output), value);
         }
+        binding.timeoutOutput.setText(result);
     }
 }
