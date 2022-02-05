@@ -108,7 +108,7 @@ public class SignalDetailsFragment extends BaseFragment
         binding.imgAddCommentPhoto.setOnClickListener(getOnAddCommentPhotoClickListener());
         binding.btnAddComment.setOnClickListener(getOnAddCommentClickListener());
         binding.editComment.setOnFocusChangeListener(getOnCommentEditTextFocusChangeListener());
-        binding.imgCall.setOnClickListener(getOnCallButtonClickListener());
+        binding.btnNavigate.setOnClickListener(getOnNavigateButtonClickListener());
         binding.btnCall.setOnClickListener(getOnCallButtonClickListener());
         binding.imgSignalPhoto.setOnClickListener(getOnSignalPhotoClickListener());
         binding.scrollSignalDetails.setOnBottomReachedListener(getOnBottomReachedListener());
@@ -153,10 +153,8 @@ public class SignalDetailsFragment extends BaseFragment
 
         String authorPhone = signal.getAuthorPhone();
         if (authorPhone == null || authorPhone.trim().isEmpty()) {
-            binding.imgCall.setVisibility(View.GONE);
             binding.btnCall.setVisibility(View.GONE);
         } else {
-            binding.imgCall.setVisibility(View.VISIBLE);
             binding.btnCall.setText(authorPhone);
             binding.btnCall.setVisibility(View.VISIBLE);
         }
@@ -360,6 +358,13 @@ public class SignalDetailsFragment extends BaseFragment
     @Override
     public void showStatusUpdatedMessage() {
         showMessage(getString(R.string.txt_status_updated));
+    }
+
+    @Override
+    public void openNavigation(double latitude, double longitude) {
+        String url = String.format("http://maps.google.com/maps?daddr=%f,%f", latitude, longitude);
+        Intent intent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(url));
+        startActivity(intent);
     }
 
     @Override
@@ -588,6 +593,15 @@ public class SignalDetailsFragment extends BaseFragment
             public void onClick(View v) {
                 String commentText = binding.editComment.getText().toString();
                 actionsListener.onAddCommentButtonClicked(commentText);
+            }
+        };
+    }
+
+    public View.OnClickListener getOnNavigateButtonClickListener() {
+        return new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                actionsListener.onNavigateButtonClicked();
             }
         };
     }

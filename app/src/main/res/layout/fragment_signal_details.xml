@@ -161,26 +161,25 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content">
 
-                                <ImageView
-                                    android:id="@+id/img_call"
-                                    android:layout_width="20dp"
-                                    android:layout_height="20dp"
-                                    android:layout_toStartOf="@id/btn_call"
-                                    android:layout_alignTop="@id/btn_call"
-                                    android:layout_marginTop="16dp"
-                                    android:src="@drawable/ic_call"
-                                    app:tint="@color/comments_gray"
-                                    android:visibility="visible" />
+                                <Button
+                                    android:id="@+id/btn_navigate"
+                                    style="@style/Widget.AppCompat.Button.Colored"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="4dp"
+                                    android:gravity="center"
+                                    android:drawableLeft="@drawable/ic_assistant_direction_24"
+                                    android:text="@string/txt_navigate_to" />
 
                                 <Button
                                     android:id="@+id/btn_call"
+                                    style="@style/Widget.AppCompat.Button.Colored"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_alignParentEnd="true"
-                                    android:layout_marginStart="4dp"
                                     android:layout_marginTop="4dp"
-                                    style="@style/Widget.AppCompat.Button.Colored"
-                                    tools:text="0881234567"/>
+                                    android:drawableLeft="@drawable/ic_call_24"
+                                    tools:text="0881234567" />
                             </RelativeLayout>
                         </LinearLayout>
 

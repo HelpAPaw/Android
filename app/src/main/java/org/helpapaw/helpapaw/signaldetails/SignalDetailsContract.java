@@ -44,6 +44,8 @@ public interface SignalDetailsContract {
 
         void setNoCommentsTextVisibility(boolean visibility);
 
+        void openNavigation(double latitude, double longitude);
+
         void openNumberDialer(String phoneNumber);
 
         void showNoInternetMessage();
@@ -94,6 +96,8 @@ public interface SignalDetailsContract {
         void onUpdateTitle(String title);
 
         void onDeleteSignal();
+
+        void onNavigateButtonClicked();
 
         void onCallButtonClicked();
 

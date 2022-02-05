@@ -51,6 +51,7 @@
     <string name="txt_only_registered_users_can_submit_signals">Only registered users can submit signals</string>
 
     <!-- Strings related to Signal Details screen -->
+    <string name="txt_navigate_to">Navigate me</string>
     <string name="txt_save">Save</string>
     <string name="txt_cancel">Cancel</string>
     <string name="txt_signal_details_title">Signal Details</string>
