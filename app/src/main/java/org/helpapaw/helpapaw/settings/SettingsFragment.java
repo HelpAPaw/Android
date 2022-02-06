@@ -37,6 +37,7 @@ public class SettingsFragment extends BaseFragment implements SettingsContract.V
     private int timeoutMin;
     private int currentlySelectedTypesInt = Integer.MAX_VALUE;
     private String[] signalTypeStrings;
+    private String[] languages;
 
     FragmentSettingsBinding binding;
     SettingsPresenter settingsPresenter;
@@ -76,6 +77,7 @@ public class SettingsFragment extends BaseFragment implements SettingsContract.V
         binding.radiusValue.setMax(radiusMax);
         
         signalTypeStrings = getResources().getStringArray(R.array.signal_types_items);
+        languages = getResources().getStringArray(R.array.languages_items);
 
         settingsPresenter = new SettingsPresenter(this);
         settingsPresenter.setView(this);
@@ -104,6 +106,7 @@ public class SettingsFragment extends BaseFragment implements SettingsContract.V
         binding.radiusValue.setOnSeekBarChangeListener(onRadiusSeekBarChangeListener());
         binding.timeoutValue.setOnSeekBarChangeListener(onTimeoutSeekBarChangeListener());
         binding.signalTypeSetting.setOnClickListener(onSelectedSignalTypesClickListener());
+        binding.languageSetting.setOnClickListener(onChangeLanguageClickListener());
     }
 
     @Override
@@ -173,6 +176,19 @@ public class SettingsFragment extends BaseFragment implements SettingsContract.V
         };
     }
 
+    public View.OnClickListener onChangeLanguageClickListener() {
+        return new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getContext(), LanguageSettingsActivity.class);
+                intent.putExtra(EXTRA_SELECTED_TYPES,
+                        Utils.convertIntegerToBooleanArray(0, languages.length));
+
+                startActivityForResult(intent, REQUEST_CHANGE_SIGNAL_TYPES);
+            }
+        };
+    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_CHANGE_SIGNAL_TYPES) {
@@ -205,10 +221,16 @@ public class SettingsFragment extends BaseFragment implements SettingsContract.V
     @Override
     public void setSignalTypes(int signalTypesInt) {
         currentlySelectedTypesInt = signalTypesInt;
+
         String signalTypesStr =
                 Utils.selectedTypesToString(Utils.convertIntegerToBooleanArray(signalTypesInt, signalTypeStrings.length), signalTypeStrings);
 
         binding.signalTypeSetting.setText(signalTypesStr);
+    }
+
+    @Override
+    public void setLanguage(int languageIndex) {
+        binding.languageSetting.setText(languages[languageIndex]);
     }
 
     private void updateRadius(int value) {

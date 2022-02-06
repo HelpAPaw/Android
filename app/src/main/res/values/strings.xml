@@ -205,4 +205,10 @@
     <string name="txt_delete_button">Delete</string>
     <string name="txt_cancel_button">Cancel</string>
     <string name="txt_no_navigation_app">No navigation app found</string>
+
+    <string name="txt_language_settings">LANGUAGE</string>
+    <string-array name="languages_items" translatable="false">
+        <item>English</item>
+        <item>Български</item>
+    </string-array>
 </resources>
