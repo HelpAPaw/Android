@@ -362,8 +362,7 @@ public class SignalDetailsFragment extends BaseFragment
 
     @Override
     public void openNavigation(double latitude, double longitude) {
-        String url = String.format("http://maps.google.com/maps?daddr=%f,%f", latitude, longitude);
-        Intent intent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(url));
+        Intent intent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse("geo:" + latitude + "," + longitude));
         startActivity(intent);
     }
 
