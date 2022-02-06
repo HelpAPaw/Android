@@ -26,6 +26,8 @@ import static android.app.Activity.RESULT_OK;
 
 import static org.helpapaw.helpapaw.data.repositories.BackendlessPushNotificationsRepository.MAX_PADDING;
 import static org.helpapaw.helpapaw.data.repositories.BackendlessPushNotificationsRepository.SIGNAL_TYPES_SIZE;
+import static org.helpapaw.helpapaw.settings.LanguageSettingsActivity.EXTRA_SELECTED_LANGUAGE;
+import static org.helpapaw.helpapaw.settings.LanguageSettingsActivity.REQUEST_CHANGE_LANGUAGE;
 import static org.helpapaw.helpapaw.settings.SignalTypeSettingsActivity.EXTRA_SELECTED_TYPES;
 import static org.helpapaw.helpapaw.settings.SignalTypeSettingsActivity.REQUEST_CHANGE_SIGNAL_TYPES;
 
@@ -36,6 +38,7 @@ public class SettingsFragment extends BaseFragment implements SettingsContract.V
     private int radiusMax;
     private int timeoutMin;
     private int currentlySelectedTypesInt = Integer.MAX_VALUE;
+    private int currentlySelectedLanguage = 0;
     private String[] signalTypeStrings;
     private String[] languages;
 
@@ -181,10 +184,10 @@ public class SettingsFragment extends BaseFragment implements SettingsContract.V
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getContext(), LanguageSettingsActivity.class);
-                intent.putExtra(EXTRA_SELECTED_TYPES,
+                intent.putExtra(EXTRA_SELECTED_LANGUAGE,
                         Utils.convertIntegerToBooleanArray(0, languages.length));
 
-                startActivityForResult(intent, REQUEST_CHANGE_SIGNAL_TYPES);
+                startActivityForResult(intent, REQUEST_CHANGE_LANGUAGE);
             }
         };
     }
@@ -230,6 +233,7 @@ public class SettingsFragment extends BaseFragment implements SettingsContract.V
 
     @Override
     public void setLanguage(int languageIndex) {
+        currentlySelectedLanguage = languageIndex;
         binding.languageSetting.setText(languages[languageIndex]);
     }
 
