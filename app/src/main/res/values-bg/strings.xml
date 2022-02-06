@@ -196,4 +196,5 @@
     <string name="txt_delete_button">Изтрий</string>
     <string name="txt_cancel_button">Откажи</string>
     <string name="txt_no_navigation_app">Не е открито приложение за навигация</string>
+    <string name="txt_language_settings">ЕЗИК</string>
 </resources>
