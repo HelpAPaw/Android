@@ -16,6 +16,7 @@ public class SettingsPresenter extends Presenter<SettingsContract.View> implemen
     private int radius;
     private int timeout;
     private int signalTypes;
+    private int language;
 
     SettingsPresenter(SettingsContract.View view) {
         super(view);
@@ -60,7 +61,8 @@ public class SettingsPresenter extends Presenter<SettingsContract.View> implemen
 
     @Override
     public void onLanguageChange(int languageIndex) {
-
+        this.language = languageIndex;
+        settingsRepository.saveLanguage(languageIndex);
     }
 
     @Override

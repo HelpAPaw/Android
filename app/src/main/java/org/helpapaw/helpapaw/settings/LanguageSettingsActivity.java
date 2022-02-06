@@ -19,8 +19,8 @@ public class LanguageSettingsActivity extends AppCompatActivity {
     protected static final int REQUEST_CHANGE_LANGUAGE = 2;
     public static final String EXTRA_SELECTED_LANGUAGE = "selected_language";
 
-    private boolean[] languageSelection;
-    private SignalTypeCustomAdapter customAdapter;
+    private int languageSelection;
+    private LanguageCustomAdapter customAdapter;
 
     ActivityLanguageSettingsBinding binding;
 
@@ -36,17 +36,17 @@ public class LanguageSettingsActivity extends AppCompatActivity {
         if (supportActionBar != null) {
             supportActionBar.setDisplayHomeAsUpEnabled(true);
             supportActionBar.setDisplayShowTitleEnabled(false);
-            binding.toolbarTitle.setText(getString(R.string.string_signal_type_settings_title));
+            binding.toolbarTitle.setText(getString(R.string.txt_language_settings));
         }
 
         Intent intent = this.getIntent();
 
         ListView languageListView = findViewById(R.id.language_list_view);
         String[] languageStrings = getResources().getStringArray(R.array.languages_items);
-        if (languageSelection == null) {
-            languageSelection = intent.getBooleanArrayExtra(EXTRA_SELECTED_LANGUAGE);
-        }
-        customAdapter = new SignalTypeCustomAdapter(languageListView.getContext(), languageStrings, languageSelection);
+//        if (languageSelection == null) {
+//            languageSelection = intent.getIntExtra(EXTRA_SELECTED_LANGUAGE);
+//        }
+        customAdapter = new LanguageCustomAdapter(languageListView.getContext(), languageStrings, languageSelection);
         languageListView.setAdapter(customAdapter);
     }
 
@@ -64,7 +64,7 @@ public class LanguageSettingsActivity extends AppCompatActivity {
     }
 
     private void saveSelectedTypes() {
-        languageSelection = customAdapter.getCurrentSignalTypeSelection();
+        languageSelection = customAdapter.getCurrentLanguageSelection();
 
         Intent resultIntent = new Intent();
         resultIntent.putExtra(EXTRA_SELECTED_LANGUAGE, languageSelection);
