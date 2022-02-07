@@ -175,4 +175,9 @@
     <string name="txt_type_settings_description">Signal types you want to be notified about</string>
     <string name="string_signal_type_settings_title">Signal Types</string>
     <string name="txt_forgot_password">Forgot password?</string>
+    <string name="txt_permission_needed">Permission needed</string>
+    <string name="txt_foreground_location_rationale">If you want to be notified about signals near you the app needs to know your location</string>
+    <string name="txt_i_want_this_feature">I want this feature</string>
+    <string name="txt_no_thanks">No thanks</string>
+    <string name="txt_background_location_rationale">\"If you want to be notified about signals near you even when your location changes significantly while not using the app, it needs to access your location in the background"</string>
 </resources>

@@ -30,6 +30,10 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.databinding.DataBindingUtil;
 import androidx.annotation.NonNull;
@@ -86,7 +90,6 @@ import static org.helpapaw.helpapaw.filtersignal.FilterSignalTypeDialog.EXTRA_SI
 import static org.helpapaw.helpapaw.filtersignal.FilterSignalTypeDialog.FILTER_TAG;
 import static org.helpapaw.helpapaw.filtersignal.FilterSignalTypeDialog.REQUEST_UPDATE_SIGNAL_TYPE_SELECTION;
 
-
 public class SignalsMapFragment extends BaseFragment
         implements SignalsMapContract.View,
         UploadPhotoContract.View,
@@ -97,8 +100,6 @@ public class SignalsMapFragment extends BaseFragment
     public static final String TAG = SignalsMapFragment.class.getSimpleName();
     private static final String MAP_VIEW_STATE = "mapViewSaveState";
 
-    private static final int LOCATION_PERMISSIONS_REQUEST = 1;
-    private static final int BACKGROUND_LOCATION_PERMISSIONS_REQUEST = 2;
     private static final int READ_EXTERNAL_STORAGE_FOR_CAMERA = 4;
     private static final int REQUEST_SIGNAL_DETAILS = 6;
     private static final int REQUEST_CHECK_SETTINGS = 214;
@@ -129,6 +130,9 @@ public class SignalsMapFragment extends BaseFragment
 
     private ISettingsRepository settingsRepository;
 
+    ActivityResultLauncher<String[]> mForegroundPermissionsLauncher;
+    ActivityResultLauncher<String> mBackgroundPermissionLauncher;
+
     public SignalsMapFragment() {
         // Required empty public constructor
     }
@@ -157,15 +161,93 @@ public class SignalsMapFragment extends BaseFragment
             arguments.remove(Signal.KEY_SIGNAL_ID);
         }
 
+        settingsRepository = Injection.getSettingsRepositoryInstance();
+
         //Initialize location api
         initLocationApi();
-        //TODO: get permission for background location
-//        showPermissionDialog(getActivity(), new String[] {Manifest.permission.ACCESS_BACKGROUND_LOCATION}, BACKGROUND_LOCATION_PERMISSIONS_REQUEST);
+
+        askForPermissionsIfNeeded();
     }
 
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
+    private void askForPermissionsIfNeeded() {
+        // First setup the result handlers
+        mForegroundPermissionsLauncher = registerForActivityResult(
+                new ActivityResultContracts.RequestMultiplePermissions(),
+                new ActivityResultCallback<Map<String, Boolean>>() {
+                    @Override
+                    public void onActivityResult(Map<String, Boolean> results) {
+                        for (Boolean granted : results.values()) {
+                            if (granted) {
+                                googleApiClient.disconnect();
+                                googleApiClient.connect();
+                                return;
+                            }
+                        }
+                        // Permission Denied
+                        Toast.makeText(getContext(), R.string.txt_location_permissions_for_map, Toast.LENGTH_SHORT).show();
+                    }
+                });
+        mBackgroundPermissionLauncher = registerForActivityResult(
+                new ActivityResultContracts.RequestPermission(),
+                result -> {
+                    // Do nothing, be happy
+                });
+
+        assert getActivity() != null;
+        // Then check if we have permission for foreground location
+        if (   (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)
+            && (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)   ) {
+            // If we don't and the user hasn't denied the rationale before...
+            if (!settingsRepository.getHasDeniedForegroundLocationRationale()) {
+                // ...check if the system thinks we should show the rationale or it hasn't been shown so far
+                if (   (shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_COARSE_LOCATION))
+                    || (!settingsRepository.getHasShownForegroundLocationRationale())   ) {
+                    settingsRepository.setHasShownForegroundLocationRationale(true);
+                    AlertDialog.Builder alertBuilder = new AlertDialog.Builder(getActivity())
+                            .setTitle(R.string.txt_permission_needed)
+                            .setMessage(R.string.txt_foreground_location_rationale)
+                            .setPositiveButton(R.string.txt_i_want_this_feature, (dialogInterface, i) -> askForForegroundLocationPermission())
+                            .setNegativeButton(R.string.txt_no_thanks, ((dialog, which) -> settingsRepository.setHasDeniedForegroundLocationRationale(true)));
+                    alertBuilder.create().show();
+                }
+                // If not rationale is needed - ask for foreground location directly
+                else {
+                    askForForegroundLocationPermission();
+                }
+            }
+        } else {
+            // If we have foreground location - check if we need background location
+            // It was introduced in API 29 so only bother from there upward
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                // If we already have permissions for foreground locations - ask for background
+                if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_BACKGROUND_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    if (!settingsRepository.getHasDeniedBackgroundLocationRationale()) {
+                        if (   (shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_BACKGROUND_LOCATION))
+                            || (!settingsRepository.getHasShownBackgroundLocationRationale())   ) {
+                            settingsRepository.setHasShownBackgroundLocationRationale(true);
+                            AlertDialog.Builder alertBuilder = new AlertDialog.Builder(getActivity())
+                                    .setTitle(R.string.txt_permission_needed)
+                                    .setMessage(R.string.txt_background_location_rationale)
+                                    .setPositiveButton(R.string.txt_i_want_this_feature, (dialogInterface, i) -> askForBackgroundLocationPermission())
+                                    .setNegativeButton(R.string.txt_no_thanks, ((dialog, which) -> settingsRepository.setHasDeniedBackgroundLocationRationale(true)));
+                            alertBuilder.create().show();
+                        }
+                        else {
+                            askForBackgroundLocationPermission();
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private void askForForegroundLocationPermission() {
+        mForegroundPermissionsLauncher.launch(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION});
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.Q)
+    private void askForBackgroundLocationPermission() {
+        mBackgroundPermissionLauncher.launch(Manifest.permission.ACCESS_BACKGROUND_LOCATION);
     }
 
     @Override
@@ -196,14 +278,13 @@ public class SignalsMapFragment extends BaseFragment
         }
         actionsListener = signalsMapPresenter;
         uploadPhotoActionsListener = signalsMapPresenter;
-        settingsRepository = Injection.getSettingsRepositoryInstance();
 
         setHasOptionsMenu(true);
 
         binding.fabAddSignal.setOnClickListener(getFabAddSignalClickListener());
         binding.viewSendSignal.setOnSignalSendClickListener(getOnSignalSendClickListener());
         binding.viewSendSignal.setOnSignalPhotoClickListener(getOnSignalPhotoClickListener());
-        
+
         return binding.getRoot();
     }
 
@@ -522,13 +603,8 @@ public class SignalsMapFragment extends BaseFragment
             Log.e(TAG, "Context is null, exiting...");
             return;
         }
-        if (   (ContextCompat.checkSelfPermission(cont, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)
-            && (ContextCompat.checkSelfPermission(cont, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)   ) {
-            requestPermissions(
-                    new String[] {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION},
-                    LOCATION_PERMISSIONS_REQUEST
-            );
-        } else {
+        if (   (ContextCompat.checkSelfPermission(cont, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
+            || (ContextCompat.checkSelfPermission(cont, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED)   ) {
             setAddSignalViewVisibility(mVisibilityAddSignal);
             if (signalsGoogleMap != null) {
                 signalsGoogleMap.setMyLocationEnabled(true);
@@ -895,19 +971,6 @@ public class SignalsMapFragment extends BaseFragment
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode) {
-            case LOCATION_PERMISSIONS_REQUEST:
-                for (int grantResult : grantResults) {
-                    if (grantResult == PackageManager.PERMISSION_GRANTED) {
-                        if (signalsGoogleMap != null) {
-                            signalsGoogleMap.setMyLocationEnabled(true);
-                        }
-                        setLastLocation();
-                        return;
-                    }
-                }
-                // Permission Denied
-                Toast.makeText(getContext(), R.string.txt_location_permissions_for_map, Toast.LENGTH_SHORT).show();
-                break;
             case READ_EXTERNAL_STORAGE_FOR_CAMERA:
                 if ((grantResults.length > 0) && (grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
                     uploadPhotoActionsListener.onCameraOptionSelected();

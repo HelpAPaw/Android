@@ -13,6 +13,10 @@ public class SettingsRepository implements ISettingsRepository {
     private final static String LAST_SHOWN_LATITUDE_FIELD = "lastShownLatitude";
     private final static String LAST_SHOWN_LONGITUDE_FIELD = "lastShownLongitude";
     private final static String LAST_SHOWN_ZOOM_FIELD = "lastShownZoom";
+    private final static String HAS_SHOWN_FOREGROUND_LOCATION_RATIONALE = "HAS_SHOWN_FOREGROUND_LOCATION_RATIONALE";
+    private final static String HAS_SHOWN_BACKGROUND_LOCATION_RATIONALE = "HAS_SHOWN_BACKGROUND_LOCATION_RATIONALE";
+    private final static String HAS_DENIED_FOREGROUND_LOCATION_RATIONALE = "HAS_DENIED_FOREGROUND_LOCATION_RATIONALE";
+    private final static String HAS_DENIED_BACKGROUND_LOCATION_RATIONALE = "HAS_DENIED_BACKGROUND_LOCATION_RATIONALE";
     private final static String DEVICE_BACKENDLESS_TOKEN = "deviceBackendlessToken";
 
     private SharedPreferences preferences;
@@ -21,10 +25,7 @@ public class SettingsRepository implements ISettingsRepository {
 
         //for (app) preferences use getDefaultSharedPreferences() (see doc)
         Context context = PawApplication.getContext();
-        this.preferences = context
-                .getSharedPreferences(context
-                        .getString(R.string
-                                .shared_preferences_for_app), context.MODE_PRIVATE);
+        this.preferences = context.getSharedPreferences(context.getString(R.string.shared_preferences_for_app), Context.MODE_PRIVATE);
     }
 
     @Override
@@ -66,7 +67,7 @@ public class SettingsRepository implements ISettingsRepository {
     @Override
     public double getLastShownLatitude() {
         String lat = preferences.getString(LAST_SHOWN_LATITUDE_FIELD, "0");
-        return Double.valueOf(lat);
+        return Double.parseDouble(lat);
     }
 
     @Override
@@ -79,7 +80,7 @@ public class SettingsRepository implements ISettingsRepository {
     @Override
     public double getLastShownLongitude() {
         String longi = preferences.getString(LAST_SHOWN_LONGITUDE_FIELD, "0");
-        return Double.valueOf(longi);
+        return Double.parseDouble(longi);
     }
 
     @Override
@@ -128,8 +129,46 @@ public class SettingsRepository implements ISettingsRepository {
     //Get Backendless device-token from local-preferences
     @Override
     public String getTokenFromPreferences() {
-        String token = preferences.getString(DEVICE_BACKENDLESS_TOKEN, "-1");
-        return token;
+        return preferences.getString(DEVICE_BACKENDLESS_TOKEN, "-1");
     }
 
+    @Override
+    public boolean getHasShownForegroundLocationRationale() {
+        return preferences.getBoolean(HAS_SHOWN_FOREGROUND_LOCATION_RATIONALE, false);
+    }
+
+    @Override
+    public void setHasShownForegroundLocationRationale(boolean newValue) {
+        preferences.edit().putBoolean(HAS_SHOWN_FOREGROUND_LOCATION_RATIONALE, newValue).apply();
+    }
+
+    @Override
+    public boolean getHasShownBackgroundLocationRationale() {
+        return preferences.getBoolean(HAS_SHOWN_BACKGROUND_LOCATION_RATIONALE, false);
+    }
+
+    @Override
+    public void setHasShownBackgroundLocationRationale(boolean newValue) {
+        preferences.edit().putBoolean(HAS_SHOWN_BACKGROUND_LOCATION_RATIONALE, newValue).apply();
+    }
+
+    @Override
+    public boolean getHasDeniedForegroundLocationRationale() {
+        return preferences.getBoolean(HAS_DENIED_FOREGROUND_LOCATION_RATIONALE, false);
+    }
+
+    @Override
+    public void setHasDeniedForegroundLocationRationale(boolean newValue) {
+        preferences.edit().putBoolean(HAS_DENIED_FOREGROUND_LOCATION_RATIONALE, newValue).apply();
+    }
+
+    @Override
+    public boolean getHasDeniedBackgroundLocationRationale() {
+        return preferences.getBoolean(HAS_DENIED_BACKGROUND_LOCATION_RATIONALE, false);
+    }
+
+    @Override
+    public void setHasDeniedBackgroundLocationRationale(boolean newValue) {
+        preferences.edit().putBoolean(HAS_DENIED_BACKGROUND_LOCATION_RATIONALE, newValue).apply();
+    }
 }

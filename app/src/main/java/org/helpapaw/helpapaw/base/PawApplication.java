@@ -155,8 +155,6 @@ public class PawApplication extends MultiDexApplication {
                 .addTag("BackgroundCheckJobService")
                 // start in 15 minutes from now
                 .setInitialDelay(15, TimeUnit.MINUTES)
-                // retry with exponential backoff
-                .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, 3000, TimeUnit.MILLISECONDS)
                 .setConstraints(workerConstraints)
                 .build();
 

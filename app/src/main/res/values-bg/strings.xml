@@ -167,4 +167,9 @@
     <string name="txt_type_settings_description">Типове на сигналите, за които желаете да бъдете известявани</string>
     <string name="string_signal_type_settings_title">Типове на сигнали</string>
     <string name="txt_forgot_password">Забравена парола?</string>
+    <string name="txt_permission_needed">Нужно е позволение</string>
+    <string name="txt_no_thanks">Не, благодаря</string>
+    <string name="txt_i_want_this_feature">Искам тази функционалност</string>
+    <string name="txt_foreground_location_rationale">Ако желаете да бъдете известявани за сигнали близо до вас, приложението има нужда да знае местоположението Ви</string>
+    <string name="txt_background_location_rationale">Ако желаете да бъдете известявани за сигнали близо до вас дори когато местоположението ви се променя значително докато не използвате приложението, то има нужда от достъп до местоположението Ви във фонов режим</string>
 </resources>
