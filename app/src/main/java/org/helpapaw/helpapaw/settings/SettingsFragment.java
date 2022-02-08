@@ -26,13 +26,14 @@ import static android.app.Activity.RESULT_OK;
 
 import static org.helpapaw.helpapaw.data.repositories.BackendlessPushNotificationsRepository.MAX_PADDING;
 import static org.helpapaw.helpapaw.data.repositories.BackendlessPushNotificationsRepository.SIGNAL_TYPES_SIZE;
-import static org.helpapaw.helpapaw.settings.LanguageSettingsActivity.EXTRA_SELECTED_LANGUAGE;
-import static org.helpapaw.helpapaw.settings.LanguageSettingsActivity.REQUEST_CHANGE_LANGUAGE;
 import static org.helpapaw.helpapaw.settings.SignalTypeSettingsActivity.EXTRA_SELECTED_TYPES;
 import static org.helpapaw.helpapaw.settings.SignalTypeSettingsActivity.REQUEST_CHANGE_SIGNAL_TYPES;
 
 
 public class SettingsFragment extends BaseFragment implements SettingsContract.View {
+
+    private static final int REQUEST_CHANGE_LANGUAGE = 2;
+    protected static final String EXTRA_SELECTED_LANGUAGE = "selected_language";
 
     private int radiusMin;
     private int radiusMax;
@@ -184,8 +185,7 @@ public class SettingsFragment extends BaseFragment implements SettingsContract.V
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getContext(), LanguageSettingsActivity.class);
-                intent.putExtra(EXTRA_SELECTED_LANGUAGE,
-                        Utils.convertIntegerToBooleanArray(0, languages.length));
+                intent.putExtra(EXTRA_SELECTED_LANGUAGE, currentlySelectedLanguage);
 
                 startActivityForResult(intent, REQUEST_CHANGE_LANGUAGE);
             }
@@ -205,6 +205,14 @@ public class SettingsFragment extends BaseFragment implements SettingsContract.V
 
                     actionsListener.onSignalTypesChange(currentlySelectedTypesInt);
                 }
+            }
+        }
+
+        else if (requestCode == REQUEST_CHANGE_LANGUAGE) {
+            if (resultCode == RESULT_OK) {
+                currentlySelectedLanguage = data.getIntExtra(EXTRA_SELECTED_LANGUAGE, 0);
+                setLanguage(currentlySelectedLanguage);
+                actionsListener.onLanguageChange(getActivity(), currentlySelectedLanguage);
             }
         }
     }

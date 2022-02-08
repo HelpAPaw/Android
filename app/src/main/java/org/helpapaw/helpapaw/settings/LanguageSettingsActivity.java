@@ -1,5 +1,6 @@
 package org.helpapaw.helpapaw.settings;
 
+import static org.helpapaw.helpapaw.settings.SettingsFragment.EXTRA_SELECTED_LANGUAGE;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.ListView;
@@ -11,15 +12,11 @@ import androidx.databinding.DataBindingUtil;
 
 import org.helpapaw.helpapaw.R;
 import org.helpapaw.helpapaw.databinding.ActivityLanguageSettingsBinding;
-import org.helpapaw.helpapaw.filtersignal.SignalTypeCustomAdapter;
 
 
 public class LanguageSettingsActivity extends AppCompatActivity {
 
-    protected static final int REQUEST_CHANGE_LANGUAGE = 2;
-    public static final String EXTRA_SELECTED_LANGUAGE = "selected_language";
-
-    private int languageSelection;
+    private int languageSelection = -1;
     private LanguageCustomAdapter customAdapter;
 
     ActivityLanguageSettingsBinding binding;
@@ -43,27 +40,27 @@ public class LanguageSettingsActivity extends AppCompatActivity {
 
         ListView languageListView = findViewById(R.id.language_list_view);
         String[] languageStrings = getResources().getStringArray(R.array.languages_items);
-//        if (languageSelection == null) {
-//            languageSelection = intent.getIntExtra(EXTRA_SELECTED_LANGUAGE);
-//        }
+        if (languageSelection == -1) {
+            languageSelection = intent.getIntExtra(EXTRA_SELECTED_LANGUAGE, 0);
+        }
         customAdapter = new LanguageCustomAdapter(languageListView.getContext(), languageStrings, languageSelection);
         languageListView.setAdapter(customAdapter);
     }
 
     @Override
     public void onBackPressed() {
-        saveSelectedTypes();
+        saveSelectedLanguage();
         super.onBackPressed();
     }
 
     @Override
     public boolean onSupportNavigateUp() {
-        saveSelectedTypes();
+        saveSelectedLanguage();
         finish();
         return true;
     }
 
-    private void saveSelectedTypes() {
+    private void saveSelectedLanguage() {
         languageSelection = customAdapter.getCurrentLanguageSelection();
 
         Intent resultIntent = new Intent();

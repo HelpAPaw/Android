@@ -13,13 +13,13 @@ import org.helpapaw.helpapaw.R;
 public class LanguageCustomAdapter extends BaseAdapter {
 
     private final Context context;
-    private final String[] language;
+    private final String[] languages;
 
     private int currentLanguageSelection;
 
-    public LanguageCustomAdapter(Context context, String[] signalType, int languageSelection) {
+    public LanguageCustomAdapter(Context context, String[] languages, int languageSelection) {
         this.context = context;
-        this.language = signalType;
+        this.languages = languages;
         this.currentLanguageSelection = languageSelection ;
     }
 
@@ -35,12 +35,12 @@ public class LanguageCustomAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return language.length;
+        return languages.length;
     }
 
     @Override
     public Object getItem(int position) {
-        return language[position];
+        return languages[position];
     }
 
     @Override
@@ -62,17 +62,21 @@ public class LanguageCustomAdapter extends BaseAdapter {
             // the getTag returns the viewHolder object set as a tag to the view
             holder = (ViewHolder)convertView.getTag();
         }
-        holder.textView.setText(language[position]);
+        holder.textView.setText(languages[position]);
         if (position == currentLanguageSelection) {
             holder.radioButton.setChecked(true);
+        }
+        else {
+            holder.radioButton.setChecked(false);
         }
         holder.radioButton.setTag(position);
 
         holder.radioButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Integer pos = (Integer)  holder.radioButton.getTag();
+                Integer position = (Integer)  holder.radioButton.getTag();
                 currentLanguageSelection = position;
+                notifyDataSetChanged();
             }
         });
         return convertView;
@@ -82,9 +86,9 @@ public class LanguageCustomAdapter extends BaseAdapter {
         return this.currentLanguageSelection;
     }
 
-    public void setCurrentLanguageSelection(int currentLanguageSelection) {
-        this.currentLanguageSelection = currentLanguageSelection;
-    }
+//    public void setCurrentLanguageSelection(int currentLanguageSelection) {
+//        this.currentLanguageSelection = currentLanguageSelection;
+//    }
 
     private static class ViewHolder {
         protected RadioButton radioButton;

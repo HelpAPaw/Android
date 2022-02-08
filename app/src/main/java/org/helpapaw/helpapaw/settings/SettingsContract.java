@@ -1,5 +1,7 @@
 package org.helpapaw.helpapaw.settings;
 
+import android.app.Activity;
+
 public interface SettingsContract {
     interface View {
         void setRadius(int radius);
@@ -20,7 +22,7 @@ public interface SettingsContract {
 
         void onSignalTypesChange(int signalTypes);
 
-        void onLanguageChange(int languageIndex);
+        void onLanguageChange(Activity activity, int languageIndex);
 
         void onCloseSettingsScreen();
     }
