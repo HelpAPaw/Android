@@ -410,6 +410,8 @@ public class SignalDetailsFragment extends BaseFragment
 
     @Override
     public void closeScreenWithResult(Signal signal) {
+        if (getActivity() == null) return;
+
         Intent data = new Intent();
         data.putExtra("signal", signal);
         getActivity().setResult(Activity.RESULT_OK, data);

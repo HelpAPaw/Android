@@ -64,6 +64,7 @@
                                 android:layout_marginStart="4dp"
                                 android:layout_marginTop="4dp"
                                 android:drawableStart="@drawable/ic_cloud_upload_24"
+                                android:drawablePadding="4dp"
                                 android:text="@string/txt_upload_photo"
                                 android:visibility="invisible" />
                         </FrameLayout>
