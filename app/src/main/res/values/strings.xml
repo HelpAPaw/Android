@@ -180,4 +180,6 @@
     <string name="txt_i_want_this_feature">I want this feature</string>
     <string name="txt_no_thanks">No thanks</string>
     <string name="txt_background_location_rationale">\"If you want to be notified about signals near you even when your location changes significantly while not using the app, it needs to access your location in the background"</string>
+    <string name="txt_disable_hibernation">Disable hibernation</string>
+    <string name="txt_disable_hibernation_explanation">Help a Paw is only used when needed. Therefore there can be prolonged periods in which you don\'t interact with the app. However, in order to continue checking for new signals around you it needs to keep its permissions even if the system considers it \'unused\'. So, if you want to continue receiving notifications about new signals, disable the option \'Remove permissions if app is unused\'.</string>
 </resources>

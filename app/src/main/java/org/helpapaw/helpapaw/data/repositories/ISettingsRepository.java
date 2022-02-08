@@ -41,4 +41,6 @@ public interface ISettingsRepository {
     void setHasDeniedForegroundLocationRationale(boolean newValue);
     boolean getHasDeniedBackgroundLocationRationale();
     void setHasDeniedBackgroundLocationRationale(boolean newValue);
+    boolean getHasShownHibernationExemptionDialog();
+    void setHasShownHibernationExemptionDialog(boolean newValue);
 }

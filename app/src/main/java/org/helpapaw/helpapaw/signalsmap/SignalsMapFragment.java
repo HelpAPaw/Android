@@ -1,5 +1,9 @@
 package org.helpapaw.helpapaw.signalsmap;
 
+import static androidx.core.content.UnusedAppRestrictionsConstants.API_30;
+import static androidx.core.content.UnusedAppRestrictionsConstants.API_30_BACKPORT;
+import static androidx.core.content.UnusedAppRestrictionsConstants.API_31;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -35,6 +39,8 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.IntentCompat;
+import androidx.core.content.PackageManagerCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -69,10 +75,12 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.VisibleRegion;
+import com.google.common.util.concurrent.ListenableFuture;
 
 import org.helpapaw.helpapaw.R;
 import org.helpapaw.helpapaw.authentication.AuthenticationActivity;
 import org.helpapaw.helpapaw.base.BaseFragment;
+import org.helpapaw.helpapaw.base.PawApplication;
 import org.helpapaw.helpapaw.base.Presenter;
 import org.helpapaw.helpapaw.base.PresenterManager;
 import org.helpapaw.helpapaw.data.models.Signal;
@@ -102,6 +110,7 @@ public class SignalsMapFragment extends BaseFragment
 
     private static final int READ_EXTERNAL_STORAGE_FOR_CAMERA = 4;
     private static final int REQUEST_SIGNAL_DETAILS = 6;
+    private static final int REQUEST_HIBERNATION_EXEMPTION = 7;
     private static final int REQUEST_CHECK_SETTINGS = 214;
     private static final String VIEW_ADD_SIGNAL = "view_add_signal";
     private static final int PADDING_TOP = 190;
@@ -237,6 +246,9 @@ public class SignalsMapFragment extends BaseFragment
                         }
                     }
                 }
+                else {
+                    askForHibernationExemptionIfNeeded();
+                }
             }
         }
     }
@@ -248,6 +260,48 @@ public class SignalsMapFragment extends BaseFragment
     @RequiresApi(api = Build.VERSION_CODES.Q)
     private void askForBackgroundLocationPermission() {
         mBackgroundPermissionLauncher.launch(Manifest.permission.ACCESS_BACKGROUND_LOCATION);
+    }
+
+    private void askForHibernationExemptionIfNeeded() {
+        if (!settingsRepository.getHasShownHibernationExemptionDialog() && (getActivity() != null)) {
+            //https://developer.android.com/topic/performance/app-hibernation
+            ListenableFuture<Integer> future = PackageManagerCompat.getUnusedAppRestrictionsStatus(getActivity());
+            future.addListener(() -> {
+                try {
+                    switch (future.get()) {
+                        case API_30_BACKPORT:
+                        case API_30:
+                        case API_31:
+                        {
+                            askForHibernationExemption();
+                        }
+                    }
+                }
+                catch (Exception ignored) {}
+
+            }, ContextCompat.getMainExecutor(getActivity()));
+        }
+    }
+
+    private void askForHibernationExemption() {
+        // If your app works primarily in the background, you can ask the user
+        // to disable these restrictions. Check if you have already asked the
+        // user to disable these restrictions. If not, you can show a message to
+        // the user explaining why permission auto-reset or app hibernation should be
+        // disabled. Then, redirect the user to the page in system settings where they
+        // can disable the feature.
+        assert getActivity() != null;
+        AlertDialog.Builder alertBuilder = new AlertDialog.Builder(getActivity())
+                .setTitle(R.string.txt_disable_hibernation)
+                .setMessage(R.string.txt_disable_hibernation_explanation)
+                .setPositiveButton(android.R.string.ok, (dialogInterface, i) -> {
+                    Intent intent = IntentCompat.createManageUnusedAppRestrictionsIntent(PawApplication.getContext(), PawApplication.getContext().getPackageName());
+                    // You must use startActivityForResult(), not startActivity(), even if you don't use the result code returned in onActivityResult().
+                    startActivityForResult(intent, REQUEST_HIBERNATION_EXEMPTION);
+                })
+                .setNegativeButton(R.string.txt_cancel, null);
+        alertBuilder.create().show();
+        settingsRepository.setHasShownHibernationExemptionDialog(true);
     }
 
     @Override

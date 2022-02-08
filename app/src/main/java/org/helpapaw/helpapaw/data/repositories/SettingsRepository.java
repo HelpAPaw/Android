@@ -17,9 +17,10 @@ public class SettingsRepository implements ISettingsRepository {
     private final static String HAS_SHOWN_BACKGROUND_LOCATION_RATIONALE = "HAS_SHOWN_BACKGROUND_LOCATION_RATIONALE";
     private final static String HAS_DENIED_FOREGROUND_LOCATION_RATIONALE = "HAS_DENIED_FOREGROUND_LOCATION_RATIONALE";
     private final static String HAS_DENIED_BACKGROUND_LOCATION_RATIONALE = "HAS_DENIED_BACKGROUND_LOCATION_RATIONALE";
+    private final static String HAS_SHOWN_HIBERNATION_EXEMPTION_DIALOG = "HAS_SHOWN_HIBERNATION_EXEMPTION_DIALOG";
     private final static String DEVICE_BACKENDLESS_TOKEN = "deviceBackendlessToken";
 
-    private SharedPreferences preferences;
+    private final SharedPreferences preferences;
 
     public SettingsRepository() {
 
@@ -170,5 +171,15 @@ public class SettingsRepository implements ISettingsRepository {
     @Override
     public void setHasDeniedBackgroundLocationRationale(boolean newValue) {
         preferences.edit().putBoolean(HAS_DENIED_BACKGROUND_LOCATION_RATIONALE, newValue).apply();
+    }
+
+    @Override
+    public boolean getHasShownHibernationExemptionDialog() {
+        return preferences.getBoolean(HAS_SHOWN_HIBERNATION_EXEMPTION_DIALOG, false);
+    }
+
+    @Override
+    public void setHasShownHibernationExemptionDialog(boolean newValue) {
+        preferences.edit().putBoolean(HAS_SHOWN_HIBERNATION_EXEMPTION_DIALOG, newValue).apply();
     }
 }
