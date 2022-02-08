@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="radius_value_min">1</integer>
+    <integer name="radius_value_max">1000</integer>
+    <integer name="timeout_value_min">1</integer>
+</resources>

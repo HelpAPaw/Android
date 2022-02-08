@@ -29,11 +29,12 @@ import static org.helpapaw.helpapaw.data.repositories.BackendlessPushNotificatio
 import static org.helpapaw.helpapaw.settings.SignalTypeSettingsActivity.EXTRA_SELECTED_TYPES;
 import static org.helpapaw.helpapaw.settings.SignalTypeSettingsActivity.REQUEST_CHANGE_SIGNAL_TYPES;
 
+
 public class SettingsFragment extends BaseFragment implements SettingsContract.View {
 
-    private static final int RADIUS_VALUE_MIN = 1;
-    private static final int TIMEOUT_VALUE_MIN = 1;
-
+    private int radiusMin;
+    private int radiusMax;
+    private int timeoutMin;
     private int currentlySelectedTypesInt = Integer.MAX_VALUE;
     private String[] signalTypeStrings;
 
@@ -47,6 +48,13 @@ public class SettingsFragment extends BaseFragment implements SettingsContract.V
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
+
+        if (getContext() != null) {
+            radiusMin = getContext().getResources().getInteger(R.integer.radius_value_min);
+            radiusMax = getContext().getResources().getInteger(R.integer.radius_value_max);
+            timeoutMin = getContext().getResources().getInteger(R.integer.timeout_value_min);
+        }
+
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
     }
@@ -65,6 +73,8 @@ public class SettingsFragment extends BaseFragment implements SettingsContract.V
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_settings, container, false);
+        binding.radiusValue.setMax(radiusMax);
+        
         signalTypeStrings = getResources().getStringArray(R.array.signal_types_items);
 
         settingsPresenter = new SettingsPresenter(this);
@@ -107,11 +117,12 @@ public class SettingsFragment extends BaseFragment implements SettingsContract.V
         return new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                if (progress < RADIUS_VALUE_MIN) {
-                    seekBar.setProgress(RADIUS_VALUE_MIN);
+                if (progress < radiusMin) {
+                    seekBar.setProgress(radiusMin);
                 }
                 else {
-                    updateRadius(progress);
+                    seekBar.setProgress(progress);
+                    updateRadius(settingsPresenter.scaleLogarithmic(progress));
                 }
             }
 
@@ -121,7 +132,7 @@ public class SettingsFragment extends BaseFragment implements SettingsContract.V
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                actionsListener.onRadiusChange(seekBar.getProgress());
+                actionsListener.onRadiusChange(settingsPresenter.scaleLogarithmic(seekBar.getProgress()));
             }
         };
     }
@@ -130,8 +141,8 @@ public class SettingsFragment extends BaseFragment implements SettingsContract.V
         return new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                if (progress < TIMEOUT_VALUE_MIN) {
-                    seekBar.setProgress(TIMEOUT_VALUE_MIN);
+                if (progress < timeoutMin) {
+                    seekBar.setProgress(timeoutMin);
                 }
                 else {
                     updateTimeout(progress);
@@ -181,7 +192,7 @@ public class SettingsFragment extends BaseFragment implements SettingsContract.V
 
     @Override
     public void setRadius(int radius) {
-        binding.radiusValue.setProgress(radius);
+        binding.radiusValue.setProgress(settingsPresenter.unscaleLogarithmic(radius));
         updateRadius(radius);
     }
 
@@ -201,22 +212,22 @@ public class SettingsFragment extends BaseFragment implements SettingsContract.V
     }
 
     private void updateRadius(int value) {
-        if (value == 1) {
-            String result = String.format(Locale.getDefault(), getString(R.string.radius_output_single), value);
-            binding.radiusOutput.setText(result);
+        String result;
+        if (value == radiusMin) {
+            result = String.format(Locale.getDefault(), getString(R.string.radius_output_single), value);
         } else {
-            String result = String.format(Locale.getDefault(), getString(R.string.radius_output), value);
-            binding.radiusOutput.setText(result);
+            result = String.format(Locale.getDefault(), getString(R.string.radius_output), value);
         }
+        binding.radiusOutput.setText(result);
     }
 
     private void updateTimeout(int value) {
-        if (value == 1) {
-            String result = String.format(Locale.getDefault(), getString(R.string.timeout_output_single), value);
-            binding.timeoutOutput.setText(result);
+        String result;
+        if (value == timeoutMin) {
+            result = String.format(Locale.getDefault(), getString(R.string.timeout_output_single), value);
         } else {
-            String result = String.format(Locale.getDefault(), getString(R.string.timeout_output), value);
-            binding.timeoutOutput.setText(result);
+            result = String.format(Locale.getDefault(), getString(R.string.timeout_output), value);
         }
+        binding.timeoutOutput.setText(result);
     }
 }

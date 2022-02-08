@@ -285,6 +285,13 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
     }
 
     @Override
+    public void onNavigateButtonClicked() {
+        double latitude = signal.getLatitude();
+        double longitude = signal.getLongitude();
+        getView().openNavigation(latitude, longitude);
+    }
+
+    @Override
     public void onCallButtonClicked() {
         String phoneNumber = signal.getAuthorPhone();
         getView().openNumberDialer(phoneNumber);

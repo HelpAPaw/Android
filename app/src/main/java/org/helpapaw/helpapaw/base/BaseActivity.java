@@ -33,6 +33,7 @@ import org.helpapaw.helpapaw.mynotifications.MyNotificationsActivity;
 import org.helpapaw.helpapaw.privacypolicy.PrivacyPolicyActivity;
 import org.helpapaw.helpapaw.reusable.AlertDialogFragment;
 import org.helpapaw.helpapaw.settings.SettingsActivity;
+import org.helpapaw.helpapaw.share.ShareActivity;
 import org.helpapaw.helpapaw.utils.Injection;
 import org.helpapaw.helpapaw.utils.SharingUtils;
 import org.helpapaw.helpapaw.utils.Utils;
@@ -118,6 +119,12 @@ public abstract class BaseActivity extends AppCompatActivity {
                         menuItem.setChecked(true);
                         Intent aboutIntent = new Intent(BaseActivity.this, AboutActivity.class);
                         startActivity(aboutIntent);
+                        break;
+
+                    case R.id.nav_item_share:
+                        menuItem.setChecked(true);
+                        Intent shareIntent = new Intent(BaseActivity.this, ShareActivity.class);
+                        startActivity(shareIntent);
                         break;
 
                     case R.id.nav_item_privacy_policy:
