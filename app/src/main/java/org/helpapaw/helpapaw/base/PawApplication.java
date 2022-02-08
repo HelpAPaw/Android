@@ -1,5 +1,6 @@
 package org.helpapaw.helpapaw.base;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.StrictMode;
@@ -18,6 +19,7 @@ import com.google.firebase.analytics.FirebaseAnalytics;
 import org.helpapaw.helpapaw.R;
 import org.helpapaw.helpapaw.data.user.UserManager;
 import org.helpapaw.helpapaw.utils.Injection;
+import org.helpapaw.helpapaw.utils.LocaleUtils;
 import org.helpapaw.helpapaw.utils.services.BackgroundCheckWorker;
 
 import java.util.concurrent.TimeUnit;
@@ -31,11 +33,14 @@ public class PawApplication extends MultiDexApplication {
 
     public static final String APP_OPEN_COUNTER = "APP_OPEN_COUNTER_KEY";
     public static final int APP_OPENINGS_TO_ASK_FOR_SHARE = 10;
+    private final static String LANGUAGE_FIELD = "language";
 
     private static final String IS_TEST_ENVIRONMENT_KEY = "IS_TEST_ENVIRONMENT_KEY";
 
     private static Boolean isTestEnvironment;
     private static PawApplication pawApplication;
+
+    private SharedPreferences preferences;
 
     @Override
     protected void attachBaseContext(Context context) {
@@ -73,7 +78,35 @@ public class PawApplication extends MultiDexApplication {
         // After APP_OPEN_MAX_COUNTER the counter will be set to 0 again
         // and the user will receive a reminder to share the application.
         updateApplicationCounter();
+
+//        this.preferences = this.getSharedPreferences(
+//                this.getString(R.string.shared_preferences_for_app), this.MODE_PRIVATE);
+//        Resources resources = this.getResources();
+//        Locale current = getResources().getConfiguration().locale;
+//
+//        int language = preferences.getInt(LANGUAGE_FIELD, -1);
+//        switch (language) {
+//            case 0: setLocale("en"); break;
+//            case 1: setLocale("bg"); break;
+//            default: setLocale(current.getDisplayLanguage()); break;
+//
+//        }
+
+        initAppLanguage(this);
     }
+
+    public void initAppLanguage(Context context) {
+        LocaleUtils.initialize(context, LocaleUtils.getSelectedLanguageId());
+    }
+
+//    public void setLocale(String languageCode) {
+//        Locale locale = new Locale(languageCode);
+//        Locale.setDefault(locale);
+//        Resources resources = this.getResources();
+//        Configuration config = resources.getConfiguration();
+//        config.setLocale(locale);
+//        resources.updateConfiguration(config, resources.getDisplayMetrics());
+//    }
 
     private void updateApplicationCounter() {
         SharedPreferences prefs = getSharedPreferences("HelpAPaw", MODE_PRIVATE);

@@ -143,6 +143,10 @@
             android:parentActivityName=".settings.SettingsActivity"
             android:screenOrientation="portrait"  />
         <activity
+            android:name=".settings.LanguageSettingsActivity"
+            android:parentActivityName=".settings.SettingsActivity"
+            android:screenOrientation="portrait"  />
+        <activity
             android:name=".privacypolicy.PrivacyPolicyActivity"
             android:parentActivityName=".signalsmap.SignalsMapActivity"/>
 
