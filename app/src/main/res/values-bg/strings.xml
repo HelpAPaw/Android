@@ -96,6 +96,12 @@
     <string name="txt_delete_notifications_dialog">Сигурни ли сте, че искате да изтриете всички известия?</string>
     <string name="string_about_contact">Свържете се с нас</string>
     <string name="string_about_milen">© Милен Маринов 2022</string>
+    <string name="string_share_text">Харесва ли ви приложението? Споделете го с приятели!</string>
+    <string name="string_share_app_text">Искате да помагате на животните? Вижте това приложение: %s</string>
+    <string name="string_share_app_reminder_title">Споделете приложението!</string>
+    <string name="string_share_app_reminder_message">Забелязахме, че често изполвате приложението. Искате ли да го споделите с приятели?</string>
+    <string name="string_share_button">Сподели</string>
+    <string name="string_share_later">По-късно</string>
     <string name="error_empty_signal_response">Получихме празен отговор! Може би сигналът не същестува вече!?</string>
     <string name="txt_channel_description_help_needed">Показва сигналите за животни в близост до мен, които се нуждаят от спешна помощ</string>
     <string name="txt_channel_description_somebody_on_the_way">Показва сигналите, на които някой вече се е отзовал, но са все още неразрешени</string>
