@@ -16,5 +16,7 @@
               android:title="@string/text_privacy_policy"/>
         <item android:id="@+id/nav_item_about"
               android:title="@string/text_about"/>
+        <item android:id="@+id/nav_item_share"
+            android:title="@string/text_share"/>
     </group>
 </menu>
