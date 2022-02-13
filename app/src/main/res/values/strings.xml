@@ -101,7 +101,7 @@
     <string name="txt_new_status_icon">New status icon</string>
     <string name="string_about_title">About</string>
     <string name="string_about_contact">Contact us</string>
-    <string name="string_about_milen">© Milen Marinov 2021</string>
+    <string name="string_about_milen">© Milen Marinov 2022</string>
     <string name="string_share_text">Do you like the application? Share it with your friends!</string>
     <string name="string_share_app_text">Do you want ot help animals in need? Check out this app: %s</string>
     <string name="string_share_app_reminder_title">Share the application!</string>
@@ -184,4 +184,11 @@
     <string name="txt_type_settings_description">Signal types you want to be notified about</string>
     <string name="string_signal_type_settings_title">Signal Types</string>
     <string name="txt_forgot_password">Forgot password?</string>
+    <string name="txt_permission_needed">Permission needed</string>
+    <string name="txt_foreground_location_rationale">If you want to be notified about signals near you the app needs to know your location</string>
+    <string name="txt_i_want_this_feature">I want this feature</string>
+    <string name="txt_no_thanks">No thanks</string>
+    <string name="txt_background_location_rationale">\"If you want to be notified about signals near you even when your location changes significantly while not using the app, it needs to access your location in the background"</string>
+    <string name="txt_disable_hibernation">Disable hibernation</string>
+    <string name="txt_disable_hibernation_explanation">Help a Paw is only used when needed. Therefore there can be prolonged periods in which you don\'t interact with the app. However, in order to continue checking for new signals around you it needs to keep its permissions even if the system considers it \'unused\'. So, if you want to continue receiving notifications about new signals, disable the option \'Remove permissions if app is unused\'.</string>
 </resources>

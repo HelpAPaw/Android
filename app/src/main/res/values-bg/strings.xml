@@ -85,23 +85,17 @@
     <string name="txt_user_changed_status_to">%1$s промени статуса на \'%2$s\'</string>
     <string name="txt_new_status_icon">Икона на новия статус</string>
     <string name="text_my_signals">Моите Сигнали</string>
-    <string name="no_signals_message">Вие нямате сигнали.</string>
+    <string name="no_signals_message">Вие нямате сигнали</string>
     <string-array name="my_signal_items">
         <item>Подадени Сигнали</item>
         <item>Коментирани Сигнали</item>
     </string-array>
     <string name="string_about_title">Относно</string>
     <string name="text_my_notifications">Моите Известия</string>
-    <string name="no_notifications_message">Вие нямате известия.</string>
+    <string name="no_notifications_message">Вие нямате известия</string>
     <string name="txt_delete_notifications_dialog">Сигурни ли сте, че искате да изтриете всички известия?</string>
     <string name="string_about_contact">Свържете се с нас</string>
-    <string name="string_about_milen">© Милен Маринов 2021</string>
-    <string name="string_share_text">Харесва ли ви приложението? Споделете го с приятели!</string>
-    <string name="string_share_app_text">Искате да помагате на животните? Вижте това приложение: %s</string>
-    <string name="string_share_app_reminder_title">Споделете приложението!</string>
-    <string name="string_share_app_reminder_message">Забелязахме, че често изполвате приложението. Искате ли да го споделите с приятели?</string>
-    <string name="string_share_button">Сподели</string>
-    <string name="string_share_later">По-късно</string>
+    <string name="string_about_milen">© Милен Маринов 2022</string>
     <string name="error_empty_signal_response">Получихме празен отговор! Може би сигналът не същестува вече!?</string>
     <string name="txt_channel_description_help_needed">Показва сигналите за животни в близост до мен, които се нуждаят от спешна помощ</string>
     <string name="txt_channel_description_somebody_on_the_way">Показва сигналите, на които някой вече се е отзовал, но са все още неразрешени</string>
@@ -137,7 +131,7 @@
     <string name="text_settings">Настройки</string>
     <string name="txt_radius">РАДИУС</string>
     <string name="txt_signal_timeout">ВРЕМЕТРАЕНЕ НА СИГНАЛИТЕ</string>
-    <string name="txt_radius_description">Областта около текущото ви местоположение във всеки един момент, за която искате да бъдете известявани в случай на нови сигнали</string>
+    <string name="txt_radius_description">Областта около текущото Ви местоположение във всеки един момент, за която искате да бъдете известявани в случай на нови сигнали</string>
     <string name="txt_timeout_description">Колко да са стари сигналите, за които бивате известявани</string>
     <string name="radius_output">%d километра</string>
     <string name="radius_output_single">%d километър</string>
@@ -175,4 +169,11 @@
     <string name="txt_type_settings_description">Типове на сигналите, за които желаете да бъдете известявани</string>
     <string name="string_signal_type_settings_title">Типове на сигнали</string>
     <string name="txt_forgot_password">Забравена парола?</string>
+    <string name="txt_permission_needed">Нужно е позволение</string>
+    <string name="txt_no_thanks">Не, благодаря</string>
+    <string name="txt_i_want_this_feature">Искам тази функционалност</string>
+    <string name="txt_foreground_location_rationale">Ако желаете да бъдете известявани за сигнали близо до вас, приложението има нужда да знае местоположението Ви</string>
+    <string name="txt_background_location_rationale">Ако желаете да бъдете известявани за сигнали близо до вас дори когато местоположението Ви се променя значително докато не използвате приложението, то има нужда от достъп до местоположението Ви във фонов режим</string>
+    <string name="txt_disable_hibernation">Деактивирайте хибернацията</string>
+    <string name="txt_disable_hibernation_explanation">Help a Paw се използва само при нужда. Затова може да има дълги периоди, в които не взаимодействате с приложението. За да продължи да проверява за нови сигнали около вас обаче, то има нужда да запази разрешенията си, дори ако системата го смята за \'неизползвано\'. Затова, ако желаете да продължите да получавате известия за нови сигнали, деактивирайте опцията \'Премахване на разрешенията, ако приложението не се използва\'.</string>
 </resources>

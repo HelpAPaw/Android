@@ -181,4 +181,46 @@ public class PawApplication extends MultiDexApplication {
             }
         });
     }
+
+    public static PawApplication getContext() {
+        return pawApplication;
+    }
+
+    public static Boolean getIsTestEnvironment() {
+        return isTestEnvironment;
+    }
+
+    public static void setIsTestEnvironment(Boolean isTestEnvironment) {
+        PawApplication.isTestEnvironment = isTestEnvironment;
+        pawApplication.saveIsTestEnvironment(isTestEnvironment);
+    }
+
+    private Boolean loadIsTestEnvironment() {
+        SharedPreferences prefs = getSharedPreferences("HelpAPaw", MODE_PRIVATE);
+        return prefs.getBoolean(IS_TEST_ENVIRONMENT_KEY, false);
+    }
+
+    private void saveIsTestEnvironment(Boolean isTestEnvironment) {
+        SharedPreferences prefs = pawApplication.getSharedPreferences("HelpAPaw", MODE_PRIVATE);
+        prefs.edit().putBoolean(IS_TEST_ENVIRONMENT_KEY, isTestEnvironment).apply();
+    }
+
+    private void scheduleBackgroundChecks() {
+        // constraints that need to be satisfied for the job to run
+        Constraints workerConstraints = new Constraints.Builder()
+                //Network connectivity required
+                .setRequiredNetworkType(NetworkType.CONNECTED)
+                .build();
+
+        PeriodicWorkRequest workRequest = new PeriodicWorkRequest.Builder(BackgroundCheckWorker.class, 15, TimeUnit.MINUTES)
+                // uniquely identifies the job
+                .addTag("BackgroundCheckJobService")
+                // start in 15 minutes from now
+                .setInitialDelay(15, TimeUnit.MINUTES)
+                .setConstraints(workerConstraints)
+                .build();
+
+        WorkManager.getInstance(this)
+                .enqueueUniquePeriodicWork("BackgroundCheckJobService", ExistingPeriodicWorkPolicy.REPLACE, workRequest);
+    }
 }

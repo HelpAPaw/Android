@@ -1,10 +1,13 @@
 package org.helpapaw.helpapaw.utils.services;
 
+import static android.content.Context.LOCATION_SERVICE;
+
 import android.Manifest;
-import android.app.NotificationManager;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.location.LocationManager;
+
 import androidx.annotation.NonNull;
 import androidx.concurrent.futures.CallbackToFutureAdapter;
 import androidx.core.content.ContextCompat;
@@ -13,10 +16,6 @@ import androidx.work.WorkerParameters;
 
 import android.util.Log;
 
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.common.util.concurrent.ListenableFuture;
 
 import org.helpapaw.helpapaw.R;
@@ -30,7 +29,6 @@ import org.helpapaw.helpapaw.utils.Injection;
 import org.helpapaw.helpapaw.utils.NotificationUtils;
 import org.helpapaw.helpapaw.utils.Utils;
 
-import java.util.HashSet;
 import java.util.List;
 
 import static org.helpapaw.helpapaw.data.models.Signal.SOLVED;
@@ -45,10 +43,6 @@ public class BackgroundCheckWorker extends ListenableWorker {
     private ReceivedNotificationsRepository notificationDatabase;
 
     public static final String TAG = BackgroundCheckWorker.class.getSimpleName();
-    static final String CURRENT_NOTIFICATION_IDS = "CurrentNotificationIds";
-
-    HashSet<String> mCurrentNotificationIds = new HashSet<>();
-    NotificationManager mNotificationManager;
 
     /**
      * @param appContext   The application {@link Context}
@@ -57,45 +51,38 @@ public class BackgroundCheckWorker extends ListenableWorker {
     public BackgroundCheckWorker(@NonNull Context appContext, @NonNull WorkerParameters workerParams) {
         super(appContext, workerParams);
     }
-//    SharedPreferences mSharedPreferences;
 
     @NonNull
     @Override
     public ListenableFuture<ListenableWorker.Result> startWork() {
+        Log.d(TAG, "onStartJob called");
+
         signalsDatabase = SignalsDatabase.getDatabase(getApplicationContext());
         notificationDatabase = Injection.getReceivedNotificationsRepositoryInstance();
 
-        Log.d(TAG, "onStartJob called");
-
-        mNotificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
-//        mSharedPreferences = getApplicationContext().getSharedPreferences(TAG, Context.MODE_PRIVATE);
-
         // Do some work here
         return CallbackToFutureAdapter.getFuture(completer -> {
-            if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            FusedLocationProviderClient mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getApplicationContext());
-            mFusedLocationClient.getLastLocation()
-                    .addOnSuccessListener(new OnSuccessListener<Location>() {
-                        @Override
-                        public void onSuccess(Location location) {
-                            //Got last known location. In some rare situations this can be null.
-                            if (location != null) {
-                                getSignalsForLastKnownLocation(location, completer);
-                                Injection.getPushNotificationsRepositoryInstance().
-                                        updateDeviceInfoInCloud(location, null, null, null);
-                            } else {
-                                Log.d(TAG, "got callback but last location is null");
-                                completer.set(Result.success());
-                            }
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Log.d(TAG, "failed to get location");
-                            completer.setException(e);
-                        }
-                    });
+            if (   (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
+                || (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED)   ) {
+
+                LocationManager locationManager = (LocationManager) getApplicationContext().getSystemService(LOCATION_SERVICE);
+                List<String> providers = locationManager.getProviders(true);
+                Location location = null;
+                for (String provider : providers) {
+                    location = locationManager.getLastKnownLocation(provider);
+                    if (location != null) {
+                        break;
+                    }
+                }
+
+                //Got last known location. In some rare situations this can be null.
+                if (location != null) {
+                    getSignalsForLastKnownLocation(location, completer);
+                    Injection.getPushNotificationsRepositoryInstance().updateDeviceInfoInCloud(location, null, null, null);
+                } else {
+                    Log.d(TAG, "Could not obtain last location");
+                    completer.set(Result.failure());
+                }
             } else {
                 Log.d(TAG, "No location permission");
                 completer.set(Result.failure());
@@ -131,7 +118,6 @@ public class BackgroundCheckWorker extends ListenableWorker {
                                 Signal signalFromDb = signalsFromDB.get(0);
                                 if (!signalFromDb.getSeen()) {
                                     NotificationUtils.showNotificationForSignal(signal, getApplicationContext());
-                                    mCurrentNotificationIds.add(signal.getId());
 
                                     saveNotification(signal);
 
@@ -142,21 +128,6 @@ public class BackgroundCheckWorker extends ListenableWorker {
                         }
                     }
                 }
-
-                // Cancel all previous notifications that are not currently present
-//                Set<String> oldNotificationIds = mSharedPreferences.getStringSet(CURRENT_NOTIFICATION_IDS, null);
-//                if (oldNotificationIds != null) {
-//                    for (String id : oldNotificationIds) {
-//                        if (!mCurrentNotificationIds.contains(id)) {
-//                            mNotificationManager.cancel(id.hashCode());
-//                        }
-//                    }
-//                }
-
-                // Save ids of current notifications
-//                SharedPreferences.Editor editor = mSharedPreferences.edit();
-//                editor.putStringSet(CURRENT_NOTIFICATION_IDS, mCurrentNotificationIds);
-//                editor.apply();
 
                 completer.set(Result.success());
             }

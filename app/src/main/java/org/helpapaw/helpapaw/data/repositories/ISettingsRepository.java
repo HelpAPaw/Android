@@ -32,4 +32,15 @@ public interface ISettingsRepository {
     void deleteTokenFromPreferences();
 
     String getTokenFromPreferences();
+
+    boolean getHasShownForegroundLocationRationale();
+    void setHasShownForegroundLocationRationale(boolean newValue);
+    boolean getHasShownBackgroundLocationRationale();
+    void setHasShownBackgroundLocationRationale(boolean newValue);
+    boolean getHasDeniedForegroundLocationRationale();
+    void setHasDeniedForegroundLocationRationale(boolean newValue);
+    boolean getHasDeniedBackgroundLocationRationale();
+    void setHasDeniedBackgroundLocationRationale(boolean newValue);
+    boolean getHasShownHibernationExemptionDialog();
+    void setHasShownHibernationExemptionDialog(boolean newValue);
 }
