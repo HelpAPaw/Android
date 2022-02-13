@@ -6,7 +6,6 @@ import android.os.StrictMode;
 
 import androidx.multidex.MultiDex;
 import androidx.multidex.MultiDexApplication;
-import androidx.work.BackoffPolicy;
 import androidx.work.Constraints;
 import androidx.work.ExistingPeriodicWorkPolicy;
 import androidx.work.NetworkType;
@@ -77,57 +76,13 @@ public class PawApplication extends MultiDexApplication {
         updateApplicationCounter();
     }
 
-    public static PawApplication getContext() {
-        return pawApplication;
-    }
-
-    public static Boolean getIsTestEnvironment() {
-        return isTestEnvironment;
-    }
-
-    public static void setIsTestEnvironment(Boolean isTestEnvironment) {
-        PawApplication.isTestEnvironment = isTestEnvironment;
-        pawApplication.saveIsTestEnvironment(isTestEnvironment);
-    }
-
-    private Boolean loadIsTestEnvironment() {
-        SharedPreferences prefs = getSharedPreferences("HelpAPaw", MODE_PRIVATE);
-        return prefs.getBoolean(IS_TEST_ENVIRONMENT_KEY, false);
-    }
-
-    private void saveIsTestEnvironment(Boolean isTestEnvironment) {
-        SharedPreferences prefs = pawApplication.getSharedPreferences("HelpAPaw", MODE_PRIVATE);
-        prefs.edit().putBoolean(IS_TEST_ENVIRONMENT_KEY, isTestEnvironment).apply();
-    }
-
-    private void scheduleBackgroundChecks() {
-        // constraints that need to be satisfied for the job to run
-        Constraints workerConstraints = new Constraints.Builder()
-                //Network connectivity required
-                .setRequiredNetworkType(NetworkType.CONNECTED)
-                .build();
-
-        PeriodicWorkRequest workRequest = new PeriodicWorkRequest.Builder(BackgroundCheckWorker.class, 15, TimeUnit.MINUTES)
-                // uniquely identifies the job
-                .addTag("BackgroundCheckJobService")
-                // start in 15 minutes from now
-                .setInitialDelay(15, TimeUnit.MINUTES)
-                // retry with exponential backoff
-                .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, 3000, TimeUnit.MILLISECONDS)
-                .setConstraints(workerConstraints)
-                .build();
-
-        WorkManager.getInstance(this)
-                .enqueueUniquePeriodicWork("BackgroundCheckJobService", ExistingPeriodicWorkPolicy.REPLACE, workRequest);
-    }
-
     private void updateApplicationCounter() {
         SharedPreferences prefs = getSharedPreferences("HelpAPaw", MODE_PRIVATE);
         int counter = prefs.getInt(APP_OPEN_COUNTER, 0);
 
         if (counter <= APP_OPENINGS_TO_ASK_FOR_SHARE) {
             counter++;
-            prefs.edit().putInt(APP_OPEN_COUNTER, counter).commit();
+            prefs.edit().putInt(APP_OPEN_COUNTER, counter).apply();
         }
     }
 
