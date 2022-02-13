@@ -85,11 +85,10 @@ interface SignalsMapContract {
 
         void onFilterSignalsButtonClicked();
 
-        void onSignalStatusUpdated(Signal signal);
+        void onSignalUpdated(Signal signal);
 
         void onAuthenticationAction();
 
         void onLoginAction();
-
     }
 }

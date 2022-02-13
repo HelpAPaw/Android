@@ -396,7 +396,16 @@ public class SignalsMapFragment extends BaseFragment
             mDisplayedSignals.add(newSignal);
         }
 
-        // Remove signals that do not are not included in current filter
+        // Remove any deleted signals
+        ArrayList<Signal> notDeletedSignals = new ArrayList<>();
+        for (Signal signal : mDisplayedSignals) {
+            if (!signal.getIsDeleted()) {
+                notDeletedSignals.add(signal);
+            }
+        }
+        mDisplayedSignals = notDeletedSignals;
+
+        // Remove signals that are not included in current filter
         if (selectedTypes != null) {
             ArrayList<Signal> filteredSignals = new ArrayList<>();
             for (Signal signal : mDisplayedSignals) {
@@ -802,7 +811,7 @@ public class SignalsMapFragment extends BaseFragment
             if (resultCode == Activity.RESULT_OK) {
                 Signal signal = data.getParcelableExtra("signal");
                 if (signal != null) {
-                    actionsListener.onSignalStatusUpdated(signal);
+                    actionsListener.onSignalUpdated(signal);
                 }
             }
         }

@@ -23,9 +23,9 @@ import org.helpapaw.helpapaw.utils.Utils;
 public class SignalsMapPresenter extends Presenter<SignalsMapContract.View>
         implements SignalsMapContract.UserActionsListener, UploadPhotoContract.UserActionsListener {
 
-    private UserManager userManager;
-    private SignalRepository signalRepository;
-    private PhotoRepository photoRepository;
+    private final UserManager userManager;
+    private final SignalRepository signalRepository;
+    private final PhotoRepository photoRepository;
 
     private double latitude;
     private double longitude;
@@ -304,7 +304,7 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View>
     }
 
     @Override
-    public void onSignalStatusUpdated(Signal signal) {
+    public void onSignalUpdated(Signal signal) {
         if (signal == null) return;
 
         replaceSignal(signal);
@@ -316,9 +316,9 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View>
             Signal currentSignal = signalsList.get(i);
             if (currentSignal.getId().equals(signal.getId())) {
                 signalsList.remove(i);
+                signalsList.add(signal);
                 break;
             }
-            signalsList.add(signal);
         }
     }
 
