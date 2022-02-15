@@ -698,7 +698,12 @@ public class SignalsMapFragment extends BaseFragment
     private void setLastLocation() {
         if (!mVisibilityAddSignal) {
             Location location = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
-            handleNewLocation(location);
+            if (location != null) {
+                handleNewLocation(location);
+            }
+            else {
+                Log.d(TAG, "here we are");
+            }
         }
     }
 
