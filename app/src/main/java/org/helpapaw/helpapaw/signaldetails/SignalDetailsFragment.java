@@ -362,7 +362,9 @@ public class SignalDetailsFragment extends BaseFragment
 
     @Override
     public void openNavigation(double latitude, double longitude) {
-        Intent intent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse("geo:" + latitude + "," + longitude));
+        //https://developer.android.com/guide/components/intents-common#Maps
+        final String geoIntentData = "geo:0,0?q=" + latitude + "," + longitude + "(" + mSignal.getTitle() + ")";
+        Intent intent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(geoIntentData));
         startActivity(intent);
     }
 
