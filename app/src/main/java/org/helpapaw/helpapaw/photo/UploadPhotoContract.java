@@ -15,6 +15,8 @@ import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
+
 import org.helpapaw.helpapaw.base.PawApplication;
 import org.helpapaw.helpapaw.sendsignal.SendPhotoBottomSheet;
 import org.helpapaw.helpapaw.utils.images.ImageUtils;
@@ -51,10 +53,8 @@ public interface UploadPhotoContract {
         }
 
         default File openCamera() {
-            Context context = getFragment().getContext();
-
             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            if (intent.resolveActivity(context.getPackageManager()) != null) {
+            try {
                 File photoFile = ImageUtils.getInstance().createPhotoFile(PawApplication.getContext());
                 Uri photoUri = FileProvider.getUriForFile(PawApplication.getContext(),
                         "org.helpapaw.helpapaw.fileprovider",
@@ -62,6 +62,8 @@ public interface UploadPhotoContract {
                 intent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
                 getFragment().startActivityForResult(intent, REQUEST_CAMERA);
                 return photoFile;
+            } catch (Exception e) {
+                FirebaseCrashlytics.getInstance().recordException(e);
             }
 
             return null;
@@ -77,8 +79,10 @@ public interface UploadPhotoContract {
             }
             else{
                 Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                if (intent.resolveActivity(context.getPackageManager()) != null) {
+                try {
                     getFragment().startActivityForResult(intent, REQUEST_GALLERY);
+                } catch (Exception e) {
+                    FirebaseCrashlytics.getInstance().recordException(e);
                 }
             }
         }
@@ -88,10 +92,7 @@ public interface UploadPhotoContract {
 
             // This segment works once the permission is handled
             try {
-                ParcelFileDescriptor parcelFileDesc = context.getContentResolver().openFileDescriptor(photoUri, "r");
-                FileDescriptor fileDesc = parcelFileDesc.getFileDescriptor();
-                Bitmap photo = BitmapFactory.decodeFileDescriptor(fileDesc);
-                parcelFileDesc.close();
+                Bitmap photo = MediaStore.Images.Media.getBitmap(context.getContentResolver(), photoUri);
 
                 int rotation = ImageUtils.getInstance().getRotationFromMediaUri(context, photoUri);
                 photo = ImageUtils.getInstance().getRotatedBitmap(photo, rotation);
@@ -108,7 +109,7 @@ public interface UploadPhotoContract {
                 actionsListener.onSignalPhotoSelected(dest);
             }
             catch (Exception e) {
-                e.printStackTrace();
+                FirebaseCrashlytics.getInstance().recordException(e);
             }
         }
 
