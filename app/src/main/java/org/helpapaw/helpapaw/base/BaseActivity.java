@@ -20,6 +20,7 @@ import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
 
 import org.helpapaw.helpapaw.R;
@@ -34,6 +35,7 @@ import org.helpapaw.helpapaw.privacypolicy.PrivacyPolicyActivity;
 import org.helpapaw.helpapaw.reusable.AlertDialogFragment;
 import org.helpapaw.helpapaw.settings.SettingsActivity;
 import org.helpapaw.helpapaw.share.ShareActivity;
+import org.helpapaw.helpapaw.userprofile.UserProfileActivity;
 import org.helpapaw.helpapaw.utils.Injection;
 import org.helpapaw.helpapaw.utils.SharingUtils;
 import org.helpapaw.helpapaw.utils.Utils;
@@ -252,6 +254,13 @@ public abstract class BaseActivity extends AppCompatActivity {
                     public void onSuccess(Object value) {
                         if (value instanceof String) {
                             title.setText(value.toString());
+                            title.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    Intent intent = new Intent(BaseActivity.this, UserProfileActivity.class);
+                                    startActivity(intent);
+                                }
+                            });
                         }
                     }
 
