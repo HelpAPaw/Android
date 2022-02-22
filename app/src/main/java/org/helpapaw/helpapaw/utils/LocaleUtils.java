@@ -20,13 +20,13 @@ public class LocaleUtils {
     public static final String ENGLISH = "en";
     public static final String BULGARIAN = "bg";
 
-    public static void initialize(Context context, @LocaleDef String defaultLanguage) {
-        setLocale(context, defaultLanguage);
-    }
+//    public static void initialize(Context context, @LocaleDef String defaultLanguage) {
+//        setLocale(context, defaultLanguage);
+//    }
 
-    public static boolean setLocale(Context context, @LocaleDef String language) {
-        return updateResources(context, language);
-    }
+//    public static boolean setLocale(Context context, @LocaleDef String language) {
+//        return updateResources(context, language);
+//    }
 
     private static boolean updateResources(Context context, String language) {
         Locale locale = new Locale(language);

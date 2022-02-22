@@ -184,10 +184,13 @@ public class SettingsFragment extends BaseFragment implements SettingsContract.V
         return new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getContext(), LanguageSettingsActivity.class);
-                intent.putExtra(EXTRA_SELECTED_LANGUAGE, currentlySelectedLanguage);
+                Intent i = new Intent( android.provider.Settings.ACTION_LOCALE_SETTINGS );
+                startActivity( i );
 
-                startActivityForResult(intent, REQUEST_CHANGE_LANGUAGE);
+//                Intent intent = new Intent(getContext(), LanguageSettingsActivity.class);
+//                intent.putExtra(EXTRA_SELECTED_LANGUAGE, currentlySelectedLanguage);
+//
+//                startActivityForResult(intent, REQUEST_CHANGE_LANGUAGE);
             }
         };
     }
@@ -242,7 +245,7 @@ public class SettingsFragment extends BaseFragment implements SettingsContract.V
     @Override
     public void setLanguage(int languageIndex) {
         currentlySelectedLanguage = languageIndex;
-        binding.languageSetting.setText(languages[languageIndex]);
+        binding.languageSetting.setText(Locale.getDefault().getDisplayName());
     }
 
     private void updateRadius(int value) {

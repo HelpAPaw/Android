@@ -92,12 +92,12 @@ public class PawApplication extends MultiDexApplication {
 //
 //        }
 
-        initAppLanguage(this);
+//        initAppLanguage(this);
     }
 
-    public void initAppLanguage(Context context) {
-        LocaleUtils.initialize(context, LocaleUtils.getSelectedLanguageId());
-    }
+//    public void initAppLanguage(Context context) {
+//        LocaleUtils.initialize(context, LocaleUtils.getSelectedLanguageId());
+//    }
 
 //    public void setLocale(String languageCode) {
 //        Locale locale = new Locale(languageCode);
