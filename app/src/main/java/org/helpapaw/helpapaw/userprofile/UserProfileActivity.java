@@ -13,7 +13,6 @@ import androidx.fragment.app.FragmentTransaction;
 import org.helpapaw.helpapaw.R;
 import org.helpapaw.helpapaw.databinding.ActivityUserProfileBinding;
 
-import java.util.List;
 
 public class UserProfileActivity extends AppCompatActivity {
 

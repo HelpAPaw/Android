@@ -1,6 +1,5 @@
 package org.helpapaw.helpapaw.userprofile;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -8,7 +7,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
 import androidx.databinding.DataBindingUtil;
@@ -123,14 +121,14 @@ public class UserProfileFragment extends BaseFragment implements UserProfileCont
 
     @Override
     public void deleteUserProfile() {
-//        FragmentManager fm = getChildFragmentManager();
-//
-//        DeleteSignalDialog deleteSignalDialog = DeleteSignalDialog.newInstance(mSignal, this.signalDetailsPresenter);
-//        deleteSignalDialog.show(fm, DeleteSignalDialog.DELETE_SIGNAL_TAG);
+        FragmentManager fm = getChildFragmentManager();
+
+        DeleteUserProfileDialog deleteSignalDialog = DeleteUserProfileDialog.newInstance(this.userProfilePresenter);
+        deleteSignalDialog.show(fm, DeleteSignalDialog.DELETE_SIGNAL_TAG);
     }
 
-    public void onBackPressed() {
-//        actionsListener.onSignalDetailsClosing();
+    public void onUserProfileDeleted() {
+        this.getActivity().finish();
     }
 
     @Override

@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.backendless.Backendless;
 import com.backendless.BackendlessUser;
+import com.backendless.IDataStore;
 import com.backendless.async.callback.AsyncCallback;
 import com.backendless.exceptions.BackendlessException;
 import com.backendless.exceptions.BackendlessFault;
@@ -149,6 +150,32 @@ public class BackendlessUserManager implements UserManager {
             public void handleFault(BackendlessFault fault) {
                 registrationCallback.onRegistrationFailure(fault.getMessage());
             }
+        });
+    }
+
+    @Override
+    public void delete(String userId, final DisableUserCallback disableUserCallback) {
+        final IDataStore<BackendlessUser> dataStore = Backendless.Data.of(BackendlessUser.class);
+        dataStore.findById(userId, new AsyncCallback<BackendlessUser>() {
+            @Override
+            public void handleResponse(BackendlessUser backendlessUser )
+            {
+                dataStore.remove(backendlessUser, new AsyncCallback<Long>() {
+                    @Override
+                    public void handleResponse( Long aLong )
+                    {
+                        disableUserCallback.onDisableUserSuccess();
+                    }
+                    @Override
+                    public void handleFault( BackendlessFault backendlessFault )
+                    {
+                        disableUserCallback.onDisableUserFailure(backendlessFault.getMessage());                    }
+                });
+            }
+            @Override
+            public void handleFault( BackendlessFault backendlessFault )
+            {
+                disableUserCallback.onDisableUserFailure(backendlessFault.getMessage());            }
         });
     }
 

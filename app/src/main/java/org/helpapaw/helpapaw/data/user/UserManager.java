@@ -16,6 +16,8 @@ public interface UserManager {
 
     void register(String email, String password, String name, String phoneNumber, RegistrationCallback registrationCallback);
 
+    void delete(String userId, final DisableUserCallback disableUserCallback);
+
     void update(String name, String phoneNumber, UpdateUserCallback updateUserCallback);
 
     void changePassword(String oldPassword, String newPassword, UpdateUserCallback updateUserCallback);
@@ -56,6 +58,11 @@ public interface UserManager {
     interface UpdateUserCallback {
         void onUpdateUserSuccess();
         void onUpdateUserFailure(String message);
+    }
+
+    interface DisableUserCallback {
+        void onDisableUserSuccess();
+        void onDisableUserFailure(String message);
     }
 
     interface ResetPasswordCallback {

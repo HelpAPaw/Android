@@ -12,6 +12,7 @@
     <string name="txt_no_account_yet">No account yet?</string>
     <string name="txt_user_profile_title">Profile</string>
     <string name="txt_delete_account">Delete account</string>
+    <string name="txt_delete_account_dialog">Are you sure you want to delete your account?</string>
     <string name="txt_register">Register</string>
     <string name="txt_already_a_member">Already a member?</string>
     <string name="txt_phone_number">Phone Number</string>

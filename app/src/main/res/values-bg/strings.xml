@@ -11,6 +11,7 @@
     <string name="txt_no_account_yet">Нямате акаунт?</string>
     <string name="txt_user_profile_title">Профил</string>
     <string name="txt_delete_account">Изтрийте акаунта</string>
+    <string name="txt_delete_account_dialog">Сигурни ли сте, че искате да изтриете акаунта си?</string>
     <string name="txt_register">Регистрация</string>
     <string name="txt_already_a_member">Вече сте регистриран?</string>
     <string name="txt_phone_number">Телефонен номер</string>

@@ -59,6 +59,32 @@ public class UserProfilePresenter extends Presenter<UserProfileContract.View>
         });
     }
 
+    @Override
+    public void onDeleteUserProfile() {
+        userManager.delete(userManager.getLoggedUserId(), new UserManager.DisableUserCallback() {
+            @Override
+            public void onDisableUserSuccess() {
+                userManager.logout(new UserManager.LogoutCallback() {
+                    @Override
+                    public void onLogoutSuccess() {
+                        getView().onUserProfileDeleted();
+                    }
+
+                    @Override
+                    public void onLogoutFailure(String message) {
+                        // Do nothing
+                    }
+                });
+            }
+
+            @Override
+            public void onDisableUserFailure(String message) {
+                if (!isViewAvailable()) return;
+                getView().showMessage(message);
+            }
+        });
+    }
+
     private boolean isViewAvailable() {
         return getView() != null && getView().isActive();
     }

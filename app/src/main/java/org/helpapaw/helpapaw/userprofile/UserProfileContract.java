@@ -9,23 +9,19 @@ public interface UserProfileContract {
 
     interface View {
 
+        boolean isActive();
+
         void showMessage(String message);
 
-//        void hideKeyboard();
-//
         void showUserProfile(BackendlessUser currentUser);
-//
-//        void setEditUserProfileButtonVisibility(int visibility);
-//
-//        void showNoInternetMessage();
-//
-        boolean isActive();
 
         void editUserProfile();
 
         void saveEditUserProfile();
 
         void deleteUserProfile();
+
+        void onUserProfileDeleted();
     }
 
     interface UserActionsListener {
@@ -34,9 +30,7 @@ public interface UserProfileContract {
 
         void onUpdateUser(String userName, String userPhone);
 
-//        void onDeleteSignal();
-//
-//        void onUserProfileClosing();
+        void onDeleteUserProfile();
 
         void onEditUserProfileClicked();
 
