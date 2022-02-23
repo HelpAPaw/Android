@@ -1,5 +1,6 @@
 package org.helpapaw.helpapaw.data.user;
 
+import com.backendless.BackendlessUser;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 
 /**
@@ -15,7 +16,7 @@ public interface UserManager {
 
     void register(String email, String password, String name, String phoneNumber, RegistrationCallback registrationCallback);
 
-    void update(String email, String name, String phoneNumber, UpdateUserCallback updateUserCallback);
+    void update(String name, String phoneNumber, UpdateUserCallback updateUserCallback);
 
     void changePassword(String oldPassword, String newPassword, UpdateUserCallback updateUserCallback);
 
@@ -30,6 +31,8 @@ public interface UserManager {
     String getLoggedUserId();
 
     boolean isLoggedIn();
+
+    BackendlessUser getCurrentUser();
 
     void getUserEmail(final GetUserPropertyCallback getUserPropertyCallback);
 

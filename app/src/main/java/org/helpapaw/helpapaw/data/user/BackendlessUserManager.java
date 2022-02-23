@@ -153,17 +153,13 @@ public class BackendlessUserManager implements UserManager {
     }
 
     @Override
-    public void update(String email, String name, String phoneNumber, final UpdateUserCallback updateUserCallback) {
-        BackendlessUser backendlessUser = Backendless.UserService.CurrentUser();
+    public void update(String name, String phoneNumber, final UpdateUserCallback updateUserCallback) {
+        BackendlessUser currentUser = Backendless.UserService.CurrentUser();
 
-        BackendlessUser user = new BackendlessUser();
-        user.setProperty(USER_EMAIL_FIELD, email);
-        user.setProperty(USER_NAME_FIELD, name);
-        user.setProperty(USER_PHONE_NUMBER_FIELD, phoneNumber);
-        user.setProperty(USER_ACCEPTED_PRIVACY_POLICY_FIELD, backendlessUser.getProperty(USER_ACCEPTED_PRIVACY_POLICY_FIELD));
-        user.setPassword(backendlessUser.getPassword());
+        currentUser.setProperty(USER_NAME_FIELD, name);
+        currentUser.setProperty(USER_PHONE_NUMBER_FIELD, phoneNumber);
 
-        Backendless.UserService.update(user, new AsyncCallback<BackendlessUser>() {
+        Backendless.UserService.update(currentUser, new AsyncCallback<BackendlessUser>() {
             public void handleResponse(BackendlessUser registeredUser) {
                 updateUserCallback.onUpdateUserSuccess();
             }
@@ -349,6 +345,12 @@ public class BackendlessUserManager implements UserManager {
         else {
             getUserPropertyCallback.onFailure("User not logged in!");
         }
+    }
+
+    @Override
+    public BackendlessUser getCurrentUser() {
+        return Backendless.UserService.CurrentUser();
+
     }
 
     @Override

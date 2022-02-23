@@ -82,6 +82,22 @@
                 android:textColorHint="@color/gray"
                 android:importantForAutofill="no" />
 
+            <RelativeLayout
+                android:id="@+id/author_buttons_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/btn_saveEditUser"
+                    style="@style/Widget.AppCompat.Button.Borderless.Colored"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:text="@string/txt_save"
+                    android:visibility="gone" />
+            </RelativeLayout>
+
             <TextView
                 android:id="@+id/change_password"
                 android:layout_width="match_parent"

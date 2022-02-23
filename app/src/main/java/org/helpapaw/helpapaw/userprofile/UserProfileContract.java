@@ -1,53 +1,48 @@
 package org.helpapaw.helpapaw.userprofile;
 
-import org.helpapaw.helpapaw.data.models.Comment;
-import org.helpapaw.helpapaw.data.models.Signal;
-
-import java.util.List;
+import com.backendless.BackendlessUser;
 
 /**
- * Created by iliyan on 7/25/16
+ * Created by niya
  */
 public interface UserProfileContract {
 
     interface View {
 
-//        void showMessage(String message);
-//
+        void showMessage(String message);
+
 //        void hideKeyboard();
 //
-//        void showProfileDetails();
+        void showUserProfile(BackendlessUser currentUser);
 //
 //        void setEditUserProfileButtonVisibility(int visibility);
 //
 //        void showNoInternetMessage();
 //
         boolean isActive();
-//
-//        void editUserProfile();
-//
-//        void saveEditUserProfile();
-//
-//        void deleteProfile();
+
+        void editUserProfile();
+
+        void saveEditUserProfile();
+
+        void deleteUserProfile();
     }
 
     interface UserActionsListener {
 
-//        void onInitUserProfileScreen();
+        void onInitUserProfileScreen();
 
-//        void onUpdateTitle(String title);
+        void onUpdateUser(String userName, String userPhone);
 
 //        void onDeleteSignal();
 //
 //        void onUserProfileClosing();
 
-//        void onEditSignalTitleClicked();
+        void onEditUserProfileClicked();
 
-//        void onDeleteSignalClicked();
+        void onDeleteUserProfileClicked();
 
-//        void onShareSignalClicked();
-
-//        void onSaveEditSignalTitleClicked();
+        void onSaveEditUserClicked();
 
     }
 }

@@ -66,16 +66,4 @@ public class UserProfileActivity extends AppCompatActivity {
         transaction.add(R.id.grp_content_frame, userProfileFragment);
         transaction.commit();
     }
-
-    @Override
-    public void onBackPressed() {
-        List<Fragment> fragmentList = getSupportFragmentManager().getFragments();
-        if (fragmentList != null) {
-            for (Fragment fragment : fragmentList) {
-                if (fragment instanceof UserProfileFragment) {
-                    ((UserProfileFragment) fragment).onBackPressed();
-                }
-            }
-        }
-    }
 }
