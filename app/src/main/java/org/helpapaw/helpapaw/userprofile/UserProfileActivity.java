@@ -17,7 +17,6 @@ import java.util.List;
 
 public class UserProfileActivity extends AppCompatActivity {
 
-//    public final static String SIGNAL_KEY = "signalKey";
     ActivityUserProfileBinding binding;
 
     @Override
@@ -38,7 +37,6 @@ public class UserProfileActivity extends AppCompatActivity {
         if (null == savedInstanceState) {
 
             if (getIntent() != null) {
-//                Signal signal = getIntent().getParcelableExtra(SIGNAL_KEY);
                 Fragment fragment = UserProfileFragment.newInstance();
                 initFragment(fragment);
             }
@@ -80,5 +78,4 @@ public class UserProfileActivity extends AppCompatActivity {
             }
         }
     }
-
 }

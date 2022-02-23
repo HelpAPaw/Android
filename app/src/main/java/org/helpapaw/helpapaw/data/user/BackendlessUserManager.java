@@ -153,6 +153,55 @@ public class BackendlessUserManager implements UserManager {
     }
 
     @Override
+    public void update(String email, String name, String phoneNumber, final UpdateUserCallback updateUserCallback) {
+        BackendlessUser backendlessUser = Backendless.UserService.CurrentUser();
+
+        BackendlessUser user = new BackendlessUser();
+        user.setProperty(USER_EMAIL_FIELD, email);
+        user.setProperty(USER_NAME_FIELD, name);
+        user.setProperty(USER_PHONE_NUMBER_FIELD, phoneNumber);
+        user.setProperty(USER_ACCEPTED_PRIVACY_POLICY_FIELD, backendlessUser.getProperty(USER_ACCEPTED_PRIVACY_POLICY_FIELD));
+        user.setPassword(backendlessUser.getPassword());
+
+        Backendless.UserService.update(user, new AsyncCallback<BackendlessUser>() {
+            public void handleResponse(BackendlessUser registeredUser) {
+                updateUserCallback.onUpdateUserSuccess();
+            }
+
+            public void handleFault(BackendlessFault fault) {
+                updateUserCallback.onUpdateUserFailure(fault.getMessage());
+            }
+        });
+    }
+
+    @Override
+    public void changePassword(String oldPassword, String newPassword, final UpdateUserCallback updateUserCallback) {
+        BackendlessUser backendlessUser = Backendless.UserService.CurrentUser();
+
+        BackendlessUser user = new BackendlessUser();
+        user.setProperty(USER_EMAIL_FIELD, backendlessUser.getProperty(USER_EMAIL_FIELD));
+        user.setProperty(USER_NAME_FIELD, backendlessUser.getProperty(USER_NAME_FIELD));
+        user.setProperty(USER_PHONE_NUMBER_FIELD, backendlessUser.getProperty(USER_PHONE_NUMBER_FIELD));
+        user.setProperty(USER_ACCEPTED_PRIVACY_POLICY_FIELD, backendlessUser.getProperty(USER_ACCEPTED_PRIVACY_POLICY_FIELD));
+
+        if(oldPassword.equals(backendlessUser.getPassword())) {
+            user.setPassword(newPassword);
+        } else {
+            user.setPassword(backendlessUser.getPassword());
+        }
+
+        Backendless.UserService.update(user, new AsyncCallback<BackendlessUser>() {
+            public void handleResponse(BackendlessUser registeredUser) {
+                updateUserCallback.onUpdateUserSuccess();
+            }
+
+            public void handleFault(BackendlessFault fault) {
+                updateUserCallback.onUpdateUserFailure(fault.getMessage());
+            }
+        });
+    }
+
+    @Override
     public void resetPassword(String email, ResetPasswordCallback resetPasswordCallback) {
         Backendless.UserService.restorePassword(email, new AsyncCallback<Void>() {
             @Override
@@ -298,6 +347,36 @@ public class BackendlessUserManager implements UserManager {
             });
         }
         else {
+            getUserPropertyCallback.onFailure("User not logged in!");
+        }
+    }
+
+    @Override
+    public void getUserEmail(final GetUserPropertyCallback getUserPropertyCallback) {
+        String currentUserId = Backendless.UserService.loggedInUser();
+        if (!currentUserId.equals("")) {
+            Backendless.UserService.findById(currentUserId, new AsyncCallback<BackendlessUser>() {
+                @Override
+                public void handleResponse(BackendlessUser currentUser) {
+                    if (currentUser == null) {
+                        getUserPropertyCallback.onFailure(PawApplication.getContext().getResources().getString(R.string.txt_logged_user_not_found));
+                        return;
+                    }
+
+                    Object result = "";
+                    Object value = currentUser.getProperty(USER_EMAIL_FIELD);
+                    if (value != null) {
+                        result = value;
+                    }
+                    getUserPropertyCallback.onSuccess(result);
+                }
+
+                @Override
+                public void handleFault(BackendlessFault fault) {
+                    getUserPropertyCallback.onFailure(fault.getMessage());
+                }
+            });
+        } else {
             getUserPropertyCallback.onFailure("User not logged in!");
         }
     }
