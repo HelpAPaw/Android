@@ -182,10 +182,7 @@ public class BackendlessSpatialSignalRepository implements SignalRepository {
     }
 
     private String whereClauseExcludeCurrentUser() {
-        BackendlessUser currentUser = Backendless.UserService.CurrentUser();
-
-        String where = OWNER_ID + " != '" + currentUser.getUserId() + "'";
-        return where;
+        return OWNER_ID + " != '" + Backendless.UserService.loggedInUser() + "'";
     }
 
     private void getSignals(String whereClause, final LoadSignalsCallback callback) {
