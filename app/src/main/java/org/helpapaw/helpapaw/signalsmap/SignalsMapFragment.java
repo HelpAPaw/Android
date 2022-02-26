@@ -952,10 +952,12 @@ public class SignalsMapFragment extends BaseFragment
         }
         else if (requestCode == REQUEST_UPDATE_SIGNAL_TYPE_SELECTION) {
             if (resultCode == Activity.RESULT_OK) {
-                boolean[] signalTypeSelection = data.getBooleanArrayExtra(EXTRA_SIGNAL_TYPE_SELECTION);
-                if (signalTypeSelection != null) {
-                    actionsListener.onFilterSignalsClicked(signalTypeSelection);
-                }
+                try {
+                    boolean[] signalTypeSelection = data.getBooleanArrayExtra(EXTRA_SIGNAL_TYPE_SELECTION);
+                    if (signalTypeSelection != null) {
+                        actionsListener.onFilterSignalsClicked(signalTypeSelection);
+                    }
+                } catch (Exception ignored) {}
             }
         }
     }
