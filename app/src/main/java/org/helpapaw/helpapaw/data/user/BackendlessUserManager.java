@@ -14,7 +14,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
 
 import org.helpapaw.helpapaw.R;
-import org.helpapaw.helpapaw.authentication.login.LoginPresenter;
 import org.helpapaw.helpapaw.base.PawApplication;
 import org.json.JSONObject;
 
@@ -156,7 +155,7 @@ public class BackendlessUserManager implements UserManager {
     }
 
     @Override
-    public void delete(String userId, final DisableUserCallback disableUserCallback) {
+    public void delete(String userId, final DeleteUserCallback deleteUserCallback) {
         final IDataStore<BackendlessUser> dataStore = Backendless.Data.of(BackendlessUser.class);
         dataStore.findById(userId, new AsyncCallback<BackendlessUser>() {
             @Override
@@ -166,18 +165,18 @@ public class BackendlessUserManager implements UserManager {
                     @Override
                     public void handleResponse( Long aLong )
                     {
-                        disableUserCallback.onDisableUserSuccess();
+                        deleteUserCallback.onDeleteUserSuccess();
                     }
                     @Override
                     public void handleFault( BackendlessFault backendlessFault )
                     {
-                        disableUserCallback.onDisableUserFailure(backendlessFault.getMessage());                    }
+                        deleteUserCallback.onDeleteUserFailure(backendlessFault.getMessage());                    }
                 });
             }
             @Override
             public void handleFault( BackendlessFault backendlessFault )
             {
-                disableUserCallback.onDisableUserFailure(backendlessFault.getMessage());            }
+                deleteUserCallback.onDeleteUserFailure(backendlessFault.getMessage());            }
         });
     }
 
@@ -381,7 +380,6 @@ public class BackendlessUserManager implements UserManager {
     @Override
     public BackendlessUser getCurrentUser() {
         return Backendless.UserService.CurrentUser();
-
     }
 
     @Override

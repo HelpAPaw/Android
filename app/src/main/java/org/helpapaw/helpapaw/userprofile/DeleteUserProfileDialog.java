@@ -9,13 +9,11 @@ import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentManager;
 
 import org.helpapaw.helpapaw.R;
-import org.helpapaw.helpapaw.data.models.Signal;
 
 public class DeleteUserProfileDialog extends DialogFragment {
 
     public static final String DELETE_USER_PROFILE = "deleteUserProfile";
 
-    private Signal signal;
     private UserProfilePresenter presenter;
 
     public static DeleteUserProfileDialog newInstance(UserProfilePresenter presenter) {

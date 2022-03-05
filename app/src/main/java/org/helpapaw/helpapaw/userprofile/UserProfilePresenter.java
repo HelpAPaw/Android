@@ -75,14 +75,14 @@ public class UserProfilePresenter extends Presenter<UserProfileContract.View>
     public void onDeleteUserProfile() {
         getView().setProgressVisibility(View.VISIBLE);
 
-        userManager.delete(userManager.getLoggedUserId(), new UserManager.DisableUserCallback() {
+        userManager.delete(userManager.getLoggedUserId(), new UserManager.DeleteUserCallback() {
             @Override
-            public void onDisableUserSuccess() {
+            public void onDeleteUserSuccess() {
                 onLogOut();
             }
 
             @Override
-            public void onDisableUserFailure(String message) {
+            public void onDeleteUserFailure(String message) {
                 if (!isViewAvailable()) return;
                 getView().showMessage(message);
                 getView().setProgressVisibility(View.GONE);
