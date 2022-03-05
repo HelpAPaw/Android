@@ -7,7 +7,6 @@
     <string name="txt_email_hint">Email</string>
     <string name="txt_password_hint">Password</string>
     <string name="txt_password_confirmation_hint">Confirm Password</string>
-    <string name="txt_password_change">Change Password</string>
     <string name="txt_login">Login</string>
     <string name="txt_no_account_yet">No account yet?</string>
     <string name="txt_user_profile_title">Profile</string>

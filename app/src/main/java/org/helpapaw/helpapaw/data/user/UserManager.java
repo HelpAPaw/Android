@@ -18,9 +18,7 @@ public interface UserManager {
 
     void delete(String userId, final DisableUserCallback disableUserCallback);
 
-    void update(String name, String phoneNumber, UpdateUserCallback updateUserCallback);
-
-    void changePassword(String oldPassword, String newPassword, UpdateUserCallback updateUserCallback);
+    void update(String name, String phoneNumber, String password, UpdateUserCallback updateUserCallback);
 
     void resetPassword(String email, ResetPasswordCallback resetPasswordCallback);
 
@@ -35,8 +33,6 @@ public interface UserManager {
     boolean isLoggedIn();
 
     BackendlessUser getCurrentUser();
-
-    void getUserEmail(final GetUserPropertyCallback getUserPropertyCallback);
 
     void getUserName(final GetUserPropertyCallback getUserPropertyCallback);
 

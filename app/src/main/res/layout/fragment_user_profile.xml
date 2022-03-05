@@ -29,8 +29,6 @@
                 android:background="@drawable/rounded_border"
                 android:hint="@string/txt_email_hint"
                 android:enabled="false"
-                android:inputType="textPersonName"
-                android:paddingLeft="10dp"
                 android:paddingRight="10dp"
                 android:layout_marginBottom="5dp"
                 android:textColorHint="@color/gray"
@@ -51,7 +49,6 @@
                 android:minHeight="@dimen/thumbnail_size"
                 android:background="@drawable/rounded_border"
                 android:hint="@string/txt_name"
-                android:enabled="false"
                 android:inputType="textEmailAddress"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
@@ -74,13 +71,66 @@
                 android:minHeight="@dimen/thumbnail_size"
                 android:background="@drawable/rounded_border"
                 android:hint="@string/txt_phone_number"
-                android:enabled="false"
                 android:inputType="phone"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
                 android:layout_marginBottom="5dp"
                 android:textColorHint="@color/gray"
                 android:importantForAutofill="no" />
+
+            <TextView
+                android:id="@+id/new_password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:paddingStart="10dp"
+                android:textSize="18sp"
+                android:textColor="@color/color_accent"
+                android:text="@string/txt_password_hint" />
+            <EditText
+                android:id="@+id/user_new_password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="@dimen/thumbnail_size"
+                android:background="@drawable/rounded_border"
+                android:hint="@string/txt_password_hint"
+                android:inputType="textPassword"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:layout_marginBottom="5dp"
+                android:textColorHint="@color/gray"
+                android:importantForAutofill="no" />
+
+            <TextView
+                android:id="@+id/new_password_confirm"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:paddingStart="10dp"
+                android:textSize="18sp"
+                android:textColor="@color/color_accent"
+                android:text="@string/txt_password_confirmation_hint" />
+            <EditText
+                android:id="@+id/user_new_password_confirm"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="@dimen/thumbnail_size"
+                android:background="@drawable/rounded_border"
+                android:hint="@string/txt_password_confirmation_hint"
+                android:inputType="textPassword"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:layout_marginBottom="5dp"
+                android:textColorHint="@color/gray"
+                android:importantForAutofill="no" />
+
+            <ProgressBar
+                android:id="@+id/progress_bar"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_marginTop="36dp"
+                android:layout_gravity="center"
+                android:visibility="gone"/>
 
             <RelativeLayout
                 android:id="@+id/author_buttons_layout"
@@ -89,24 +139,31 @@
                 android:orientation="horizontal">
 
                 <Button
-                    android:id="@+id/btn_saveEditUser"
-                    style="@style/Widget.AppCompat.Button.Borderless.Colored"
+                    android:id="@+id/btn_delete_user"
+                    style="@style/Widget.AppCompat.Button.Colored"
+                    android:backgroundTint="@color/color_emergency"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:text="@string/txt_save"
-                    android:visibility="gone" />
-            </RelativeLayout>
+                    android:layout_alignParentStart="true"
+                    android:layout_marginTop="4dp"
+                    android:drawablePadding="4dp"
+                    android:gravity="center"
+                    android:layout_alignParentBottom="true"
+                    android:text="@string/txt_delete_account"
+                    tools:targetApi="m" />
 
-            <TextView
-                android:id="@+id/change_password"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:paddingStart="10dp"
-                android:textSize="18sp"
-                android:textColor="@color/color_accent"
-                android:text="@string/txt_password_change" />
+                <Button
+                    android:id="@+id/btn_logout"
+                    style="@style/Widget.AppCompat.Button.Colored"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginTop="4dp"
+                    android:drawablePadding="4dp"
+                    android:text="@string/txt_log_out"
+                    tools:targetApi="m" />
+            </RelativeLayout>
         </LinearLayout>
     </RelativeLayout>
 </layout>

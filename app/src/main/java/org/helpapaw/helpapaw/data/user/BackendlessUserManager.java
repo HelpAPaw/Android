@@ -14,6 +14,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
 
 import org.helpapaw.helpapaw.R;
+import org.helpapaw.helpapaw.authentication.login.LoginPresenter;
 import org.helpapaw.helpapaw.base.PawApplication;
 import org.json.JSONObject;
 
@@ -35,6 +36,7 @@ public class BackendlessUserManager implements UserManager {
 
     private static final String USER_EMAIL_FIELD = "email";
     private static final String USER_NAME_FIELD = "name";
+    private static final String PASSWORD = "password";
     private static final String USER_PHONE_NUMBER_FIELD = "phoneNumber";
     private static final String USER_ACCEPTED_PRIVACY_POLICY_FIELD = "acceptedPrivacyPolicy";
 
@@ -180,11 +182,14 @@ public class BackendlessUserManager implements UserManager {
     }
 
     @Override
-    public void update(String name, String phoneNumber, final UpdateUserCallback updateUserCallback) {
+    public void update(
+            String name, String phoneNumber, String password,
+            final UpdateUserCallback updateUserCallback) {
         BackendlessUser currentUser = Backendless.UserService.CurrentUser();
 
         currentUser.setProperty(USER_NAME_FIELD, name);
         currentUser.setProperty(USER_PHONE_NUMBER_FIELD, phoneNumber);
+
 
         Backendless.UserService.update(currentUser, new AsyncCallback<BackendlessUser>() {
             public void handleResponse(BackendlessUser registeredUser) {
@@ -195,33 +200,32 @@ public class BackendlessUserManager implements UserManager {
                 updateUserCallback.onUpdateUserFailure(fault.getMessage());
             }
         });
-    }
 
-    @Override
-    public void changePassword(String oldPassword, String newPassword, final UpdateUserCallback updateUserCallback) {
-        BackendlessUser backendlessUser = Backendless.UserService.CurrentUser();
+        if (password != null && !password.isEmpty()) {
+            currentUser.setProperty(PASSWORD, password);
 
-        BackendlessUser user = new BackendlessUser();
-        user.setProperty(USER_EMAIL_FIELD, backendlessUser.getProperty(USER_EMAIL_FIELD));
-        user.setProperty(USER_NAME_FIELD, backendlessUser.getProperty(USER_NAME_FIELD));
-        user.setProperty(USER_PHONE_NUMBER_FIELD, backendlessUser.getProperty(USER_PHONE_NUMBER_FIELD));
-        user.setProperty(USER_ACCEPTED_PRIVACY_POLICY_FIELD, backendlessUser.getProperty(USER_ACCEPTED_PRIVACY_POLICY_FIELD));
+            Backendless.Data.of(BackendlessUser.class).save(currentUser, new AsyncCallback<BackendlessUser>() {
+                public void handleResponse( BackendlessUser backendlessUser ) {
+                    BackendlessUser changedCurrentUser = Backendless.UserService.CurrentUser();
+                    login(changedCurrentUser.getEmail(), password, new UserManager.LoginCallback() {
+                        @Override
+                        public void onLoginSuccess(String userId) {
+                            updateUserCallback.onUpdateUserSuccess();
+                        }
 
-        if(oldPassword.equals(backendlessUser.getPassword())) {
-            user.setPassword(newPassword);
-        } else {
-            user.setPassword(backendlessUser.getPassword());
+                        @Override
+                        public void onLoginFailure(String message) {
+                            updateUserCallback.onUpdateUserFailure(message);
+                        }
+                    });
+                    updateUserCallback.onUpdateUserSuccess();
+                }
+
+                public void handleFault (BackendlessFault fault) {
+                    updateUserCallback.onUpdateUserFailure(fault.getMessage());
+                }
+            });
         }
-
-        Backendless.UserService.update(user, new AsyncCallback<BackendlessUser>() {
-            public void handleResponse(BackendlessUser registeredUser) {
-                updateUserCallback.onUpdateUserSuccess();
-            }
-
-            public void handleFault(BackendlessFault fault) {
-                updateUserCallback.onUpdateUserFailure(fault.getMessage());
-            }
-        });
     }
 
     @Override
@@ -378,36 +382,6 @@ public class BackendlessUserManager implements UserManager {
     public BackendlessUser getCurrentUser() {
         return Backendless.UserService.CurrentUser();
 
-    }
-
-    @Override
-    public void getUserEmail(final GetUserPropertyCallback getUserPropertyCallback) {
-        String currentUserId = Backendless.UserService.loggedInUser();
-        if (!currentUserId.equals("")) {
-            Backendless.UserService.findById(currentUserId, new AsyncCallback<BackendlessUser>() {
-                @Override
-                public void handleResponse(BackendlessUser currentUser) {
-                    if (currentUser == null) {
-                        getUserPropertyCallback.onFailure(PawApplication.getContext().getResources().getString(R.string.txt_logged_user_not_found));
-                        return;
-                    }
-
-                    Object result = "";
-                    Object value = currentUser.getProperty(USER_EMAIL_FIELD);
-                    if (value != null) {
-                        result = value;
-                    }
-                    getUserPropertyCallback.onSuccess(result);
-                }
-
-                @Override
-                public void handleFault(BackendlessFault fault) {
-                    getUserPropertyCallback.onFailure(fault.getMessage());
-                }
-            });
-        } else {
-            getUserPropertyCallback.onFailure("User not logged in!");
-        }
     }
 
     @Override

@@ -6,7 +6,6 @@
     <string name="txt_email_hint">Имейл</string>
     <string name="txt_password_hint">Парола</string>
     <string name="txt_password_confirmation_hint">Потвърдете паролата</string>
-    <string name="txt_password_change">Сменете паролата</string>
     <string name="txt_login">Вписване</string>
     <string name="txt_no_account_yet">Нямате акаунт?</string>
     <string name="txt_user_profile_title">Профил</string>

@@ -1,5 +1,7 @@
 package org.helpapaw.helpapaw.userprofile;
 
+import android.view.View;
+
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
 
 import org.helpapaw.helpapaw.base.Presenter;
@@ -12,6 +14,8 @@ import org.helpapaw.helpapaw.utils.Injection;
  */
 public class UserProfilePresenter extends Presenter<UserProfileContract.View>
         implements UserProfileContract.UserActionsListener {
+
+    private static final int MIN_PASS_LENGTH = 6;
 
     private final UserManager userManager;
 
@@ -27,59 +31,72 @@ public class UserProfilePresenter extends Presenter<UserProfileContract.View>
     }
 
     @Override
-    public void onEditUserProfileClicked() {
-        getView().editUserProfile();
-    }
-
-    @Override
     public void onDeleteUserProfileClicked() {
         getView().deleteUserProfile();
     }
 
     @Override
-    public void onSaveEditUserClicked() {
-        getView().saveEditUserProfile();
-    }
-
-    @Override
-    public void onUpdateUser(final String userName, final String userPhone) {
+    public void onUpdateUser(
+            final String userName, final String userPhone,
+            final String password, final String passwordConfirm) {
         FirebaseCrashlytics.getInstance().log("Initiate change for user ");
 
-        userManager.update(userName, userPhone, new UserManager.UpdateUserCallback() {
-            @Override
-            public void onUpdateUserSuccess() {
-                getView().showUserProfile(userManager.getCurrentUser());
-            }
+        boolean passwordsDoesNotMatch = !password.equals(passwordConfirm);
 
-            @Override
-            public void onUpdateUserFailure(String message) {
-                if (!isViewAvailable()) return;
-                getView().showMessage(message);
-            }
-        });
+        if (passwordsDoesNotMatch) {
+            getView().showPasswordDoesNotMatchMessage();
+        } else if (!password.isEmpty() && password.length() < MIN_PASS_LENGTH) {
+            getView().showPasswordErrorMessage();
+            return;
+        } else {
+            getView().setProgressVisibility(View.VISIBLE);
+
+            userManager.update(userName, userPhone, password, new UserManager.UpdateUserCallback() {
+                @Override
+                public void onUpdateUserSuccess() {
+                    getView().showUserProfile(userManager.getCurrentUser());
+                    getView().setProgressVisibility(View.GONE);
+                }
+
+                @Override
+                public void onUpdateUserFailure(String message) {
+                    if (!isViewAvailable()) return;
+                    getView().setProgressVisibility(View.GONE);
+                    getView().showMessage(message);
+                }
+            });
+        }
     }
 
     @Override
     public void onDeleteUserProfile() {
+        getView().setProgressVisibility(View.VISIBLE);
+
         userManager.delete(userManager.getLoggedUserId(), new UserManager.DisableUserCallback() {
             @Override
             public void onDisableUserSuccess() {
-                userManager.logout(new UserManager.LogoutCallback() {
-                    @Override
-                    public void onLogoutSuccess() {
-                        getView().onUserProfileDeleted();
-                    }
-
-                    @Override
-                    public void onLogoutFailure(String message) {
-                        // Do nothing
-                    }
-                });
+                onLogOut();
             }
 
             @Override
             public void onDisableUserFailure(String message) {
                 if (!isViewAvailable()) return;
+                getView().showMessage(message);
+                getView().setProgressVisibility(View.GONE);
+            }
+        });
+    }
+
+    @Override
+    public void onLogOut() {
+        userManager.logout(new UserManager.LogoutCallback() {
+            @Override
+            public void onLogoutSuccess() {
+                getView().onFinishActivity();
+            }
+
+            @Override
+            public void onLogoutFailure(String message) {
                 getView().showMessage(message);
             }
         });

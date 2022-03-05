@@ -7,7 +7,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.FragmentManager;
@@ -57,9 +56,8 @@ public class UserProfileFragment extends BaseFragment implements UserProfileCont
 
         setHasOptionsMenu(true);
 
-        binding.btnSaveEditUser.setOnClickListener(getOnSaveEditUserProfileClickListener());
-
-//        binding.changePassword.setOnClickListener();
+        binding.btnDeleteUser.setOnClickListener(getOnDeleteUserProfileClickListener());
+        binding.btnLogout.setOnClickListener(getOnLogoutClickListener());
 
         return binding.getRoot();
     }
@@ -82,6 +80,18 @@ public class UserProfileFragment extends BaseFragment implements UserProfileCont
     }
 
     @Override
+    public void showPasswordDoesNotMatchMessage() {
+        if (getView() != null) {
+            Snackbar.make(getView(), R.string.txt_invalid_password_confirmation, Snackbar.LENGTH_LONG).show();
+        }
+    }
+
+    @Override
+    public void showPasswordErrorMessage() {
+        Snackbar.make(getView(), R.string.txt_invalid_password, Snackbar.LENGTH_LONG).show();
+    }
+
+    @Override
     public void showUserProfile(BackendlessUser currentUser) {
         binding.userEmail.setText(currentUser.getEmail());
         binding.userName.setText(currentUser.getProperty("name").toString());
@@ -94,32 +104,6 @@ public class UserProfileFragment extends BaseFragment implements UserProfileCont
     }
 
     @Override
-    public void editUserProfile() {
-        EditText txtUserName = binding.userName;
-        txtUserName.setEnabled(true);
-        txtUserName.requestFocus();
-
-        EditText txtUserPhone = binding.userPhone;
-        txtUserPhone.setEnabled(true);
-        txtUserPhone.requestFocus();
-
-        // place the cursor at the end of the string
-        txtUserName.setSelection(txtUserName.getText().length());
-        txtUserPhone.setSelection(txtUserPhone.getText().length());
-
-        binding.btnSaveEditUser.setVisibility(View.VISIBLE);
-    }
-
-    @Override
-    public void saveEditUserProfile() {
-        userProfilePresenter.onUpdateUser(
-                binding.userName.getText().toString(),
-                binding.userPhone.getText().toString());
-
-        endEditSignalTitleMode();
-    }
-
-    @Override
     public void deleteUserProfile() {
         FragmentManager fm = getChildFragmentManager();
 
@@ -127,18 +111,26 @@ public class UserProfileFragment extends BaseFragment implements UserProfileCont
         deleteSignalDialog.show(fm, DeleteSignalDialog.DELETE_SIGNAL_TAG);
     }
 
-    public void onUserProfileDeleted() {
+    @Override
+    public void setProgressVisibility(int visibility) {
+        binding.progressBar.setVisibility(visibility);
+    }
+
+    public void onFinishActivity() {
         this.getActivity().finish();
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.btn_deleteUserProfile) {
-            actionsListener.onDeleteUserProfileClicked();
-            return true;
-        }
-        else if (item.getItemId() == R.id.btn_editUserProfile) {
-            actionsListener.onEditUserProfileClicked();
+        if (item.getItemId() == R.id.btn_saveEditUser) {
+            hideKeyboard();
+
+            String userName = binding.userName.getText().toString();
+            String phone = binding.userPhone.getText().toString();
+            String password = binding.userNewPassword.getText().toString();
+            String passwordConfirm = binding.userNewPasswordConfirm.getText().toString();
+
+            actionsListener.onUpdateUser(userName, phone, password, passwordConfirm);
             return true;
         }
 
@@ -152,19 +144,20 @@ public class UserProfileFragment extends BaseFragment implements UserProfileCont
         super.onCreateOptionsMenu(menu, inflater);
     }
 
-    private void endEditSignalTitleMode() {
-        binding.userName.setEnabled(false);
-        binding.userPhone.setEnabled(false);
-
-        hideKeyboard();
-        binding.btnSaveEditUser.setVisibility(View.GONE);
-    }
-
-    public View.OnClickListener getOnSaveEditUserProfileClickListener() {
+    public View.OnClickListener getOnDeleteUserProfileClickListener() {
         return new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                actionsListener.onSaveEditUserClicked();
+                actionsListener.onDeleteUserProfileClicked();
+            }
+        };
+    }
+
+    public View.OnClickListener getOnLogoutClickListener() {
+        return new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                actionsListener.onLogOut();
             }
         };
     }

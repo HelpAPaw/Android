@@ -13,30 +13,29 @@ public interface UserProfileContract {
 
         void showMessage(String message);
 
+        void showPasswordDoesNotMatchMessage();
+
+        void showPasswordErrorMessage();
+
+        void setProgressVisibility(int visibility);
+
         void showUserProfile(BackendlessUser currentUser);
-
-        void editUserProfile();
-
-        void saveEditUserProfile();
 
         void deleteUserProfile();
 
-        void onUserProfileDeleted();
+        void onFinishActivity();
     }
 
     interface UserActionsListener {
 
         void onInitUserProfileScreen();
 
-        void onUpdateUser(String userName, String userPhone);
+        void onUpdateUser(String userName, String userPhone, String password, String passwordConfirm);
 
         void onDeleteUserProfile();
 
-        void onEditUserProfileClicked();
+        void onLogOut();
 
         void onDeleteUserProfileClicked();
-
-        void onSaveEditUserClicked();
-
     }
 }

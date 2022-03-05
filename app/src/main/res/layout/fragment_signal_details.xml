@@ -34,24 +34,25 @@
                             android:id="@+id/txt_signal_is_deleted"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
+                            android:text="@string/txt_signal_was_deleted"
                             android:textAlignment="center"
                             android:textAllCaps="true"
-                            android:text="@string/txt_signal_was_deleted"
                             android:textColor="@color/color_primary_dark"
                             android:textSize="22sp"
-                            android:visibility="gone"/>
+                            android:visibility="gone" />
 
                         <FrameLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center">
+
                             <ImageView
                                 android:id="@+id/img_signal_photo"
                                 android:layout_width="150dp"
                                 android:layout_height="150dp"
+                                android:layout_gravity="center"
                                 android:layout_marginTop="8dp"
                                 android:layout_marginBottom="8dp"
-                                android:layout_gravity="center"
                                 android:background="@drawable/ic_paw"
                                 android:contentDescription="@string/txt_signal_photo_description" />
 
@@ -68,22 +69,23 @@
                                 android:text="@string/txt_upload_photo"
                                 android:visibility="invisible" />
                         </FrameLayout>
+
                         <EditText
                             android:id="@+id/txt_signal_title"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="4dp"
-                            android:padding="0dp"
-                            android:textSize="22sp"
-                            android:textAlignment="center"
                             android:autoLink="all"
-                            android:linksClickable="true"
-                            android:inputType="none"
-                            android:textIsSelectable="true"
-                            android:enabled="false"
-                            android:textColor="#000000"
                             android:backgroundTint="@color/light_gray"
-                            tools:text="This is a title but it is very, very, very, VERY long and expands way much more that it should. However the important thing is that it is fully displayed and no part of it is hidden or hard to read! Right!?"/>
+                            android:enabled="false"
+                            android:inputType="none"
+                            android:linksClickable="true"
+                            android:padding="0dp"
+                            android:textAlignment="center"
+                            android:textColor="#000000"
+                            android:textIsSelectable="true"
+                            android:textSize="22sp"
+                            tools:text="This is a title but it is very, very, very, VERY long and expands way much more that it should. However the important thing is that it is fully displayed and no part of it is hidden or hard to read! Right!?" />
 
                         <RelativeLayout
                             android:id="@+id/author_buttons_layout"
@@ -99,6 +101,7 @@
                                 android:layout_alignParentLeft="true"
                                 android:text="@string/txt_cancel"
                                 android:visibility="gone" />
+
                             <Button
                                 android:id="@+id/btn_saveEditTitle"
                                 style="@style/Widget.AppCompat.Button.Borderless.Colored"
@@ -108,18 +111,19 @@
                                 android:text="@string/txt_save"
                                 android:visibility="gone" />
                         </RelativeLayout>
+
                         <TextView
                             android:id="@+id/txt_signal_type"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
-                            android:padding="0dp"
                             android:layout_gravity="center"
-                            android:gravity="center"
                             android:dropDownVerticalOffset="50dp"
                             android:entries="@array/signal_types_items"
+                            android:gravity="center"
                             android:minHeight="@dimen/thumbnail_size"
+                            android:padding="0dp"
                             android:spinnerMode="dialog"
-                            tools:text="Тип на сигнала: Бездомно животно"/>
+                            tools:text="Тип на сигнала: Бездомно животно" />
 
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -127,29 +131,29 @@
 
                             <TextView
                                 android:id="@+id/txt_submitted_date"
-                                android:layout_weight="1"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="4dp"
                                 android:layout_marginStart="4dp"
-                                android:textSize="15sp"
-                                android:textStyle="italic"
+                                android:layout_marginTop="4dp"
+                                android:layout_weight="1"
                                 android:textAlignment="textStart"
                                 android:textColor="@color/comments_gray"
-                                tools:text="12.01.2018 12:34 pm"/>
+                                android:textSize="15sp"
+                                android:textStyle="italic"
+                                tools:text="12.01.2018 12:34 pm" />
 
                             <TextView
                                 android:id="@+id/txt_signal_author"
-                                android:layout_weight="1"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="4dp"
                                 android:layout_marginEnd="4dp"
-                                android:textSize="15sp"
-                                android:textStyle="italic"
+                                android:layout_weight="1"
                                 android:textAlignment="textEnd"
                                 android:textColor="@color/comments_gray"
-                                tools:text="Milen Marinov"/>
+                                android:textSize="15sp"
+                                android:textStyle="italic"
+                                tools:text="Milen Marinov" />
 
                         </LinearLayout>
 
@@ -162,11 +166,11 @@
                                 style="@style/Widget.AppCompat.Button.Colored"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="4dp"
                                 android:layout_alignParentStart="true"
+                                android:layout_marginTop="4dp"
                                 android:drawableLeft="@drawable/ic_assistant_direction_24"
-                                android:drawableTint="@android:color/white"
                                 android:drawablePadding="4dp"
+                                android:drawableTint="@android:color/white"
                                 android:gravity="center"
                                 android:text="@string/txt_navigate_to"
                                 tools:targetApi="m" />
@@ -179,10 +183,10 @@
                                 android:layout_alignParentEnd="true"
                                 android:layout_marginTop="4dp"
                                 android:drawableLeft="@drawable/ic_call_24"
-                                android:drawableTint="@android:color/white"
                                 android:drawablePadding="4dp"
-                                tools:text="0881234567"
-                                tools:targetApi="m" />
+                                android:drawableTint="@android:color/white"
+                                tools:targetApi="m"
+                                tools:text="0881234567" />
                         </RelativeLayout>
 
                     </LinearLayout>
