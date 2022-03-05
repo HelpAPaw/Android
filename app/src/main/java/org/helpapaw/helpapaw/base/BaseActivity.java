@@ -89,7 +89,8 @@ public abstract class BaseActivity extends AppCompatActivity {
 
                     case R.id.nav_item_sign_in_out:
                         if (userManager.isLoggedIn()) {
-                            logOut();
+                            Intent intent = new Intent(BaseActivity.this, UserProfileActivity.class);
+                            startActivity(intent);
                         } else {
                             logIn();
                         }
@@ -246,7 +247,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         binding.navView.getMenu().findItem(R.id.nav_item_sign_in_out).setChecked(false);
 
         if (userManager.isLoggedIn()) {
-            binding.navView.getMenu().findItem(R.id.nav_item_sign_in_out).setTitle(R.string.txt_log_out);
+            binding.navView.getMenu().findItem(R.id.nav_item_sign_in_out).setTitle(R.string.txt_user_profile_title);
             final TextView title = binding.navView.getHeaderView(0).findViewById(R.id.nav_title);
             if (title != null) {
                 userManager.getUserName(new UserManager.GetUserPropertyCallback() {
