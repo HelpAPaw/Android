@@ -1,9 +1,12 @@
 package org.helpapaw.helpapaw.userprofile;
 
+import static org.helpapaw.helpapaw.base.PawApplication.getContext;
+
 import android.view.View;
 
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
 
+import org.helpapaw.helpapaw.R;
 import org.helpapaw.helpapaw.base.Presenter;
 import org.helpapaw.helpapaw.data.user.UserManager;
 import org.helpapaw.helpapaw.utils.Injection;
@@ -15,7 +18,7 @@ import org.helpapaw.helpapaw.utils.Injection;
 public class UserProfilePresenter extends Presenter<UserProfileContract.View>
         implements UserProfileContract.UserActionsListener {
 
-    private static final int MIN_PASS_LENGTH = 6;
+    private final int passwordMinLength;
 
     private final UserManager userManager;
 
@@ -23,6 +26,7 @@ public class UserProfilePresenter extends Presenter<UserProfileContract.View>
         super(view);
 
         userManager = Injection.getUserManagerInstance();
+        passwordMinLength = getContext().getResources().getInteger(R.integer.password_min_length);
     }
 
     @Override
@@ -43,11 +47,10 @@ public class UserProfilePresenter extends Presenter<UserProfileContract.View>
 
         boolean passwordsDoesNotMatch = !password.equals(passwordConfirm);
 
-        if (passwordsDoesNotMatch) {
-            getView().showPasswordDoesNotMatchMessage();
-        } else if (!password.isEmpty() && password.length() < MIN_PASS_LENGTH) {
+        if (!password.isEmpty() && password.length() < passwordMinLength) {
             getView().showPasswordErrorMessage();
-            return;
+        } else if (passwordsDoesNotMatch) {
+            getView().showPasswordDoesNotMatchMessage();
         } else {
             getView().setProgressVisibility(View.VISIBLE);
 
@@ -89,6 +92,8 @@ public class UserProfilePresenter extends Presenter<UserProfileContract.View>
 
     @Override
     public void onLogOut() {
+        getView().setProgressVisibility(View.VISIBLE);
+
         userManager.logout(new UserManager.LogoutCallback() {
             @Override
             public void onLogoutSuccess() {
@@ -97,6 +102,7 @@ public class UserProfilePresenter extends Presenter<UserProfileContract.View>
 
             @Override
             public void onLogoutFailure(String message) {
+                getView().setProgressVisibility(View.GONE);
                 getView().showMessage(message);
             }
         });

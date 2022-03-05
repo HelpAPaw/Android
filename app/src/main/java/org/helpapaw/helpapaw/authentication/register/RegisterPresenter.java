@@ -1,5 +1,7 @@
 package org.helpapaw.helpapaw.authentication.register;
 
+import static org.helpapaw.helpapaw.base.PawApplication.getContext;
+
 import org.helpapaw.helpapaw.R;
 import org.helpapaw.helpapaw.authentication.PrivacyPolicyConfirmationContract;
 import org.helpapaw.helpapaw.authentication.PrivacyPolicyConfirmationGetter;
@@ -17,7 +19,7 @@ public class RegisterPresenter extends Presenter<RegisterContract.View>
         PrivacyPolicyConfirmationContract.Obtain,
         PrivacyPolicyConfirmationContract.UserResponse {
 
-    private static final int MIN_PASS_LENGTH = 6;
+    private final int passwordMinLength;
 
     private UserManager userManager;
 
@@ -32,6 +34,7 @@ public class RegisterPresenter extends Presenter<RegisterContract.View>
         super(view);
         showProgressBar = false;
         userManager = Injection.getUserManagerInstance();
+        passwordMinLength = getContext().getResources().getInteger(R.integer.password_min_length);
     }
 
     @Override
@@ -48,7 +51,7 @@ public class RegisterPresenter extends Presenter<RegisterContract.View>
             return;
         }
 
-        if (isEmpty(password) || password.length() < MIN_PASS_LENGTH) {
+        if (isEmpty(password) || password.length() < passwordMinLength) {
             getView().showPasswordErrorMessage();
             return;
         }

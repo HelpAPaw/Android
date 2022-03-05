@@ -81,21 +81,30 @@ public class UserProfileFragment extends BaseFragment implements UserProfileCont
 
     @Override
     public void showPasswordDoesNotMatchMessage() {
-        if (getView() != null) {
-            Snackbar.make(getView(), R.string.txt_invalid_password_confirmation, Snackbar.LENGTH_LONG).show();
-        }
+        binding.newPasswordConfirm.setError(getString(R.string.txt_invalid_password_confirmation));
     }
 
     @Override
     public void showPasswordErrorMessage() {
-        Snackbar.make(getView(), R.string.txt_invalid_password, Snackbar.LENGTH_LONG).show();
+        binding.newPassword.setError(getString(R.string.txt_invalid_password));
     }
 
     @Override
     public void showUserProfile(BackendlessUser currentUser) {
         binding.userEmail.setText(currentUser.getEmail());
         binding.userName.setText(currentUser.getProperty("name").toString());
-        binding.userPhone.setText(currentUser.getProperty("phoneNumber").toString());
+
+        String phoneNumber = currentUser.getProperty("phoneNumber").toString();
+        if (phoneNumber != null && !phoneNumber.isEmpty()) {
+            binding.userPhone.setText(phoneNumber);
+        }
+
+        binding.userName.clearFocus();
+        binding.userPhone.clearFocus();
+        binding.newPassword.clearFocus();
+        binding.newPassword.setText("");
+        binding.newPasswordConfirm.clearFocus();
+        binding.newPasswordConfirm.setText("");
     }
 
     @Override
@@ -131,6 +140,7 @@ public class UserProfileFragment extends BaseFragment implements UserProfileCont
             String passwordConfirm = binding.newPasswordConfirm.getText().toString();
 
             actionsListener.onUpdateUser(userName, phone, password, passwordConfirm);
+
             return true;
         }
 

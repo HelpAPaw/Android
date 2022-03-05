@@ -274,7 +274,8 @@ public abstract class BaseActivity extends AppCompatActivity {
             binding.navView.getMenu().findItem(R.id.nav_item_sign_in_out).setTitle(R.string.txt_log_in);
             final TextView title = binding.navView.getHeaderView(0).findViewById(R.id.nav_title);
             if (title != null) {
-                title.setText("");
+                title.setText(getString(R.string.app_name));
+                title.setOnClickListener(null);
             }
         }
     }
