@@ -127,8 +127,8 @@ public class UserProfileFragment extends BaseFragment implements UserProfileCont
 
             String userName = binding.userName.getText().toString();
             String phone = binding.userPhone.getText().toString();
-            String password = binding.userNewPassword.getText().toString();
-            String passwordConfirm = binding.userNewPasswordConfirm.getText().toString();
+            String password = binding.newPassword.getText().toString();
+            String passwordConfirm = binding.newPasswordConfirm.getText().toString();
 
             actionsListener.onUpdateUser(userName, phone, password, passwordConfirm);
             return true;
