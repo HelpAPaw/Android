@@ -9,7 +9,7 @@ android {
         applicationId "org.helpapaw.helpapaw"
         minSdkVersion 19
         targetSdkVersion 31
-        versionCode 87
+        versionCode 88
         versionName "5.1.0"
         vectorDrawables.useSupportLibrary = true
 
@@ -41,7 +41,7 @@ android {
 }
 
 ext {
-    roomVersion = '2.4.1'
+    roomVersion = '2.4.2'
 }
 
 dependencies {
