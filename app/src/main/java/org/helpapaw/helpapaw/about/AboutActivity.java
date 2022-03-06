@@ -34,7 +34,7 @@ public class AboutActivity extends AppCompatActivity {
             binding.toolbarTitle.setText(getString(R.string.string_about_title));
         }
 
-        binding.tvAboutVersion.setText(BuildConfig.VERSION_NAME);
+        binding.tvAboutVersion.setText(String.format("%s (%d)", BuildConfig.VERSION_NAME, BuildConfig.VERSION_CODE));
 
         binding.btnAboutContacts.setOnClickListener(new View.OnClickListener() {
             @Override
