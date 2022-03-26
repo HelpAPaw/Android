@@ -87,7 +87,9 @@ public interface UploadPhotoContract {
             }
         }
 
-        default void saveImageFromUri(UserActionsListener actionsListener, Uri photoUri) {
+        default void saveImageFromUri(UploadPhotoContract.UserActionsListener actionsListener, Uri photoUri) {
+            FirebaseCrashlytics.getInstance().log("Entering saveImageFromUri, photoUri is: " + photoUri.toString());
+
             Context context = getFragment().getActivity();
 
             // This segment works once the permission is handled
@@ -98,9 +100,13 @@ public interface UploadPhotoContract {
                 photo = ImageUtils.getInstance().getRotatedBitmap(photo, rotation);
 
                 //https://stackoverflow.com/questions/58539583/android-q-get-image-from-gallery-and-process-it
-                String filename = photoUri.getLastPathSegment();
+                // Weird decoding and reparsing because the path is sometimes encoded like this:
+                // content://com.miui.gallery.open/raw/%2Fstorage%2Femulated%2F0%2FDCIM%2FCamera%2FIMG_20220316_225127.jpg
+                String lastSegment = photoUri.getLastPathSegment();
+                String filename = Uri.parse(Uri.decode(lastSegment)).getLastPathSegment();
                 File dir = context.getCacheDir();
                 File dest = new File(dir, filename);
+                FirebaseCrashlytics.getInstance().log("destination is: " + dest);
                 FileOutputStream out = new FileOutputStream(dest);
                 photo.compress(Bitmap.CompressFormat.JPEG, 100, out);
                 out.flush();
