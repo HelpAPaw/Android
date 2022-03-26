@@ -56,7 +56,7 @@
     <string name="txt_share">Сподели</string>
     <string name="txt_edit_title">Промени</string>
     <string name="txt_delete_signal">Изтрий</string>
-    <string name="txt_delete_signal_dialog">Сигурни ли сте, че искате да изтриете сиганала?</string>
+    <string name="txt_delete_signal_dialog">Сигурни ли сте, че искате да изтриете сигнала?</string>
     <string name="txt_comments">Коментари</string>
     <string name="txt_signal_from">Сигналът е подаден от %1$s</string>
     <string name="txt_comment_hint">Напиши коментар</string>
