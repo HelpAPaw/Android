@@ -369,7 +369,12 @@ public class SignalDetailsFragment extends BaseFragment
         //https://stackoverflow.com/questions/25662853/android-intent-for-opening-both-waze-and-google-maps/71251419#71251419
         final String geoIntentData = "geo:" + latitude + "," + longitude + "?q=" + latitude + "," + longitude;
         Intent intent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(geoIntentData));
-        startActivity(intent);
+        try {
+            startActivity(intent);
+        }
+        catch (Exception ex) {
+            showMessage(getString(R.string.txt_no_navigation_app));
+        }
     }
 
     @Override
