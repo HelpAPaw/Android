@@ -88,7 +88,7 @@
         <item>Commented Signals</item>
     </string-array>
     <string name="text_my_notifications">My Notifications</string>
-    <string name="no_notifications_message">You do not have notifications.</string>
+    <string name="no_notifications_message">You do not have notifications</string>
     <string name="txt_delete_notifications_dialog">Are you sure you want to delete all the notifications?</string>
     <string name="text_faqs">FAQs</string>
     <string name="text_about">About</string>

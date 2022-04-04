@@ -53,10 +53,10 @@ public class MyNotificationsCustomAdapter extends BaseAdapter {
         if (convertView == null) {
             holder = new ViewHolder(); LayoutInflater inflater = (LayoutInflater) context
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            convertView = inflater.inflate(R.layout.notification_item, null, true);
-            holder.imageView = convertView.findViewById(R.id.notification_item_signal_img);
-            holder.textViewTitle = convertView.findViewById(R.id.notification_item_text);
-            holder.textViewDate = convertView.findViewById(R.id.notification_item_date);
+            convertView = inflater.inflate(R.layout.signal_item, null, true);
+            holder.imageView = convertView.findViewById(R.id.signal_item_img);
+            holder.textViewTitle = convertView.findViewById(R.id.signal_item_title);
+            holder.textViewDate = convertView.findViewById(R.id.signal_item_date);
             convertView.setTag(holder);
         } else {
             // the getTag returns the viewHolder object set as a tag to the view
