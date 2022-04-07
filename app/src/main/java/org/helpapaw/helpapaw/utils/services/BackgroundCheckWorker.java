@@ -17,6 +17,7 @@ import androidx.work.WorkerParameters;
 import android.util.Log;
 
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 
 import org.helpapaw.helpapaw.R;
 import org.helpapaw.helpapaw.data.models.Notification;
@@ -80,7 +81,7 @@ public class BackgroundCheckWorker extends ListenableWorker {
                     getSignalsForLastKnownLocation(location, completer);
                     Injection.getPushNotificationsRepositoryInstance().updateDeviceInfoInCloud(location, null, null, null);
                 } else {
-                    Log.d(TAG, "Could not obtain last location");
+                    FirebaseCrashlytics.getInstance().recordException(new Throwable("Could not obtain last location"));
                     completer.set(Result.failure());
                 }
             } else {
@@ -134,7 +135,7 @@ public class BackgroundCheckWorker extends ListenableWorker {
 
             @Override
             public void onSignalsFailure(String message) {
-                Log.d(TAG, "there was a problem obtaining signals: " + message);
+                FirebaseCrashlytics.getInstance().recordException(new Throwable(message));
                 completer.set(Result.failure());
             }
         });

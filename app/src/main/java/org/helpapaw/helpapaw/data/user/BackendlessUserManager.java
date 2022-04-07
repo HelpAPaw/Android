@@ -126,6 +126,7 @@ public class BackendlessUserManager implements UserManager {
                             },
                             true);
                 } catch (Exception e) {
+                    FirebaseCrashlytics.getInstance().recordException(e);
                     loginCallback.onLoginFailure(e.getLocalizedMessage());
                 }
             }
@@ -259,13 +260,14 @@ public class BackendlessUserManager implements UserManager {
 
                 @Override
                 public void handleFault(BackendlessFault fault) {
+                    FirebaseCrashlytics.getInstance().recordException(new Throwable(fault.toString()));
                     setUserPropertyCallback.onFailure(fault.getMessage());
                 }
             });
         }
         catch (BackendlessException exception) {
             // update failed, to get the error code, call exception.getFault().getCode()
-            Log.e(BackendlessUserManager.class.getSimpleName(), Objects.requireNonNull(exception.getMessage()));
+            FirebaseCrashlytics.getInstance().recordException(exception);
         }
     }
 

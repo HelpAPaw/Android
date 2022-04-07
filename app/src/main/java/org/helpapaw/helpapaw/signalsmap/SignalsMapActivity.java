@@ -12,6 +12,8 @@ import androidx.appcompat.widget.Toolbar;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
+
 import org.helpapaw.helpapaw.R;
 import org.helpapaw.helpapaw.base.BaseActivity;
 import org.helpapaw.helpapaw.base.PawApplication;
@@ -68,7 +70,7 @@ public class SignalsMapActivity extends BaseActivity {
                     }
                 }
             } else {
-                Log.i("BRANCH SDK", error.getMessage());
+                FirebaseCrashlytics.getInstance().recordException(new Throwable(error.toString()));
             }
         }).withData(this.getIntent().getData()).init();
     }

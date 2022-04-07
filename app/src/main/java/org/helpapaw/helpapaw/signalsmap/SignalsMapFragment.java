@@ -77,6 +77,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.VisibleRegion;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 
 import org.helpapaw.helpapaw.R;
 import org.helpapaw.helpapaw.authentication.AuthenticationActivity;
@@ -666,6 +667,7 @@ public class SignalsMapFragment extends BaseFragment
                             // and check the result in onActivityResult().
                             status.startResolutionForResult(getActivity(), REQUEST_CHECK_SETTINGS);
                         } catch (Exception e) {
+                            FirebaseCrashlytics.getInstance().recordException(e);
                             // Ignore the error.
                         }
                         break;
@@ -681,7 +683,7 @@ public class SignalsMapFragment extends BaseFragment
         //Protection for the case when activity is destroyed (e.g. when rotating)
         //Probably there is a better fix in the actual workflow but we need a quick fix as users experience a lot of crashes
         if (cont == null) {
-            Log.e(TAG, "Context is null, exiting...");
+            FirebaseCrashlytics.getInstance().recordException(new Throwable("Context is null, exiting..."));
             return;
         }
         if (   (ContextCompat.checkSelfPermission(cont, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
@@ -700,9 +702,6 @@ public class SignalsMapFragment extends BaseFragment
             Location location = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
             if (location != null) {
                 handleNewLocation(location);
-            }
-            else {
-                Log.d(TAG, "here we are");
             }
         }
     }

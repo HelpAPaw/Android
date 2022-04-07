@@ -9,6 +9,8 @@ import androidx.fragment.app.FragmentManager;
 import androidx.appcompat.app.AlertDialog;
 import android.util.Log;
 
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
+
 import org.helpapaw.helpapaw.utils.SharingUtils;
 
 /**
@@ -32,7 +34,7 @@ public class AlertDialogFragment extends DialogFragment {
                 dialog.show(fm, "tag");
             }
             catch (Exception ex) {
-                Log.e(AlertDialogFragment.class.getSimpleName(), "Could not show alert");
+                FirebaseCrashlytics.getInstance().recordException(ex);
             }
         }
     }

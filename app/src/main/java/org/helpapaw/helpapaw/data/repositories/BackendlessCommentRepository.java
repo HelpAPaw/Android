@@ -8,6 +8,7 @@ import com.backendless.IDataStore;
 import com.backendless.async.callback.AsyncCallback;
 import com.backendless.exceptions.BackendlessFault;
 import com.backendless.persistence.DataQueryBuilder;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 
 import org.helpapaw.helpapaw.data.models.Comment;
 import org.helpapaw.helpapaw.data.models.Signal;
@@ -92,7 +93,7 @@ public class BackendlessCommentRepository implements CommentRepository {
                                 dateCreated = dateFormat.parse(dateCreatedString);
                             }
                             catch (Exception ex) {
-                                Log.d(BackendlessCommentRepository.class.getName(), "Failed to parse comment date.");
+                                FirebaseCrashlytics.getInstance().recordException(ex);
                             }
 
                             Comment comment = new Comment(
@@ -162,7 +163,7 @@ public class BackendlessCommentRepository implements CommentRepository {
                                     dateCreated = dateFormat.parse(dateCreatedString);
                                 }
                                 catch (Exception ex) {
-                                    Log.d(BackendlessCommentRepository.class.getName(), "Failed to parse comment date.");
+                                    FirebaseCrashlytics.getInstance().recordException(ex);
                                 }
 
                                 Injection.getPushNotificationsRepositoryInstance().pushNewCommentNotification(

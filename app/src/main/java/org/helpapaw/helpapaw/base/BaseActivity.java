@@ -11,6 +11,7 @@ import androidx.annotation.Nullable;
 
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 
 import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat;
 import androidx.core.content.res.ResourcesCompat;
@@ -257,7 +258,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
                     @Override
                     public void onFailure(String message) {
-                        Log.d(TAG, message);
+                        FirebaseCrashlytics.getInstance().recordException(new Throwable(message));
                     }
                 });
             }

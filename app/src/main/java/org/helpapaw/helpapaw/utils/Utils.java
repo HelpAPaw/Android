@@ -7,6 +7,8 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
 
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
+
 import org.helpapaw.helpapaw.base.PawApplication;
 
 import java.io.BufferedReader;
@@ -113,7 +115,7 @@ public class Utils {
             formattedDate = targetFormat.format(date);
         }
         catch (Exception ex) {
-            Log.d(Utils.class.getName(), "Failed to parse date.");
+            FirebaseCrashlytics.getInstance().recordException(ex);
         }
 
         return formattedDate;

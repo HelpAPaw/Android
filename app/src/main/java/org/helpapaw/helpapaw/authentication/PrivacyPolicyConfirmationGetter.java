@@ -3,6 +3,8 @@ package org.helpapaw.helpapaw.authentication;
 import android.content.Context;
 import android.os.AsyncTask;
 
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
+
 import org.helpapaw.helpapaw.R;
 import org.helpapaw.helpapaw.utils.Utils;
 
@@ -29,7 +31,7 @@ public class PrivacyPolicyConfirmationGetter extends AsyncTask<Void, Void, Strin
                 str = Utils.getHtml(context.getString(R.string.url_privacy_policy));
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            FirebaseCrashlytics.getInstance().recordException(e);
         }
 
         return str;
