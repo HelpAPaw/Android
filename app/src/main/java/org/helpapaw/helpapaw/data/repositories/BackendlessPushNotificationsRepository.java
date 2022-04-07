@@ -313,6 +313,7 @@ public class BackendlessPushNotificationsRepository implements PushNotifications
         String whereClause = "user.objectid IN (" + userIds + ")";
         DataQueryBuilder queryBuilder = DataQueryBuilder.create();
         queryBuilder.setWhereClause(whereClause);
+        queryBuilder.setPageSize(pageSize);
 
         pushSignalUpdatedNotifications(signal, signalUpdate, newStatus, newComment, queryBuilder, 0);
     }
