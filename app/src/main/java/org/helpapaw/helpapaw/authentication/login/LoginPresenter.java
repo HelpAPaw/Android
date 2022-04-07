@@ -3,7 +3,6 @@ package org.helpapaw.helpapaw.authentication.login;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.crashlytics.FirebaseCrashlytics;
 
 import org.helpapaw.helpapaw.R;
 import org.helpapaw.helpapaw.authentication.PrivacyPolicyConfirmationContract;
@@ -264,7 +263,7 @@ public class LoginPresenter extends Presenter<LoginContract.View>
                 }
             });
         } catch (ApiException e) {
-            FirebaseCrashlytics.getInstance().recordException(e);
+            Injection.getCrashLogger().recordException(e);
             // The ApiException status code indicates the detailed failure reason.
             // Please refer to the GoogleSignInStatusCodes class reference for more information.
             if (!isViewAvailable()) return;

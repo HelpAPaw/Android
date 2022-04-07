@@ -10,10 +10,10 @@ import com.backendless.exceptions.BackendlessFault;
 import com.backendless.persistence.local.UserTokenStorageFactory;
 import com.facebook.login.LoginManager;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.firebase.crashlytics.FirebaseCrashlytics;
 
 import org.helpapaw.helpapaw.R;
 import org.helpapaw.helpapaw.base.PawApplication;
+import org.helpapaw.helpapaw.utils.Injection;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -44,11 +44,11 @@ public class BackendlessUserManager implements UserManager {
                 Backendless.UserService.setCurrentUser(user);
                 loginCallback.onLoginSuccess(user.getUserId());
 
-                FirebaseCrashlytics.getInstance().setUserId(user.getUserId());
+                Injection.getCrashLogger().setUserId(user.getUserId());
             }
 
             public void handleFault(BackendlessFault fault) {
-                FirebaseCrashlytics.getInstance().recordException(new Throwable(fault.toString()));
+                Injection.getCrashLogger().recordException(new Throwable(fault.toString()));
                 loginCallback.onLoginFailure(fault.getMessage());
             }
         }, true);
@@ -62,12 +62,12 @@ public class BackendlessUserManager implements UserManager {
                 Backendless.UserService.setCurrentUser(user);
                 loginCallback.onLoginSuccess(user.getUserId());
 
-                FirebaseCrashlytics.getInstance().setUserId(user.getUserId());
+                Injection.getCrashLogger().setUserId(user.getUserId());
             }
 
             @Override
             public void handleFault(BackendlessFault fault) {
-                FirebaseCrashlytics.getInstance().recordException(new Throwable(fault.toString()));
+                Injection.getCrashLogger().recordException(new Throwable(fault.toString()));
                 loginCallback.onLoginFailure(fault.getMessage());
             }
         },
@@ -118,18 +118,18 @@ public class BackendlessUserManager implements UserManager {
                                     Backendless.UserService.setCurrentUser(user);
                                     loginCallback.onLoginSuccess(user.getUserId());
 
-                                    FirebaseCrashlytics.getInstance().setUserId(user.getUserId());
+                                    Injection.getCrashLogger().setUserId(user.getUserId());
                                 }
 
                                 @Override
                                 public void handleFault(BackendlessFault fault) {
-                                    FirebaseCrashlytics.getInstance().recordException(new Throwable(fault.toString()));
+                                    Injection.getCrashLogger().recordException(new Throwable(fault.toString()));
                                     loginCallback.onLoginFailure(fault.getMessage());
                                 }
                             },
                             true);
                 } catch (Exception e) {
-                    FirebaseCrashlytics.getInstance().recordException(e);
+                    Injection.getCrashLogger().recordException(e);
                     loginCallback.onLoginFailure(e.getLocalizedMessage());
                 }
             }
@@ -151,7 +151,7 @@ public class BackendlessUserManager implements UserManager {
             }
 
             public void handleFault(BackendlessFault fault) {
-                FirebaseCrashlytics.getInstance().recordException(new Throwable(fault.toString()));
+                Injection.getCrashLogger().recordException(new Throwable(fault.toString()));
                 registrationCallback.onRegistrationFailure(fault.getMessage());
             }
         });
@@ -167,7 +167,7 @@ public class BackendlessUserManager implements UserManager {
 
             @Override
             public void handleFault(BackendlessFault fault) {
-                FirebaseCrashlytics.getInstance().recordException(new Throwable(fault.toString()));
+                Injection.getCrashLogger().recordException(new Throwable(fault.toString()));
                 resetPasswordCallback.onResetPasswordFailure(fault.getMessage());
             }
         });
@@ -182,7 +182,7 @@ public class BackendlessUserManager implements UserManager {
             }
 
             public void handleFault(BackendlessFault fault) {
-                FirebaseCrashlytics.getInstance().recordException(new Throwable(fault.toString()));
+                Injection.getCrashLogger().recordException(new Throwable(fault.toString()));
                 logoutCallback.onLogoutFailure(fault.getMessage());
             }
         });
@@ -212,7 +212,7 @@ public class BackendlessUserManager implements UserManager {
 
                                 @Override
                                 public void handleFault(BackendlessFault fault) {
-                                    FirebaseCrashlytics.getInstance().recordException(new Throwable(fault.toString()));
+                                    Injection.getCrashLogger().recordException(new Throwable(fault.toString()));
                                     loginCallback.onLoginFailure(fault.getMessage());
                                 }
                             });
@@ -227,7 +227,7 @@ public class BackendlessUserManager implements UserManager {
 
             @Override
             public void handleFault(BackendlessFault fault) {
-                FirebaseCrashlytics.getInstance().recordException(new Throwable(fault.toString()));
+                Injection.getCrashLogger().recordException(new Throwable(fault.toString()));
                 loginCallback.onLoginFailure(fault.getMessage());
             }
         });
@@ -268,14 +268,14 @@ public class BackendlessUserManager implements UserManager {
 
                 @Override
                 public void handleFault(BackendlessFault fault) {
-                    FirebaseCrashlytics.getInstance().recordException(new Throwable(fault.toString()));
+                    Injection.getCrashLogger().recordException(new Throwable(fault.toString()));
                     setUserPropertyCallback.onFailure(fault.getMessage());
                 }
             });
         }
         catch (BackendlessException exception) {
             // update failed, to get the error code, call exception.getFault().getCode()
-            FirebaseCrashlytics.getInstance().recordException(exception);
+            Injection.getCrashLogger().recordException(exception);
         }
     }
 
@@ -303,7 +303,7 @@ public class BackendlessUserManager implements UserManager {
 
                 @Override
                 public void handleFault(BackendlessFault fault) {
-                    FirebaseCrashlytics.getInstance().recordException(new Throwable(fault.toString()));
+                    Injection.getCrashLogger().recordException(new Throwable(fault.toString()));
                     getUserPropertyCallback.onFailure(fault.getMessage());
                 }
             });
@@ -335,7 +335,7 @@ public class BackendlessUserManager implements UserManager {
 
                 @Override
                 public void handleFault(BackendlessFault fault) {
-                    FirebaseCrashlytics.getInstance().recordException(new Throwable(fault.toString()));
+                    Injection.getCrashLogger().recordException(new Throwable(fault.toString()));
                     getUserPropertyCallback.onFailure(fault.getMessage());
                 }
             });
@@ -366,7 +366,7 @@ public class BackendlessUserManager implements UserManager {
 
                 @Override
                 public void handleFault(BackendlessFault fault) {
-                    FirebaseCrashlytics.getInstance().recordException(new Throwable(fault.toString()));
+                    Injection.getCrashLogger().recordException(new Throwable(fault.toString()));
                     getUserPropertyCallback.onFailure(fault.getMessage());
                 }
             });

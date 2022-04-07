@@ -11,7 +11,6 @@ import com.backendless.messaging.MessageStatus;
 import com.backendless.messaging.PublishOptions;
 import com.backendless.persistence.DataQueryBuilder;
 import com.backendless.push.DeviceRegistrationResult;
-import com.google.firebase.crashlytics.FirebaseCrashlytics;
 
 import org.helpapaw.helpapaw.R;
 import org.helpapaw.helpapaw.base.PawApplication;
@@ -74,7 +73,7 @@ public class BackendlessPushNotificationsRepository implements PushNotifications
 
             @Override
             public void handleFault(BackendlessFault fault) {
-                FirebaseCrashlytics.getInstance().recordException(new Throwable(fault.toString()));
+                Injection.getCrashLogger().recordException(new Throwable(fault.toString()));
             }
         });
     }
@@ -89,7 +88,7 @@ public class BackendlessPushNotificationsRepository implements PushNotifications
 
             @Override
             public void handleFault(BackendlessFault fault) {
-                FirebaseCrashlytics.getInstance().recordException(new Throwable(fault.toString()));
+                Injection.getCrashLogger().recordException(new Throwable(fault.toString()));
             }
         });
     }
@@ -141,7 +140,7 @@ public class BackendlessPushNotificationsRepository implements PushNotifications
                                     }
                                 }
                                 catch (Error e) {
-                                    FirebaseCrashlytics.getInstance().recordException(e);
+                                    Injection.getCrashLogger().recordException(e);
                                 }
 
                                 // Save updated object
@@ -153,22 +152,22 @@ public class BackendlessPushNotificationsRepository implements PushNotifications
 
                                     @Override
                                     public void handleFault(BackendlessFault fault) {
-                                        FirebaseCrashlytics.getInstance().recordException(new Throwable(fault.toString()));
+                                        Injection.getCrashLogger().recordException(new Throwable(fault.toString()));
                                     }
                                 });
                             }
                             else {
-                                FirebaseCrashlytics.getInstance().recordException(new Throwable("Device token not found in server DB."));
+                                Injection.getCrashLogger().recordException(new Throwable("Device token not found in server DB."));
                             }
                         }
 
                         @Override
                         public void handleFault(BackendlessFault fault) {
-                            FirebaseCrashlytics.getInstance().recordException(new Throwable(fault.toString()));
+                            Injection.getCrashLogger().recordException(new Throwable(fault.toString()));
                         }
                     });
         } else {
-            FirebaseCrashlytics.getInstance().recordException(new Throwable("localToken is null -or- non-existent"));
+            Injection.getCrashLogger().recordException(new Throwable("localToken is null -or- non-existent"));
         }
     }
 
@@ -245,7 +244,7 @@ public class BackendlessPushNotificationsRepository implements PushNotifications
 
                         @Override
                         public void handleFault(BackendlessFault fault) {
-                            FirebaseCrashlytics.getInstance().recordException(new Throwable(fault.toString()));
+                            Injection.getCrashLogger().recordException(new Throwable(fault.toString()));
                         }
                     });
                 }
@@ -257,7 +256,7 @@ public class BackendlessPushNotificationsRepository implements PushNotifications
 
             @Override
             public void handleFault(BackendlessFault fault) {
-                FirebaseCrashlytics.getInstance().recordException(new Throwable(fault.toString()));
+                Injection.getCrashLogger().recordException(new Throwable(fault.toString()));
             }
         });
     }
@@ -384,7 +383,7 @@ public class BackendlessPushNotificationsRepository implements PushNotifications
 
                                 @Override
                                 public void handleFault(BackendlessFault fault) {
-                                    FirebaseCrashlytics.getInstance().recordException(new Throwable(fault.toString()));
+                                    Injection.getCrashLogger().recordException(new Throwable(fault.toString()));
                                 }
                             });
                         }
@@ -396,7 +395,7 @@ public class BackendlessPushNotificationsRepository implements PushNotifications
 
                     @Override
                     public void handleFault(BackendlessFault fault) {
-                        FirebaseCrashlytics.getInstance().recordException(new Throwable(fault.toString()));
+                        Injection.getCrashLogger().recordException(new Throwable(fault.toString()));
                     }
                 });
     }

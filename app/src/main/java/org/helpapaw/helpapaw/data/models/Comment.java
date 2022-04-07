@@ -1,9 +1,6 @@
 package org.helpapaw.helpapaw.data.models;
 
-import android.util.Log;
-
-import com.google.firebase.crashlytics.FirebaseCrashlytics;
-
+import org.helpapaw.helpapaw.utils.Injection;
 import org.json.JSONObject;
 
 import java.util.Date;
@@ -87,7 +84,7 @@ public class Comment {
         }
         catch (Exception ex) {
             // Failed to parse new status from comment. Not a status change comment?
-            FirebaseCrashlytics.getInstance().recordException(ex);
+            Injection.getCrashLogger().recordException(ex);
         }
 
         return newStatus;

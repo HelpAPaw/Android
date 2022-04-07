@@ -2,8 +2,6 @@ package org.helpapaw.helpapaw.mynotifications;
 
 import android.view.View;
 
-import com.google.firebase.crashlytics.FirebaseCrashlytics;
-
 import org.helpapaw.helpapaw.base.Presenter;
 import org.helpapaw.helpapaw.data.models.Notification;
 import org.helpapaw.helpapaw.data.models.Signal;
@@ -53,7 +51,7 @@ public class MyNotificationsPresenter extends Presenter<MyNotificationsContract.
 
     @Override
     public void onDeleteMyNotifications() {
-        FirebaseCrashlytics.getInstance().log("Initiate delete notifications ");
+        Injection.getCrashLogger().log("Initiate delete notifications ");
         notificationsDatabase.deleteAll();
         notificationList = new ArrayList<>();
         mapSignalsToIds = new HashMap<>();

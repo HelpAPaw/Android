@@ -14,7 +14,6 @@ import androidx.work.WorkManager;
 
 import com.backendless.Backendless;
 import com.google.firebase.analytics.FirebaseAnalytics;
-import com.google.firebase.crashlytics.FirebaseCrashlytics;
 
 import org.helpapaw.helpapaw.R;
 import org.helpapaw.helpapaw.data.user.UserManager;
@@ -92,7 +91,7 @@ public class PawApplication extends MultiDexApplication {
         userManager.isLoggedIn(new UserManager.LoginCallback() {
             @Override
             public void onLoginSuccess(String userId) {
-                FirebaseCrashlytics.getInstance().setUserId(userId);
+                Injection.getCrashLogger().setUserId(userId);
 
                 // Check if user has accepted privacy policy. If not - log out to force acceptance
                 userManager.getHasAcceptedPrivacyPolicy(new UserManager.GetUserPropertyCallback() {

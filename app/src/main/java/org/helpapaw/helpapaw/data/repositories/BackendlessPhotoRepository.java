@@ -6,10 +6,10 @@ import com.backendless.Backendless;
 import com.backendless.async.callback.AsyncCallback;
 import com.backendless.exceptions.BackendlessFault;
 import com.backendless.files.BackendlessFile;
-import com.google.firebase.crashlytics.FirebaseCrashlytics;
 
 import org.helpapaw.helpapaw.R;
 import org.helpapaw.helpapaw.base.PawApplication;
+import org.helpapaw.helpapaw.utils.Injection;
 import org.helpapaw.helpapaw.utils.images.ImageUtils;
 
 import java.io.File;
@@ -40,7 +40,7 @@ public class BackendlessPhotoRepository implements PhotoRepository {
 
                     @Override
                     public void handleFault(BackendlessFault fault) {
-                        FirebaseCrashlytics.getInstance().recordException(new Throwable(fault.toString()));
+                        Injection.getCrashLogger().recordException(new Throwable(fault.toString()));
                         callback.onPhotoFailure(fault.getMessage());
                     }
                 });
@@ -59,7 +59,7 @@ public class BackendlessPhotoRepository implements PhotoRepository {
 
                     @Override
                     public void handleFault(BackendlessFault fault) {
-                        FirebaseCrashlytics.getInstance().recordException(new Throwable(fault.toString()));
+                        Injection.getCrashLogger().recordException(new Throwable(fault.toString()));
                         callback.onPhotoFailure(fault.getMessage());
                     }
                 });
@@ -94,7 +94,7 @@ public class BackendlessPhotoRepository implements PhotoRepository {
 
             @Override
             public void handleFault(BackendlessFault fault) {
-                FirebaseCrashlytics.getInstance().recordException(new Throwable(fault.toString()));
+                Injection.getCrashLogger().recordException(new Throwable(fault.toString()));
                 callback.onPhotoExistsFailure(fault.getMessage());
             }
         });

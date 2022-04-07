@@ -29,6 +29,7 @@ public class Injection {
     private static SettingsRepository settingsRepository;
     private static PushNotificationsRepository pushNotificationsRepository;
     private static ReceivedNotificationsRepository receivedNotificationsRepository;
+    private static ICrashLogger crashLogger;
 
     public synchronized static ImageLoader getImageLoader() {
         if (imageLoader == null) {
@@ -87,5 +88,13 @@ public class Injection {
         }
 
         return receivedNotificationsRepository;
+    }
+    
+    public static ICrashLogger getCrashLogger() {
+        if (crashLogger == null) {
+            crashLogger = new CrashLogger();
+        }
+        
+        return crashLogger;
     }
 }

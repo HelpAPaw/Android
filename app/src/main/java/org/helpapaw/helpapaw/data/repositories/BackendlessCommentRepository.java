@@ -1,14 +1,11 @@
 package org.helpapaw.helpapaw.data.repositories;
 
-import android.util.Log;
-
 import com.backendless.Backendless;
 import com.backendless.BackendlessUser;
 import com.backendless.IDataStore;
 import com.backendless.async.callback.AsyncCallback;
 import com.backendless.exceptions.BackendlessFault;
 import com.backendless.persistence.DataQueryBuilder;
-import com.google.firebase.crashlytics.FirebaseCrashlytics;
 
 import org.helpapaw.helpapaw.data.models.Comment;
 import org.helpapaw.helpapaw.data.models.Signal;
@@ -93,7 +90,7 @@ public class BackendlessCommentRepository implements CommentRepository {
                                 dateCreated = dateFormat.parse(dateCreatedString);
                             }
                             catch (Exception ex) {
-                                FirebaseCrashlytics.getInstance().recordException(ex);
+                                Injection.getCrashLogger().recordException(ex);
                             }
 
                             Comment comment = new Comment(
@@ -123,7 +120,7 @@ public class BackendlessCommentRepository implements CommentRepository {
 
                     @Override
                     public void handleFault(BackendlessFault fault) {
-                        FirebaseCrashlytics.getInstance().recordException(new Throwable(fault.toString()));
+                        Injection.getCrashLogger().recordException(new Throwable(fault.toString()));
                         callback.onCommentsFailure(fault.getMessage());
                     }
                 });
@@ -161,7 +158,7 @@ public class BackendlessCommentRepository implements CommentRepository {
                                     DateFormat dateFormat = new SimpleDateFormat(DATE_TIME_FORMAT, Locale.getDefault());
                                     dateCreated = dateFormat.parse(dateCreatedString);
                                 } catch (Exception ex) {
-                                    FirebaseCrashlytics.getInstance().recordException(ex);
+                                    Injection.getCrashLogger().recordException(ex);
                                 }
 
                                 Injection.getPushNotificationsRepositoryInstance().pushNewCommentNotification(
@@ -185,7 +182,7 @@ public class BackendlessCommentRepository implements CommentRepository {
 
                                                 @Override
                                                 public void handleFault(BackendlessFault fault) {
-                                                    FirebaseCrashlytics.getInstance().recordException(new Throwable(fault.toString()));
+                                                    Injection.getCrashLogger().recordException(new Throwable(fault.toString()));
                                                     callback.onCommentFailure(fault.getMessage());
                                                 }
                                             });
@@ -203,14 +200,14 @@ public class BackendlessCommentRepository implements CommentRepository {
 
                             @Override
                             public void handleFault(BackendlessFault fault) {
-                                FirebaseCrashlytics.getInstance().recordException(new Throwable(fault.toString()));
+                                Injection.getCrashLogger().recordException(new Throwable(fault.toString()));
                                 callback.onCommentFailure(fault.getMessage());
                             }
                         });
             }
 
             public void handleFault(BackendlessFault fault) {
-                FirebaseCrashlytics.getInstance().recordException(new Throwable(fault.toString()));
+                Injection.getCrashLogger().recordException(new Throwable(fault.toString()));
                 callback.onCommentFailure(fault.getMessage());
             }
         });

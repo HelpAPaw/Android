@@ -5,9 +5,6 @@ import android.content.Context;
 import android.location.Location;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.util.Log;
-
-import com.google.firebase.crashlytics.FirebaseCrashlytics;
 
 import org.helpapaw.helpapaw.base.PawApplication;
 
@@ -115,7 +112,7 @@ public class Utils {
             formattedDate = targetFormat.format(date);
         }
         catch (Exception ex) {
-            FirebaseCrashlytics.getInstance().recordException(ex);
+            Injection.getCrashLogger().recordException(ex);
         }
 
         return formattedDate;

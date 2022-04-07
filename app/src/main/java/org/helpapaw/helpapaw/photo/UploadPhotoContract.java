@@ -5,9 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
 
 import androidx.core.content.ContextCompat;
@@ -15,10 +13,9 @@ import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
-import com.google.firebase.crashlytics.FirebaseCrashlytics;
-
 import org.helpapaw.helpapaw.base.PawApplication;
 import org.helpapaw.helpapaw.sendsignal.SendPhotoBottomSheet;
+import org.helpapaw.helpapaw.utils.Injection;
 import org.helpapaw.helpapaw.utils.images.ImageUtils;
 
 import java.io.File;
@@ -63,7 +60,7 @@ public interface UploadPhotoContract {
                 getFragment().startActivityForResult(intent, REQUEST_CAMERA);
                 return photoFile;
             } catch (Exception e) {
-                FirebaseCrashlytics.getInstance().recordException(e);
+                Injection.getCrashLogger().recordException(e);
             }
 
             return null;
@@ -82,13 +79,13 @@ public interface UploadPhotoContract {
                 try {
                     getFragment().startActivityForResult(intent, REQUEST_GALLERY);
                 } catch (Exception e) {
-                    FirebaseCrashlytics.getInstance().recordException(e);
+                    Injection.getCrashLogger().recordException(e);
                 }
             }
         }
 
         default void saveImageFromUri(UploadPhotoContract.UserActionsListener actionsListener, Uri photoUri) {
-            FirebaseCrashlytics.getInstance().log("Entering saveImageFromUri, photoUri is: " + photoUri.toString());
+            Injection.getCrashLogger().log("Entering saveImageFromUri, photoUri is: " + photoUri.toString());
 
             Context context = getFragment().getActivity();
 
@@ -106,7 +103,7 @@ public interface UploadPhotoContract {
                 String filename = Uri.parse(Uri.decode(lastSegment)).getLastPathSegment();
                 File dir = context.getCacheDir();
                 File dest = new File(dir, filename);
-                FirebaseCrashlytics.getInstance().log("destination is: " + dest);
+                Injection.getCrashLogger().log("destination is: " + dest);
                 FileOutputStream out = new FileOutputStream(dest);
                 photo.compress(Bitmap.CompressFormat.JPEG, 100, out);
                 out.flush();
@@ -115,7 +112,7 @@ public interface UploadPhotoContract {
                 actionsListener.onSignalPhotoSelected(dest);
             }
             catch (Exception e) {
-                FirebaseCrashlytics.getInstance().recordException(e);
+                Injection.getCrashLogger().recordException(e);
             }
         }
 

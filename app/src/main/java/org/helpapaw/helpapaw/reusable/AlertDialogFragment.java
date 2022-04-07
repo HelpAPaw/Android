@@ -7,10 +7,8 @@ import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.appcompat.app.AlertDialog;
-import android.util.Log;
 
-import com.google.firebase.crashlytics.FirebaseCrashlytics;
-
+import org.helpapaw.helpapaw.utils.Injection;
 import org.helpapaw.helpapaw.utils.SharingUtils;
 
 /**
@@ -34,7 +32,7 @@ public class AlertDialogFragment extends DialogFragment {
                 dialog.show(fm, "tag");
             }
             catch (Exception ex) {
-                FirebaseCrashlytics.getInstance().recordException(ex);
+                Injection.getCrashLogger().recordException(ex);
             }
         }
     }
