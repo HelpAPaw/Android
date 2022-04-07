@@ -48,6 +48,7 @@ public class BackendlessUserManager implements UserManager {
             }
 
             public void handleFault(BackendlessFault fault) {
+                FirebaseCrashlytics.getInstance().recordException(new Throwable(fault.toString()));
                 loginCallback.onLoginFailure(fault.getMessage());
             }
         }, true);
@@ -66,6 +67,7 @@ public class BackendlessUserManager implements UserManager {
 
             @Override
             public void handleFault(BackendlessFault fault) {
+                FirebaseCrashlytics.getInstance().recordException(new Throwable(fault.toString()));
                 loginCallback.onLoginFailure(fault.getMessage());
             }
         },
@@ -121,6 +123,7 @@ public class BackendlessUserManager implements UserManager {
 
                                 @Override
                                 public void handleFault(BackendlessFault fault) {
+                                    FirebaseCrashlytics.getInstance().recordException(new Throwable(fault.toString()));
                                     loginCallback.onLoginFailure(fault.getMessage());
                                 }
                             },
@@ -148,6 +151,7 @@ public class BackendlessUserManager implements UserManager {
             }
 
             public void handleFault(BackendlessFault fault) {
+                FirebaseCrashlytics.getInstance().recordException(new Throwable(fault.toString()));
                 registrationCallback.onRegistrationFailure(fault.getMessage());
             }
         });
@@ -163,6 +167,7 @@ public class BackendlessUserManager implements UserManager {
 
             @Override
             public void handleFault(BackendlessFault fault) {
+                FirebaseCrashlytics.getInstance().recordException(new Throwable(fault.toString()));
                 resetPasswordCallback.onResetPasswordFailure(fault.getMessage());
             }
         });
@@ -177,6 +182,7 @@ public class BackendlessUserManager implements UserManager {
             }
 
             public void handleFault(BackendlessFault fault) {
+                FirebaseCrashlytics.getInstance().recordException(new Throwable(fault.toString()));
                 logoutCallback.onLogoutFailure(fault.getMessage());
             }
         });
@@ -206,6 +212,7 @@ public class BackendlessUserManager implements UserManager {
 
                                 @Override
                                 public void handleFault(BackendlessFault fault) {
+                                    FirebaseCrashlytics.getInstance().recordException(new Throwable(fault.toString()));
                                     loginCallback.onLoginFailure(fault.getMessage());
                                 }
                             });
@@ -220,6 +227,7 @@ public class BackendlessUserManager implements UserManager {
 
             @Override
             public void handleFault(BackendlessFault fault) {
+                FirebaseCrashlytics.getInstance().recordException(new Throwable(fault.toString()));
                 loginCallback.onLoginFailure(fault.getMessage());
             }
         });
@@ -295,6 +303,7 @@ public class BackendlessUserManager implements UserManager {
 
                 @Override
                 public void handleFault(BackendlessFault fault) {
+                    FirebaseCrashlytics.getInstance().recordException(new Throwable(fault.toString()));
                     getUserPropertyCallback.onFailure(fault.getMessage());
                 }
             });
@@ -326,6 +335,7 @@ public class BackendlessUserManager implements UserManager {
 
                 @Override
                 public void handleFault(BackendlessFault fault) {
+                    FirebaseCrashlytics.getInstance().recordException(new Throwable(fault.toString()));
                     getUserPropertyCallback.onFailure(fault.getMessage());
                 }
             });
@@ -356,6 +366,7 @@ public class BackendlessUserManager implements UserManager {
 
                 @Override
                 public void handleFault(BackendlessFault fault) {
+                    FirebaseCrashlytics.getInstance().recordException(new Throwable(fault.toString()));
                     getUserPropertyCallback.onFailure(fault.getMessage());
                 }
             });

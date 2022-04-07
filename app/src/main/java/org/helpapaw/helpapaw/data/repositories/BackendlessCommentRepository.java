@@ -123,6 +123,7 @@ public class BackendlessCommentRepository implements CommentRepository {
 
                     @Override
                     public void handleFault(BackendlessFault fault) {
+                        FirebaseCrashlytics.getInstance().recordException(new Throwable(fault.toString()));
                         callback.onCommentsFailure(fault.getMessage());
                     }
                 });
@@ -142,12 +143,10 @@ public class BackendlessCommentRepository implements CommentRepository {
 
                 ArrayList<BackendlessUser> userList = new ArrayList<>();
                 userList.add(Backendless.UserService.CurrentUser());
-                commentsStore.setRelation( newComment, "author", userList,
-                        new AsyncCallback<Integer>()
-                        {
+                commentsStore.setRelation(newComment, "author", userList,
+                        new AsyncCallback<Integer>() {
                             @Override
-                            public void handleResponse( Integer response )
-                            {
+                            public void handleResponse(Integer response) {
                                 newComment.setAuthor(Backendless.UserService.CurrentUser());
                                 String authorId = null;
                                 String authorName = null;
@@ -161,8 +160,7 @@ public class BackendlessCommentRepository implements CommentRepository {
                                     String dateCreatedString = newComment.getCreated();
                                     DateFormat dateFormat = new SimpleDateFormat(DATE_TIME_FORMAT, Locale.getDefault());
                                     dateCreated = dateFormat.parse(dateCreatedString);
-                                }
-                                catch (Exception ex) {
+                                } catch (Exception ex) {
                                     FirebaseCrashlytics.getInstance().recordException(ex);
                                 }
 
@@ -179,20 +177,18 @@ public class BackendlessCommentRepository implements CommentRepository {
                                         public void onPhotoSaved(String photoUrl) {
                                             newComment.setPhoto(photoUrl);
                                             comment.setPhotoUrl(photoUrl);
-                                            commentsStore.save(newComment, new AsyncCallback<FINComment>()
-                                                    {
-                                                        @Override
-                                                        public void handleResponse(final FINComment newComment )
-                                                        {
-                                                            callback.onCommentSaved(comment);
-                                                        }
+                                            commentsStore.save(newComment, new AsyncCallback<FINComment>() {
+                                                @Override
+                                                public void handleResponse(final FINComment newComment) {
+                                                    callback.onCommentSaved(comment);
+                                                }
 
-                                                        @Override
-                                                        public void handleFault( BackendlessFault fault )
-                                                        {
-                                                            callback.onCommentFailure(fault.getMessage());
-                                                        }
-                                                    } );
+                                                @Override
+                                                public void handleFault(BackendlessFault fault) {
+                                                    FirebaseCrashlytics.getInstance().recordException(new Throwable(fault.toString()));
+                                                    callback.onCommentFailure(fault.getMessage());
+                                                }
+                                            });
                                         }
 
                                         @Override
@@ -200,21 +196,21 @@ public class BackendlessCommentRepository implements CommentRepository {
                                             callback.onCommentFailure(message);
                                         }
                                     });
-                                }
-                                else {
+                                } else {
                                     callback.onCommentSaved(comment);
                                 }
                             }
 
                             @Override
-                            public void handleFault( BackendlessFault fault )
-                            {
+                            public void handleFault(BackendlessFault fault) {
+                                FirebaseCrashlytics.getInstance().recordException(new Throwable(fault.toString()));
                                 callback.onCommentFailure(fault.getMessage());
                             }
-                        } );
+                        });
             }
 
             public void handleFault(BackendlessFault fault) {
+                FirebaseCrashlytics.getInstance().recordException(new Throwable(fault.toString()));
                 callback.onCommentFailure(fault.getMessage());
             }
         });

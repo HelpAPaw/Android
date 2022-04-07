@@ -271,8 +271,8 @@ public class BackendlessSpatialSignalRepository implements SignalRepository {
                 }
             }
             @Override
-            public void handleFault( BackendlessFault fault )
-            {
+            public void handleFault(BackendlessFault fault) {
+                FirebaseCrashlytics.getInstance().recordException(new Throwable(fault.toString()));
                 callback.onSignalsFailure(fault.getMessage());
             }
         });
@@ -327,8 +327,8 @@ public class BackendlessSpatialSignalRepository implements SignalRepository {
                             }
 
                             @Override
-                            public void handleFault( BackendlessFault fault )
-                            {
+                            public void handleFault(BackendlessFault fault) {
+                                FirebaseCrashlytics.getInstance().recordException(new Throwable(fault.toString()));
                                 callback.onSignalFailure(fault.getMessage());
                             }
                         } );
@@ -336,6 +336,7 @@ public class BackendlessSpatialSignalRepository implements SignalRepository {
 
             @Override
             public void handleFault(BackendlessFault fault) {
+                FirebaseCrashlytics.getInstance().recordException(new Throwable(fault.toString()));
                 callback.onSignalFailure(fault.getMessage());
             }
         });
@@ -366,6 +367,7 @@ public class BackendlessSpatialSignalRepository implements SignalRepository {
 
             @Override
             public void handleFault(BackendlessFault fault) {
+                FirebaseCrashlytics.getInstance().recordException(new Throwable(fault.toString()));
                 callback.onStatusFailure(fault.getMessage());
             }
         });
@@ -394,6 +396,7 @@ public class BackendlessSpatialSignalRepository implements SignalRepository {
 
             @Override
             public void handleFault(BackendlessFault fault) {
+                FirebaseCrashlytics.getInstance().recordException(new Throwable(fault.toString()));
                 callback.onTitleFailure(fault.getMessage());
             }
         });
@@ -422,6 +425,7 @@ public class BackendlessSpatialSignalRepository implements SignalRepository {
 
             @Override
             public void handleFault(BackendlessFault fault) {
+                FirebaseCrashlytics.getInstance().recordException(new Throwable(fault.toString()));
                 callback.onSignalDeletedFailed(fault.getMessage());
             }
         });
