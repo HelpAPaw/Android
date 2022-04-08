@@ -67,8 +67,10 @@ public class MyNotificationsCustomAdapter extends BaseAdapter {
         String currentNotificationSignalId = currentNotification.getSignalId();
         Signal currentNotificationSignal = mapSignalsToIds.get(currentNotificationSignalId);
 
-        Injection.getImageLoader().loadWithRoundedCorners(
-                this.context, currentNotificationSignal.getPhotoUrl(), holder.imageView, R.drawable.ic_paw);
+        if (currentNotificationSignal != null) {
+            Injection.getImageLoader().loadWithRoundedCorners(
+                    this.context, currentNotificationSignal.getPhotoUrl(), holder.imageView, R.drawable.ic_paw);
+        }
 
         holder.textViewTitle.setText(currentNotification.getText());
 

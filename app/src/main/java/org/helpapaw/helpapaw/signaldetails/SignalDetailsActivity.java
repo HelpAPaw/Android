@@ -40,7 +40,10 @@ public class SignalDetailsActivity extends AppCompatActivity {
 
             if (getIntent() != null) {
                 Signal signal = getIntent().getParcelableExtra(SIGNAL_KEY);
-                //TODO: If signal is null - finish activity
+                //TODO: show error
+                if (signal == null) {
+                    finish();
+                }
                 SignalDetailsFragment fragment = SignalDetailsFragment.newInstance(signal);
                 initFragment(fragment);
             }
@@ -49,7 +52,7 @@ public class SignalDetailsActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case android.R.id.home:
                 onBackPressed();
                 return true;
