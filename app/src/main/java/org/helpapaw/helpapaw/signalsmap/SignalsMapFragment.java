@@ -299,9 +299,12 @@ public class SignalsMapFragment extends BaseFragment
                 .setTitle(R.string.txt_disable_hibernation)
                 .setMessage(R.string.txt_disable_hibernation_explanation)
                 .setPositiveButton(android.R.string.ok, (dialogInterface, i) -> {
-                    Intent intent = IntentCompat.createManageUnusedAppRestrictionsIntent(PawApplication.getContext(), PawApplication.getContext().getPackageName());
-                    // You must use startActivityForResult(), not startActivity(), even if you don't use the result code returned in onActivityResult().
-                    startActivityForResult(intent, REQUEST_HIBERNATION_EXEMPTION);
+                    // Check if fragment is still added to an activity to avoid a crash
+                    if (isAdded()) {
+                        Intent intent = IntentCompat.createManageUnusedAppRestrictionsIntent(PawApplication.getContext(), PawApplication.getContext().getPackageName());
+                        // You must use startActivityForResult(), not startActivity(), even if you don't use the result code returned in onActivityResult().
+                        startActivityForResult(intent, REQUEST_HIBERNATION_EXEMPTION);
+                    }
                 })
                 .setNegativeButton(R.string.txt_cancel, null);
         alertBuilder.create().show();
