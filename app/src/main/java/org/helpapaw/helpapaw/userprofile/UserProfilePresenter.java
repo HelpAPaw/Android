@@ -10,6 +10,7 @@ import org.helpapaw.helpapaw.R;
 import org.helpapaw.helpapaw.base.Presenter;
 import org.helpapaw.helpapaw.data.user.UserManager;
 import org.helpapaw.helpapaw.utils.Injection;
+import org.helpapaw.helpapaw.utils.Utils;
 
 
 /**
@@ -36,38 +37,42 @@ public class UserProfilePresenter extends Presenter<UserProfileContract.View>
 
     @Override
     public void onDeleteUserProfileClicked() {
-        getView().deleteUserProfile();
+        getView().showDeleteUserProfileConfirmation();
     }
 
     @Override
     public void onUpdateUser(
             final String userName, final String userPhone,
             final String password, final String passwordConfirm) {
-        FirebaseCrashlytics.getInstance().log("Initiate change for user ");
+        if (Utils.getInstance().hasNetworkConnection()) {
+            FirebaseCrashlytics.getInstance().log("Initiate change for user ");
 
-        boolean passwordsDoesNotMatch = !password.equals(passwordConfirm);
+            boolean passwordsDoesNotMatch = !password.equals(passwordConfirm);
 
-        if (!password.isEmpty() && password.length() < passwordMinLength) {
-            getView().showPasswordErrorMessage();
-        } else if (passwordsDoesNotMatch) {
-            getView().showPasswordDoesNotMatchMessage();
+            if (!password.isEmpty() && password.length() < passwordMinLength) {
+                getView().showPasswordErrorMessage();
+            } else if (passwordsDoesNotMatch) {
+                getView().showPasswordDoesNotMatchMessage();
+            } else {
+                getView().setProgressVisibility(View.VISIBLE);
+
+                userManager.update(userName, userPhone, password, new UserManager.UpdateUserCallback() {
+                    @Override
+                    public void onUpdateUserSuccess() {
+                        getView().showUserProfile(userManager.getCurrentUser());
+                        getView().setProgressVisibility(View.GONE);
+                    }
+
+                    @Override
+                    public void onUpdateUserFailure(String message) {
+                        if (!isViewAvailable()) return;
+                        getView().setProgressVisibility(View.GONE);
+                        getView().showMessage(message);
+                    }
+                });
+            }
         } else {
-            getView().setProgressVisibility(View.VISIBLE);
-
-            userManager.update(userName, userPhone, password, new UserManager.UpdateUserCallback() {
-                @Override
-                public void onUpdateUserSuccess() {
-                    getView().showUserProfile(userManager.getCurrentUser());
-                    getView().setProgressVisibility(View.GONE);
-                }
-
-                @Override
-                public void onUpdateUserFailure(String message) {
-                    if (!isViewAvailable()) return;
-                    getView().setProgressVisibility(View.GONE);
-                    getView().showMessage(message);
-                }
-            });
+            getView().showNoInternetMessage();
         }
     }
 

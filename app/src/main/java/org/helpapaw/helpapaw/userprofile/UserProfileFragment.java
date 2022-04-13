@@ -11,13 +11,13 @@ import android.view.ViewGroup;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.FragmentManager;
 
-import com.backendless.BackendlessUser;
 import com.google.android.material.snackbar.Snackbar;
 
 import org.helpapaw.helpapaw.R;
 import org.helpapaw.helpapaw.base.BaseFragment;
 import org.helpapaw.helpapaw.base.Presenter;
 import org.helpapaw.helpapaw.base.PresenterManager;
+import org.helpapaw.helpapaw.data.user.DisplayUser;
 import org.helpapaw.helpapaw.databinding.FragmentUserProfileBinding;
 import org.helpapaw.helpapaw.signaldetails.DeleteSignalDialog;
 
@@ -74,9 +74,12 @@ public class UserProfileFragment extends BaseFragment implements UserProfileCont
 
     @Override
     public void showMessage(String message) {
-        if (getView() != null) {
-            Snackbar.make(getView(), message, Snackbar.LENGTH_LONG).show();
-        }
+        super.showMessage(message);
+    }
+
+    @Override
+    public void showNoInternetMessage() {
+        super.showNoInternetMessage();
     }
 
     @Override
@@ -90,11 +93,11 @@ public class UserProfileFragment extends BaseFragment implements UserProfileCont
     }
 
     @Override
-    public void showUserProfile(BackendlessUser currentUser) {
+    public void showUserProfile(DisplayUser currentUser) {
         binding.userEmail.setText(currentUser.getEmail());
-        binding.userName.setText(currentUser.getProperty("name").toString());
+        binding.userName.setText(currentUser.getName());
 
-        String phoneNumber = currentUser.getProperty("phoneNumber").toString();
+        String phoneNumber = currentUser.getPhoneNumber();
         if (phoneNumber != null && !phoneNumber.isEmpty()) {
             binding.userPhone.setText(phoneNumber);
         }
@@ -113,7 +116,7 @@ public class UserProfileFragment extends BaseFragment implements UserProfileCont
     }
 
     @Override
-    public void deleteUserProfile() {
+    public void showDeleteUserProfileConfirmation() {
         FragmentManager fm = getChildFragmentManager();
 
         DeleteUserProfileDialog deleteSignalDialog = DeleteUserProfileDialog.newInstance(this.userProfilePresenter);

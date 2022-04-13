@@ -101,14 +101,12 @@ public class MyNotificationsFragment extends BaseFragment implements MyNotificat
 
     @Override
     public void showMessage(String message) {
-        if (getView() != null) {
-            Snackbar.make(getView(), message, Snackbar.LENGTH_LONG).show();
-        }
+        super.showMessage(message);
     }
 
     @Override
     public void showNoInternetMessage() {
-        showMessage(getString(R.string.txt_no_internet));
+        super.showNoInternetMessage();
     }
 
     @Override
@@ -116,11 +114,11 @@ public class MyNotificationsFragment extends BaseFragment implements MyNotificat
         AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity());
         dialog.setTitle(R.string.txt_delete_notifications_dialog);
 
-        dialog.setPositiveButton("Delete", (dialog1, which) -> {
+        dialog.setPositiveButton(R.string.txt_delete_button, (dialog1, which) -> {
             presenter.onDeleteMyNotifications();
         });
 
-        dialog.setNegativeButton("Cancel", (dialog1, which) -> {
+        dialog.setNegativeButton(R.string.txt_cancel_button, (dialog1, which) -> {
         });
 
         dialog.show();

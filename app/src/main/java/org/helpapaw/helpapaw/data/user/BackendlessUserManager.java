@@ -378,8 +378,13 @@ public class BackendlessUserManager implements UserManager {
     }
 
     @Override
-    public BackendlessUser getCurrentUser() {
-        return Backendless.UserService.CurrentUser();
+    public DisplayUser getCurrentUser() {
+        BackendlessUser backendlessUser = Backendless.UserService.CurrentUser();
+        DisplayUser user = new DisplayUser(
+                backendlessUser.getEmail(),
+                backendlessUser.getProperty(USER_NAME_FIELD).toString(),
+                backendlessUser.getProperty(USER_PHONE_NUMBER_FIELD).toString());
+        return user;
     }
 
     @Override

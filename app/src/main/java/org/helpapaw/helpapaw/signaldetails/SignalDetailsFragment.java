@@ -122,9 +122,7 @@ public class SignalDetailsFragment extends BaseFragment
 
     @Override
     public void showMessage(String message) {
-        if (getView() != null) {
-            Snackbar.make(getView(), message, Snackbar.LENGTH_LONG).show();
-        }
+        super.showMessage(message);
     }
 
     @Override
@@ -342,7 +340,7 @@ public class SignalDetailsFragment extends BaseFragment
 
     @Override
     public void showNoInternetMessage() {
-        showMessage(getString(R.string.txt_no_internet));
+        super.showNoInternetMessage();
     }
 
     @Override

@@ -87,7 +87,7 @@ public abstract class BaseActivity extends AppCompatActivity {
             public boolean onNavigationItemSelected(MenuItem menuItem) {
                 switch (menuItem.getItemId()) {
 
-                    case R.id.nav_item_sign_in_out:
+                    case R.id.nav_item_user_profle:
                         if (userManager.isLoggedIn()) {
                             Intent intent = new Intent(BaseActivity.this, UserProfileActivity.class);
                             startActivity(intent);
@@ -158,7 +158,7 @@ public abstract class BaseActivity extends AppCompatActivity {
                 @Override
                 public void onLogoutSuccess() {
                     Snackbar.make(binding.getRoot(), R.string.txt_logout_succeeded, Snackbar.LENGTH_LONG).show();
-                    binding.navView.getMenu().findItem(R.id.nav_item_sign_in_out).setTitle(R.string.txt_log_in);
+                    binding.navView.getMenu().findItem(R.id.nav_item_user_profle).setTitle(R.string.txt_log_in);
                     Intent intent = new Intent(getApplicationContext(), AuthenticationActivity.class);
                     startActivity(intent);
                 }
@@ -244,10 +244,10 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        binding.navView.getMenu().findItem(R.id.nav_item_sign_in_out).setChecked(false);
+        binding.navView.getMenu().findItem(R.id.nav_item_user_profle).setChecked(false);
 
         if (userManager.isLoggedIn()) {
-            binding.navView.getMenu().findItem(R.id.nav_item_sign_in_out).setTitle(R.string.txt_user_profile_title);
+            binding.navView.getMenu().findItem(R.id.nav_item_user_profle).setTitle(R.string.txt_user_profile_title);
             final TextView title = binding.navView.getHeaderView(0).findViewById(R.id.nav_title);
             if (title != null) {
                 userManager.getUserName(new UserManager.GetUserPropertyCallback() {
@@ -272,7 +272,7 @@ public abstract class BaseActivity extends AppCompatActivity {
                 });
             }
         } else {
-            binding.navView.getMenu().findItem(R.id.nav_item_sign_in_out).setTitle(R.string.txt_log_in);
+            binding.navView.getMenu().findItem(R.id.nav_item_user_profle).setTitle(R.string.txt_log_in);
             final TextView title = binding.navView.getHeaderView(0).findViewById(R.id.nav_title);
             if (title != null) {
                 title.setText(getString(R.string.app_name));

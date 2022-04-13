@@ -1,6 +1,5 @@
 package org.helpapaw.helpapaw.data.user;
 
-import com.backendless.BackendlessUser;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 
 /**
@@ -32,7 +31,7 @@ public interface UserManager {
 
     boolean isLoggedIn();
 
-    BackendlessUser getCurrentUser();
+    DisplayUser getCurrentUser();
 
     void getUserName(final GetUserPropertyCallback getUserPropertyCallback);
 

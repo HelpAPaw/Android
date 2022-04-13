@@ -1,6 +1,6 @@
 package org.helpapaw.helpapaw.userprofile;
 
-import com.backendless.BackendlessUser;
+import org.helpapaw.helpapaw.data.user.DisplayUser;
 
 /**
  * Created by niya
@@ -13,15 +13,17 @@ public interface UserProfileContract {
 
         void showMessage(String message);
 
+        void showNoInternetMessage();
+
         void showPasswordDoesNotMatchMessage();
 
         void showPasswordErrorMessage();
 
         void setProgressVisibility(int visibility);
 
-        void showUserProfile(BackendlessUser currentUser);
+        void showUserProfile(DisplayUser currentUser);
 
-        void deleteUserProfile();
+        void showDeleteUserProfileConfirmation();
 
         void onFinishActivity();
     }

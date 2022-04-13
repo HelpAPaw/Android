@@ -29,13 +29,13 @@ public class DeleteUserProfileDialog extends DialogFragment {
         AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity());
         dialog.setTitle(R.string.txt_delete_account_dialog);
 
-        dialog.setPositiveButton("Delete", (dialog1, which) -> {
+        dialog.setPositiveButton(R.string.txt_delete_button, (dialog1, which) -> {
             presenter.onDeleteUserProfile();
 
             dismiss();
         });
 
-        dialog.setNegativeButton("Cancel", (dialog1, which) -> {
+        dialog.setNegativeButton(R.string.txt_cancel_button, (dialog1, which) -> {
             dismiss();
         });
 
