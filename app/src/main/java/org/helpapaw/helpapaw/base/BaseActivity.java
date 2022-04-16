@@ -18,7 +18,6 @@ import androidx.core.view.GravityCompat;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
@@ -267,7 +266,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
                     @Override
                     public void onFailure(String message) {
-                        Log.d(TAG, message);
+                        Injection.getCrashLogger().recordException(new Throwable(message));
                     }
                 });
             }

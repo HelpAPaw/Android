@@ -1,7 +1,6 @@
 package org.helpapaw.helpapaw.data.models;
 
-import android.util.Log;
-
+import org.helpapaw.helpapaw.utils.Injection;
 import org.json.JSONObject;
 
 import java.util.Date;
@@ -84,7 +83,8 @@ public class Comment {
             newStatus = json.getInt("new");
         }
         catch (Exception ex) {
-            Log.d(TAG, String.format("Failed to parse new status from comment. Not a status change comment? %s", ex.getMessage()));
+            // Failed to parse new status from comment. Not a status change comment?
+            Injection.getCrashLogger().recordException(ex);
         }
 
         return newStatus;

@@ -31,12 +31,10 @@
             </androidx.appcompat.widget.Toolbar>
         </com.google.android.material.appbar.AppBarLayout>
 
-        <LinearLayout
+        <RelativeLayout
             android:id="@+id/grp_content_frame"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:paddingLeft="@dimen/activity_horizontal_margin"
-            android:paddingRight="@dimen/activity_horizontal_margin"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
             android:orientation="vertical">
 
@@ -44,10 +42,10 @@
                 android:id="@+id/no_notifications_message"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="30dp"
-                android:layout_marginVertical="30dp"
+                android:layout_marginHorizontal="24dp"
+                android:layout_marginVertical="24dp"
                 android:textSize="26sp"
-                android:layout_gravity="center_horizontal"
+                android:layout_centerInParent="true"
                 android:textAlignment="center"
                 android:visibility="gone"
                 android:text="@string/no_notifications_message"/>
@@ -55,19 +53,18 @@
             <ListView
                 android:id="@+id/my_notifications_list_view"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:paddingTop="@dimen/activity_vertical_margin"
-                android:paddingBottom="@dimen/activity_vertical_margin"
+                android:layout_height="match_parent"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
                 android:divider="@null" />
 
             <ProgressBar
                 android:id="@+id/progress_bar"
                 android:layout_width="36dp"
                 android:layout_height="36dp"
-                android:layout_gravity="center"
+                android:layout_centerInParent="true"
                 android:visibility="gone"/>
-        </LinearLayout>
+        </RelativeLayout>
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>

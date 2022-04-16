@@ -196,7 +196,7 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View>
 
     private void saveSignal(String description, String authorPhone, Date dateSubmitted, int status,
                             final double latitude, final double longitude, int type) {
-        FirebaseCrashlytics.getInstance().log("Initiate save new signal");
+        Injection.getCrashLogger().log("Initiate save new signal");
         signalRepository.saveSignal(new Signal(description, authorPhone, dateSubmitted, status, latitude, longitude, type), new SignalRepository.SaveSignalCallback() {
             @Override
             public void onSignalSaved(Signal signal) {

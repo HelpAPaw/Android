@@ -9,7 +9,6 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.core.view.GravityCompat;
 import androidx.appcompat.widget.Toolbar;
 
-import android.util.Log;
 import android.widget.Toast;
 
 import org.helpapaw.helpapaw.R;
@@ -68,7 +67,7 @@ public class SignalsMapActivity extends BaseActivity {
                     }
                 }
             } else {
-                Log.i("BRANCH SDK", error.getMessage());
+                Injection.getCrashLogger().recordException(new Throwable(error.toString()));
             }
         }).withData(this.getIntent().getData()).init();
     }

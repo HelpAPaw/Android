@@ -5,9 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
 
 import androidx.core.content.ContextCompat;
@@ -17,6 +15,7 @@ import androidx.fragment.app.FragmentManager;
 
 import org.helpapaw.helpapaw.base.PawApplication;
 import org.helpapaw.helpapaw.sendsignal.SendPhotoBottomSheet;
+import org.helpapaw.helpapaw.utils.Injection;
 import org.helpapaw.helpapaw.utils.images.ImageUtils;
 
 import java.io.File;
@@ -51,10 +50,8 @@ public interface UploadPhotoContract {
         }
 
         default File openCamera() {
-            Context context = getFragment().getContext();
-
             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            if (intent.resolveActivity(context.getPackageManager()) != null) {
+            try {
                 File photoFile = ImageUtils.getInstance().createPhotoFile(PawApplication.getContext());
                 Uri photoUri = FileProvider.getUriForFile(PawApplication.getContext(),
                         "org.helpapaw.helpapaw.fileprovider",
@@ -62,6 +59,8 @@ public interface UploadPhotoContract {
                 intent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
                 getFragment().startActivityForResult(intent, REQUEST_CAMERA);
                 return photoFile;
+            } catch (Exception e) {
+                Injection.getCrashLogger().recordException(e);
             }
 
             return null;
@@ -77,29 +76,34 @@ public interface UploadPhotoContract {
             }
             else{
                 Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                if (intent.resolveActivity(context.getPackageManager()) != null) {
+                try {
                     getFragment().startActivityForResult(intent, REQUEST_GALLERY);
+                } catch (Exception e) {
+                    Injection.getCrashLogger().recordException(e);
                 }
             }
         }
 
-        default void saveImageFromUri(UserActionsListener actionsListener, Uri photoUri) {
+        default void saveImageFromUri(UploadPhotoContract.UserActionsListener actionsListener, Uri photoUri) {
+            Injection.getCrashLogger().log("Entering saveImageFromUri, photoUri is: " + photoUri.toString());
+
             Context context = getFragment().getActivity();
 
             // This segment works once the permission is handled
             try {
-                ParcelFileDescriptor parcelFileDesc = context.getContentResolver().openFileDescriptor(photoUri, "r");
-                FileDescriptor fileDesc = parcelFileDesc.getFileDescriptor();
-                Bitmap photo = BitmapFactory.decodeFileDescriptor(fileDesc);
-                parcelFileDesc.close();
+                Bitmap photo = MediaStore.Images.Media.getBitmap(context.getContentResolver(), photoUri);
 
                 int rotation = ImageUtils.getInstance().getRotationFromMediaUri(context, photoUri);
                 photo = ImageUtils.getInstance().getRotatedBitmap(photo, rotation);
 
                 //https://stackoverflow.com/questions/58539583/android-q-get-image-from-gallery-and-process-it
-                String filename = photoUri.getLastPathSegment();
+                // Weird decoding and reparsing because the path is sometimes encoded like this:
+                // content://com.miui.gallery.open/raw/%2Fstorage%2Femulated%2F0%2FDCIM%2FCamera%2FIMG_20220316_225127.jpg
+                String lastSegment = photoUri.getLastPathSegment();
+                String filename = Uri.parse(Uri.decode(lastSegment)).getLastPathSegment();
                 File dir = context.getCacheDir();
                 File dest = new File(dir, filename);
+                Injection.getCrashLogger().log("destination is: " + dest);
                 FileOutputStream out = new FileOutputStream(dest);
                 photo.compress(Bitmap.CompressFormat.JPEG, 100, out);
                 out.flush();
@@ -108,7 +112,7 @@ public interface UploadPhotoContract {
                 actionsListener.onSignalPhotoSelected(dest);
             }
             catch (Exception e) {
-                e.printStackTrace();
+                Injection.getCrashLogger().recordException(e);
             }
         }
 

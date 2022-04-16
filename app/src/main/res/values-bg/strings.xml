@@ -59,7 +59,7 @@
     <string name="txt_share">Сподели</string>
     <string name="txt_edit_title">Промени</string>
     <string name="txt_delete_signal">Изтрий</string>
-    <string name="txt_delete_signal_dialog">Сигурни ли сте, че искате да изтриете сиганала?</string>
+    <string name="txt_delete_signal_dialog">Сигурни ли сте, че искате да изтриете сигнала?</string>
     <string name="txt_comments">Коментари</string>
     <string name="txt_signal_from">Сигналът е подаден от %1$s</string>
     <string name="txt_comment_hint">Напиши коментар</string>
@@ -187,4 +187,5 @@
     <string name="txt_disable_hibernation_explanation">Help a Paw се използва само при нужда. Затова може да има дълги периоди, в които не взаимодействате с приложението. За да продължи да проверява за нови сигнали около вас обаче, то има нужда да запази разрешенията си, дори ако системата го смята за \'неизползвано\'. Затова, ако желаете да продължите да получавате известия за нови сигнали, деактивирайте опцията \'Премахване на разрешенията, ако приложението не се използва\'.</string>
     <string name="txt_delete_button">Изтрий</string>
     <string name="txt_cancel_button">Откажи</string>
+    <string name="txt_no_navigation_app">Не е открито приложение за навигация</string>
 </resources>

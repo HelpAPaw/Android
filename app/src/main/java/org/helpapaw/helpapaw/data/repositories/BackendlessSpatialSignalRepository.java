@@ -13,7 +13,6 @@ import com.backendless.async.callback.AsyncCallback;
 import com.backendless.exceptions.BackendlessFault;
 import com.backendless.persistence.DataQueryBuilder;
 import com.backendless.persistence.Point;
-import com.google.firebase.crashlytics.FirebaseCrashlytics;
 
 import org.helpapaw.helpapaw.base.PawApplication;
 import org.helpapaw.helpapaw.data.models.Comment;
@@ -182,10 +181,7 @@ public class BackendlessSpatialSignalRepository implements SignalRepository {
     }
 
     private String whereClauseExcludeCurrentUser() {
-        BackendlessUser currentUser = Backendless.UserService.CurrentUser();
-
-        String where = OWNER_ID + " != '" + currentUser.getUserId() + "'";
-        return where;
+        return OWNER_ID + " != '" + Backendless.UserService.loggedInUser() + "'";
     }
 
     private void getSignals(String whereClause, final LoadSignalsCallback callback) {
@@ -212,7 +208,7 @@ public class BackendlessSpatialSignalRepository implements SignalRepository {
                         HashMap signalMap = (HashMap) response.get(i);
 
                         String objectId = (String) signalMap.get(OBJECT_ID_FIELD);
-                        FirebaseCrashlytics.getInstance().log("Got signal with Id: " + objectId);
+                        Injection.getCrashLogger().log("Got signal with Id: " + objectId);
                         String signalTitle = (String) signalMap.get(SIGNAL_TITLE);
                         Date dateCreated = (Date) signalMap.get(CREATED_FIELD);
                         Integer status = (Integer) signalMap.get(SIGNAL_STATUS);
@@ -251,7 +247,7 @@ public class BackendlessSpatialSignalRepository implements SignalRepository {
 
                         signals.add(newSignal);
                     } catch (Exception ex) {
-                        FirebaseCrashlytics.getInstance().recordException(ex);
+                        Injection.getCrashLogger().recordException(ex);
                     }
                 }
 
@@ -274,8 +270,8 @@ public class BackendlessSpatialSignalRepository implements SignalRepository {
                 }
             }
             @Override
-            public void handleFault( BackendlessFault fault )
-            {
+            public void handleFault(BackendlessFault fault) {
+                Injection.getCrashLogger().recordException(new Throwable(fault.toString()));
                 callback.onSignalsFailure(fault.getMessage());
             }
         });
@@ -330,8 +326,8 @@ public class BackendlessSpatialSignalRepository implements SignalRepository {
                             }
 
                             @Override
-                            public void handleFault( BackendlessFault fault )
-                            {
+                            public void handleFault(BackendlessFault fault) {
+                                Injection.getCrashLogger().recordException(new Throwable(fault.toString()));
                                 callback.onSignalFailure(fault.getMessage());
                             }
                         } );
@@ -339,6 +335,7 @@ public class BackendlessSpatialSignalRepository implements SignalRepository {
 
             @Override
             public void handleFault(BackendlessFault fault) {
+                Injection.getCrashLogger().recordException(new Throwable(fault.toString()));
                 callback.onSignalFailure(fault.getMessage());
             }
         });
@@ -369,6 +366,7 @@ public class BackendlessSpatialSignalRepository implements SignalRepository {
 
             @Override
             public void handleFault(BackendlessFault fault) {
+                Injection.getCrashLogger().recordException(new Throwable(fault.toString()));
                 callback.onStatusFailure(fault.getMessage());
             }
         });
@@ -397,6 +395,7 @@ public class BackendlessSpatialSignalRepository implements SignalRepository {
 
             @Override
             public void handleFault(BackendlessFault fault) {
+                Injection.getCrashLogger().recordException(new Throwable(fault.toString()));
                 callback.onTitleFailure(fault.getMessage());
             }
         });
@@ -425,6 +424,7 @@ public class BackendlessSpatialSignalRepository implements SignalRepository {
 
             @Override
             public void handleFault(BackendlessFault fault) {
+                Injection.getCrashLogger().recordException(new Throwable(fault.toString()));
                 callback.onSignalDeletedFailed(fault.getMessage());
             }
         });

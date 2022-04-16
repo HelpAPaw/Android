@@ -14,7 +14,8 @@ import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
 import androidx.annotation.Nullable;
 import android.text.TextUtils;
-import android.util.Log;
+
+import org.helpapaw.helpapaw.utils.Injection;
 
 import java.io.Closeable;
 import java.io.File;
@@ -62,7 +63,7 @@ public class ImageUtils {
 
             // Create the storage directory if it does not exist
             if ((mediaStorageDir != null) && !mediaStorageDir.exists() && !mediaStorageDir.mkdirs()) {
-                Log.d(ImageUtils.class.getSimpleName(), "failed to create directory");
+                Injection.getCrashLogger().recordException(new Throwable("failed to create directory"));
             }
 
             try {
@@ -71,7 +72,7 @@ public class ImageUtils {
                 String imageFileName = "JPEG_" + timeStamp + "_";
                 return File.createTempFile(imageFileName, ".jpg", mediaStorageDir);
             } catch (IOException e) {
-                e.printStackTrace();
+                Injection.getCrashLogger().recordException(e);
             }
         }
         return null;
@@ -85,6 +86,7 @@ public class ImageUtils {
             return exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_UNDEFINED);
 
         } catch (IOException e) {
+            Injection.getCrashLogger().recordException(e);
             //  Log.e("Error getting Exif data", e);
             return 0;
         }
@@ -135,7 +137,7 @@ public class ImageUtils {
             bitmap.recycle();
             return oriented;
         } catch (OutOfMemoryError e) {
-            e.printStackTrace();
+            Injection.getCrashLogger().recordException(e);
             return bitmap;
         }
     }

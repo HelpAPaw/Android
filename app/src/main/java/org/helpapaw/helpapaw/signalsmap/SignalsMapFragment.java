@@ -299,9 +299,12 @@ public class SignalsMapFragment extends BaseFragment
                 .setTitle(R.string.txt_disable_hibernation)
                 .setMessage(R.string.txt_disable_hibernation_explanation)
                 .setPositiveButton(android.R.string.ok, (dialogInterface, i) -> {
-                    Intent intent = IntentCompat.createManageUnusedAppRestrictionsIntent(PawApplication.getContext(), PawApplication.getContext().getPackageName());
-                    // You must use startActivityForResult(), not startActivity(), even if you don't use the result code returned in onActivityResult().
-                    startActivityForResult(intent, REQUEST_HIBERNATION_EXEMPTION);
+                    // Check if fragment is still added to an activity to avoid a crash
+                    if (isAdded()) {
+                        Intent intent = IntentCompat.createManageUnusedAppRestrictionsIntent(PawApplication.getContext(), PawApplication.getContext().getPackageName());
+                        // You must use startActivityForResult(), not startActivity(), even if you don't use the result code returned in onActivityResult().
+                        startActivityForResult(intent, REQUEST_HIBERNATION_EXEMPTION);
+                    }
                 })
                 .setNegativeButton(R.string.txt_cancel, null);
         alertBuilder.create().show();
@@ -666,6 +669,7 @@ public class SignalsMapFragment extends BaseFragment
                             // and check the result in onActivityResult().
                             status.startResolutionForResult(getActivity(), REQUEST_CHECK_SETTINGS);
                         } catch (Exception e) {
+                            Injection.getCrashLogger().recordException(e);
                             // Ignore the error.
                         }
                         break;
@@ -681,7 +685,7 @@ public class SignalsMapFragment extends BaseFragment
         //Protection for the case when activity is destroyed (e.g. when rotating)
         //Probably there is a better fix in the actual workflow but we need a quick fix as users experience a lot of crashes
         if (cont == null) {
-            Log.e(TAG, "Context is null, exiting...");
+            Injection.getCrashLogger().recordException(new Throwable("Context is null, exiting..."));
             return;
         }
         if (   (ContextCompat.checkSelfPermission(cont, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
@@ -700,9 +704,6 @@ public class SignalsMapFragment extends BaseFragment
             Location location = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
             if (location != null) {
                 handleNewLocation(location);
-            }
-            else {
-                Log.d(TAG, "here we are");
             }
         }
     }
@@ -952,10 +953,12 @@ public class SignalsMapFragment extends BaseFragment
         }
         else if (requestCode == REQUEST_UPDATE_SIGNAL_TYPE_SELECTION) {
             if (resultCode == Activity.RESULT_OK) {
-                boolean[] signalTypeSelection = data.getBooleanArrayExtra(EXTRA_SIGNAL_TYPE_SELECTION);
-                if (signalTypeSelection != null) {
-                    actionsListener.onFilterSignalsClicked(signalTypeSelection);
-                }
+                try {
+                    boolean[] signalTypeSelection = data.getBooleanArrayExtra(EXTRA_SIGNAL_TYPE_SELECTION);
+                    if (signalTypeSelection != null) {
+                        actionsListener.onFilterSignalsClicked(signalTypeSelection);
+                    }
+                } catch (Exception ignored) {}
             }
         }
     }

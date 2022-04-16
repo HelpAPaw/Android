@@ -62,7 +62,7 @@ public class NotificationUtils {
 
     public static void showNotificationForSignal(Signal signal, Context context) {
 
-        Integer signalCode = signal.getId().hashCode();
+        int signalCode = signal.getId().hashCode();
 
         String status = "Status: ";
         String channel_id;
@@ -93,11 +93,12 @@ public class NotificationUtils {
         Intent resultIntent = new Intent(context, SignalsMapActivity.class);
         resultIntent.putExtra(Signal.KEY_SIGNAL_ID, signal.getId());
 
-        TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
-        stackBuilder.addNextIntent(resultIntent);
-
-        PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(signalCode, PendingIntent.FLAG_UPDATE_CURRENT);
-
+        int flags = PendingIntent.FLAG_UPDATE_CURRENT;
+        // When targeting API 31+ we should provide explicitly either FLAG_IMMUTABLE or FLAG_MUTABLE
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            flags |= PendingIntent.FLAG_IMMUTABLE;
+        }
+        PendingIntent resultPendingIntent = PendingIntent.getActivity(context, signalCode, resultIntent, flags);
         mBuilder.setContentIntent(resultPendingIntent);
 
         NotificationManager mNotificationManager = (android.app.NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);

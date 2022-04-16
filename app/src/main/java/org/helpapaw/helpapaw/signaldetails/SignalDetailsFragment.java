@@ -361,9 +361,18 @@ public class SignalDetailsFragment extends BaseFragment
     @Override
     public void openNavigation(double latitude, double longitude) {
         //https://developer.android.com/guide/components/intents-common#Maps
-        final String geoIntentData = "geo:0,0?q=" + latitude + "," + longitude + "(" + mSignal.getTitle() + ")";
+        //Unfortunately the below doesn't work in Waze (runs a search with the signal title)
+        //final String geoIntentData = "geo:0,0?q=" + mSignal.getTitle() + "@" + latitude + "," + longitude;
+
+        //https://stackoverflow.com/questions/25662853/android-intent-for-opening-both-waze-and-google-maps/71251419#71251419
+        final String geoIntentData = "geo:" + latitude + "," + longitude + "?q=" + latitude + "," + longitude;
         Intent intent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(geoIntentData));
-        startActivity(intent);
+        try {
+            startActivity(intent);
+        }
+        catch (Exception ex) {
+            showMessage(getString(R.string.txt_no_navigation_app));
+        }
     }
 
     @Override

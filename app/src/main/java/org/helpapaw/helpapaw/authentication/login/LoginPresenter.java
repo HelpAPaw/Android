@@ -267,6 +267,7 @@ public class LoginPresenter extends Presenter<LoginContract.View>
                 }
             });
         } catch (ApiException e) {
+            Injection.getCrashLogger().recordException(e);
             // The ApiException status code indicates the detailed failure reason.
             // Please refer to the GoogleSignInStatusCodes class reference for more information.
             if (!isViewAvailable()) return;

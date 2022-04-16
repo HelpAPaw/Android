@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 
 import org.helpapaw.helpapaw.R;
+import org.helpapaw.helpapaw.utils.Injection;
 import org.helpapaw.helpapaw.utils.Utils;
 
 import java.io.IOException;
@@ -29,7 +30,7 @@ public class PrivacyPolicyConfirmationGetter extends AsyncTask<Void, Void, Strin
                 str = Utils.getHtml(context.getString(R.string.url_privacy_policy));
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            Injection.getCrashLogger().recordException(e);
         }
 
         return str;

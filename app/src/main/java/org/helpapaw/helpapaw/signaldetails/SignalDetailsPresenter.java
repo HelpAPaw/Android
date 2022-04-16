@@ -1,7 +1,5 @@
 package org.helpapaw.helpapaw.signaldetails;
 
-import com.google.firebase.crashlytics.FirebaseCrashlytics;
-
 import org.helpapaw.helpapaw.R;
 import org.helpapaw.helpapaw.base.PawApplication;
 import org.helpapaw.helpapaw.base.Presenter;
@@ -58,7 +56,7 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
         setCommentsProgressIndicator(showProgressBar);
 
         if (signal != null) {
-            FirebaseCrashlytics.getInstance().log("Show signal details for " + signal.getId());
+            Injection.getCrashLogger().log("Show signal details for " + signal.getId());
 
             this.signal = signal;
             getView().showSignalDetails(signal);
@@ -213,7 +211,7 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
             userManager.isLoggedIn(new UserManager.LoginCallback() {
                 @Override
                 public void onLoginSuccess(String userId) {
-                    FirebaseCrashlytics.getInstance().log("Initiate status change for signal " + signal.getId());
+                    Injection.getCrashLogger().log("Initiate status change for signal " + signal.getId());
                     signalRepository.updateSignalStatus(signal.getId(), status, commentList, new SignalRepository.UpdateStatusCallback() {
                         @Override
                         public void onStatusUpdated(int status) {
@@ -246,7 +244,7 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
 
     @Override
     public void onUpdateTitle(final String newTitle) {
-        FirebaseCrashlytics.getInstance().log("Initiate title change for signal " + signal.getId());
+        Injection.getCrashLogger().log("Initiate title change for signal " + signal.getId());
         signalRepository.updateSignalTitle(signal.getId(), newTitle, new SignalRepository.UpdateTitleCallback() {
             @Override
             public void onTitleUpdated(String title) {
@@ -267,7 +265,7 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
 
     @Override
     public void onDeleteSignal() {
-        FirebaseCrashlytics.getInstance().log("Initiate delete for signal " + signal.getId());
+        Injection.getCrashLogger().log("Initiate delete for signal " + signal.getId());
         signalRepository.deleteSignal(signal.getId(), new SignalRepository.DeleteSignalCallback() {
             @Override
             public void onSignalDeleted() {
@@ -420,7 +418,7 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
     }
 
     private void saveComment(String comment, File photoFile) {
-        FirebaseCrashlytics.getInstance().log("Initiate save new comment for signal" + signal.getId());
+        Injection.getCrashLogger().log("Initiate save new comment for signal" + signal.getId());
         commentRepository.saveComment(comment, signal, commentList, photoRepository, photoFile, new CommentRepository.SaveCommentCallback() {
             @Override
             public void onCommentSaved(Comment comment) {
