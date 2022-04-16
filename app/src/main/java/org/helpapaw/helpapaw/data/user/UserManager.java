@@ -15,6 +15,10 @@ public interface UserManager {
 
     void register(String email, String password, String name, String phoneNumber, RegistrationCallback registrationCallback);
 
+    void delete(String userId, final DeleteUserCallback deleteUserCallback);
+
+    void update(String name, String phoneNumber, String password, UpdateUserCallback updateUserCallback);
+
     void resetPassword(String email, ResetPasswordCallback resetPasswordCallback);
 
     void logout(LogoutCallback logoutCallback);
@@ -26,6 +30,8 @@ public interface UserManager {
     String getLoggedUserId();
 
     boolean isLoggedIn();
+
+    DisplayUser getCurrentUser();
 
     void getUserName(final GetUserPropertyCallback getUserPropertyCallback);
 
@@ -42,6 +48,16 @@ public interface UserManager {
     interface RegistrationCallback {
         void onRegistrationSuccess();
         void onRegistrationFailure(String message);
+    }
+
+    interface UpdateUserCallback {
+        void onUpdateUserSuccess();
+        void onUpdateUserFailure(String message);
+    }
+
+    interface DeleteUserCallback {
+        void onDeleteUserSuccess();
+        void onDeleteUserFailure(String message);
     }
 
     interface ResetPasswordCallback {

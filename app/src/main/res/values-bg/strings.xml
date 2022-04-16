@@ -8,6 +8,9 @@
     <string name="txt_password_confirmation_hint">Потвърдете паролата</string>
     <string name="txt_login">Вписване</string>
     <string name="txt_no_account_yet">Нямате акаунт?</string>
+    <string name="txt_user_profile_title">Профил</string>
+    <string name="txt_delete_account">Изтрийте акаунта</string>
+    <string name="txt_delete_account_dialog">Сигурни ли сте, че искате да изтриете акаунта си?</string>
     <string name="txt_register">Регистрация</string>
     <string name="txt_already_a_member">Вече сте регистриран?</string>
     <string name="txt_phone_number">Телефонен номер</string>
@@ -182,5 +185,7 @@
     <string name="txt_background_location_rationale">Ако желаете да бъдете известявани за сигнали близо до вас дори когато местоположението Ви се променя значително докато не използвате приложението, то има нужда от достъп до местоположението Ви във фонов режим</string>
     <string name="txt_disable_hibernation">Деактивирайте хибернацията</string>
     <string name="txt_disable_hibernation_explanation">Help a Paw се използва само при нужда. Затова може да има дълги периоди, в които не взаимодействате с приложението. За да продължи да проверява за нови сигнали около вас обаче, то има нужда да запази разрешенията си, дори ако системата го смята за \'неизползвано\'. Затова, ако желаете да продължите да получавате известия за нови сигнали, деактивирайте опцията \'Премахване на разрешенията, ако приложението не се използва\'.</string>
+    <string name="txt_delete_button">Изтрий</string>
+    <string name="txt_cancel_button">Откажи</string>
     <string name="txt_no_navigation_app">Не е открито приложение за навигация</string>
 </resources>

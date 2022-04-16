@@ -112,6 +112,9 @@
             android:windowSoftInputMode="stateHidden" />
 
         <activity
+            android:name=".userprofile.UserProfileActivity"
+            android:parentActivityName=".signalsmap.SignalsMapActivity" />
+        <activity
             android:name=".mysignals.MySignalsActivity"
             android:parentActivityName=".signalsmap.SignalsMapActivity" />
         <activity

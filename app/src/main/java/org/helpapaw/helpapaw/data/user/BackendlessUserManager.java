@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.backendless.Backendless;
 import com.backendless.BackendlessUser;
+import com.backendless.IDataStore;
 import com.backendless.async.callback.AsyncCallback;
 import com.backendless.exceptions.BackendlessException;
 import com.backendless.exceptions.BackendlessFault;
@@ -34,6 +35,7 @@ public class BackendlessUserManager implements UserManager {
 
     private static final String USER_EMAIL_FIELD = "email";
     private static final String USER_NAME_FIELD = "name";
+    private static final String PASSWORD = "password";
     private static final String USER_PHONE_NUMBER_FIELD = "phoneNumber";
     private static final String USER_ACCEPTED_PRIVACY_POLICY_FIELD = "acceptedPrivacyPolicy";
 
@@ -155,6 +157,79 @@ public class BackendlessUserManager implements UserManager {
                 registrationCallback.onRegistrationFailure(fault.getMessage());
             }
         });
+    }
+
+    @Override
+    public void delete(String userId, final DeleteUserCallback deleteUserCallback) {
+        final IDataStore<BackendlessUser> dataStore = Backendless.Data.of(BackendlessUser.class);
+        dataStore.findById(userId, new AsyncCallback<BackendlessUser>() {
+            @Override
+            public void handleResponse(BackendlessUser backendlessUser )
+            {
+                dataStore.remove(backendlessUser, new AsyncCallback<Long>() {
+                    @Override
+                    public void handleResponse( Long aLong )
+                    {
+                        deleteUserCallback.onDeleteUserSuccess();
+                    }
+                    @Override
+                    public void handleFault( BackendlessFault backendlessFault )
+                    {
+                        deleteUserCallback.onDeleteUserFailure(backendlessFault.getMessage());                    }
+                });
+            }
+            @Override
+            public void handleFault( BackendlessFault backendlessFault )
+            {
+                deleteUserCallback.onDeleteUserFailure(backendlessFault.getMessage());            }
+        });
+    }
+
+    @Override
+    public void update(
+            String name, String phoneNumber, String password,
+            final UpdateUserCallback updateUserCallback) {
+        BackendlessUser currentUser = Backendless.UserService.CurrentUser();
+
+        currentUser.setProperty(USER_NAME_FIELD, name);
+        currentUser.setProperty(USER_PHONE_NUMBER_FIELD, phoneNumber);
+
+
+        Backendless.UserService.update(currentUser, new AsyncCallback<BackendlessUser>() {
+            public void handleResponse(BackendlessUser registeredUser) {
+                updateUserCallback.onUpdateUserSuccess();
+            }
+
+            public void handleFault(BackendlessFault fault) {
+                updateUserCallback.onUpdateUserFailure(fault.getMessage());
+            }
+        });
+
+        if (password != null && !password.isEmpty()) {
+            currentUser.setProperty(PASSWORD, password);
+
+            Backendless.Data.of(BackendlessUser.class).save(currentUser, new AsyncCallback<BackendlessUser>() {
+                public void handleResponse( BackendlessUser backendlessUser ) {
+                    BackendlessUser changedCurrentUser = Backendless.UserService.CurrentUser();
+                    login(changedCurrentUser.getEmail(), password, new UserManager.LoginCallback() {
+                        @Override
+                        public void onLoginSuccess(String userId) {
+                            updateUserCallback.onUpdateUserSuccess();
+                        }
+
+                        @Override
+                        public void onLoginFailure(String message) {
+                            updateUserCallback.onUpdateUserFailure(message);
+                        }
+                    });
+                    updateUserCallback.onUpdateUserSuccess();
+                }
+
+                public void handleFault (BackendlessFault fault) {
+                    updateUserCallback.onUpdateUserFailure(fault.getMessage());
+                }
+            });
+        }
     }
 
     @Override
@@ -311,6 +386,20 @@ public class BackendlessUserManager implements UserManager {
         else {
             getUserPropertyCallback.onFailure("User not logged in!");
         }
+    }
+
+    @Override
+    public DisplayUser getCurrentUser() {
+        BackendlessUser backendlessUser = Backendless.UserService.CurrentUser();
+        String name = backendlessUser.getProperty(USER_NAME_FIELD) != null ?
+                backendlessUser.getProperty(USER_NAME_FIELD).toString() : "";
+        String phone = backendlessUser.getProperty(USER_PHONE_NUMBER_FIELD) != null ?
+                backendlessUser.getProperty(USER_PHONE_NUMBER_FIELD).toString() : "";
+
+        return new DisplayUser(
+                backendlessUser.getEmail(),
+                name,
+                phone);
     }
 
     @Override

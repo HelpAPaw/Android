@@ -1,6 +1,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <group>
-        <item android:id="@+id/nav_item_sign_in_out"
+        <item android:id="@+id/nav_item_user_profile"
               android:title="@string/txt_log_out"/>
         <item android:id="@+id/nav_item_my_signals"
             android:title="@string/text_my_signals"/>

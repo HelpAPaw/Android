@@ -9,6 +9,8 @@ import androidx.appcompat.widget.Toolbar;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
+import com.google.android.material.snackbar.Snackbar;
+
 import org.helpapaw.helpapaw.R;
 
 import java.util.UUID;
@@ -101,4 +103,13 @@ public abstract class BaseFragment extends Fragment {
         }
     }
 
+    public void showMessage(String message) {
+        if (getView() != null) {
+            Snackbar.make(getView(), message, Snackbar.LENGTH_LONG).show();
+        }
+    }
+
+    public void showNoInternetMessage() {
+        showMessage(getString(R.string.txt_no_internet));
+    }
 }

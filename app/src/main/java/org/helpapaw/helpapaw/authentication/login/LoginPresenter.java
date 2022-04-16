@@ -1,5 +1,7 @@
 package org.helpapaw.helpapaw.authentication.login;
 
+import static org.helpapaw.helpapaw.base.PawApplication.getContext;
+
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
@@ -20,7 +22,8 @@ public class LoginPresenter extends Presenter<LoginContract.View>
         implements LoginContract.UserActionsListener,
         PrivacyPolicyConfirmationContract.Obtain,
         PrivacyPolicyConfirmationContract.UserResponse {
-    private static final int MIN_PASS_LENGTH = 6;
+
+    private final int passwordMinLength;
 
     private final UserManager userManager;
     private boolean showProgressBar;
@@ -28,6 +31,7 @@ public class LoginPresenter extends Presenter<LoginContract.View>
     LoginPresenter(LoginContract.View view) {
         super(view);
         userManager = Injection.getUserManagerInstance();
+        passwordMinLength = getContext().getResources().getInteger(R.integer.password_min_length);
         showProgressBar = false;
     }
 
@@ -45,7 +49,7 @@ public class LoginPresenter extends Presenter<LoginContract.View>
             return;
         }
 
-        if (isEmpty(password) || password.length() < MIN_PASS_LENGTH) {
+        if (isEmpty(password) || password.length() < passwordMinLength) {
             getView().showPasswordErrorMessage();
             return;
         }

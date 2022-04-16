@@ -1016,7 +1016,7 @@ public class SignalsMapFragment extends BaseFragment
 
     @Override
     public void showNoInternetMessage() {
-        showMessage(getString(R.string.txt_no_internet));
+        super.showNoInternetMessage();
     }
 
     @Override

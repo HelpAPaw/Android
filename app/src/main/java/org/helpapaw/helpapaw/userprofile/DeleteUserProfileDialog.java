@@ -1,4 +1,4 @@
-package org.helpapaw.helpapaw.signaldetails;
+package org.helpapaw.helpapaw.userprofile;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -9,18 +9,15 @@ import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentManager;
 
 import org.helpapaw.helpapaw.R;
-import org.helpapaw.helpapaw.data.models.Signal;
 
-public class DeleteSignalDialog extends DialogFragment {
+public class DeleteUserProfileDialog extends DialogFragment {
 
-    public static final String DELETE_SIGNAL_TAG = "deleteSignal";
+    public static final String DELETE_USER_PROFILE = "deleteUserProfile";
 
-    private Signal signal;
-    private SignalDetailsPresenter presenter;
+    private UserProfilePresenter presenter;
 
-    public static DeleteSignalDialog newInstance(Signal signal, SignalDetailsPresenter presenter) {
-        DeleteSignalDialog deleteSignalDialog = new DeleteSignalDialog();
-        deleteSignalDialog.signal = signal;
+    public static DeleteUserProfileDialog newInstance(UserProfilePresenter presenter) {
+        DeleteUserProfileDialog deleteSignalDialog = new DeleteUserProfileDialog();
         deleteSignalDialog.presenter = presenter;
         return deleteSignalDialog;
     }
@@ -30,10 +27,10 @@ public class DeleteSignalDialog extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
         AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity());
-        dialog.setTitle(R.string.txt_delete_signal_dialog);
+        dialog.setTitle(R.string.txt_delete_account_dialog);
 
         dialog.setPositiveButton(R.string.txt_delete_button, (dialog1, which) -> {
-            presenter.onDeleteSignal();
+            presenter.onDeleteUserProfile();
 
             dismiss();
         });
@@ -47,7 +44,7 @@ public class DeleteSignalDialog extends DialogFragment {
 
     @Override
     public void show(@NonNull FragmentManager manager, String tag) {
-        if (tag != null && tag.equals(DELETE_SIGNAL_TAG)) {
+        if (tag != null && tag.equals(DELETE_USER_PROFILE)) {
             // we do not show it twice
             if (manager.findFragmentByTag(tag) == null) {
                 super.show(manager, tag);

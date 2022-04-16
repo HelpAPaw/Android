@@ -19,6 +19,7 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
 
 import org.helpapaw.helpapaw.R;
@@ -33,6 +34,7 @@ import org.helpapaw.helpapaw.privacypolicy.PrivacyPolicyActivity;
 import org.helpapaw.helpapaw.reusable.AlertDialogFragment;
 import org.helpapaw.helpapaw.settings.SettingsActivity;
 import org.helpapaw.helpapaw.share.ShareActivity;
+import org.helpapaw.helpapaw.userprofile.UserProfileActivity;
 import org.helpapaw.helpapaw.utils.Injection;
 import org.helpapaw.helpapaw.utils.SharingUtils;
 import org.helpapaw.helpapaw.utils.Utils;
@@ -84,9 +86,10 @@ public abstract class BaseActivity extends AppCompatActivity {
             public boolean onNavigationItemSelected(MenuItem menuItem) {
                 switch (menuItem.getItemId()) {
 
-                    case R.id.nav_item_sign_in_out:
+                    case R.id.nav_item_user_profile:
                         if (userManager.isLoggedIn()) {
-                            logOut();
+                            Intent intent = new Intent(BaseActivity.this, UserProfileActivity.class);
+                            startActivity(intent);
                         } else {
                             logIn();
                         }
@@ -154,7 +157,7 @@ public abstract class BaseActivity extends AppCompatActivity {
                 @Override
                 public void onLogoutSuccess() {
                     Snackbar.make(binding.getRoot(), R.string.txt_logout_succeeded, Snackbar.LENGTH_LONG).show();
-                    binding.navView.getMenu().findItem(R.id.nav_item_sign_in_out).setTitle(R.string.txt_log_in);
+                    binding.navView.getMenu().findItem(R.id.nav_item_user_profile).setTitle(R.string.txt_log_in);
                     Intent intent = new Intent(getApplicationContext(), AuthenticationActivity.class);
                     startActivity(intent);
                 }
@@ -240,10 +243,10 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        binding.navView.getMenu().findItem(R.id.nav_item_sign_in_out).setChecked(false);
+        binding.navView.getMenu().findItem(R.id.nav_item_user_profile).setChecked(false);
 
         if (userManager.isLoggedIn()) {
-            binding.navView.getMenu().findItem(R.id.nav_item_sign_in_out).setTitle(R.string.txt_log_out);
+            binding.navView.getMenu().findItem(R.id.nav_item_user_profile).setTitle(R.string.txt_user_profile_title);
             final TextView title = binding.navView.getHeaderView(0).findViewById(R.id.nav_title);
             if (title != null) {
                 userManager.getUserName(new UserManager.GetUserPropertyCallback() {
@@ -251,6 +254,13 @@ public abstract class BaseActivity extends AppCompatActivity {
                     public void onSuccess(Object value) {
                         if (value instanceof String) {
                             title.setText(value.toString());
+                            title.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    Intent intent = new Intent(BaseActivity.this, UserProfileActivity.class);
+                                    startActivity(intent);
+                                }
+                            });
                         }
                     }
 
@@ -261,7 +271,12 @@ public abstract class BaseActivity extends AppCompatActivity {
                 });
             }
         } else {
-            binding.navView.getMenu().findItem(R.id.nav_item_sign_in_out).setTitle(R.string.txt_log_in);
+            binding.navView.getMenu().findItem(R.id.nav_item_user_profile).setTitle(R.string.txt_log_in);
+            final TextView title = binding.navView.getHeaderView(0).findViewById(R.id.nav_title);
+            if (title != null) {
+                title.setText(getString(R.string.app_name));
+                title.setOnClickListener(null);
+            }
         }
     }
 

@@ -155,7 +155,7 @@ public class LoginFragment extends AuthenticationFragment implements LoginContra
 
     @Override
     public void showNoInternetMessage() {
-        showErrorMessage(getString(R.string.txt_no_internet));
+        super.showNoInternetMessage();
     }
 
     @Override
