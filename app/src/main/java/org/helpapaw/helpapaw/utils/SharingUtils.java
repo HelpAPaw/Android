@@ -21,7 +21,7 @@ public class SharingUtils {
         context.startActivity(chooserIntent);
     }
 
-    public static void shareSupport(Context context) {
+    public static void shareApp(Context context) {
         Intent sendIntent = new Intent();
         sendIntent.setAction(Intent.ACTION_SEND);
         sendIntent.putExtra(Intent.EXTRA_TEXT,

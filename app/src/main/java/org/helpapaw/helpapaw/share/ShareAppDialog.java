@@ -36,7 +36,7 @@ public class ShareAppDialog extends DialogFragment {
         dialog.setMessage(R.string.string_share_app_reminder_message);
 
         dialog.setPositiveButton(getString(R.string.text_share), (dialog1, which) -> {
-            SharingUtils.shareSupport(context);
+            SharingUtils.shareApp(context);
             dismiss();
         });
 

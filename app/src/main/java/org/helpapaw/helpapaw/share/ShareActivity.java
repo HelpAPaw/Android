@@ -35,11 +35,11 @@ public class ShareActivity extends AppCompatActivity {
             binding.toolbarTitle.setText(getString(R.string.text_share));
         }
 
-        binding.btnShareContacts.setOnClickListener(new View.OnClickListener() {
+        binding.btnShareApp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 SharingUtils.resetCounter(ShareActivity.this, APP_OPENINGS_TO_ASK_FOR_SHARE + 1);
-                SharingUtils.shareSupport(ShareActivity.this);
+                SharingUtils.shareApp(ShareActivity.this);
             }
         });
     }

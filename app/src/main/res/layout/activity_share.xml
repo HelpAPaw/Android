@@ -63,7 +63,7 @@
                 android:textSize="24sp" />
 
             <Button
-                android:id="@+id/btn_share_contacts"
+                android:id="@+id/btn_share_app"
                 android:layout_width="200dp"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/tv_title_text"
@@ -72,13 +72,6 @@
                 android:background="@color/color_accent"
                 android:textColor="@android:color/white"
                 android:text="@string/string_share_button"/>
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:gravity="center"
-                android:text="@string/string_about_milen"/>
         </RelativeLayout>
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>
