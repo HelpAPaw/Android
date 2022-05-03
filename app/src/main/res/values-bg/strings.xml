@@ -80,7 +80,7 @@
     <string name="txt_new_comment">Нов коментар</string>
     <string name="txt_new_status">Нов статус</string>
     <string name="text_faqs">Често задавани въпроси</string>
-    <string name="text_about">Относно</string>
+    <string name="text_about">За приложението</string>
     <string name="text_share">Сподели</string>
     <string name="text_privacy_policy">Политика за поверителност</string>
     <string name="text_feedback">Обратна връзка</string>
@@ -100,7 +100,7 @@
     <string name="string_about_contact">Свържете се с нас</string>
     <string name="string_about_milen">© Милен Маринов 2022</string>
     <string name="string_share_text">Харесва ли ви приложението? Споделете го с приятели!</string>
-    <string name="string_share_app_text">Искате да помагате на животните? Вижте това приложение: %s</string>
+    <string name="string_share_app_text">Открих страхотно приложение за помощ на животни в беда: %s</string>
     <string name="string_share_app_reminder_title">Споделете приложението!</string>
     <string name="string_share_app_reminder_message">Забелязахме, че често изполвате приложението. Искате ли да го споделите с приятели?</string>
     <string name="string_share_button">Сподели</string>
