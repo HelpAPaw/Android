@@ -174,6 +174,7 @@
     <string name="txt_signal_type">Тип на сигнала: %s</string>
     <string name="txt_type">Тип: %s</string>
     <string name="content_description_add_signal">Добави сигнал</string>
+    <string name="content_description_show_clinics">Покажи ветеринарните клиники наблизо</string>
     <string name="txt_type_settings">ТИПОВЕ</string>
     <string name="txt_type_settings_description">Типове на сигналите, за които желаете да бъдете известявани</string>
     <string name="string_signal_type_settings_title">Типове на сигнали</string>
