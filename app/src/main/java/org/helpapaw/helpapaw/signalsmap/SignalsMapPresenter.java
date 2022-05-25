@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import com.google.firebase.crashlytics.FirebaseCrashlytics;
-
 import org.helpapaw.helpapaw.base.Presenter;
 import org.helpapaw.helpapaw.data.models.Signal;
 import org.helpapaw.helpapaw.data.repositories.PhotoRepository;
@@ -41,6 +39,7 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View>
     private boolean sendSignalViewVisibility;
     private boolean filterSignalViewVisibility;
     private List<Signal> signalsList;
+    private boolean showVetClinicsClicked = false;
 
     SignalsMapPresenter(SignalsMapContract.View view) {
         super(view);
@@ -165,6 +164,17 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View>
         }
         else {
             setSendSignalViewVisibility(false);
+        }
+    }
+
+    @Override
+    public void onShowVetClinicsClicked() {
+        if (!showVetClinicsClicked) {
+            getView().showVetClinicsOnMap();
+            showVetClinicsClicked = true;
+        } else {
+//            getView().hideVetClinicsFromMap();
+            showVetClinicsClicked = false;
         }
     }
 

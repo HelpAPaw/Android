@@ -46,6 +46,10 @@ interface SignalsMapContract {
 
         void closeSignalsMapScreen();
 
+        void showVetClinicsOnMap();
+
+//        void hideVetClinicsFromMap();
+
         void showDescriptionErrorMessage();
 
         void showAddedSignalMessage();
@@ -78,6 +82,8 @@ interface SignalsMapContract {
         void onChoosePhotoIconClicked();
 
         void onSignalInfoWindowClicked(Signal signal);
+
+        void onShowVetClinicsClicked();
 
         void onBackButtonPressed();
 

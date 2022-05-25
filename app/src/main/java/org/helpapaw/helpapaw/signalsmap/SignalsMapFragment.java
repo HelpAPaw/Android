@@ -95,6 +95,7 @@ import org.helpapaw.helpapaw.signaldetails.SignalDetailsActivity;
 import org.helpapaw.helpapaw.utils.Injection;
 import org.helpapaw.helpapaw.utils.StatusUtils;
 import org.helpapaw.helpapaw.utils.images.ImageUtils;
+import org.helpapaw.helpapaw.vetclinics.VetClinicsTask;
 
 import static org.helpapaw.helpapaw.base.PawApplication.APP_OPEN_COUNTER;
 import static org.helpapaw.helpapaw.base.PawApplication.APP_OPENINGS_TO_ASK_FOR_SHARE;
@@ -342,6 +343,7 @@ public class SignalsMapFragment extends BaseFragment
 
         setHasOptionsMenu(true);
 
+        binding.fabShowClinics.setOnClickListener(getFabShowVetClinicsClickListener());
         binding.fabAddSignal.setOnClickListener(getFabAddSignalClickListener());
         binding.viewSendSignal.setOnSignalSendClickListener(getOnSignalSendClickListener());
         binding.viewSendSignal.setOnSignalPhotoClickListener(getOnSignalPhotoClickListener());
@@ -609,6 +611,23 @@ public class SignalsMapFragment extends BaseFragment
         }
     }
 
+    @Override
+    public void showVetClinicsOnMap() {
+        StringBuilder vetClinicsRequest = new StringBuilder(createVetClinicsRequest());
+        VetClinicsTask vetClinicsTask = new VetClinicsTask();
+        vetClinicsTask.execute(vetClinicsRequest.toString());
+    }
+
+    public StringBuilder createVetClinicsRequest() {
+        StringBuilder sb = new StringBuilder("https://maps.googleapis.com/maps/api/place/nearbysearch/json?");
+        sb.append("location=" + mCurrentLat + "," + mCurrentLong);
+        sb.append("&radius=" + calculateZoomToMeters()); // TODO - is mZoom ok?
+        sb.append("&types=" + "veterinary_care");
+        sb.append("&key=" + getString(R.string.google_android_map_api_key_test)); // TODO - we need to change this
+
+        return sb;
+    }
+
     @NonNull
     private Marker addMarkerToMap(Signal signal) {
         MarkerOptions markerOptions = new MarkerOptions()
@@ -784,6 +803,12 @@ public class SignalsMapFragment extends BaseFragment
         return v -> {
             boolean visibility = binding.viewSendSignal.getVisibility() == View.VISIBLE;
             actionsListener.onAddSignalClicked(visibility);
+        };
+    }
+
+    public View.OnClickListener getFabShowVetClinicsClickListener() {
+        return v -> {
+            actionsListener.onShowVetClinicsClicked();
         };
     }
 
