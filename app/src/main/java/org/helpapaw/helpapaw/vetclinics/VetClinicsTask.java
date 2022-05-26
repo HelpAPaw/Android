@@ -1,155 +1,56 @@
 package org.helpapaw.helpapaw.vetclinics;
 
 import android.os.AsyncTask;
-import android.util.Log;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import org.json.JSONObject;
+import org.helpapaw.helpapaw.R;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 
-public class VetClinicsTask extends AsyncTask<String, Integer, String> {
+public class VetClinicsTask extends AsyncTask<Object, Integer, String> {
 
-    String data = null;
+    String googlePlacesData;
+    GoogleMap mMap;
+    String url;
 
-    // Invoked by execute() method of this object
     @Override
-    protected String doInBackground(String... url) {
+    protected String doInBackground(Object... params) {
         try {
-            data = downloadUrl(url[0]);
+            mMap = (GoogleMap) params[0];
+            url = (String) params[1];
+            DownloadUrl downloadUrl = new DownloadUrl();
+            googlePlacesData = downloadUrl.readUrl(url);
         } catch (Exception e) {
-            Log.d("Background Task", e.toString());
+            e.printStackTrace();
         }
-        return data;
+        return googlePlacesData;
     }
 
-    // Executed after the complete execution of doInBackground() method
     @Override
     protected void onPostExecute(String result) {
-        ParserTask parserTask = new ParserTask();
 
-        // Start parsing the Google places in JSON format
-        // Invokes the "doInBackground()" method of the class ParserTask
-        parserTask.execute(result);
+        List<HashMap<String, String>> nearbyPlacesList = null;
+        DataParser dataParser = new DataParser();
+        nearbyPlacesList =  dataParser.parse(result);
+        ShowNearbyPlaces(nearbyPlacesList);
     }
 
-    private String downloadUrl(String strUrl) throws IOException {
-        String data = "";
-        InputStream iStream = null;
-        HttpURLConnection urlConnection = null;
-        try {
-            URL url = new URL(strUrl);
-
-            // Creating an http connection to communicate with url
-            urlConnection = (HttpURLConnection) url.openConnection();
-
-            // Connecting to url
-            urlConnection.connect();
-
-            // Reading data from url
-            iStream = urlConnection.getInputStream();
-
-            BufferedReader br = new BufferedReader(new InputStreamReader(iStream));
-
-            StringBuffer sb = new StringBuffer();
-
-            String line = "";
-            while ((line = br.readLine()) != null) {
-                sb.append(line);
-            }
-
-            data = sb.toString();
-
-            br.close();
-
-        } catch (Exception e) {
-            Log.d("Error downloading url", e.toString());
-        } finally {
-            iStream.close();
-            urlConnection.disconnect();
-        }
-        return data;
-    }
-
-    private class ParserTask extends AsyncTask<String, Integer, List<HashMap<String, String>>> {
-
-        JSONObject jObject;
-
-        // Invoked by execute() method of this object
-        @Override
-        protected List<HashMap<String, String>> doInBackground(String... jsonData) {
-
-            List<HashMap<String, String>> places = null;
-            PlaceJSON placeJson = new PlaceJSON();
-
-            try {
-                jObject = new JSONObject(jsonData[0]);
-
-                places = placeJson.parse(jObject);
-
-            } catch (Exception e) {
-                Log.d("Exception", e.toString());
-            }
-            return places;
-        }
-
-
-
-        // Executed after the complete execution of doInBackground() method
-        protected void onPostExecute(List<HashMap<String, String>> list, GoogleMap signalsGoogleMap) {
-
-            Log.d("Map", "list size: " + list.size());
-            // Clears all the existing markers;
-//            mGoogleMap.clear();
-
-            for (int i = 0; i < list.size(); i++) {
-
-                // Creating a marker
-                MarkerOptions markerOptions = new MarkerOptions();
-
-                // Getting a place from the places list
-                HashMap<String, String> hmPlace = list.get(i);
-
-
-                // Getting latitude of the place
-                double lat = Double.parseDouble(hmPlace.get("lat"));
-
-                // Getting longitude of the place
-                double lng = Double.parseDouble(hmPlace.get("lng"));
-
-                // Getting name
-                String name = hmPlace.get("place_name");
-
-                Log.d("Map", "place: " + name);
-
-                // Getting vicinity
-                String vicinity = hmPlace.get("vicinity");
-
-                LatLng latLng = new LatLng(lat, lng);
-
-                // Setting the position for the marker
-                markerOptions.position(latLng);
-
-                markerOptions.title(name + " : " + vicinity);
-
-                markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
-
-                // Placing a marker on the touched position
-                Marker m = signalsGoogleMap.addMarker(markerOptions);
-
-            }
+    private void ShowNearbyPlaces(List<HashMap<String, String>> nearbyPlacesList) {
+        for (int i = 0; i < nearbyPlacesList.size(); i++) {
+            MarkerOptions markerOptions = new MarkerOptions();
+            HashMap<String, String> googlePlace = nearbyPlacesList.get(i);
+            double lat = Double.parseDouble(googlePlace.get("lat"));
+            double lng = Double.parseDouble(googlePlace.get("lng"));
+            LatLng latLng = new LatLng(lat, lng);
+            markerOptions.position(latLng);
+            markerOptions.title(googlePlace.get("place_name"));
+            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.pin_blue2));
+            mMap.addMarker(markerOptions);
         }
     }
 }

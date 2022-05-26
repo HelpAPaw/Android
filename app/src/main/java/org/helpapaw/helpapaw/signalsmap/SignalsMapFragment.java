@@ -564,7 +564,7 @@ public class SignalsMapFragment extends BaseFragment
         }
 
         if (signalsGoogleMap != null) {
-            signalsGoogleMap.clear();
+//            signalsGoogleMap.clear();
             mDisplayedMarkers.clear();
 
             signalsGoogleMap.setPadding(0, PADDING_TOP, 0, PADDING_BOTTOM);
@@ -613,16 +613,26 @@ public class SignalsMapFragment extends BaseFragment
 
     @Override
     public void showVetClinicsOnMap() {
-        StringBuilder vetClinicsRequest = new StringBuilder(createVetClinicsRequest());
+        double lat = mCurrentLat;
+        double lon = mCurrentLong;
+        int  radius = calculateZoomToMeters();
+        StringBuilder vetClinicsRequest =
+                new StringBuilder(createVetClinicsRequest(lat, lon, radius));
+
+        Object[] dataTransfer = new Object[2];
+        dataTransfer[0] = signalsGoogleMap;
+        dataTransfer[1] = vetClinicsRequest.toString();
+
         VetClinicsTask vetClinicsTask = new VetClinicsTask();
-        vetClinicsTask.execute(vetClinicsRequest.toString());
+        vetClinicsTask.execute(dataTransfer);
     }
 
-    public StringBuilder createVetClinicsRequest() {
+    public StringBuilder createVetClinicsRequest(double lat, double lon, int radius) {
         StringBuilder sb = new StringBuilder("https://maps.googleapis.com/maps/api/place/nearbysearch/json?");
-        sb.append("location=" + mCurrentLat + "," + mCurrentLong);
-        sb.append("&radius=" + calculateZoomToMeters()); // TODO - is mZoom ok?
+        sb.append("location=" + lat + "," + lon);
+        sb.append("&radius=" + radius); // TODO - is mZoom ok?
         sb.append("&types=" + "veterinary_care");
+        sb.append("&sensor=true");
         sb.append("&key=" + getString(R.string.google_android_map_api_key_test)); // TODO - we need to change this
 
         return sb;
