@@ -2,29 +2,20 @@ package org.helpapaw.helpapaw.vetclinics;
 
 import android.os.AsyncTask;
 
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
-
-import org.helpapaw.helpapaw.R;
-
 import java.util.HashMap;
 import java.util.List;
 
-public class VetClinicsTask extends AsyncTask<Object, Integer, String> {
+public class VetClinicsTask extends AsyncTask<String, Integer, String> {
 
-    String googlePlacesData;
-    GoogleMap mMap;
-    String url;
+    private String googlePlacesData;
+
+    public VetClinicsAsyncResponse delegate = null;
 
     @Override
-    protected String doInBackground(Object... params) {
+    protected String doInBackground(String... url) {
         try {
-            mMap = (GoogleMap) params[0];
-            url = (String) params[1];
             DownloadUrl downloadUrl = new DownloadUrl();
-            googlePlacesData = downloadUrl.readUrl(url);
+            googlePlacesData = downloadUrl.readUrl(url[0]);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -34,23 +25,9 @@ public class VetClinicsTask extends AsyncTask<Object, Integer, String> {
     @Override
     protected void onPostExecute(String result) {
 
-        List<HashMap<String, String>> nearbyPlacesList = null;
+        List<HashMap<String, String>> nearbyPlacesList;
         DataParser dataParser = new DataParser();
         nearbyPlacesList =  dataParser.parse(result);
-        ShowNearbyPlaces(nearbyPlacesList);
-    }
-
-    private void ShowNearbyPlaces(List<HashMap<String, String>> nearbyPlacesList) {
-        for (int i = 0; i < nearbyPlacesList.size(); i++) {
-            MarkerOptions markerOptions = new MarkerOptions();
-            HashMap<String, String> googlePlace = nearbyPlacesList.get(i);
-            double lat = Double.parseDouble(googlePlace.get("lat"));
-            double lng = Double.parseDouble(googlePlace.get("lng"));
-            LatLng latLng = new LatLng(lat, lng);
-            markerOptions.position(latLng);
-            markerOptions.title(googlePlace.get("place_name"));
-            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.pin_blue2));
-            mMap.addMarker(markerOptions);
-        }
+        delegate.vetClinicsLoaded(nearbyPlacesList);
     }
 }

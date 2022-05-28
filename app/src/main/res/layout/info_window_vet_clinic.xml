@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingBottom="2dp"
+        android:paddingTop="2dp">
+
+    <TextView
+        android:id="@+id/txt_vet_clinic_name"
+        android:layout_width="220dp"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:singleLine="false"
+        android:textColor="@android:color/black"
+        android:textSize="17sp"
+        android:textAlignment="center"
+        tools:text="Vet Clinic"/>
+
+    <TextView
+        android:id="@+id/txt_vet_clinic_vicinity"
+        android:layout_width="220dp"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:singleLine="false"
+        android:textColor="@android:color/black"
+        android:textSize="17sp"
+        android:textAlignment="center"
+        tools:text="Vicinity" />
+    </LinearLayout>
+</layout>

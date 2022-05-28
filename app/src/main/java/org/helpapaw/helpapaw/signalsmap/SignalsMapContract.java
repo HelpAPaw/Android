@@ -48,7 +48,7 @@ interface SignalsMapContract {
 
         void showVetClinicsOnMap();
 
-//        void hideVetClinicsFromMap();
+        void hideVetClinicsFromMap();
 
         void showDescriptionErrorMessage();
 

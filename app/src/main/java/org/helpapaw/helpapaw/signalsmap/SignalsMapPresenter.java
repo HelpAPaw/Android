@@ -172,8 +172,9 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View>
         if (!showVetClinicsClicked) {
             getView().showVetClinicsOnMap();
             showVetClinicsClicked = true;
+
         } else {
-//            getView().hideVetClinicsFromMap();
+            getView().hideVetClinicsFromMap();
             showVetClinicsClicked = false;
         }
     }

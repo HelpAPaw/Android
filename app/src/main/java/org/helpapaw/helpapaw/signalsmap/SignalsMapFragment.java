@@ -95,6 +95,8 @@ import org.helpapaw.helpapaw.signaldetails.SignalDetailsActivity;
 import org.helpapaw.helpapaw.utils.Injection;
 import org.helpapaw.helpapaw.utils.StatusUtils;
 import org.helpapaw.helpapaw.utils.images.ImageUtils;
+import org.helpapaw.helpapaw.vetclinics.VetClinicsAsyncResponse;
+import org.helpapaw.helpapaw.vetclinics.VetClinicsInfoWindowAdapter;
 import org.helpapaw.helpapaw.vetclinics.VetClinicsTask;
 
 import static org.helpapaw.helpapaw.base.PawApplication.APP_OPEN_COUNTER;
@@ -108,6 +110,7 @@ public class SignalsMapFragment extends BaseFragment
         UploadPhotoContract.View,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
+        VetClinicsAsyncResponse,
         LocationListener {
 
     public static final String TAG = SignalsMapFragment.class.getSimpleName();
@@ -127,6 +130,11 @@ public class SignalsMapFragment extends BaseFragment
     private final ArrayList<Marker> mDisplayedMarkers = new ArrayList<>();
     private final Map<String, Signal> mSignalMarkers = new HashMap<>();
     private Signal mCurrentlyShownInfoWindowSignal;
+
+    private final ArrayList<Marker> mDisplayedVetClinicsMarkers = new ArrayList<>();
+    private final Map<String, HashMap<String, String>> mVetClinicsMarkers = new HashMap<>();
+
+    private Map<String, GoogleMap.InfoWindowAdapter> adapterMap = new HashMap<>();
 
     private double mCurrentLat;
     private double mCurrentLong;
@@ -456,6 +464,7 @@ public class SignalsMapFragment extends BaseFragment
                 signalsGoogleMap.setOnMapClickListener(mapClickListener);
                 signalsGoogleMap.setOnMarkerClickListener(mapMarkerClickListener);
                 signalsGoogleMap.setOnCameraIdleListener(mapCameraIdleListener);
+                signalsGoogleMap.setInfoWindowAdapter(new CentralInfoWindowAdapter(adapterMap));
             }
         };
     }
@@ -572,6 +581,8 @@ public class SignalsMapFragment extends BaseFragment
                 Signal signal = mDisplayedSignals.get(i);
 
                 Marker marker = addMarkerToMap(signal);
+                SignalInfoWindowAdapter signalInfoWindowAdapter = new SignalInfoWindowAdapter(mSignalMarkers, getActivity().getLayoutInflater());
+                adapterMap.put(marker.getId(), signalInfoWindowAdapter);
 
                 if (mFocusedSignalId != null) {
                     if (signal.getId().equalsIgnoreCase(mFocusedSignalId)) {
@@ -588,8 +599,6 @@ public class SignalsMapFragment extends BaseFragment
                 }
             }
 
-            SignalInfoWindowAdapter infoWindowAdapter = new SignalInfoWindowAdapter(mSignalMarkers, getActivity().getLayoutInflater());
-            signalsGoogleMap.setInfoWindowAdapter(infoWindowAdapter);
 
             signalsGoogleMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
                 @Override
@@ -619,14 +628,11 @@ public class SignalsMapFragment extends BaseFragment
         StringBuilder vetClinicsRequest =
                 new StringBuilder(createVetClinicsRequest(lat, lon, radius));
 
-        Object[] dataTransfer = new Object[2];
-        dataTransfer[0] = signalsGoogleMap;
-        dataTransfer[1] = vetClinicsRequest.toString();
-
         VetClinicsTask vetClinicsTask = new VetClinicsTask();
-        vetClinicsTask.execute(dataTransfer);
+        vetClinicsTask.delegate = this;
+        vetClinicsTask.execute(vetClinicsRequest.toString());
     }
-
+    
     public StringBuilder createVetClinicsRequest(double lat, double lon, int radius) {
         StringBuilder sb = new StringBuilder("https://maps.googleapis.com/maps/api/place/nearbysearch/json?");
         sb.append("location=" + lat + "," + lon);
@@ -636,6 +642,41 @@ public class SignalsMapFragment extends BaseFragment
         sb.append("&key=" + getString(R.string.google_android_map_api_key_test)); // TODO - we need to change this
 
         return sb;
+    }
+
+    @Override
+    public void vetClinicsLoaded(List<HashMap<String, String>> result) {
+
+        binding.fabShowClinics.setAlpha(0.5F);
+
+        for (int i = 0; i < result.size(); i++) {
+            MarkerOptions markerOptions = new MarkerOptions();
+            HashMap<String, String> googlePlace = result.get(i);
+            double lat = Double.parseDouble(googlePlace.get("lat"));
+            double lng = Double.parseDouble(googlePlace.get("lng"));
+            LatLng latLng = new LatLng(lat, lng);
+            markerOptions.position(latLng);
+            markerOptions.title(googlePlace.get("place_name"));
+            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.pin_blue2));
+
+            Marker vetMarker = signalsGoogleMap.addMarker(markerOptions);
+
+            mVetClinicsMarkers.put(vetMarker.getId(), result.get(i));
+            mDisplayedVetClinicsMarkers.add(vetMarker);
+
+            VetClinicsInfoWindowAdapter vetInfoWindowAdapter = new VetClinicsInfoWindowAdapter(mVetClinicsMarkers, getActivity().getLayoutInflater());
+            adapterMap.put(vetMarker.getId(), vetInfoWindowAdapter);
+        }
+    }
+
+    @Override
+    public void hideVetClinicsFromMap() {
+
+        binding.fabShowClinics.setAlpha(1F);
+
+        for (int i = 0; i < mDisplayedVetClinicsMarkers.size(); i++) {
+            mDisplayedVetClinicsMarkers.get(i).remove();
+        }
     }
 
     @NonNull
