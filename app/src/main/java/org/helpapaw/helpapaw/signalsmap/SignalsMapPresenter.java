@@ -39,6 +39,7 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View>
     private boolean sendSignalViewVisibility;
     private boolean filterSignalViewVisibility;
     private List<Signal> signalsList;
+
     private boolean showVetClinicsClicked = false;
 
     SignalsMapPresenter(SignalsMapContract.View view) {
@@ -365,6 +366,11 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View>
 
     @Override
     public void onLoginAction() {
+    }
+
+    @Override
+    public boolean isShowVetClinicsClicked() {
+        return showVetClinicsClicked;
     }
 
     private void getUserPhone() {

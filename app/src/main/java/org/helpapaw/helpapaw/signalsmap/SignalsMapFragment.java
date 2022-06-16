@@ -432,6 +432,12 @@ public class SignalsMapFragment extends BaseFragment
             return true;
         }
         if (item.getItemId() == R.id.menu_item_show_clinics) {
+            if (!actionsListener.isShowVetClinicsClicked()) {
+                item.getIcon().setAlpha(130);
+            } else {
+                item.getIcon().setAlpha(255);
+            }
+
             actionsListener.onShowVetClinicsClicked();
             return true;
         }
