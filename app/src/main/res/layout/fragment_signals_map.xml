@@ -62,15 +62,5 @@
             app:layout_anchorGravity="bottom|right|end"
             android:contentDescription="@string/content_description_add_signal" />
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fab_show_clinics"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:src="@drawable/fab_add"
-            app:backgroundTint="@color/blue"
-            app:layout_anchor="@id/grp_signals_map_container"
-            app:layout_anchorGravity="top|left|end"
-            android:contentDescription="@string/content_description_show_clinics" />
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>

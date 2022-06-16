@@ -351,7 +351,6 @@ public class SignalsMapFragment extends BaseFragment
 
         setHasOptionsMenu(true);
 
-        binding.fabShowClinics.setOnClickListener(getFabShowVetClinicsClickListener());
         binding.fabAddSignal.setOnClickListener(getFabAddSignalClickListener());
         binding.viewSendSignal.setOnSignalSendClickListener(getOnSignalSendClickListener());
         binding.viewSendSignal.setOnSignalPhotoClickListener(getOnSignalPhotoClickListener());
@@ -430,6 +429,10 @@ public class SignalsMapFragment extends BaseFragment
         }
         if (item.getItemId() == R.id.menu_item_filter_signals) {
             actionsListener.onFilterSignalsButtonClicked();
+            return true;
+        }
+        if (item.getItemId() == R.id.menu_item_show_clinics) {
+            actionsListener.onShowVetClinicsClicked();
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -646,9 +649,6 @@ public class SignalsMapFragment extends BaseFragment
 
     @Override
     public void vetClinicsLoaded(List<HashMap<String, String>> result) {
-
-        binding.fabShowClinics.setAlpha(0.5F);
-
         for (int i = 0; i < result.size(); i++) {
             MarkerOptions markerOptions = new MarkerOptions();
             HashMap<String, String> googlePlace = result.get(i);
@@ -671,9 +671,6 @@ public class SignalsMapFragment extends BaseFragment
 
     @Override
     public void hideVetClinicsFromMap() {
-
-        binding.fabShowClinics.setAlpha(1F);
-
         for (int i = 0; i < mDisplayedVetClinicsMarkers.size(); i++) {
             mDisplayedVetClinicsMarkers.get(i).remove();
         }
