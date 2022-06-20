@@ -38,7 +38,6 @@ public class VetClinicsInfoWindowAdapter implements GoogleMap.InfoWindowAdapter 
         HashMap<String, String> vetClinic = vetClinicsMarkers.get(marker.getId());
         if (vetClinic != null) {
             binding.txtVetClinicName.setText(vetClinic.get("place_name"));
-            binding.txtVetClinicVicinity.setText(vetClinic.get("vicinity"));
         }
 
         return binding.getRoot();

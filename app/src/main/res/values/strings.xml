@@ -185,6 +185,7 @@
     <string name="content_description_add_signal">Add signal</string>
     <string name="content_show_clinics">Show veterinary clinics</string>
     <string name="content_hide_clinics">Hide veterinary clinics</string>
+    <string name="txt_vet_clinic_info">More info...</string>
     <string name="txt_type_settings">TYPES</string>
     <string name="txt_type_settings_description">Signal types you want to be notified about</string>
     <string name="string_signal_type_settings_title">Signal Types</string>

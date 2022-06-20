@@ -162,11 +162,11 @@
                                 style="@style/Widget.AppCompat.Button.Colored"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="4dp"
                                 android:layout_alignParentStart="true"
+                                android:layout_marginTop="4dp"
                                 android:drawableLeft="@drawable/ic_assistant_direction_24"
-                                android:drawableTint="@android:color/white"
                                 android:drawablePadding="4dp"
+                                android:drawableTint="@android:color/white"
                                 android:gravity="center"
                                 android:text="@string/txt_navigate_to"
                                 tools:targetApi="m" />

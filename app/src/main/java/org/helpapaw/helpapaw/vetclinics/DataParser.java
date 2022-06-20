@@ -1,5 +1,6 @@
 package org.helpapaw.helpapaw.vetclinics;
 
+import org.helpapaw.helpapaw.R;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -14,7 +15,7 @@ public class DataParser {
         JSONObject jsonObject;
 
         try {
-            jsonObject = new JSONObject((String) jsonData);
+            jsonObject = new JSONObject(jsonData);
             jsonArray = jsonObject.getJSONArray("results");
         } catch (JSONException e) {
             e.printStackTrace();
@@ -30,6 +31,15 @@ public class DataParser {
         for (int i = 0; i < placesCount; i++) {
             try {
                 placeMap = getPlace((JSONObject) jsonArray.get(i));
+
+//                String request = "https://maps.googleapis.com/maps/api/place/detail/json?placeid" +
+//                        ((JSONObject) jsonArray.get(i)).getString("place_id") +
+//                        "&key=" +  R.string.google_android_map_api_key_test; // TODO - we need to change this
+//
+//
+//                VetClinicsTask vetClinicsTask = new VetClinicsTask();
+//                vetClinicsTask.execute(request);
+
                 placesList.add(placeMap);
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -39,12 +49,13 @@ public class DataParser {
     }
 
     private HashMap<String, String> getPlace(JSONObject googlePlaceJson) {
-        HashMap<String, String> googlePlaceMap = new HashMap<String, String>();
+        HashMap<String, String> googlePlaceMap = new HashMap<>();
         String placeName = "-NA-";
         String vicinity = "-NA-";
         String latitude = "";
         String longitude = "";
         String reference = "";
+//        String phoneNumber = "";
 
         try {
             if (!googlePlaceJson.isNull("name")) {
