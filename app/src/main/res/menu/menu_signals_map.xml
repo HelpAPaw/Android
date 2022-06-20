@@ -9,7 +9,7 @@
     <item
         android:id="@+id/menu_item_show_clinics"
         android:icon="@drawable/fab_add"
-        android:title="@string/content_description_show_clinics"
+        android:title="@string/content_show_clinics"
         app:showAsAction="always" />
     <item
         android:id="@+id/menu_item_refresh"

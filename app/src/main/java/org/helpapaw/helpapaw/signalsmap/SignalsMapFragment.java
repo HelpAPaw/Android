@@ -434,8 +434,10 @@ public class SignalsMapFragment extends BaseFragment
         if (item.getItemId() == R.id.menu_item_show_clinics) {
             if (!actionsListener.isShowVetClinicsClicked()) {
                 item.getIcon().setAlpha(130);
+                item.setTitle(R.string.content_hide_clinics);
             } else {
                 item.getIcon().setAlpha(255);
+                item.setTitle(R.string.content_show_clinics);
             }
 
             actionsListener.onShowVetClinicsClicked();
@@ -510,6 +512,10 @@ public class SignalsMapFragment extends BaseFragment
             mZoom = cameraPosition.zoom;
             int radius = calculateZoomToMeters();
             actionsListener.onLocationChanged(cameraTarget.latitude, cameraTarget.longitude, radius, settingsRepository.getTimeout());
+
+            if (actionsListener.isShowVetClinicsClicked()) {
+                showVetClinicsOnMap();
+            }
         }
     };
 
@@ -857,12 +863,6 @@ public class SignalsMapFragment extends BaseFragment
         return v -> {
             boolean visibility = binding.viewSendSignal.getVisibility() == View.VISIBLE;
             actionsListener.onAddSignalClicked(visibility);
-        };
-    }
-
-    public View.OnClickListener getFabShowVetClinicsClickListener() {
-        return v -> {
-            actionsListener.onShowVetClinicsClicked();
         };
     }
 
