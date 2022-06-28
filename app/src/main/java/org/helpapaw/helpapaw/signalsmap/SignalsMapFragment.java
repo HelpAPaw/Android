@@ -85,6 +85,7 @@ import org.helpapaw.helpapaw.base.PawApplication;
 import org.helpapaw.helpapaw.base.Presenter;
 import org.helpapaw.helpapaw.base.PresenterManager;
 import org.helpapaw.helpapaw.data.models.Signal;
+import org.helpapaw.helpapaw.data.models.VetClinic;
 import org.helpapaw.helpapaw.data.repositories.ISettingsRepository;
 import org.helpapaw.helpapaw.databinding.FragmentSignalsMapBinding;
 import org.helpapaw.helpapaw.filtersignal.FilterSignalTypeDialog;
@@ -95,6 +96,7 @@ import org.helpapaw.helpapaw.signaldetails.SignalDetailsActivity;
 import org.helpapaw.helpapaw.utils.Injection;
 import org.helpapaw.helpapaw.utils.StatusUtils;
 import org.helpapaw.helpapaw.utils.images.ImageUtils;
+import org.helpapaw.helpapaw.vetclinics.VetClinicDetailsActivity;
 import org.helpapaw.helpapaw.vetclinics.VetClinicsAsyncResponse;
 import org.helpapaw.helpapaw.vetclinics.VetClinicsInfoWindowAdapter;
 import org.helpapaw.helpapaw.vetclinics.VetClinicsTask;
@@ -123,6 +125,8 @@ public class SignalsMapFragment extends BaseFragment
     private static final String VIEW_ADD_SIGNAL = "view_add_signal";
     private static final int PADDING_TOP = 190;
     private static final int PADDING_BOTTOM = 160;
+
+    private static final int REQUEST_VET_CLINIC_DETAILS = 8;
 
     private GoogleApiClient googleApiClient;
     private GoogleMap signalsGoogleMap;
@@ -618,9 +622,18 @@ public class SignalsMapFragment extends BaseFragment
             signalsGoogleMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
                 @Override
                 public void onInfoWindowClick(@NonNull Marker marker) {
-                    Signal signal = mSignalMarkers.get(marker.getId());
+                    String markerId = marker.getId();
+
+                    Signal signal = mSignalMarkers.get(markerId);
+                    HashMap<String, String> vetClinicHashMap = mVetClinicsMarkers.get(markerId);
                     if (signal != null) {
                         actionsListener.onSignalInfoWindowClicked(signal);
+                    } else if (vetClinicHashMap != null && !vetClinicHashMap.isEmpty()) {
+                        VetClinic vetClinic = new VetClinic(vetClinicHashMap.get("reference"));
+                        vetClinic.setName(vetClinicHashMap.get("place_name"));
+                        vetClinic.setLatitude(Double.parseDouble(vetClinicHashMap.get("lat")));
+                        vetClinic.setLongitude(Double.parseDouble(vetClinicHashMap.get("lng")));
+                        actionsListener.onVetClinicInfoWindowClicked(vetClinic);
                     }
                 }
             });
@@ -1070,6 +1083,17 @@ public class SignalsMapFragment extends BaseFragment
         Intent intent = new Intent(getContext(), SignalDetailsActivity.class);
         intent.putExtra(SignalDetailsActivity.SIGNAL_KEY, signal);
         startActivityForResult(intent, REQUEST_SIGNAL_DETAILS);
+
+        settingsRepository.setLastShownLatitude(mCurrentLat);
+        settingsRepository.setLastShownLongitude(mCurrentLong);
+        settingsRepository.setLastShownZoom(mZoom);
+    }
+
+    @Override
+    public void openVetClinicDetailsScreen (VetClinic vetClinic) {
+        Intent intent = new Intent(getContext(), VetClinicDetailsActivity.class);
+        intent.putExtra(VetClinicDetailsActivity.VET_CLINIC_KEY, vetClinic);
+        startActivityForResult(intent, REQUEST_VET_CLINIC_DETAILS);
 
         settingsRepository.setLastShownLatitude(mCurrentLat);
         settingsRepository.setLastShownLongitude(mCurrentLong);

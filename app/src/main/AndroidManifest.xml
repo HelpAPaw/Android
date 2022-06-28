@@ -110,7 +110,10 @@
         <activity
             android:name=".signalphoto.SignalPhotoActivity"
             android:windowSoftInputMode="stateHidden" />
-
+        <activity
+            android:name=".vetclinics.VetClinicDetailsActivity"
+            android:windowSoftInputMode="stateHidden"
+            android:configChanges="keyboardHidden|orientation|screenSize"/>
         <activity
             android:name=".userprofile.UserProfileActivity"
             android:parentActivityName=".signalsmap.SignalsMapActivity" />

@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.helpapaw.helpapaw.base.Presenter;
 import org.helpapaw.helpapaw.data.models.Signal;
+import org.helpapaw.helpapaw.data.models.VetClinic;
 import org.helpapaw.helpapaw.data.repositories.PhotoRepository;
 import org.helpapaw.helpapaw.data.repositories.SignalRepository;
 import org.helpapaw.helpapaw.data.user.UserManager;
@@ -289,6 +290,11 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View>
     @Override
     public void onSignalInfoWindowClicked(Signal signal) {
         getView().openSignalDetailsScreen(signal);
+    }
+
+    @Override
+    public void onVetClinicInfoWindowClicked (VetClinic vetClinic) {
+        getView().openVetClinicDetailsScreen(vetClinic);
     }
 
     @Override

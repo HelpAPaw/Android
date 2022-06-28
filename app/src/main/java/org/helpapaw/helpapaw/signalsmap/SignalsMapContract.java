@@ -1,8 +1,7 @@
 package org.helpapaw.helpapaw.signalsmap;
 
-import android.net.Uri;
-
 import org.helpapaw.helpapaw.data.models.Signal;
+import org.helpapaw.helpapaw.data.models.VetClinic;
 
 import java.io.File;
 import java.util.List;
@@ -44,6 +43,8 @@ interface SignalsMapContract {
 
         void openSignalDetailsScreen(Signal signal);
 
+        void openVetClinicDetailsScreen(VetClinic vetClinic);
+
         void closeSignalsMapScreen();
 
         void showVetClinicsOnMap();
@@ -82,6 +83,8 @@ interface SignalsMapContract {
         void onChoosePhotoIconClicked();
 
         void onSignalInfoWindowClicked(Signal signal);
+
+        void onVetClinicInfoWindowClicked(VetClinic vetClinic);
 
         void onShowVetClinicsClicked();
 
