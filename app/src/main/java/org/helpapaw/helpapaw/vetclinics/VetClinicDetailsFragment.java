@@ -16,9 +16,12 @@ import org.helpapaw.helpapaw.base.PresenterManager;
 import org.helpapaw.helpapaw.data.models.VetClinic;
 import org.helpapaw.helpapaw.databinding.FragmentVetClinicDetailsBinding;
 
+import java.util.HashMap;
+import java.util.List;
+
 
 public class VetClinicDetailsFragment extends BaseFragment
-        implements VetClinicDetailsContract.View {
+        implements VetClinicDetailsContract.View, VetClinicDetailsAsyncResponse {
 
     private final static String VET_CLINIC_DETAILS = "vetClinicDetails";
 
@@ -90,6 +93,13 @@ public class VetClinicDetailsFragment extends BaseFragment
             binding.btnCallVet.setText(vetClinicPhone);
             binding.btnCallVet.setVisibility(View.VISIBLE);
         }
+
+        StringBuilder vetClinicDetailsRequest =
+                new StringBuilder(createVetClinicDetailsRequest(vetClinic.getId()));
+
+        VetClinicDetailsTask vetClinicDetailsTask = new VetClinicDetailsTask();
+        vetClinicDetailsTask.delegate = this;
+        vetClinicDetailsTask.execute(vetClinicDetailsRequest.toString());
     }
 
     @Override
@@ -115,6 +125,17 @@ public class VetClinicDetailsFragment extends BaseFragment
         startActivity(intent);
     }
 
+    @Override
+    public void vetClinicDetailsLoaded(HashMap<String, String> result) {
+        String phoneNumber = result.get("international_phone_number");
+
+        if (!phoneNumber.isEmpty()) {
+            mVetClinic.setPhoneNumber(phoneNumber);
+            binding.btnCallVet.setText(phoneNumber);
+            binding.btnCallVet.setVisibility(View.VISIBLE);
+        }
+    }
+
     public View.OnClickListener getOnNavigateButtonClickListener() {
         return new View.OnClickListener() {
             @Override
@@ -131,5 +152,13 @@ public class VetClinicDetailsFragment extends BaseFragment
                 actionsListener.onCallButtonClicked();
             }
         };
+    }
+
+    private StringBuilder createVetClinicDetailsRequest(String id) {
+        StringBuilder sb = new StringBuilder("https://maps.googleapis.com/maps/api/place/details/json?");
+        sb.append("place_id=" + id);
+        sb.append("&key=" + getString(R.string.google_android_map_api_key_test)); // TODO - we need to change this
+
+        return sb;
     }
 }

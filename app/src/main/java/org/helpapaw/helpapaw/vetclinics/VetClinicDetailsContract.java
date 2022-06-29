@@ -2,6 +2,8 @@ package org.helpapaw.helpapaw.vetclinics;
 
 import org.helpapaw.helpapaw.data.models.VetClinic;
 
+import java.util.HashMap;
+
 
 public interface VetClinicDetailsContract {
 
