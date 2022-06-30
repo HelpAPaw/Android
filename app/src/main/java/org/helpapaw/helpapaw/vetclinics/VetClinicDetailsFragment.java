@@ -134,6 +134,13 @@ public class VetClinicDetailsFragment extends BaseFragment
             binding.btnCallVet.setText(phoneNumber);
             binding.btnCallVet.setVisibility(View.VISIBLE);
         }
+
+        String address = result.get("formatted_address");
+
+        if (!address.isEmpty()) {
+            mVetClinic.setAddress(address);
+            binding.txtVetClinicAddressDetails.setText(address);
+        }
     }
 
     public View.OnClickListener getOnNavigateButtonClickListener() {

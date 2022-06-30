@@ -24,8 +24,6 @@ public class VetClinicDetailsTask extends AsyncTask<String, Integer, String> {
 
     @Override
     protected void onPostExecute(String result) {
-
-        String test = result;
         HashMap<String, String> placeDetails;
         DataParser dataParser = new DataParser();
         placeDetails =  dataParser.parseDetails(result);

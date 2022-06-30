@@ -1,73 +1,105 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.android.com/tools">
-
-    <LinearLayout
-        android:id="@+id/photo_title_layout"
-        android:layout_marginTop="50dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_height="wrap_content">
 
-        <ImageView
-            android:layout_width="120dp"
-            android:layout_height="150dp"
-            android:layout_gravity="center"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="30dp"
-            android:background="@drawable/pin_blue"
-            android:contentDescription="@string/txt_signal_photo_description" />
-
-        <TextView
-            android:id="@+id/txt_vet_clinic_name_details"
+        <LinearLayout
+            android:id="@+id/photo_title_layout"
+            android:layout_marginTop="40dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="4dp"
-            android:layout_marginBottom="20dp"
-            android:autoLink="all"
-            android:backgroundTint="@color/light_gray"
-            android:enabled="false"
-            android:inputType="none"
-            android:linksClickable="true"
-            android:padding="0dp"
-            android:textAlignment="center"
-            android:textColor="#000000"
-            android:textIsSelectable="true"
-            android:textSize="22sp"
-            tools:text="Veterinary clinic name" />
+            android:orientation="vertical">
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            <ImageView
+                android:layout_width="120dp"
+                android:layout_height="150dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="20dp"
+                android:background="@drawable/pin_blue"
+                android:contentDescription="@string/txt_signal_photo_description" />
 
-            <Button
-                android:id="@+id/btn_navigate_vet"
-                style="@style/Widget.AppCompat.Button.Colored"
-                android:layout_width="wrap_content"
+            <TextView
+                android:id="@+id/txt_vet_clinic_name_details"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_marginTop="4dp"
-                android:drawableLeft="@drawable/ic_assistant_direction_24"
-                android:drawablePadding="4dp"
-                android:drawableTint="@android:color/white"
-                android:gravity="center"
-                android:text="@string/txt_navigate_to"
-                tools:targetApi="m" />
+                android:layout_marginStart="4dp"
+                android:layout_marginBottom="20dp"
+                android:linksClickable="true"
+                android:padding="0dp"
+                android:textAlignment="center"
+                android:textColor="#000000"
+                android:textIsSelectable="true"
+                android:textSize="22sp"
+                tools:text="Veterinary clinic name" />
 
-            <Button
-                android:id="@+id/btn_call_vet"
-                style="@style/Widget.AppCompat.Button.Colored"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_marginTop="4dp"
-                android:drawableLeft="@drawable/ic_call_24"
-                android:drawablePadding="4dp"
-                android:drawableTint="@android:color/white"
-                tools:targetApi="m"
-                tools:text="0881234567" />
-        </RelativeLayout>
-    </LinearLayout>
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/lbl_vet_clinic_address_details"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginBottom="10dp"
+                    android:labelFor="@id/txt_vet_clinic_address_details"
+                    android:linksClickable="true"
+                    android:padding="0dp"
+                    android:text="@string/lbl_vet_clinic_details_address"
+                    android:textColor="@color/gray"
+                    android:textIsSelectable="true"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:id="@+id/txt_vet_clinic_address_details"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/lbl_vet_clinic_address_details"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginBottom="20dp"
+                    android:linksClickable="true"
+                    android:padding="0dp"
+                    android:textColor="#000000"
+                    android:textIsSelectable="true"
+                    android:textSize="20sp"
+                    tools:text="Veterinary clinic address" />
+
+                <Button
+                    android:id="@+id/btn_navigate_vet"
+                    style="@style/Widget.AppCompat.Button.Colored"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_below="@id/txt_vet_clinic_address_details"
+                    android:drawableStart="@drawable/ic_assistant_direction_24"
+                    android:drawablePadding="4dp"
+                    android:drawableTint="@android:color/white"
+                    android:gravity="center"
+                    android:text="@string/txt_navigate_to"
+                    tools:targetApi="m" />
+
+                <Button
+                    android:id="@+id/btn_call_vet"
+                    style="@style/Widget.AppCompat.Button.Colored"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginBottom="50dp"
+                    android:layout_below="@id/btn_navigate_vet"
+                    android:drawableStart="@drawable/ic_call_24"
+                    android:drawablePadding="4dp"
+                    android:drawableTint="@android:color/white"
+                    tools:targetApi="m"
+                    tools:text="0881234567" />
+
+            </RelativeLayout>
+        </LinearLayout>
+    </ScrollView>
 </layout>
