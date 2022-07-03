@@ -15,6 +15,8 @@ public interface VetClinicDetailsContract {
 
         void openNumberDialer(String phoneNumber);
 
+        void openUrl(String url);
+
         void showNoInternetMessage();
     }
 
@@ -25,5 +27,7 @@ public interface VetClinicDetailsContract {
         void onNavigateButtonClicked();
 
         void onCallButtonClicked();
+
+        void onMoreInfoButtonClicked();
     }
 }

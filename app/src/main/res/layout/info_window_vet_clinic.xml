@@ -4,30 +4,39 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <LinearLayout
-        android:layout_width="250dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:paddingBottom="2dp"
-        android:paddingTop="2dp">
+        android:orientation="horizontal"
+        android:padding="8dp">
 
-        <TextView
-            android:id="@+id/txt_vet_clinic_name"
-            android:layout_width="250dp"
+        <LinearLayout
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:singleLine="true"
-            android:textColor="@android:color/black"
-            android:textSize="17sp"
-            tools:text="Vet Clinic" />
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/txt_vet_clinic_name"
+                android:layout_width="250dp"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:textColor="@android:color/black"
+                android:textSize="17sp"
+                tools:text="Vet Clinic" />
+            <TextView
+                android:id="@+id/txt_vet_clinic_description"
+                android:layout_width="250dp"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:text="Ветеринарна клиника" />
+        </LinearLayout>
 
-        <TextView
-            android:id="@+id/txt_vet_clinic_more_info"
-            android:layout_width="250dp"
-            android:layout_height="wrap_content"
-            android:paddingLeft="150dp"
-            android:singleLine="true"
-            android:textColor="@android:color/holo_blue_dark"
-            android:textSize="17sp"
-            android:text="@string/txt_vet_clinic_info" />
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/img_info_icon"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_gravity="center"
+            android:src="@android:drawable/ic_dialog_info"
+            android:tint="@color/blue" />
     </LinearLayout>
 </layout>

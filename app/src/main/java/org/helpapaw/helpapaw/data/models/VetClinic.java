@@ -11,6 +11,7 @@ public class VetClinic implements Parcelable {
     private double longitude;
     private String phoneNumber;
     private String address;
+    private String url;
 
     public VetClinic(String id) {
         this.id = id;
@@ -60,6 +61,14 @@ public class VetClinic implements Parcelable {
         this.address = address;
     }
 
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
     public static final Creator<VetClinic> CREATOR = new Creator<VetClinic>() {
         @Override
         public VetClinic createFromParcel(Parcel in) {
@@ -78,6 +87,8 @@ public class VetClinic implements Parcelable {
         latitude = in.readDouble();
         longitude = in.readDouble();
         phoneNumber = in.readString();
+        address = in.readString();
+        url = in.readString();
     }
 
     @Override
@@ -87,6 +98,8 @@ public class VetClinic implements Parcelable {
         dest.writeDouble(latitude);
         dest.writeDouble(longitude);
         dest.writeString(phoneNumber);
+        dest.writeString(address);
+        dest.writeString(url);
     }
 
     @Override

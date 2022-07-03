@@ -68,6 +68,7 @@ public class VetClinicDetailsFragment extends BaseFragment
 
         binding.btnNavigateVet.setOnClickListener(getOnNavigateButtonClickListener());
         binding.btnCallVet.setOnClickListener(getOnCallButtonClickListener());
+        binding.btnMoreInfo.setOnClickListener(getOnMoreInfoButtonClickListener());
 
         return binding.getRoot();
     }
@@ -92,6 +93,13 @@ public class VetClinicDetailsFragment extends BaseFragment
         } else {
             binding.btnCallVet.setText(vetClinicPhone);
             binding.btnCallVet.setVisibility(View.VISIBLE);
+        }
+
+        String vetClinicUrl = vetClinic.getUrl();
+        if (vetClinicUrl == null || vetClinicUrl.trim().isEmpty()) {
+            binding.btnMoreInfo.setVisibility(View.GONE);
+        } else {
+            binding.btnMoreInfo.setVisibility(View.VISIBLE);
         }
 
         StringBuilder vetClinicDetailsRequest =
@@ -126,9 +134,14 @@ public class VetClinicDetailsFragment extends BaseFragment
     }
 
     @Override
+    public void openUrl(String url) {
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+        startActivity(browserIntent);
+    }
+
+    @Override
     public void vetClinicDetailsLoaded(HashMap<String, String> result) {
         String phoneNumber = result.get("international_phone_number");
-
         if (!phoneNumber.isEmpty()) {
             mVetClinic.setPhoneNumber(phoneNumber);
             binding.btnCallVet.setText(phoneNumber);
@@ -136,10 +149,15 @@ public class VetClinicDetailsFragment extends BaseFragment
         }
 
         String address = result.get("formatted_address");
-
         if (!address.isEmpty()) {
             mVetClinic.setAddress(address);
             binding.txtVetClinicAddressDetails.setText(address);
+        }
+
+        String url = result.get("url");
+        if (!url.isEmpty()) {
+            mVetClinic.setUrl(url);
+            binding.btnMoreInfo.setVisibility(View.VISIBLE);
         }
     }
 
@@ -157,6 +175,15 @@ public class VetClinicDetailsFragment extends BaseFragment
             @Override
             public void onClick(View v) {
                 actionsListener.onCallButtonClicked();
+            }
+        };
+    }
+
+    public View.OnClickListener getOnMoreInfoButtonClickListener() {
+        return new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                actionsListener.onMoreInfoButtonClicked();
             }
         };
     }

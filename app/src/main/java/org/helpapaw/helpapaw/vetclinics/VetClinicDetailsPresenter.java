@@ -34,4 +34,9 @@ public class VetClinicDetailsPresenter extends Presenter<VetClinicDetailsContrac
         String phoneNumber = vetClinic.getPhoneNumber();
         getView().openNumberDialer(phoneNumber);
     }
+
+    @Override
+    public void onMoreInfoButtonClicked() {
+        getView().openUrl(vetClinic.getUrl());
+    }
 }

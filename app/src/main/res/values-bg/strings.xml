@@ -176,9 +176,11 @@
     <string name="content_description_add_signal">Добави сигнал</string>
     <string name="content_show_clinics">Покажи ветеринарните клиники</string>
     <string name="content_hide_clinics">Скрий ветеринарните клиники</string>
-    <string name="txt_vet_clinic_info">Повече информация...</string>
-    <string name="txt_vet_clinic_details_title">Подробности за ветеринарната клиника</string>
-    <string name="lbl_vet_clinic_details_address">Адрес: </string>
+    <string name="txt_vet_clinic_details_title">Подробности за клиниката</string>
+    <string name="lbl_vet_clinic_details_address">Адрес:</string>
+    <string name="lbl_vet_clinic_details_phone">Телефон:</string>
+    <string name="lbl_vet_clinic_details_more_info">Повече информация:</string>
+    <string name="txt_open_in_google_maps">Отвори в Google Maps</string>
     <string name="txt_type_settings">ТИПОВЕ</string>
     <string name="txt_type_settings_description">Типове на сигналите, за които желаете да бъдете известявани</string>
     <string name="string_signal_type_settings_title">Типове на сигнали</string>

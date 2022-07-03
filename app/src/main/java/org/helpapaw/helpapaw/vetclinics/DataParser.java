@@ -90,6 +90,9 @@ public class DataParser {
             if (!googlePlaceJson.isNull("international_phone_number")) {
                 phone = googlePlaceJson.getString("international_phone_number");
             }
+            if (!googlePlaceJson.isNull("url")) {
+                googlePlaceDetailsMap.put("url", googlePlaceJson.getString("url"));
+            }
             googlePlaceDetailsMap.put("formatted_address", address);
             googlePlaceDetailsMap.put("international_phone_number", phone);
         } catch (JSONException e) {

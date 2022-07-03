@@ -14,15 +14,6 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <ImageView
-                android:layout_width="120dp"
-                android:layout_height="150dp"
-                android:layout_gravity="center"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="20dp"
-                android:background="@drawable/pin_blue"
-                android:contentDescription="@string/txt_signal_photo_description" />
-
             <TextView
                 android:id="@+id/txt_vet_clinic_name_details"
                 android:layout_width="match_parent"
@@ -46,7 +37,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="4dp"
-                    android:layout_marginBottom="10dp"
+                    android:layout_marginBottom="4dp"
                     android:labelFor="@id/txt_vet_clinic_address_details"
                     android:linksClickable="true"
                     android:padding="0dp"
@@ -61,9 +52,9 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@id/lbl_vet_clinic_address_details"
                     android:layout_marginStart="4dp"
-                    android:layout_marginBottom="20dp"
                     android:linksClickable="true"
                     android:padding="0dp"
+                    android:textAlignment="center"
                     android:textColor="#000000"
                     android:textIsSelectable="true"
                     android:textSize="20sp"
@@ -74,30 +65,71 @@
                     style="@style/Widget.AppCompat.Button.Colored"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:layout_alignParentEnd="true"
+                    android:layout_marginTop="8dp"
+                    android:layout_centerHorizontal="true"
                     android:layout_below="@id/txt_vet_clinic_address_details"
                     android:drawableStart="@drawable/ic_assistant_direction_24"
                     android:drawablePadding="4dp"
                     android:drawableTint="@android:color/white"
                     android:gravity="center"
-                    android:text="@string/txt_navigate_to"
-                    tools:targetApi="m" />
+                    android:text="@string/txt_navigate_to"/>
+
+                <TextView
+                    android:id="@+id/lbl_vet_clinic_phone_details"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_below="@id/btn_navigate_vet"
+                    android:labelFor="@id/txt_vet_clinic_address_details"
+                    android:linksClickable="true"
+                    android:padding="0dp"
+                    android:text="@string/lbl_vet_clinic_details_phone"
+                    android:textColor="@color/gray"
+                    android:textIsSelectable="true"
+                    android:textSize="18sp" />
 
                 <Button
                     android:id="@+id/btn_call_vet"
                     style="@style/Widget.AppCompat.Button.Colored"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_marginTop="4dp"
-                    android:layout_marginBottom="50dp"
-                    android:layout_below="@id/btn_navigate_vet"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="8dp"
+                    android:layout_below="@id/lbl_vet_clinic_phone_details"
                     android:drawableStart="@drawable/ic_call_24"
                     android:drawablePadding="4dp"
                     android:drawableTint="@android:color/white"
-                    tools:targetApi="m"
                     tools:text="0881234567" />
+
+                <TextView
+                    android:id="@+id/lbl_vet_clinic_more_info"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_below="@id/btn_call_vet"
+                    android:labelFor="@id/txt_vet_clinic_address_details"
+                    android:linksClickable="true"
+                    android:padding="0dp"
+                    android:text="@string/lbl_vet_clinic_details_more_info"
+                    android:textColor="@color/gray"
+                    android:textIsSelectable="true"
+                    android:textSize="18sp" />
+
+                <Button
+                    android:id="@+id/btn_more_info"
+                    style="@style/Widget.AppCompat.Button.Colored"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="50dp"
+                    android:layout_below="@id/lbl_vet_clinic_more_info"
+                    android:drawableStart="@drawable/ic_info_24dp"
+                    android:drawablePadding="4dp"
+                    android:drawableTint="@android:color/white"
+                    android:text="@string/txt_open_in_google_maps" />
 
             </RelativeLayout>
         </LinearLayout>
