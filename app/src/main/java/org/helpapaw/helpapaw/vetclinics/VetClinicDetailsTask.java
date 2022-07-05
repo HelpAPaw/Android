@@ -3,7 +3,6 @@ package org.helpapaw.helpapaw.vetclinics;
 import android.os.AsyncTask;
 
 import java.util.HashMap;
-import java.util.List;
 
 public class VetClinicDetailsTask extends AsyncTask<String, Integer, String> {
 
@@ -25,8 +24,8 @@ public class VetClinicDetailsTask extends AsyncTask<String, Integer, String> {
     @Override
     protected void onPostExecute(String result) {
         HashMap<String, String> placeDetails;
-        DataParser dataParser = new DataParser();
-        placeDetails =  dataParser.parseDetails(result);
+        VetClinicsParser vetClinicsParser = new VetClinicsParser();
+        placeDetails =  vetClinicsParser.parseDetails(result);
         delegate.vetClinicDetailsLoaded(placeDetails);
     }
 }

@@ -41,7 +41,7 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View>
     private boolean filterSignalViewVisibility;
     private List<Signal> signalsList;
 
-    private boolean showVetClinicsClicked = false;
+    private boolean shouldShowVetClinics = false;
 
     SignalsMapPresenter(SignalsMapContract.View view) {
         super(view);
@@ -171,13 +171,13 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View>
 
     @Override
     public void onShowVetClinicsClicked() {
-        if (!showVetClinicsClicked) {
+        if (!shouldShowVetClinics) {
             getView().showVetClinicsOnMap();
-            showVetClinicsClicked = true;
+            shouldShowVetClinics = true;
 
         } else {
             getView().hideVetClinicsFromMap();
-            showVetClinicsClicked = false;
+            shouldShowVetClinics = false;
         }
     }
 
@@ -375,8 +375,8 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View>
     }
 
     @Override
-    public boolean isShowVetClinicsClicked() {
-        return showVetClinicsClicked;
+    public boolean shouldShowVetClinics() {
+        return shouldShowVetClinics;
     }
 
     private void getUserPhone() {

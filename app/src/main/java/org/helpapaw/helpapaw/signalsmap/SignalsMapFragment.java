@@ -436,7 +436,7 @@ public class SignalsMapFragment extends BaseFragment
             return true;
         }
         if (item.getItemId() == R.id.menu_item_show_clinics) {
-            if (!actionsListener.isShowVetClinicsClicked()) {
+            if (!actionsListener.shouldShowVetClinics()) {
                 item.getIcon().setAlpha(130);
                 item.setTitle(R.string.content_hide_clinics);
             } else {
@@ -517,7 +517,7 @@ public class SignalsMapFragment extends BaseFragment
             int radius = calculateZoomToMeters();
             actionsListener.onLocationChanged(cameraTarget.latitude, cameraTarget.longitude, radius, settingsRepository.getTimeout());
 
-            if (actionsListener.isShowVetClinicsClicked()) {
+            if (actionsListener.shouldShowVetClinics()) {
                 showVetClinicsOnMap();
             }
         }
@@ -592,7 +592,6 @@ public class SignalsMapFragment extends BaseFragment
         }
 
         if (signalsGoogleMap != null) {
-//            signalsGoogleMap.clear();
             mDisplayedMarkers.clear();
 
             signalsGoogleMap.setPadding(0, PADDING_TOP, 0, PADDING_BOTTOM);

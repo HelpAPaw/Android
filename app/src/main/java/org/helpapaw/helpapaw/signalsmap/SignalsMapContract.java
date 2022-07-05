@@ -88,7 +88,7 @@ interface SignalsMapContract {
 
         void onShowVetClinicsClicked();
 
-        boolean isShowVetClinicsClicked();
+        boolean shouldShowVetClinics();
 
         void onBackButtonPressed();
 

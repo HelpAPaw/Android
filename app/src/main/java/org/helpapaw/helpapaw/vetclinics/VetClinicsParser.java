@@ -1,5 +1,6 @@
 package org.helpapaw.helpapaw.vetclinics;
 
+import org.helpapaw.helpapaw.data.models.VetClinic;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -8,7 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class DataParser {
+public class VetClinicsParser {
     public List<HashMap<String, String>> parse(String jsonData) {
         JSONArray jsonArray = null;
         JSONObject jsonObject;
@@ -78,10 +79,11 @@ public class DataParser {
         return googlePlaceMap;
     }
 
-    private HashMap<String, String> getPlaceDetails(JSONObject googlePlaceJson) {
+    private VetClinic getPlaceDetails(JSONObject googlePlaceJson) {
         HashMap<String, String> googlePlaceDetailsMap = new HashMap<>();
         String address = "";
         String phone = "";
+
 
         try {
             if (!googlePlaceJson.isNull("formatted_address")) {

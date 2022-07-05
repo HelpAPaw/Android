@@ -26,8 +26,8 @@ public class VetClinicsTask extends AsyncTask<String, Integer, String> {
     protected void onPostExecute(String result) {
 
         List<HashMap<String, String>> nearbyPlacesList;
-        DataParser dataParser = new DataParser();
-        nearbyPlacesList =  dataParser.parse(result);
+        VetClinicsParser vetClinicsParser = new VetClinicsParser();
+        nearbyPlacesList =  vetClinicsParser.parse(result);
         delegate.vetClinicsLoaded(nearbyPlacesList);
     }
 }
