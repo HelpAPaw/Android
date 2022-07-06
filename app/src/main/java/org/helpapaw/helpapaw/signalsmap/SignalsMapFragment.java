@@ -433,15 +433,20 @@ public class SignalsMapFragment extends BaseFragment
             return true;
         }
         if (item.getItemId() == R.id.menu_item_show_clinics) {
-            if (!actionsListener.shouldShowVetClinics()) {
-                item.getIcon().setAlpha(130);
-                item.setTitle(R.string.content_hide_clinics);
-            } else {
+            actionsListener.onShowVetClinicsClicked(mCurrentLat, mCurrentLong, calculateZoomToMeters());
+
+            if (actionsListener.shouldShowVetClinics()) {
                 item.getIcon().setAlpha(255);
                 item.setTitle(R.string.content_show_clinics);
+
+                actionsListener.setShouldShowVetClinics(false);
+            } else {
+                item.getIcon().setAlpha(130);
+                item.setTitle(R.string.content_hide_clinics);
+
+                actionsListener.setShouldShowVetClinics(true);
             }
 
-            actionsListener.onShowVetClinicsClicked();
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -515,7 +520,7 @@ public class SignalsMapFragment extends BaseFragment
             actionsListener.onLocationChanged(cameraTarget.latitude, cameraTarget.longitude, radius, settingsRepository.getTimeout());
 
             if (actionsListener.shouldShowVetClinics()) {
-                showVetClinicsOnMap();
+                actionsListener.onShowVetClinicsClicked(mCurrentLat, mCurrentLong, radius);
             }
         }
     };
@@ -638,11 +643,6 @@ public class SignalsMapFragment extends BaseFragment
                 markerToReShow.showInfoWindow();
             }
         }
-    }
-
-    @Override
-    public void showVetClinicsOnMap() {
-
     }
 
     @Override

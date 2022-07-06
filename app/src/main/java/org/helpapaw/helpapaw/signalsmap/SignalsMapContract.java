@@ -47,8 +47,6 @@ interface SignalsMapContract {
 
         void closeSignalsMapScreen();
 
-        void showVetClinicsOnMap();
-
         void showVetClinicsOnMap(List<VetClinic> vetClinics);
 
         void hideVetClinicsFromMap();
@@ -88,9 +86,11 @@ interface SignalsMapContract {
 
         void onVetClinicInfoWindowClicked(VetClinic vetClinic);
 
-        void onShowVetClinicsClicked();
+        void onShowVetClinicsClicked(double latitude, double longitude, int radius);
 
         boolean shouldShowVetClinics();
+
+        void setShouldShowVetClinics(boolean shouldShowVetClinics);
 
         void onBackButtonPressed();
 

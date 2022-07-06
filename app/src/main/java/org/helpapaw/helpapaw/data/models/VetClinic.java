@@ -13,8 +13,7 @@ public class VetClinic implements Parcelable {
     private String address;
     private String url;
 
-    public VetClinic(String id) {
-        this.id = id;
+    public VetClinic() {
     }
 
     public VetClinic(String id, String name, double latitude, double longitude) {
@@ -24,8 +23,22 @@ public class VetClinic implements Parcelable {
         this.longitude = longitude;
     }
 
+    public VetClinic(String id, String name, double latitude, double longitude, String phoneNumber, String address, String url) {
+        this.id = id;
+        this.name = name;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.phoneNumber = phoneNumber;
+        this.address = address;
+        this.url = url;
+    }
+
     public String getId() {
         return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getName() {

@@ -104,13 +104,8 @@ public class VetClinicsParser {
             e.printStackTrace();
         }
 
-        VetClinic vetClinic = new VetClinic(reference,
-                placeName,
-                Double.parseDouble(latitude),
-                Double.parseDouble(longitude));
-        vetClinic.setAddress(address);
-        vetClinic.setPhoneNumber(phone);
-        vetClinic.setUrl(url);
+        VetClinic vetClinic = new VetClinic(reference, placeName, Double.parseDouble(latitude),
+                Double.parseDouble(longitude), phone, address, url);
 
         return vetClinic;
     }

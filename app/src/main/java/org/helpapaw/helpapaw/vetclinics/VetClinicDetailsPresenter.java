@@ -1,7 +1,5 @@
 package org.helpapaw.helpapaw.vetclinics;
 
-import org.helpapaw.helpapaw.R;
-import org.helpapaw.helpapaw.base.PawApplication;
 import org.helpapaw.helpapaw.base.Presenter;
 import org.helpapaw.helpapaw.data.models.VetClinic;
 import org.helpapaw.helpapaw.data.repositories.vetClinics.VetClinicRepository;
@@ -13,7 +11,7 @@ public class VetClinicDetailsPresenter extends Presenter<VetClinicDetailsContrac
 
     private final VetClinicRepository vetClinicRepository;
 
-    private final VetClinic vetClinic = new VetClinic("");
+    private final VetClinic vetClinic = new VetClinic();
 
     public VetClinicDetailsPresenter(VetClinicDetailsContract.View view) {
         super(view);
@@ -40,15 +38,6 @@ public class VetClinicDetailsPresenter extends Presenter<VetClinicDetailsContrac
         }
     }
 
-    private void populateVetClinicInfo(VetClinic vetClinicDetails) {
-        vetClinic.setName(vetClinicDetails.getName());
-        vetClinic.setLatitude(vetClinicDetails.getLatitude());
-        vetClinic.setLongitude(vetClinicDetails.getLongitude());
-        vetClinic.setAddress(vetClinicDetails.getAddress());
-        vetClinic.setPhoneNumber(vetClinicDetails.getPhoneNumber());
-        vetClinic.setUrl(vetClinicDetails.getUrl());
-    }
-
     @Override
     public void onNavigateButtonClicked() {
         double latitude = vetClinic.getLatitude();
@@ -65,5 +54,15 @@ public class VetClinicDetailsPresenter extends Presenter<VetClinicDetailsContrac
     @Override
     public void onMoreInfoButtonClicked() {
         getView().openUrl(vetClinic.getUrl());
+    }
+
+    private void populateVetClinicInfo(VetClinic vetClinicDetails) {
+        vetClinic.setId(vetClinicDetails.getId());
+        vetClinic.setName(vetClinicDetails.getName());
+        vetClinic.setLatitude(vetClinicDetails.getLatitude());
+        vetClinic.setLongitude(vetClinicDetails.getLongitude());
+        vetClinic.setAddress(vetClinicDetails.getAddress());
+        vetClinic.setPhoneNumber(vetClinicDetails.getPhoneNumber());
+        vetClinic.setUrl(vetClinicDetails.getUrl());
     }
 }

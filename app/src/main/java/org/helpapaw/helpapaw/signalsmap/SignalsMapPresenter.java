@@ -1,14 +1,10 @@
 package org.helpapaw.helpapaw.signalsmap;
 
-import android.app.Activity;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.helpapaw.helpapaw.R;
-import org.helpapaw.helpapaw.base.PawApplication;
 import org.helpapaw.helpapaw.base.Presenter;
 import org.helpapaw.helpapaw.data.models.Signal;
 import org.helpapaw.helpapaw.data.models.VetClinic;
@@ -177,17 +173,15 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View>
     }
 
     @Override
-    public void onShowVetClinicsClicked() {
+    public void onShowVetClinicsClicked(double latitude, double longitude, int radius) {
         vetClinicRepository.getVetClinics(latitude, longitude, radius,
                 new VetClinicRepository.LoadVetClinicsCallback() {
             @Override
             public void onVetClinicsLoaded(List<VetClinic> vetClinics) {
-                if (!shouldShowVetClinics) {
+                if (shouldShowVetClinics) {
                     getView().showVetClinicsOnMap(vetClinics);
-                    shouldShowVetClinics = true;
                 } else {
                     getView().hideVetClinicsFromMap();
-                    shouldShowVetClinics = false;
                 }
             }
 
@@ -394,6 +388,11 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View>
     @Override
     public boolean shouldShowVetClinics() {
         return shouldShowVetClinics;
+    }
+
+    @Override
+    public void setShouldShowVetClinics(boolean shouldShowVetClinics) {
+        this.shouldShowVetClinics = shouldShowVetClinics;
     }
 
     private void getUserPhone() {
