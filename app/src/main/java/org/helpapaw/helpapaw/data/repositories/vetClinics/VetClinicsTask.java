@@ -1,8 +1,9 @@
-package org.helpapaw.helpapaw.vetclinics;
+package org.helpapaw.helpapaw.data.repositories.vetClinics;
 
 import android.os.AsyncTask;
 
-import java.util.HashMap;
+import org.helpapaw.helpapaw.data.models.VetClinic;
+
 import java.util.List;
 
 public class VetClinicsTask extends AsyncTask<String, Integer, String> {
@@ -24,10 +25,9 @@ public class VetClinicsTask extends AsyncTask<String, Integer, String> {
 
     @Override
     protected void onPostExecute(String result) {
-
-        List<HashMap<String, String>> nearbyPlacesList;
+        List<VetClinic> vetClinicsList;
         VetClinicsParser vetClinicsParser = new VetClinicsParser();
-        nearbyPlacesList =  vetClinicsParser.parse(result);
-        delegate.vetClinicsLoaded(nearbyPlacesList);
+        vetClinicsList =  vetClinicsParser.parse(result);
+        delegate.vetClinicsLoaded(vetClinicsList);
     }
 }

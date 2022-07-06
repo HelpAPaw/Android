@@ -1,4 +1,4 @@
-package org.helpapaw.helpapaw.vetclinics;
+package org.helpapaw.helpapaw.data.repositories.vetClinics;
 
 import java.io.BufferedReader;
 import java.io.IOException;

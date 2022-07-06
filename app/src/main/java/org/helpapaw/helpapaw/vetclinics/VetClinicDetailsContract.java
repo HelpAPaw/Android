@@ -2,8 +2,6 @@ package org.helpapaw.helpapaw.vetclinics;
 
 import org.helpapaw.helpapaw.data.models.VetClinic;
 
-import java.util.HashMap;
-
 
 public interface VetClinicDetailsContract {
 
@@ -16,6 +14,8 @@ public interface VetClinicDetailsContract {
         void openNumberDialer(String phoneNumber);
 
         void openUrl(String url);
+
+        void showErrorMessage(String message);
 
         void showNoInternetMessage();
     }

@@ -12,6 +12,8 @@ import org.helpapaw.helpapaw.data.repositories.PushNotificationsRepository;
 import org.helpapaw.helpapaw.data.repositories.ReceivedNotificationsRepository;
 import org.helpapaw.helpapaw.data.repositories.SettingsRepository;
 import org.helpapaw.helpapaw.data.repositories.SignalRepository;
+import org.helpapaw.helpapaw.data.repositories.vetClinics.VetClinicRepository;
+import org.helpapaw.helpapaw.data.repositories.vetClinics.VetClinicsRepository;
 import org.helpapaw.helpapaw.data.user.BackendlessUserManager;
 import org.helpapaw.helpapaw.data.user.UserManager;
 import org.helpapaw.helpapaw.utils.images.ImageLoader;
@@ -29,6 +31,7 @@ public class Injection {
     private static SettingsRepository settingsRepository;
     private static PushNotificationsRepository pushNotificationsRepository;
     private static ReceivedNotificationsRepository receivedNotificationsRepository;
+    private static VetClinicRepository vetClinicRepository;
     private static ICrashLogger crashLogger;
 
     public synchronized static ImageLoader getImageLoader() {
@@ -88,6 +91,14 @@ public class Injection {
         }
 
         return receivedNotificationsRepository;
+    }
+
+    public synchronized static VetClinicRepository getVetClinicRepositoryInstance() {
+        if (vetClinicRepository == null) {
+            vetClinicRepository = new VetClinicsRepository();
+        }
+
+        return vetClinicRepository;
     }
     
     public static ICrashLogger getCrashLogger() {

@@ -1,15 +1,20 @@
 package org.helpapaw.helpapaw.signalsmap;
 
+import android.app.Activity;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.helpapaw.helpapaw.R;
+import org.helpapaw.helpapaw.base.PawApplication;
 import org.helpapaw.helpapaw.base.Presenter;
 import org.helpapaw.helpapaw.data.models.Signal;
 import org.helpapaw.helpapaw.data.models.VetClinic;
 import org.helpapaw.helpapaw.data.repositories.PhotoRepository;
 import org.helpapaw.helpapaw.data.repositories.SignalRepository;
+import org.helpapaw.helpapaw.data.repositories.vetClinics.VetClinicRepository;
 import org.helpapaw.helpapaw.data.user.UserManager;
 import org.helpapaw.helpapaw.photo.UploadPhotoContract;
 import org.helpapaw.helpapaw.utils.Injection;
@@ -25,6 +30,7 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View>
     private final UserManager userManager;
     private final SignalRepository signalRepository;
     private final PhotoRepository photoRepository;
+    private final VetClinicRepository vetClinicRepository;
 
     private double latitude;
     private double longitude;
@@ -48,6 +54,7 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View>
         signalRepository = Injection.getSignalRepositoryInstance();
         userManager = Injection.getUserManagerInstance();
         photoRepository = Injection.getPhotoRepositoryInstance();
+        vetClinicRepository = Injection.getVetClinicRepositoryInstance();
         sendSignalViewVisibility = false;
         filterSignalViewVisibility = false;
         signalsList = new ArrayList<>();
@@ -171,14 +178,24 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View>
 
     @Override
     public void onShowVetClinicsClicked() {
-        if (!shouldShowVetClinics) {
-            getView().showVetClinicsOnMap();
-            shouldShowVetClinics = true;
+        vetClinicRepository.getVetClinics(latitude, longitude, radius,
+                new VetClinicRepository.LoadVetClinicsCallback() {
+            @Override
+            public void onVetClinicsLoaded(List<VetClinic> vetClinics) {
+                if (!shouldShowVetClinics) {
+                    getView().showVetClinicsOnMap(vetClinics);
+                    shouldShowVetClinics = true;
+                } else {
+                    getView().hideVetClinicsFromMap();
+                    shouldShowVetClinics = false;
+                }
+            }
 
-        } else {
-            getView().hideVetClinicsFromMap();
-            shouldShowVetClinics = false;
-        }
+            @Override
+            public void onVetClinicsFailure(String message) {
+                getView().showMessage(message);
+            }
+        });
     }
 
     @Override

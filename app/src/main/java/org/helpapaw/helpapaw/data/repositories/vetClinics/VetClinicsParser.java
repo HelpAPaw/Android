@@ -1,4 +1,4 @@
-package org.helpapaw.helpapaw.vetclinics;
+package org.helpapaw.helpapaw.data.repositories.vetClinics;
 
 import org.helpapaw.helpapaw.data.models.VetClinic;
 import org.json.JSONArray;
@@ -6,11 +6,21 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class VetClinicsParser {
-    public List<HashMap<String, String>> parse(String jsonData) {
+
+    public static final String NAME = "name";
+    public static final String GEOMETRY = "geometry";
+    public static final String LOCATION = "location";
+    public static final String LAT = "lat";
+    public static final String LNG = "lng";
+    public static final String REFERENCE = "reference";
+    public static final String FORMATTED_ADDRESS = "formatted_address";
+    public static final String INTERNATIONAL_PHONE_NUMBER = "international_phone_number";
+    public static final String URL = "url";
+
+    public List<VetClinic> parse(String jsonData) {
         JSONArray jsonArray = null;
         JSONObject jsonObject;
 
@@ -23,7 +33,7 @@ public class VetClinicsParser {
         return getPlaces(jsonArray);
     }
 
-    public HashMap<String, String> parseDetails(String jsonData) {
+    public VetClinic parseDetails(String jsonData) {
         JSONObject jsonObject = null;
 
         try {
@@ -34,15 +44,15 @@ public class VetClinicsParser {
         return getPlaceDetails(jsonObject);
     }
 
-    private List<HashMap<String, String>> getPlaces(JSONArray jsonArray) {
+    private List<VetClinic> getPlaces(JSONArray jsonArray) {
         int placesCount = jsonArray.length();
-        List<HashMap<String, String>> placesList = new ArrayList<>();
-        HashMap<String, String> placeMap = null;
+        List<VetClinic> placesList = new ArrayList<>();
+        VetClinic vetClinic;
 
         for (int i = 0; i < placesCount; i++) {
             try {
-                placeMap = getPlace((JSONObject) jsonArray.get(i));
-                placesList.add(placeMap);
+                vetClinic = getPlace((JSONObject) jsonArray.get(i));
+                placesList.add(vetClinic);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -50,57 +60,59 @@ public class VetClinicsParser {
         return placesList;
     }
 
-    private HashMap<String, String> getPlace(JSONObject googlePlaceJson) {
-        HashMap<String, String> googlePlaceMap = new HashMap<>();
-        String placeName = "-NA-";
-        String vicinity = "-NA-";
+    private VetClinic getPlace(JSONObject googlePlaceJson) {
+        String placeName = "";
         String latitude = "";
         String longitude = "";
         String reference = "";
 
         try {
-            if (!googlePlaceJson.isNull("name")) {
-                placeName = googlePlaceJson.getString("name");
-            }
-            if (!googlePlaceJson.isNull("vicinity")) {
-                vicinity = googlePlaceJson.getString("vicinity");
-            }
-            latitude = googlePlaceJson.getJSONObject("geometry").getJSONObject("location").getString("lat");
-            longitude = googlePlaceJson.getJSONObject("geometry").getJSONObject("location").getString("lng");
-            reference = googlePlaceJson.getString("reference");
-            googlePlaceMap.put("place_name", placeName);
-            googlePlaceMap.put("vicinity", vicinity);
-            googlePlaceMap.put("lat", latitude);
-            googlePlaceMap.put("lng", longitude);
-            googlePlaceMap.put("reference", reference);
+            placeName = googlePlaceJson.getString(NAME);
+            latitude = googlePlaceJson.getJSONObject(GEOMETRY).getJSONObject(LOCATION).getString(LAT);
+            longitude = googlePlaceJson.getJSONObject(GEOMETRY).getJSONObject(LOCATION).getString(LNG);
+            reference = googlePlaceJson.getString(REFERENCE);
+
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        return googlePlaceMap;
+
+        VetClinic vetClinic = new VetClinic(reference,
+                                            placeName,
+                                            Double.parseDouble(latitude),
+                                            Double.parseDouble(longitude));
+        return vetClinic;
     }
 
     private VetClinic getPlaceDetails(JSONObject googlePlaceJson) {
-        HashMap<String, String> googlePlaceDetailsMap = new HashMap<>();
+        String placeName = "";
+        String latitude = "";
+        String longitude = "";
+        String reference = "";
         String address = "";
         String phone = "";
-
+        String url = "";
 
         try {
-            if (!googlePlaceJson.isNull("formatted_address")) {
-                address = googlePlaceJson.getString("formatted_address");
-            }
-            if (!googlePlaceJson.isNull("international_phone_number")) {
-                phone = googlePlaceJson.getString("international_phone_number");
-            }
-            if (!googlePlaceJson.isNull("url")) {
-                googlePlaceDetailsMap.put("url", googlePlaceJson.getString("url"));
-            }
-            googlePlaceDetailsMap.put("formatted_address", address);
-            googlePlaceDetailsMap.put("international_phone_number", phone);
+            placeName = googlePlaceJson.getString(NAME);
+            latitude = googlePlaceJson.getJSONObject(GEOMETRY).getJSONObject(LOCATION).getString(LAT);
+            longitude = googlePlaceJson.getJSONObject(GEOMETRY).getJSONObject(LOCATION).getString(LNG);
+            reference = googlePlaceJson.getString(REFERENCE);
+            address = googlePlaceJson.getString(FORMATTED_ADDRESS);
+            phone = googlePlaceJson.getString(INTERNATIONAL_PHONE_NUMBER);
+            url = googlePlaceJson.getString(URL);
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        return googlePlaceDetailsMap;
+
+        VetClinic vetClinic = new VetClinic(reference,
+                placeName,
+                Double.parseDouble(latitude),
+                Double.parseDouble(longitude));
+        vetClinic.setAddress(address);
+        vetClinic.setPhoneNumber(phone);
+        vetClinic.setUrl(url);
+
+        return vetClinic;
     }
 }
 

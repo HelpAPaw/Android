@@ -9,19 +9,19 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.Marker;
 
 import org.helpapaw.helpapaw.R;
+import org.helpapaw.helpapaw.data.models.VetClinic;
 import org.helpapaw.helpapaw.databinding.InfoWindowVetClinicBinding;
 
-import java.util.HashMap;
 import java.util.Map;
 
 public class VetClinicsInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
 
-    private Map<String, HashMap<String, String>> vetClinicsMarkers;
+    private Map<String, VetClinic> vetClinicsMarkers;
     private LayoutInflater inflater;
 
     InfoWindowVetClinicBinding binding;
 
-    public VetClinicsInfoWindowAdapter(Map<String, HashMap<String, String>> vetClinicsMarkers, LayoutInflater inflater) {
+    public VetClinicsInfoWindowAdapter(Map<String, VetClinic> vetClinicsMarkers, LayoutInflater inflater) {
         this.vetClinicsMarkers = vetClinicsMarkers;
         this.inflater = inflater;
         this.binding = DataBindingUtil.inflate(inflater, R.layout.info_window_vet_clinic, null, false);
@@ -35,9 +35,9 @@ public class VetClinicsInfoWindowAdapter implements GoogleMap.InfoWindowAdapter 
     @Override
     public View getInfoContents(Marker marker) {
 
-        HashMap<String, String> vetClinic = vetClinicsMarkers.get(marker.getId());
+        VetClinic vetClinic = vetClinicsMarkers.get(marker.getId());
         if (vetClinic != null) {
-            binding.txtVetClinicName.setText(vetClinic.get("place_name"));
+            binding.txtVetClinicName.setText(vetClinic.getName());
         }
 
         return binding.getRoot();

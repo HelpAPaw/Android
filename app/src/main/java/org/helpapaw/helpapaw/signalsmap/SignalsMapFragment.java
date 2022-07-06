@@ -97,9 +97,7 @@ import org.helpapaw.helpapaw.utils.Injection;
 import org.helpapaw.helpapaw.utils.StatusUtils;
 import org.helpapaw.helpapaw.utils.images.ImageUtils;
 import org.helpapaw.helpapaw.vetclinics.VetClinicDetailsActivity;
-import org.helpapaw.helpapaw.vetclinics.VetClinicsAsyncResponse;
 import org.helpapaw.helpapaw.vetclinics.VetClinicsInfoWindowAdapter;
-import org.helpapaw.helpapaw.vetclinics.VetClinicsTask;
 
 import static org.helpapaw.helpapaw.base.PawApplication.APP_OPEN_COUNTER;
 import static org.helpapaw.helpapaw.base.PawApplication.APP_OPENINGS_TO_ASK_FOR_SHARE;
@@ -112,7 +110,6 @@ public class SignalsMapFragment extends BaseFragment
         UploadPhotoContract.View,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
-        VetClinicsAsyncResponse,
         LocationListener {
 
     public static final String TAG = SignalsMapFragment.class.getSimpleName();
@@ -136,7 +133,7 @@ public class SignalsMapFragment extends BaseFragment
     private Signal mCurrentlyShownInfoWindowSignal;
 
     private final ArrayList<Marker> mDisplayedVetClinicsMarkers = new ArrayList<>();
-    private final Map<String, HashMap<String, String>> mVetClinicsMarkers = new HashMap<>();
+    private final Map<String, VetClinic> mVetClinicsMarkers = new HashMap<>();
 
     private Map<String, GoogleMap.InfoWindowAdapter> adapterMap = new HashMap<>();
 
@@ -624,14 +621,10 @@ public class SignalsMapFragment extends BaseFragment
                     String markerId = marker.getId();
 
                     Signal signal = mSignalMarkers.get(markerId);
-                    HashMap<String, String> vetClinicHashMap = mVetClinicsMarkers.get(markerId);
+                    VetClinic vetClinic = mVetClinicsMarkers.get(markerId);
                     if (signal != null) {
                         actionsListener.onSignalInfoWindowClicked(signal);
-                    } else if (vetClinicHashMap != null && !vetClinicHashMap.isEmpty()) {
-                        VetClinic vetClinic = new VetClinic(vetClinicHashMap.get("reference"));
-                        vetClinic.setName(vetClinicHashMap.get("place_name"));
-                        vetClinic.setLatitude(Double.parseDouble(vetClinicHashMap.get("lat")));
-                        vetClinic.setLongitude(Double.parseDouble(vetClinicHashMap.get("lng")));
+                    } else if (vetClinic != null) {
                         actionsListener.onVetClinicInfoWindowClicked(vetClinic);
                     }
                 }
@@ -649,43 +642,24 @@ public class SignalsMapFragment extends BaseFragment
 
     @Override
     public void showVetClinicsOnMap() {
-        double lat = mCurrentLat;
-        double lon = mCurrentLong;
-        int  radius = calculateZoomToMeters();
-        StringBuilder vetClinicsRequest =
-                new StringBuilder(createVetClinicsRequest(lat, lon, radius));
 
-        VetClinicsTask vetClinicsTask = new VetClinicsTask();
-        vetClinicsTask.delegate = this;
-        vetClinicsTask.execute(vetClinicsRequest.toString());
-    }
-    
-    public StringBuilder createVetClinicsRequest(double lat, double lon, int radius) {
-        StringBuilder sb = new StringBuilder("https://maps.googleapis.com/maps/api/place/nearbysearch/json?");
-        sb.append("location=" + lat + "," + lon);
-        sb.append("&radius=" + radius); // TODO - is mZoom ok?
-        sb.append("&types=" + "veterinary_care");
-        sb.append("&sensor=true");
-        sb.append("&key=" + getString(R.string.google_android_map_api_key_test)); // TODO - we need to change this
-
-        return sb;
     }
 
     @Override
-    public void vetClinicsLoaded(List<HashMap<String, String>> result) {
-        for (int i = 0; i < result.size(); i++) {
+    public void showVetClinicsOnMap(List<VetClinic> vetClinics) {
+        for (int i = 0; i < vetClinics.size(); i++) {
             MarkerOptions markerOptions = new MarkerOptions();
-            HashMap<String, String> googlePlace = result.get(i);
-            double lat = Double.parseDouble(googlePlace.get("lat"));
-            double lng = Double.parseDouble(googlePlace.get("lng"));
+            VetClinic current = vetClinics.get(i);
+            double lat = current.getLatitude();
+            double lng = current.getLongitude();
             LatLng latLng = new LatLng(lat, lng);
             markerOptions.position(latLng);
-            markerOptions.title(googlePlace.get("place_name"));
+            markerOptions.title(current.getName());
             markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.pin_blue2));
 
             Marker vetMarker = signalsGoogleMap.addMarker(markerOptions);
 
-            mVetClinicsMarkers.put(vetMarker.getId(), result.get(i));
+            mVetClinicsMarkers.put(vetMarker.getId(), current);
             mDisplayedVetClinicsMarkers.add(vetMarker);
 
             VetClinicsInfoWindowAdapter vetInfoWindowAdapter = new VetClinicsInfoWindowAdapter(mVetClinicsMarkers, getActivity().getLayoutInflater());

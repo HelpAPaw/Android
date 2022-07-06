@@ -49,6 +49,8 @@ interface SignalsMapContract {
 
         void showVetClinicsOnMap();
 
+        void showVetClinicsOnMap(List<VetClinic> vetClinics);
+
         void hideVetClinicsFromMap();
 
         void showDescriptionErrorMessage();

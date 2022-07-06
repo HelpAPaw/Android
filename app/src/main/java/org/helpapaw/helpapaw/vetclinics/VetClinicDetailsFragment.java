@@ -16,12 +16,9 @@ import org.helpapaw.helpapaw.base.PresenterManager;
 import org.helpapaw.helpapaw.data.models.VetClinic;
 import org.helpapaw.helpapaw.databinding.FragmentVetClinicDetailsBinding;
 
-import java.util.HashMap;
-import java.util.List;
-
 
 public class VetClinicDetailsFragment extends BaseFragment
-        implements VetClinicDetailsContract.View, VetClinicDetailsAsyncResponse {
+        implements VetClinicDetailsContract.View {
 
     private final static String VET_CLINIC_DETAILS = "vetClinicDetails";
 
@@ -87,6 +84,8 @@ public class VetClinicDetailsFragment extends BaseFragment
     public void showVetClinicDetails(VetClinic vetClinic) {
         binding.txtVetClinicNameDetails.setText(vetClinic.getName());
 
+        binding.txtVetClinicAddressDetails.setText(vetClinic.getAddress());
+
         String vetClinicPhone = vetClinic.getPhoneNumber();
         if (vetClinicPhone == null || vetClinicPhone.trim().isEmpty()) {
             binding.btnCallVet.setVisibility(View.GONE);
@@ -101,13 +100,6 @@ public class VetClinicDetailsFragment extends BaseFragment
         } else {
             binding.btnMoreInfo.setVisibility(View.VISIBLE);
         }
-
-        StringBuilder vetClinicDetailsRequest =
-                new StringBuilder(createVetClinicDetailsRequest(vetClinic.getId()));
-
-        VetClinicDetailsTask vetClinicDetailsTask = new VetClinicDetailsTask();
-        vetClinicDetailsTask.delegate = this;
-        vetClinicDetailsTask.execute(vetClinicDetailsRequest.toString());
     }
 
     @Override
@@ -140,25 +132,8 @@ public class VetClinicDetailsFragment extends BaseFragment
     }
 
     @Override
-    public void vetClinicDetailsLoaded(HashMap<String, String> result) {
-        String phoneNumber = result.get("international_phone_number");
-        if (!phoneNumber.isEmpty()) {
-            mVetClinic.setPhoneNumber(phoneNumber);
-            binding.btnCallVet.setText(phoneNumber);
-            binding.btnCallVet.setVisibility(View.VISIBLE);
-        }
-
-        String address = result.get("formatted_address");
-        if (!address.isEmpty()) {
-            mVetClinic.setAddress(address);
-            binding.txtVetClinicAddressDetails.setText(address);
-        }
-
-        String url = result.get("url");
-        if (!url.isEmpty()) {
-            mVetClinic.setUrl(url);
-            binding.btnMoreInfo.setVisibility(View.VISIBLE);
-        }
+    public void showErrorMessage(String message) {
+        super.showMessage(message);
     }
 
     public View.OnClickListener getOnNavigateButtonClickListener() {
@@ -186,13 +161,5 @@ public class VetClinicDetailsFragment extends BaseFragment
                 actionsListener.onMoreInfoButtonClicked();
             }
         };
-    }
-
-    private StringBuilder createVetClinicDetailsRequest(String id) {
-        StringBuilder sb = new StringBuilder("https://maps.googleapis.com/maps/api/place/details/json?");
-        sb.append("place_id=" + id);
-        sb.append("&key=" + getString(R.string.google_android_map_api_key_test)); // TODO - we need to change this
-
-        return sb;
     }
 }
