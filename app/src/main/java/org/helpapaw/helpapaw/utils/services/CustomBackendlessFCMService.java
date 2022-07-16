@@ -15,9 +15,12 @@ public class CustomBackendlessFCMService extends BackendlessFCMService {
     @Override
     public boolean onMessage(Context appContext, Intent msgIntent)
     {
-        Notification notification = createNotificationFromIntent(msgIntent);
-
-        Injection.getReceivedNotificationsRepositoryInstance().saveNotification(notification);
+        try {
+            Notification notification = createNotificationFromIntent(msgIntent);
+            Injection.getReceivedNotificationsRepositoryInstance().saveNotification(notification);
+        } catch (Exception e) {
+            Injection.getCrashLogger().recordException(e);
+        }
 
         return true;
     }
