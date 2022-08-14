@@ -88,9 +88,9 @@ interface SignalsMapContract {
 
         void onShowVetClinicsClicked(double latitude, double longitude, int radius);
 
-        boolean shouldShowVetClinics();
+        void showVetClinics(double latitude, double longitude, int radius);
 
-        void setShouldShowVetClinics(boolean shouldShowVetClinics);
+        boolean shouldShowVetClinics();
 
         void onBackButtonPressed();
 

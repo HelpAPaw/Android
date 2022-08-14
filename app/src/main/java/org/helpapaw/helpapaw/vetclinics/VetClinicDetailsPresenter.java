@@ -2,14 +2,14 @@ package org.helpapaw.helpapaw.vetclinics;
 
 import org.helpapaw.helpapaw.base.Presenter;
 import org.helpapaw.helpapaw.data.models.VetClinic;
-import org.helpapaw.helpapaw.data.repositories.vetClinics.VetClinicRepository;
+import org.helpapaw.helpapaw.data.repositories.vetClinics.VetClinicsRepository;
 import org.helpapaw.helpapaw.utils.Injection;
 
 
 public class VetClinicDetailsPresenter extends Presenter<VetClinicDetailsContract.View>
         implements VetClinicDetailsContract.UserActionsListener {
 
-    private final VetClinicRepository vetClinicRepository;
+    private final VetClinicsRepository vetClinicRepository;
 
     private final VetClinic vetClinic = new VetClinic();
 
@@ -23,7 +23,7 @@ public class VetClinicDetailsPresenter extends Presenter<VetClinicDetailsContrac
     public void onInitDetailsScreen(VetClinic selectedVetClinic) {
         if (selectedVetClinic != null) {
             vetClinicRepository.getVetClinicDetails(selectedVetClinic,
-                    new VetClinicRepository.LoadVetClinicDetailsCallback() {
+                    new VetClinicsRepository.LoadVetClinicDetailsCallback() {
                 @Override
                 public void onVetClinicDetailsLoaded(VetClinic vetClinicDetails) {
                     populateVetClinicInfo(vetClinicDetails);

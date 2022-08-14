@@ -428,28 +428,26 @@ public class SignalsMapFragment extends BaseFragment
             actionsListener.onRefreshButtonClicked();
             return true;
         }
-        if (item.getItemId() == R.id.menu_item_filter_signals) {
+        else if (item.getItemId() == R.id.menu_item_filter_signals) {
             actionsListener.onFilterSignalsButtonClicked();
             return true;
         }
-        if (item.getItemId() == R.id.menu_item_show_clinics) {
+        else if (item.getItemId() == R.id.menu_item_show_clinics) {
             actionsListener.onShowVetClinicsClicked(mCurrentLat, mCurrentLong, calculateZoomToMeters());
 
-            if (actionsListener.shouldShowVetClinics()) {
+            if (!actionsListener.shouldShowVetClinics()) {
                 item.getIcon().setAlpha(255);
                 item.setTitle(R.string.content_show_clinics);
-
-                actionsListener.setShouldShowVetClinics(false);
             } else {
                 item.getIcon().setAlpha(130);
                 item.setTitle(R.string.content_hide_clinics);
-
-                actionsListener.setShouldShowVetClinics(true);
             }
 
             return true;
         }
-        return super.onOptionsItemSelected(item);
+        else {
+            return super.onOptionsItemSelected(item);
+        }
     }
 
     private void showShareAppReminderIfNeeded() {
@@ -520,7 +518,7 @@ public class SignalsMapFragment extends BaseFragment
             actionsListener.onLocationChanged(cameraTarget.latitude, cameraTarget.longitude, radius, settingsRepository.getTimeout());
 
             if (actionsListener.shouldShowVetClinics()) {
-                actionsListener.onShowVetClinicsClicked(mCurrentLat, mCurrentLong, radius);
+                actionsListener.showVetClinics(mCurrentLat, mCurrentLong, radius);
             }
         }
     };

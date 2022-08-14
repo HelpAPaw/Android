@@ -10,7 +10,7 @@ import org.helpapaw.helpapaw.data.models.Signal;
 import org.helpapaw.helpapaw.data.models.VetClinic;
 import org.helpapaw.helpapaw.data.repositories.PhotoRepository;
 import org.helpapaw.helpapaw.data.repositories.SignalRepository;
-import org.helpapaw.helpapaw.data.repositories.vetClinics.VetClinicRepository;
+import org.helpapaw.helpapaw.data.repositories.vetClinics.VetClinicsRepository;
 import org.helpapaw.helpapaw.data.user.UserManager;
 import org.helpapaw.helpapaw.photo.UploadPhotoContract;
 import org.helpapaw.helpapaw.utils.Injection;
@@ -26,7 +26,7 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View>
     private final UserManager userManager;
     private final SignalRepository signalRepository;
     private final PhotoRepository photoRepository;
-    private final VetClinicRepository vetClinicRepository;
+    private final VetClinicsRepository vetClinicRepository;
 
     private double latitude;
     private double longitude;
@@ -174,22 +174,29 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View>
 
     @Override
     public void onShowVetClinicsClicked(double latitude, double longitude, int radius) {
-        vetClinicRepository.getVetClinics(latitude, longitude, radius,
-                new VetClinicRepository.LoadVetClinicsCallback() {
-            @Override
-            public void onVetClinicsLoaded(List<VetClinic> vetClinics) {
-                if (shouldShowVetClinics) {
-                    getView().showVetClinicsOnMap(vetClinics);
-                } else {
-                    getView().hideVetClinicsFromMap();
-                }
-            }
+        shouldShowVetClinics = !shouldShowVetClinics;
 
-            @Override
-            public void onVetClinicsFailure(String message) {
-                getView().showMessage(message);
-            }
-        });
+        if (shouldShowVetClinics) {
+            showVetClinics(latitude, longitude, radius);
+        } else {
+            getView().hideVetClinicsFromMap();
+        }
+    }
+
+    @Override
+    public void showVetClinics(double latitude, double longitude, int radius) {
+        vetClinicRepository.getVetClinics(latitude, longitude, radius,
+                new VetClinicsRepository.LoadVetClinicsCallback() {
+                    @Override
+                    public void onVetClinicsLoaded(List<VetClinic> vetClinics) {
+                        getView().showVetClinicsOnMap(vetClinics);
+                    }
+
+                    @Override
+                    public void onVetClinicsFailure(String message) {
+                        getView().showMessage(message);
+                    }
+                });
     }
 
     @Override
@@ -388,11 +395,6 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View>
     @Override
     public boolean shouldShowVetClinics() {
         return shouldShowVetClinics;
-    }
-
-    @Override
-    public void setShouldShowVetClinics(boolean shouldShowVetClinics) {
-        this.shouldShowVetClinics = shouldShowVetClinics;
     }
 
     private void getUserPhone() {
