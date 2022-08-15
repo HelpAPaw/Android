@@ -128,14 +128,14 @@ public class SignalsMapFragment extends BaseFragment
     private GoogleApiClient googleApiClient;
     private GoogleMap signalsGoogleMap;
     private ArrayList<Signal> mDisplayedSignals = new ArrayList<>();
-    private final ArrayList<Marker> mDisplayedMarkers = new ArrayList<>();
-    private final Map<String, Signal> mSignalMarkers = new HashMap<>();
+    private final ArrayList<Marker> mDisplayedSignalMarkers = new ArrayList<>();
+    private final Map<String, Signal> mMarkerIdToSignalMap = new HashMap<>();
     private Signal mCurrentlyShownInfoWindowSignal;
 
     private final ArrayList<Marker> mDisplayedVetClinicsMarkers = new ArrayList<>();
     private final Map<String, VetClinic> mVetClinicsMarkers = new HashMap<>();
 
-    private Map<String, GoogleMap.InfoWindowAdapter> adapterMap = new HashMap<>();
+    private final Map<String, GoogleMap.InfoWindowAdapter> adapterMap = new HashMap<>();
 
     private double mCurrentLat;
     private double mCurrentLong;
@@ -499,7 +499,7 @@ public class SignalsMapFragment extends BaseFragment
         @Override
         public boolean onMarkerClick(Marker marker) {
             // Save the signal for the currently shown info window in case it should be reopen
-            mCurrentlyShownInfoWindowSignal = mSignalMarkers.get(marker.getId());
+            mCurrentlyShownInfoWindowSignal = mMarkerIdToSignalMap.get(marker.getId());
 
             mFocusedSignalId = null;
             return false;
@@ -592,14 +592,18 @@ public class SignalsMapFragment extends BaseFragment
         }
 
         if (signalsGoogleMap != null) {
-            mDisplayedMarkers.clear();
+            // Clear only signal markers
+            for (int i = 0; i < mDisplayedSignalMarkers.size(); i++) {
+                mDisplayedSignalMarkers.get(i).remove();
+            }
+            mDisplayedSignalMarkers.clear();
 
             signalsGoogleMap.setPadding(0, PADDING_TOP, 0, PADDING_BOTTOM);
             for (int i = 0; i < mDisplayedSignals.size(); i++) {
                 Signal signal = mDisplayedSignals.get(i);
 
                 Marker marker = addMarkerToMap(signal);
-                SignalInfoWindowAdapter signalInfoWindowAdapter = new SignalInfoWindowAdapter(mSignalMarkers, getActivity().getLayoutInflater());
+                SignalInfoWindowAdapter signalInfoWindowAdapter = new SignalInfoWindowAdapter(mMarkerIdToSignalMap, getActivity().getLayoutInflater());
                 adapterMap.put(marker.getId(), signalInfoWindowAdapter);
 
                 if (mFocusedSignalId != null) {
@@ -623,7 +627,7 @@ public class SignalsMapFragment extends BaseFragment
                 public void onInfoWindowClick(@NonNull Marker marker) {
                     String markerId = marker.getId();
 
-                    Signal signal = mSignalMarkers.get(markerId);
+                    Signal signal = mMarkerIdToSignalMap.get(markerId);
                     VetClinic vetClinic = mVetClinicsMarkers.get(markerId);
                     if (signal != null) {
                         actionsListener.onSignalInfoWindowClicked(signal);
@@ -681,8 +685,8 @@ public class SignalsMapFragment extends BaseFragment
         markerOptions.icon(BitmapDescriptorFactory.fromResource(StatusUtils.getPinResourceForCode(signal.getStatus())));
 
         Marker marker = signalsGoogleMap.addMarker(markerOptions);
-        mSignalMarkers.put(marker.getId(), signal);
-        mDisplayedMarkers.add(marker);
+        mMarkerIdToSignalMap.put(marker.getId(), signal);
+        mDisplayedSignalMarkers.add(marker);
         return marker;
     }
 
