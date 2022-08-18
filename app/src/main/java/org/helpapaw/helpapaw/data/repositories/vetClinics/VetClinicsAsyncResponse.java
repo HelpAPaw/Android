@@ -5,5 +5,6 @@ import org.helpapaw.helpapaw.data.models.VetClinic;
 import java.util.List;
 
 public interface VetClinicsAsyncResponse {
-    void vetClinicsLoaded(List<VetClinic> result);
+    void onVetClinicsSuccess(List<VetClinic> result);
+    void onVetClinicsFailure(String error);
 }

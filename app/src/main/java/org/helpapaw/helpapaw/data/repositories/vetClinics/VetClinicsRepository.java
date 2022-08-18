@@ -1,64 +1,26 @@
 package org.helpapaw.helpapaw.data.repositories.vetClinics;
 
-import org.helpapaw.helpapaw.R;
-import org.helpapaw.helpapaw.base.PawApplication;
 import org.helpapaw.helpapaw.data.models.VetClinic;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class VetClinicsRepository implements VetClinicRepository {
+public interface VetClinicsRepository {
 
-    List<VetClinic> vetClinics = new ArrayList<>();
+    void getVetClinics(double latitude, double longitude, int radius, LoadVetClinicsCallback callback);
 
-    @Override
-    public void getVetClinics(double latitude, double longitude, int radius,
-                              LoadVetClinicsCallback callback) {
-        VetClinicsTask vetClinicsTask = new VetClinicsTask();
-        vetClinicsTask.delegate = result -> {
-            for (VetClinic current : result) {
-                vetClinics.add(current);
-            }
+    void getVetClinicDetails(VetClinic vetClinic, LoadVetClinicDetailsCallback callback);
 
-            callback.onVetClinicsLoaded(vetClinics);
-        };
+    interface LoadVetClinicsCallback {
 
-        String vetClinicsRequest =
-                new StringBuilder(createVetClinicsRequest(latitude, longitude, radius)).toString();
+        void onVetClinicsLoaded(List<VetClinic> vetClinics);
 
-        vetClinicsTask.execute(vetClinicsRequest);
+        void onVetClinicsFailure(String message);
     }
 
-    @Override
-    public void getVetClinicDetails(VetClinic vetClinic, LoadVetClinicDetailsCallback callback) {
+    interface LoadVetClinicDetailsCallback {
 
+        void onVetClinicDetailsLoaded(VetClinic vetClinicDetails);
 
-        VetClinicDetailsTask vetClinicDetailsTask = new VetClinicDetailsTask();
-        vetClinicDetailsTask.delegate = result -> {
-            callback.onVetClinicDetailsLoaded(result);
-        };
-
-        String vetClinicDetailsRequest =
-                new StringBuilder(createVetClinicDetailsRequest(vetClinic.getId())).toString();
-        vetClinicDetailsTask.execute(vetClinicDetailsRequest);
-    }
-
-    private StringBuilder createVetClinicDetailsRequest(String id) {
-        StringBuilder sb = new StringBuilder("https://maps.googleapis.com/maps/api/place/details/json?");
-        sb.append("place_id=" + id);
-        sb.append("&key=" + PawApplication.getContext().getResources().getString(R.string.google_android_map_api_key_test)); // TODO - we need to change this
-
-        return sb;
-    }
-
-    public StringBuilder createVetClinicsRequest(double lat, double lon, int radius) {
-        StringBuilder sb = new StringBuilder("https://maps.googleapis.com/maps/api/place/nearbysearch/json?");
-        sb.append("location=" + lat + "," + lon);
-        sb.append("&radius=" + radius);
-        sb.append("&types=" + "veterinary_care");
-        sb.append("&sensor=true");
-        sb.append("&key=" + PawApplication.getContext().getResources().getString(R.string.google_android_map_api_key_test)); // TODO - we need to change this
-
-        return sb;
+        void onVetClinicDetailsFailure(String message);
     }
 }

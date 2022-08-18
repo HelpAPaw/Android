@@ -1,7 +1,6 @@
 package org.helpapaw.helpapaw.data.repositories.vetClinics;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -9,8 +8,8 @@ import java.net.URL;
 
 public class DownloadUrl {
 
-    public String readUrl(String strUrl) throws IOException {
-        String data = "";
+    public String readUrl(String strUrl) throws Exception {
+        String data;
         InputStream iStream = null;
         HttpURLConnection urlConnection = null;
         try {
@@ -27,9 +26,9 @@ public class DownloadUrl {
 
             BufferedReader br = new BufferedReader(new InputStreamReader(iStream));
 
-            StringBuffer sb = new StringBuffer();
+            StringBuilder sb = new StringBuilder();
 
-            String line = "";
+            String line;
             while ((line = br.readLine()) != null) {
                 sb.append(line);
             }
@@ -37,11 +36,13 @@ public class DownloadUrl {
             data = sb.toString();
             br.close();
 
-        } catch (Exception e) {
-            e.printStackTrace();
         } finally {
-            iStream.close();
-            urlConnection.disconnect();
+            if (iStream != null) {
+                iStream.close();
+            }
+            if (urlConnection != null) {
+                urlConnection.disconnect();
+            }
         }
         return data;
     }

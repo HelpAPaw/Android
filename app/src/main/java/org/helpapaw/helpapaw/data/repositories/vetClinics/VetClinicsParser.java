@@ -1,6 +1,7 @@
 package org.helpapaw.helpapaw.data.repositories.vetClinics;
 
 import org.helpapaw.helpapaw.data.models.VetClinic;
+import org.helpapaw.helpapaw.utils.Injection;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -21,27 +22,26 @@ public class VetClinicsParser {
     public static final String URL = "url";
 
     public List<VetClinic> parse(String jsonData) {
-        JSONArray jsonArray = null;
-        JSONObject jsonObject;
-
         try {
-            jsonObject = new JSONObject(jsonData);
-            jsonArray = jsonObject.getJSONArray("results");
-        } catch (JSONException e) {
-            e.printStackTrace();
+            JSONObject jsonObject = new JSONObject(jsonData);
+            JSONArray jsonArray = jsonObject.getJSONArray("results");
+            return getPlaces(jsonArray);
+        } catch (Exception e) {
+            Injection.getCrashLogger().recordException(e);
+            //TODO: handle null in callers
+            return null;
         }
-        return getPlaces(jsonArray);
     }
 
     public VetClinic parseDetails(String jsonData) {
-        JSONObject jsonObject = null;
-
         try {
-            jsonObject = (JSONObject) new JSONObject(jsonData).get("result");
-        } catch (JSONException e) {
-            e.printStackTrace();
+            JSONObject jsonObject = (JSONObject) new JSONObject(jsonData).get("result");
+            return getPlaceDetails(jsonObject);
+        } catch (Exception e) {
+            Injection.getCrashLogger().recordException(e);
+            //TODO: handle null in callers
+            return null;
         }
-        return getPlaceDetails(jsonObject);
     }
 
     private List<VetClinic> getPlaces(JSONArray jsonArray) {
@@ -54,7 +54,7 @@ public class VetClinicsParser {
                 vetClinic = getPlace((JSONObject) jsonArray.get(i));
                 placesList.add(vetClinic);
             } catch (JSONException e) {
-                e.printStackTrace();
+                Injection.getCrashLogger().recordException(e);
             }
         }
         return placesList;
@@ -73,14 +73,14 @@ public class VetClinicsParser {
             reference = googlePlaceJson.getString(REFERENCE);
 
         } catch (JSONException e) {
-            e.printStackTrace();
+            Injection.getCrashLogger().recordException(e);
         }
 
-        VetClinic vetClinic = new VetClinic(reference,
-                                            placeName,
-                                            Double.parseDouble(latitude),
-                                            Double.parseDouble(longitude));
-        return vetClinic;
+        return new VetClinic(
+                reference,
+                placeName,
+                Double.parseDouble(latitude),
+                Double.parseDouble(longitude));
     }
 
     private VetClinic getPlaceDetails(JSONObject googlePlaceJson) {
@@ -101,13 +101,17 @@ public class VetClinicsParser {
             phone = googlePlaceJson.getString(INTERNATIONAL_PHONE_NUMBER);
             url = googlePlaceJson.getString(URL);
         } catch (JSONException e) {
-            e.printStackTrace();
+            Injection.getCrashLogger().recordException(e);
         }
 
-        VetClinic vetClinic = new VetClinic(reference, placeName, Double.parseDouble(latitude),
-                Double.parseDouble(longitude), phone, address, url);
-
-        return vetClinic;
+        return new VetClinic(
+                reference,
+                placeName,
+                Double.parseDouble(latitude),
+                Double.parseDouble(longitude),
+                phone,
+                address,
+                url);
     }
 }
 
