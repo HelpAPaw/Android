@@ -21,26 +21,31 @@ public class VetClinicsParser {
     public static final String INTERNATIONAL_PHONE_NUMBER = "international_phone_number";
     public static final String URL = "url";
 
-    public List<VetClinic> parse(String jsonData) {
+    public List<VetClinic> parse(String jsonData) throws Exception {
+        JSONObject jsonObject = new JSONObject(jsonData);
+        String error = null;
         try {
-            JSONObject jsonObject = new JSONObject(jsonData);
+            error = jsonObject.getString("error_message");
+        } catch (Exception ignored) {}
+        if (error == null) {
             JSONArray jsonArray = jsonObject.getJSONArray("results");
             return getPlaces(jsonArray);
-        } catch (Exception e) {
-            Injection.getCrashLogger().recordException(e);
-            //TODO: handle null in callers
-            return null;
+        } else {
+            throw new Exception(error);
         }
     }
 
-    public VetClinic parseDetails(String jsonData) {
+    public VetClinic parseDetails(String jsonData) throws Exception {
+        JSONObject jsonObject = new JSONObject(jsonData);
+        String error = null;
         try {
-            JSONObject jsonObject = (JSONObject) new JSONObject(jsonData).get("result");
-            return getPlaceDetails(jsonObject);
-        } catch (Exception e) {
-            Injection.getCrashLogger().recordException(e);
-            //TODO: handle null in callers
-            return null;
+            error = jsonObject.getString("error_message");
+        } catch (Exception ignored) {}
+        if (error == null) {
+            JSONObject jsonPlace = jsonObject.getJSONObject("result");
+            return getPlaceDetails(jsonPlace);
+        } else {
+            throw new Exception(error);
         }
     }
 

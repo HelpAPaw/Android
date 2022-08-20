@@ -148,6 +148,7 @@
     <string name="timeout_output_single">%d day</string>
     <string name="txt_success">Success</string>
     <string name="txt_error">Error</string>
+    <string name="txt_unknown_error_occurred">Unknown error occurred</string>
     <string name="txt_registration_successful">A confirmation link has been sent on your email. Please click it to complete your registration.</string>
     <string name="content_description_app_logo">App logo</string>
     <string name="txt_error_getting_privacy_policy">Could not get Privacy Policy!</string>

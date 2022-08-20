@@ -23,7 +23,7 @@ public class GoogleMapsVetClinicsRepository implements VetClinicsRepository {
                     vetClinics.addAll(result);
                     callback.onVetClinicsLoaded(vetClinics);
                 } else {
-                    callback.onVetClinicsFailure(""); //TODO: replace with unknown error
+                    callback.onVetClinicsFailure(PawApplication.getContext().getResources().getString(R.string.txt_unknown_error_occurred));
                 }
             }
 
@@ -41,19 +41,26 @@ public class GoogleMapsVetClinicsRepository implements VetClinicsRepository {
                 "&radius=" + radius +
                 "&types=" + "veterinary_care" +
                 "&sensor=true" +
-                "&key=" + PawApplication.getContext().getResources().getString(R.string.google_android_map_api_key); //TODO: change api key
+                "&key=" + PawApplication.getContext().getResources().getString(R.string.google_android_map_api_key);
     }
 
     @Override
     public void getVetClinicDetails(VetClinic vetClinic, LoadVetClinicDetailsCallback callback) {
 
         VetClinicDetailsTask vetClinicDetailsTask = new VetClinicDetailsTask();
-        vetClinicDetailsTask.delegate = result -> {
-            //TODO: test null case
-            if (result != null) {
-                callback.onVetClinicDetailsLoaded(result);
-            } else {
-                callback.onVetClinicDetailsFailure(""); //TODO: extract error
+        vetClinicDetailsTask.delegate = new VetClinicDetailsAsyncResponse() {
+            @Override
+            public void onVetClinicDetailsSuccess(VetClinic result) {
+                if (result != null) {
+                    callback.onVetClinicDetailsLoaded(result);
+                } else {
+                    callback.onVetClinicDetailsFailure(PawApplication.getContext().getResources().getString(R.string.txt_unknown_error_occurred));
+                }
+            }
+
+            @Override
+            public void onVetClinicDetailsFailure(String error) {
+                callback.onVetClinicDetailsFailure(error);
             }
         };
         vetClinicDetailsTask.execute(createVetClinicDetailsRequest(vetClinic.getId()));
@@ -62,6 +69,6 @@ public class GoogleMapsVetClinicsRepository implements VetClinicsRepository {
     private String createVetClinicDetailsRequest(String id) {
         return "https://maps.googleapis.com/maps/api/place/details/json?" +
                 "place_id=" + id +
-                "&key=" + PawApplication.getContext().getResources().getString(R.string.google_android_map_api_key); //TODO: change api key
+                "&key=" + PawApplication.getContext().getResources().getString(R.string.google_android_map_api_key);
     }
 }
