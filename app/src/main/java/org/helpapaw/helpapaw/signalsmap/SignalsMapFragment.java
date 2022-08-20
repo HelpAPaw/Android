@@ -657,7 +657,7 @@ public class SignalsMapFragment extends BaseFragment
             LatLng latLng = new LatLng(lat, lng);
             markerOptions.position(latLng);
             markerOptions.title(current.getName());
-            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.pin_blue2));
+            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.pin_vet_clinic));
 
             Marker vetMarker = signalsGoogleMap.addMarker(markerOptions);
 

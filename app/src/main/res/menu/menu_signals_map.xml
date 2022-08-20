@@ -8,7 +8,7 @@
         app:showAsAction="always" />
     <item
         android:id="@+id/menu_item_show_clinics"
-        android:icon="@drawable/pin_blue"
+        android:icon="@drawable/ic_vet_clinic"
         android:title="@string/content_show_clinics"
         app:showAsAction="always" />
     <item
