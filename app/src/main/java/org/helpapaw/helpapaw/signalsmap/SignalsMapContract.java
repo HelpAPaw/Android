@@ -57,13 +57,16 @@ interface SignalsMapContract {
 
         void showNoInternetMessage();
 
-        void setProgressVisibility(boolean visibility);
+        void setSignalsMenuButtonRefreshingStatus(boolean isRefreshing);
+
+        void setClinicsMenuButtonRefreshingStatus(boolean isRefreshing);
+
+        void setClinicsMenuButtonToShow();
 
         boolean isActive();
 
         void onLogoutSuccess();
         void onLogoutFailure(String message);
-
     }
 
     interface UserActionsListener {

@@ -436,11 +436,9 @@ public class SignalsMapFragment extends BaseFragment
             actionsListener.onShowVetClinicsClicked(mCurrentLat, mCurrentLong, calculateZoomToMeters());
 
             if (!actionsListener.shouldShowVetClinics()) {
-                item.getIcon().setAlpha(255);
-                item.setTitle(R.string.content_show_clinics);
+                setClinicsMenuButtonToShow(item);
             } else {
-                item.getIcon().setAlpha(130);
-                item.setTitle(R.string.content_hide_clinics);
+                setClinicsMenuButtonToHide(item);
             }
 
             return true;
@@ -448,6 +446,16 @@ public class SignalsMapFragment extends BaseFragment
         else {
             return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void setClinicsMenuButtonToShow(MenuItem item) {
+        item.getIcon().setAlpha(255);
+        item.setTitle(R.string.content_show_clinics);
+    }
+
+    private void setClinicsMenuButtonToHide(MenuItem item) {
+        item.getIcon().setAlpha(130);
+        item.setTitle(R.string.content_hide_clinics);
     }
 
     private void showShareAppReminderIfNeeded() {
@@ -1098,23 +1106,43 @@ public class SignalsMapFragment extends BaseFragment
     }
 
     @Override
-    public void setProgressVisibility(boolean visibility) {
+    public void setSignalsMenuButtonRefreshingStatus(boolean isRefreshing) {
         if (optionsMenu != null) {
             final MenuItem refreshItem = optionsMenu.findItem(R.id.menu_item_refresh);
+            setMenuItemRefreshingStatus(refreshItem, isRefreshing);
+        }
+    }
 
-            if (refreshItem != null) {
-                if (visibility) {
-                    MenuItemCompat.setActionView(refreshItem, R.layout.toolbar_progress);
-                    if (refreshItem.getActionView() != null) {
-                        ProgressBar progressBar = refreshItem.getActionView().findViewById(R.id.toolbar_progress_bar);
-                        if (progressBar != null) {
-                            progressBar.getIndeterminateDrawable().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN);
-                        }
+    @Override
+    public void setClinicsMenuButtonRefreshingStatus(boolean isRefreshing) {
+        if (optionsMenu != null) {
+            final MenuItem clinicsItem = optionsMenu.findItem(R.id.menu_item_show_clinics);
+            setMenuItemRefreshingStatus(clinicsItem, isRefreshing);
+        }
+    }
+
+    private void setMenuItemRefreshingStatus(MenuItem menuItem, boolean isRefreshing) {
+        if (menuItem != null) {
+            if (isRefreshing) {
+                MenuItemCompat.setActionView(menuItem, R.layout.toolbar_progress);
+                if (menuItem.getActionView() != null) {
+                    ProgressBar progressBar = menuItem.getActionView().findViewById(R.id.toolbar_progress_bar);
+                    if (progressBar != null) {
+                        progressBar.getIndeterminateDrawable().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN);
                     }
-                } else {
-
-                    MenuItemCompat.setActionView(refreshItem, null);
                 }
+            } else {
+                MenuItemCompat.setActionView(menuItem, null);
+            }
+        }
+    }
+
+    @Override
+    public void setClinicsMenuButtonToShow() {
+        if (optionsMenu != null) {
+            final MenuItem clinicsItem = optionsMenu.findItem(R.id.menu_item_show_clinics);
+            if (clinicsItem != null) {
+                setClinicsMenuButtonToShow(clinicsItem);
             }
         }
     }

@@ -75,7 +75,7 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View>
 
     private void getSignal(String signalId) {
         if (Utils.getInstance().hasNetworkConnection()) {
-            getView().setProgressVisibility(true);
+            getView().setSignalsMenuButtonRefreshingStatus(true);
 
             signalRepository.getSignal(signalId,
                     new SignalRepository.LoadSignalsCallback() {
@@ -86,7 +86,7 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View>
                                 replaceSignal(signals.get(0));
                                 signalRepository.markSignalsAsSeen(signals);
                                 getView().displaySignals(signals, true, selectedSignalTypes);
-                                getView().setProgressVisibility(false);
+                                getView().setSignalsMenuButtonRefreshingStatus(false);
                             }
                         }
 
@@ -94,7 +94,7 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View>
                         public void onSignalsFailure(String message) {
                             if (!isViewAvailable()) return;
                             getView().showMessage(message);
-                            getView().setProgressVisibility(false);
+                            getView().setSignalsMenuButtonRefreshingStatus(false);
                         }
                     });
         } else {
@@ -104,7 +104,7 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View>
 
     private void getFilteredSignals(double latitude, double longitude, int radius, int timeout) {
         if (Utils.getInstance().hasNetworkConnection()) {
-            getView().setProgressVisibility(true);
+            getView().setSignalsMenuButtonRefreshingStatus(true);
 
             signalRepository.getFilteredSignals(latitude, longitude, radius, timeout, selectedSignalTypes,
                     new SignalRepository.LoadSignalsCallback() {
@@ -115,14 +115,14 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View>
 
                             signalRepository.markSignalsAsSeen(signals);
                             getView().displaySignals(signals, false, selectedSignalTypes);
-                            getView().setProgressVisibility(false);
+                            getView().setSignalsMenuButtonRefreshingStatus(false);
                         }
 
                         @Override
                         public void onSignalsFailure(String message) {
                             if (!isViewAvailable()) return;
                             getView().showMessage(message);
-                            getView().setProgressVisibility(false);
+                            getView().setSignalsMenuButtonRefreshingStatus(false);
                         }
                     });
 
@@ -185,15 +185,20 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View>
 
     @Override
     public void showVetClinics(double latitude, double longitude, int radius) {
+        getView().setClinicsMenuButtonRefreshingStatus(true);
         vetClinicRepository.getVetClinics(latitude, longitude, radius,
                 new VetClinicsRepository.LoadVetClinicsCallback() {
                     @Override
                     public void onVetClinicsLoaded(List<VetClinic> vetClinics) {
+                        getView().setClinicsMenuButtonRefreshingStatus(false);
                         getView().showVetClinicsOnMap(vetClinics);
                     }
 
                     @Override
                     public void onVetClinicsFailure(String message) {
+                        shouldShowVetClinics = false;
+                        getView().setClinicsMenuButtonRefreshingStatus(false);
+                        getView().setClinicsMenuButtonToShow();
                         getView().showMessage(message);
                     }
                 });
