@@ -9,7 +9,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-public class VetClinicsParser {
+public class GoogleMapsVetClinicsParser {
 
     public static final String NAME = "name";
     public static final String GEOMETRY = "geometry";
@@ -21,7 +21,7 @@ public class VetClinicsParser {
     public static final String INTERNATIONAL_PHONE_NUMBER = "international_phone_number";
     public static final String URL = "url";
 
-    public List<VetClinic> parse(String jsonData) throws Exception {
+    public List<VetClinic> parseClinicsList(String jsonData) throws Exception {
         JSONObject jsonObject = new JSONObject(jsonData);
         String error = null;
         try {
@@ -35,7 +35,7 @@ public class VetClinicsParser {
         }
     }
 
-    public VetClinic parseDetails(String jsonData) throws Exception {
+    public VetClinic parseClinicDetails(String jsonData) throws Exception {
         JSONObject jsonObject = new JSONObject(jsonData);
         String error = null;
         try {

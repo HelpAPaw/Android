@@ -6,7 +6,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class DownloadUrl {
+public class UrlDownloader {
 
     public String readUrl(String strUrl) throws Exception {
         String data;

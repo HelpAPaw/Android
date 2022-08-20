@@ -1,38 +1,69 @@
 package org.helpapaw.helpapaw.data.repositories.vetClinics;
 
+import android.os.Handler;
+import android.os.Looper;
+
 import org.helpapaw.helpapaw.R;
 import org.helpapaw.helpapaw.base.PawApplication;
 import org.helpapaw.helpapaw.data.models.VetClinic;
+import org.helpapaw.helpapaw.utils.Injection;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class GoogleMapsVetClinicsRepository implements VetClinicsRepository {
 
-    List<VetClinic> vetClinics = new ArrayList<>();
+    List<VetClinic> aggregatedVetClinics = new ArrayList<>();
 
     @Override
     public void getVetClinics(double latitude, double longitude, int radius,
                               LoadVetClinicsCallback callback) {
 
-        VetClinicsTask vetClinicsTask = new VetClinicsTask();
-        vetClinicsTask.delegate = new VetClinicsAsyncResponse() {
-            @Override
-            public void onVetClinicsSuccess(List<VetClinic> result) {
-                if (result != null) {
-                    vetClinics.addAll(result);
-                    callback.onVetClinicsLoaded(vetClinics);
-                } else {
-                    callback.onVetClinicsFailure(PawApplication.getContext().getResources().getString(R.string.txt_unknown_error_occurred));
-                }
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        Handler handler = new Handler(Looper.getMainLooper());
+
+        executor.execute(() -> {
+            //Background work here
+            String result = null;
+            String error = null;
+            try {
+                UrlDownloader downloadUrl = new UrlDownloader();
+                result = downloadUrl.readUrl(createVetClinicsRequest(latitude, longitude, radius));
+            } catch (Exception e) {
+                Injection.getCrashLogger().recordException(e);
+                error = e.getLocalizedMessage();
             }
 
-            @Override
-            public void onVetClinicsFailure(String error) {
-                callback.onVetClinicsFailure(error);
-            }
-        };
-        vetClinicsTask.execute(createVetClinicsRequest(latitude, longitude, radius));
+            String finalResult = result;
+            String finalError = error;
+            handler.post(() -> {
+                //UI Thread work here
+                if (finalError != null) {
+                    callback.onVetClinicsFailure(finalError);
+                    return;
+                }
+
+                try {
+                    List<VetClinic> newVetClinics;
+                    GoogleMapsVetClinicsParser vetClinicsParser = new GoogleMapsVetClinicsParser();
+                    newVetClinics = vetClinicsParser.parseClinicsList(finalResult);
+                    if (newVetClinics != null) {
+                        aggregatedVetClinics.addAll(newVetClinics);
+                        callback.onVetClinicsLoaded(aggregatedVetClinics);
+                    } else {
+                        Injection.getCrashLogger().recordException(new Throwable("Empty clinics list from: " + finalResult));
+                        callback.onVetClinicsFailure(PawApplication.getContext().getResources().getString(R.string.txt_unknown_error_occurred));
+                    }
+                } catch (Exception e) {
+                    Injection.getCrashLogger().recordException(e);
+                    if (callback != null) {
+                        callback.onVetClinicsFailure(e.getLocalizedMessage());
+                    }
+                }
+            });
+        });
     }
 
     public String createVetClinicsRequest(double lat, double lon, int radius) {
@@ -47,23 +78,48 @@ public class GoogleMapsVetClinicsRepository implements VetClinicsRepository {
     @Override
     public void getVetClinicDetails(VetClinic vetClinic, LoadVetClinicDetailsCallback callback) {
 
-        VetClinicDetailsTask vetClinicDetailsTask = new VetClinicDetailsTask();
-        vetClinicDetailsTask.delegate = new VetClinicDetailsAsyncResponse() {
-            @Override
-            public void onVetClinicDetailsSuccess(VetClinic result) {
-                if (result != null) {
-                    callback.onVetClinicDetailsLoaded(result);
-                } else {
-                    callback.onVetClinicDetailsFailure(PawApplication.getContext().getResources().getString(R.string.txt_unknown_error_occurred));
-                }
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        Handler handler = new Handler(Looper.getMainLooper());
+
+        executor.execute(() -> {
+            //Background work here
+            String result = null;
+            String error = null;
+            try {
+                UrlDownloader downloadUrl = new UrlDownloader();
+                result = downloadUrl.readUrl(createVetClinicDetailsRequest(vetClinic.getId()));
+            } catch (Exception e) {
+                Injection.getCrashLogger().recordException(e);
+                error = e.getLocalizedMessage();
             }
 
-            @Override
-            public void onVetClinicDetailsFailure(String error) {
-                callback.onVetClinicDetailsFailure(error);
-            }
-        };
-        vetClinicDetailsTask.execute(createVetClinicDetailsRequest(vetClinic.getId()));
+            String finalResult = result;
+            String finalError = error;
+            handler.post(() -> {
+                //UI Thread work here
+                if (finalError != null) {
+                    callback.onVetClinicDetailsFailure(finalError);
+                    return;
+                }
+
+                try {
+                    VetClinic vetClinicDetails;
+                    GoogleMapsVetClinicsParser vetClinicsParser = new GoogleMapsVetClinicsParser();
+                    vetClinicDetails = vetClinicsParser.parseClinicDetails(finalResult);
+                    if (vetClinicDetails != null) {
+                        callback.onVetClinicDetailsLoaded(vetClinicDetails);
+                    } else {
+                        Injection.getCrashLogger().recordException(new Throwable("Empty clinic details from: " + finalResult));
+                        callback.onVetClinicDetailsFailure(PawApplication.getContext().getResources().getString(R.string.txt_unknown_error_occurred));
+                    }
+                } catch (Exception e) {
+                    Injection.getCrashLogger().recordException(e);
+                    if (callback != null) {
+                        callback.onVetClinicDetailsFailure(e.getLocalizedMessage());
+                    }
+                }
+            });
+        });
     }
 
     private String createVetClinicDetailsRequest(String id) {
