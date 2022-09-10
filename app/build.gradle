@@ -9,7 +9,7 @@ android {
         applicationId "org.helpapaw.helpapaw"
         minSdkVersion 19
         targetSdkVersion 30
-        versionCode 101
+        versionCode 102
         versionName "5.3.0"
         vectorDrawables.useSupportLibrary = true
 
