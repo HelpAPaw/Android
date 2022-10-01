@@ -41,7 +41,6 @@ public class SettingsFragment extends BaseFragment implements SettingsContract.V
     private int currentlySelectedTypesInt = Integer.MAX_VALUE;
     private int currentlySelectedLanguage = 0;
     private String[] signalTypeStrings;
-    private String[] languages;
 
     FragmentSettingsBinding binding;
     SettingsPresenter settingsPresenter;
@@ -81,7 +80,6 @@ public class SettingsFragment extends BaseFragment implements SettingsContract.V
         binding.radiusValue.setMax(radiusMax);
         
         signalTypeStrings = getResources().getStringArray(R.array.signal_types_items);
-        languages = getResources().getStringArray(R.array.languages_items);
 
         settingsPresenter = new SettingsPresenter(this);
         settingsPresenter.setView(this);
@@ -184,13 +182,10 @@ public class SettingsFragment extends BaseFragment implements SettingsContract.V
         return new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent( android.provider.Settings.ACTION_LOCALE_SETTINGS );
-                startActivity( i );
-
-//                Intent intent = new Intent(getContext(), LanguageSettingsActivity.class);
-//                intent.putExtra(EXTRA_SELECTED_LANGUAGE, currentlySelectedLanguage);
-//
-//                startActivityForResult(intent, REQUEST_CHANGE_LANGUAGE);
+                Intent intent = new Intent(getContext(), LanguageSettingsActivity.class);
+                intent.putExtra(EXTRA_SELECTED_LANGUAGE, currentlySelectedLanguage);
+                
+                startActivityForResult(intent, REQUEST_CHANGE_LANGUAGE);
             }
         };
     }
@@ -210,12 +205,12 @@ public class SettingsFragment extends BaseFragment implements SettingsContract.V
                 }
             }
         }
-
         else if (requestCode == REQUEST_CHANGE_LANGUAGE) {
             if (resultCode == RESULT_OK) {
                 currentlySelectedLanguage = data.getIntExtra(EXTRA_SELECTED_LANGUAGE, 0);
                 setLanguage(currentlySelectedLanguage);
-                actionsListener.onLanguageChange(getActivity(), currentlySelectedLanguage);
+
+                actionsListener.onLanguageChange(currentlySelectedLanguage);
             }
         }
     }
@@ -235,9 +230,9 @@ public class SettingsFragment extends BaseFragment implements SettingsContract.V
     @Override
     public void setSignalTypes(int signalTypesInt) {
         currentlySelectedTypesInt = signalTypesInt;
-
-        String signalTypesStr =
-                Utils.selectedTypesToString(Utils.convertIntegerToBooleanArray(signalTypesInt, signalTypeStrings.length), signalTypeStrings);
+        String signalTypesStr = selectedTypesToString(
+                Utils.convertIntegerToBooleanArray(signalTypesInt, signalTypeStrings.length),
+                signalTypeStrings);
 
         binding.signalTypeSetting.setText(signalTypesStr);
     }
@@ -245,7 +240,7 @@ public class SettingsFragment extends BaseFragment implements SettingsContract.V
     @Override
     public void setLanguage(int languageIndex) {
         currentlySelectedLanguage = languageIndex;
-        binding.languageSetting.setText(Locale.getDefault().getDisplayName());
+        binding.languageSetting.setText(getResources().getStringArray(R.array.languages_items)[currentlySelectedLanguage]);
     }
 
     private void updateRadius(int value) {
@@ -266,5 +261,24 @@ public class SettingsFragment extends BaseFragment implements SettingsContract.V
             result = String.format(Locale.getDefault(), getString(R.string.timeout_output), value);
         }
         binding.timeoutOutput.setText(result);
+    }
+
+    private String selectedTypesToString(boolean[] selectedSignalTypes, String[] signalTypes) {
+        String selectedTypesToString = "";
+
+        if (Utils.allSelected(selectedSignalTypes)) {
+            selectedTypesToString = getResources().getString(R.string.txt_all_signal_types);
+        } else if (Utils.noneSelected(selectedSignalTypes)) {
+            selectedTypesToString = getResources().getString(R.string.txt_none_signal_types);;
+        } else {
+            for (int i = 0; i < selectedSignalTypes.length; i++) {
+                if (selectedSignalTypes[i]) {
+                    selectedTypesToString = selectedTypesToString + signalTypes[i] + ", ";
+                }
+            }
+            selectedTypesToString = selectedTypesToString.substring(0, selectedTypesToString.length() - 2);
+        }
+
+        return selectedTypesToString;
     }
 }

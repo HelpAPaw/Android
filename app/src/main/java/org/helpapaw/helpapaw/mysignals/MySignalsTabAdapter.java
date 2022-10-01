@@ -1,25 +1,23 @@
 package org.helpapaw.helpapaw.mysignals;
 
-import static org.helpapaw.helpapaw.base.PawApplication.getContext;
-
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 
-import org.helpapaw.helpapaw.R;
 
 public class MySignalsTabAdapter extends FragmentStatePagerAdapter {
 
     // tab titles
-    private String[] tabTitles = getContext().getResources().getStringArray(R.array.my_signal_items);
+    private String[] tabTitles;
 
     //integer to count number of tabs
     int tabCount;
 
-    public MySignalsTabAdapter(FragmentManager fm, int tabCount) {
+    public MySignalsTabAdapter(FragmentManager fm, int tabCount, String[] tabTitles) {
         super(fm);
         //Initializing tab count
-        this.tabCount= tabCount;
+        this.tabCount = tabCount;
+        this.tabTitles = tabTitles;
     }
 
     @Override
