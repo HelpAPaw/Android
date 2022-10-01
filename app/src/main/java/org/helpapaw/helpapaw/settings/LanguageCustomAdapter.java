@@ -86,10 +86,6 @@ public class LanguageCustomAdapter extends BaseAdapter {
         return this.currentLanguageSelection;
     }
 
-//    public void setCurrentLanguageSelection(int currentLanguageSelection) {
-//        this.currentLanguageSelection = currentLanguageSelection;
-//    }
-
     private static class ViewHolder {
         protected RadioButton radioButton;
         private TextView textView;

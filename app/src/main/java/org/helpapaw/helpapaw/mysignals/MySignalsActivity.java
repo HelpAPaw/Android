@@ -41,7 +41,11 @@ public class MySignalsActivity extends AppCompatActivity  implements TabLayout.O
         tabLayout.addTab(tabLayout.newTab());
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
-        MySignalsTabAdapter adapter = new MySignalsTabAdapter(getSupportFragmentManager(), tabLayout.getTabCount());
+        MySignalsTabAdapter adapter = new MySignalsTabAdapter(
+                getSupportFragmentManager(),
+                tabLayout.getTabCount(),
+                getResources().getStringArray(R.array.my_signal_items));
+
         viewPager.setAdapter(adapter);
 
         tabLayout.setOnTabSelectedListener(this);

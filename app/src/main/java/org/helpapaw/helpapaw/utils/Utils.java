@@ -140,25 +140,6 @@ public class Utils {
         return booleanArr;
     }
 
-    public static String selectedTypesToString(boolean[] selectedSignalTypes, String[] signalTypes) {
-        String selectedTypesToString = "";
-
-        if (allSelected(selectedSignalTypes)) {
-            selectedTypesToString = "All signal types";
-        } else if (noneSelected(selectedSignalTypes)) {
-            selectedTypesToString = "None";
-        } else {
-            for (int i = 0; i < selectedSignalTypes.length; i++) {
-                if (selectedSignalTypes[i]) {
-                    selectedTypesToString = selectedTypesToString + signalTypes[i] + ", ";
-                }
-            }
-            selectedTypesToString = selectedTypesToString.substring(0, selectedTypesToString.length() - 2);
-        }
-
-        return selectedTypesToString;
-    }
-
     public static boolean allSelected(boolean[] selectedSignalTypes) {
         for (boolean selectedSignalType : selectedSignalTypes) {
             if (!selectedSignalType) {

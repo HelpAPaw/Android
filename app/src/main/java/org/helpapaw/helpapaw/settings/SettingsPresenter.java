@@ -2,18 +2,13 @@ package org.helpapaw.helpapaw.settings;
 
 import static org.helpapaw.helpapaw.base.PawApplication.getContext;
 
-import android.app.Activity;
-import android.app.Application;
-import android.content.Intent;
-import android.content.res.Configuration;
-import android.content.res.Resources;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.os.LocaleListCompat;
 
 import org.helpapaw.helpapaw.R;
 import org.helpapaw.helpapaw.base.Presenter;
 import org.helpapaw.helpapaw.data.repositories.ISettingsRepository;
 import org.helpapaw.helpapaw.utils.Injection;
-
-import java.util.Locale;
 
 public class SettingsPresenter extends Presenter<SettingsContract.View> implements SettingsContract.UserActionsListener {
 
@@ -70,16 +65,18 @@ public class SettingsPresenter extends Presenter<SettingsContract.View> implemen
     }
 
     @Override
-    public void onLanguageChange(Activity activity, int languageIndex) {
+    public void onLanguageChange(int languageIndex) {
         this.language = languageIndex;
         settingsRepository.saveLanguage(languageIndex);
-//        switch (languageIndex) {
-//            case 0: setLocale(activity, "en"); break;
-//            case 1: setLocale(activity, "bg"); break;
-//        }
 
-//        activity.getParent().recreate();
+        LocaleListCompat appLocale ;
 
+        switch (languageIndex) {
+            case 1: appLocale = LocaleListCompat.forLanguageTags("bg"); break;
+            default: appLocale = LocaleListCompat.forLanguageTags("en"); break;
+        }
+
+        AppCompatDelegate.setApplicationLocales(appLocale);
     }
 
     @Override
@@ -103,21 +100,4 @@ public class SettingsPresenter extends Presenter<SettingsContract.View> implemen
     int unscaleLogarithmic(int scaled) {
         return (int) ((Math.log(scaled/SCALE_COEFFICIENT_A))/SCALE_COEFFICIENT_B);
     }
-
-//    public static void setLocale(Activity activity, String languageCode) {
-//        Locale locale = new Locale(languageCode);
-//        Locale.setDefault(locale);
-//        Resources resources = activity.getResources();
-//        Configuration config = resources.getConfiguration();
-//        config.setLocale(locale);
-//        resources.updateConfiguration(config, resources.getDisplayMetrics());
-//        activity.getBaseContext().getResources().updateConfiguration(
-//                config, activity.getBaseContext().getResources().getDisplayMetrics());
-//        activity.invalidateOptionsMenu();
-////        activity.recreate();
-////
-//        Intent intent = activity.getIntent();
-//        activity.finish();
-//        activity.startActivity(intent);
-//    }
 }

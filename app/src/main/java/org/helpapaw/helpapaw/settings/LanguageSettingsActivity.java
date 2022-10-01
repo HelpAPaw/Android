@@ -1,6 +1,7 @@
 package org.helpapaw.helpapaw.settings;
 
 import static org.helpapaw.helpapaw.settings.SettingsFragment.EXTRA_SELECTED_LANGUAGE;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.ListView;

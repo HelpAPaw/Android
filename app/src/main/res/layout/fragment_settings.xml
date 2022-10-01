@@ -179,8 +179,7 @@
                 android:paddingRight="22dp"
                 android:background="@drawable/ripple_background_white"
                 android:clickable="true"
-                android:focusable="true"
-                tools:text="All signal types"/>
+                android:focusable="true" />
 
             <TableRow
                 android:layout_width="match_parent"
@@ -222,8 +221,7 @@
                 android:paddingRight="22dp"
                 android:background="@drawable/ripple_background_white"
                 android:clickable="true"
-                android:focusable="true"
-                tools:text="All signal types"/>
+                android:focusable="true" />
 
             <TableRow
                 android:layout_width="match_parent"
