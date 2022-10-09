@@ -52,32 +52,22 @@ public class LanguageCustomAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         final ViewHolder holder;
         if (convertView == null) {
-            holder = new ViewHolder(); LayoutInflater inflater = (LayoutInflater) context
-                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            holder = new ViewHolder();
+            LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = inflater.inflate(R.layout.language_item, null, true);
             holder.radioButton = convertView.findViewById(R.id.language_radiobutton);
-            holder.textView = convertView.findViewById(R.id.language_item);
             convertView.setTag(holder);
         } else {
             // the getTag returns the viewHolder object set as a tag to the view
-            holder = (ViewHolder)convertView.getTag();
+            holder = (ViewHolder) convertView.getTag();
         }
-        holder.textView.setText(languages[position]);
-        if (position == currentLanguageSelection) {
-            holder.radioButton.setChecked(true);
-        }
-        else {
-            holder.radioButton.setChecked(false);
-        }
+        holder.radioButton.setText(languages[position]);
+        holder.radioButton.setChecked(position == currentLanguageSelection);
         holder.radioButton.setTag(position);
 
-        holder.radioButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Integer position = (Integer)  holder.radioButton.getTag();
-                currentLanguageSelection = position;
-                notifyDataSetChanged();
-            }
+        holder.radioButton.setOnClickListener(v -> {
+            currentLanguageSelection = (Integer) holder.radioButton.getTag();
+            notifyDataSetChanged();
         });
         return convertView;
     }
@@ -88,6 +78,5 @@ public class LanguageCustomAdapter extends BaseAdapter {
 
     private static class ViewHolder {
         protected RadioButton radioButton;
-        private TextView textView;
     }
 }
