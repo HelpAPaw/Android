@@ -57,7 +57,7 @@ public class PawApplication extends MultiDexApplication {
         Branch.getAutoInstance(this);
 
         // Register device for token
-        Injection.getPushNotificationsRepositoryInstance().registerDeviceToken();
+        Injection.getPushNotificationsRepositoryInstance().registerDeviceTokenIfNeeded();
 
         doUserSetupIfNeeded();
         FirebaseAnalytics.getInstance(this);

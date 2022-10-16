@@ -4,6 +4,7 @@ import android.location.Location;
 import android.util.Log;
 
 import com.backendless.Backendless;
+import com.backendless.DeviceRegistration;
 import com.backendless.async.callback.AsyncCallback;
 import com.backendless.exceptions.BackendlessFault;
 import com.backendless.messaging.DeliveryOptions;
@@ -20,7 +21,7 @@ import org.helpapaw.helpapaw.utils.Injection;
 import org.helpapaw.helpapaw.utils.Utils;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -53,9 +54,34 @@ public class BackendlessPushNotificationsRepository implements PushNotifications
         }
     }
 
+    /* Check if device is already registered and only register it if it's not. This avoids
+       recreating notification channels which leads to current notifications from those channels
+       disappearing
+     */
+    @Override
+    public void registerDeviceTokenIfNeeded() {
+        Backendless.Messaging.getDeviceRegistration(new AsyncCallback<DeviceRegistration>() {
+            @Override
+            public void handleResponse(DeviceRegistration response) {
+                // Do nothing - device already registered
+            }
+
+            @Override
+            public void handleFault(BackendlessFault fault) {
+                // 5000: Unable to retrieve device registration - unknown device ID.
+                if (fault.getCode().equals("5000")) {
+                    registerDeviceToken();
+                }
+                else {
+                    Injection.getCrashLogger().recordException(new Throwable(fault.toString()));
+                }
+            }
+        });
+    }
+
     @Override
     public void registerDeviceToken() {
-        Backendless.Messaging.registerDevice(Arrays.asList(getNotificationChannel()), new AsyncCallback<DeviceRegistrationResult>(){
+        Backendless.Messaging.registerDevice(Collections.singletonList(getNotificationChannel()), new AsyncCallback<DeviceRegistrationResult>(){
             @Override
             public void handleResponse(DeviceRegistrationResult response) {
                 ISettingsRepository settingsRepository = Injection.getSettingsRepositoryInstance();
@@ -68,7 +94,8 @@ public class BackendlessPushNotificationsRepository implements PushNotifications
                         lastKnownDeviceLocation,
                         settingsRepository.getRadius(),
                         settingsRepository.getTimeout(),
-                        settingsRepository.getSignalTypes());
+                        settingsRepository.getSignalTypes()
+                );
             }
 
             @Override
@@ -80,7 +107,7 @@ public class BackendlessPushNotificationsRepository implements PushNotifications
 
     @Override
     public void unregisterDeviceToken() {
-        Backendless.Messaging.unregisterDevice(Arrays.asList(getNotificationChannel()), new AsyncCallback<Integer>() {
+        Backendless.Messaging.unregisterDevice(Collections.singletonList(getNotificationChannel()), new AsyncCallback<Integer>() {
             @Override
             public void handleResponse(Integer response) {
                 Injection.getSettingsRepositoryInstance().deleteTokenFromPreferences();
