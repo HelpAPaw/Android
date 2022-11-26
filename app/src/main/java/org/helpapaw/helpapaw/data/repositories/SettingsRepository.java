@@ -52,9 +52,9 @@ public class SettingsRepository implements ISettingsRepository {
     }
 
     @Override
-    public void saveLanguage(int languageIndex) {
+    public void saveLanguage(String languageCode) {
         SharedPreferences.Editor editor = preferences.edit();
-        editor.putInt(LANGUAGE_FIELD, languageIndex);
+        editor.putString(LANGUAGE_FIELD, languageCode);
         editor.apply();
     }
 
@@ -74,8 +74,8 @@ public class SettingsRepository implements ISettingsRepository {
     }
 
     @Override
-    public int getLanguageIndex() {
-        return preferences.getInt(LANGUAGE_FIELD, 0);
+    public String getLanguageCode() {
+        return preferences.getString(LANGUAGE_FIELD, "en");
     }
 
     @Override

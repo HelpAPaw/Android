@@ -7,7 +7,7 @@ public interface ISettingsRepository {
 
     void saveSignalTypes(int signalTypes);
 
-    void saveLanguage(int languageIndex);
+    void saveLanguage(String languageCode);
 
     int getRadius();
 
@@ -15,7 +15,7 @@ public interface ISettingsRepository {
 
     int getSignalTypes();
 
-    int getLanguageIndex();
+    String getLanguageCode();
 
     double getLastShownLatitude();
 

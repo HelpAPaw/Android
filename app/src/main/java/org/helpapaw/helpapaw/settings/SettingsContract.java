@@ -8,7 +8,7 @@ public interface SettingsContract {
 
         void setSignalTypes(int signalTypes);
 
-        void setLanguage(int languageIndex);
+        void setLanguage(String languageCode);
     }
 
     interface UserActionsListener {
@@ -20,7 +20,7 @@ public interface SettingsContract {
 
         void onSignalTypesChange(int signalTypes);
 
-        void onLanguageChange(int languageIndex);
+        void onLanguageChange(String languageCode);
 
         void onCloseSettingsScreen();
     }

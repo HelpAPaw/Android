@@ -19,7 +19,7 @@ public class SettingsPresenter extends Presenter<SettingsContract.View> implemen
     private int radius;
     private int timeout;
     private int signalTypes;
-    private int language;
+    private String language;
 
     SettingsPresenter(SettingsContract.View view) {
         super(view);
@@ -31,7 +31,7 @@ public class SettingsPresenter extends Presenter<SettingsContract.View> implemen
         radius = settingsRepository.getRadius();
         timeout = settingsRepository.getTimeout();
         signalTypes = settingsRepository.getSignalTypes();
-        language = settingsRepository.getLanguageIndex();
+        language = settingsRepository.getLanguageCode();
 
         int radiusMin = getContext().getResources().getInteger(R.integer.radius_value_min);
         int radiusMax = getContext().getResources().getInteger(R.integer.radius_value_max);
@@ -65,18 +65,11 @@ public class SettingsPresenter extends Presenter<SettingsContract.View> implemen
     }
 
     @Override
-    public void onLanguageChange(int languageIndex) {
-        this.language = languageIndex;
-        settingsRepository.saveLanguage(languageIndex);
+    public void onLanguageChange(String languageCode) {
+        this.language = languageCode;
+        settingsRepository.saveLanguage(languageCode);
 
-        LocaleListCompat appLocale ;
-
-        switch (languageIndex) {
-            case 1: appLocale = LocaleListCompat.forLanguageTags("bg"); break;
-            default: appLocale = LocaleListCompat.forLanguageTags("en"); break;
-        }
-
-        AppCompatDelegate.setApplicationLocales(appLocale);
+        AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(languageCode));
     }
 
     @Override
@@ -87,10 +80,6 @@ public class SettingsPresenter extends Presenter<SettingsContract.View> implemen
 
     public int getSignalTypes() {
         return signalTypes;
-    }
-
-    public int getLanguage() {
-        return language;
     }
 
     int scaleLogarithmic(final int unscaled) {

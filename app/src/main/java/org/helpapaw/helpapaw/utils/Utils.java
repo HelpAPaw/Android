@@ -16,7 +16,9 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.regex.Pattern;
 
@@ -27,11 +29,38 @@ public class Utils {
 
     private static Utils instance;
 
+    private static List<String> languages = new ArrayList<>();
+
+    static {
+        languages.add("bg");
+        languages.add("en");
+    }
+
     public synchronized static Utils getInstance() {
         if (instance == null) {
             instance = new Utils();
         }
         return instance;
+    }
+
+    public static int getLanguageIndexFromLanguageCode(String currentlySelectedLanguage) {
+        int index = 0;
+        try {
+            index = languages.indexOf(currentlySelectedLanguage);
+        } catch (Exception e) {
+            // Do nothing - we will return 0
+        }
+        return index;
+    }
+
+    public static String getLanguageCodeFromLanguageIndex(int currentlySelectedLanguageIndex) {
+        String code = "en";
+        try {
+            code = languages.get(currentlySelectedLanguageIndex);
+        } catch (Exception e) {
+            // Do nothing - we will return en
+        }
+        return code;
     }
 
     //Validation

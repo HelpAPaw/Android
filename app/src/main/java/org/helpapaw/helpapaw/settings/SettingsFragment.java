@@ -39,7 +39,7 @@ public class SettingsFragment extends BaseFragment implements SettingsContract.V
     private int radiusMax;
     private int timeoutMin;
     private int currentlySelectedTypesInt = Integer.MAX_VALUE;
-    private int currentlySelectedLanguage = 0;
+    private String currentlySelectedLanguage = "en";
     private String[] signalTypeStrings;
 
     FragmentSettingsBinding binding;
@@ -207,7 +207,7 @@ public class SettingsFragment extends BaseFragment implements SettingsContract.V
         }
         else if (requestCode == REQUEST_CHANGE_LANGUAGE) {
             if (resultCode == RESULT_OK) {
-                currentlySelectedLanguage = data.getIntExtra(EXTRA_SELECTED_LANGUAGE, 0);
+                currentlySelectedLanguage = data.getStringExtra(EXTRA_SELECTED_LANGUAGE);
                 setLanguage(currentlySelectedLanguage);
 
                 actionsListener.onLanguageChange(currentlySelectedLanguage);
@@ -238,9 +238,10 @@ public class SettingsFragment extends BaseFragment implements SettingsContract.V
     }
 
     @Override
-    public void setLanguage(int languageIndex) {
-        currentlySelectedLanguage = languageIndex;
-        binding.languageSetting.setText(getResources().getStringArray(R.array.languages_items)[currentlySelectedLanguage]);
+    public void setLanguage(String languageCode) {
+        currentlySelectedLanguage = languageCode;
+        int languageIndex = Utils.getLanguageIndexFromLanguageCode(currentlySelectedLanguage);
+        binding.languageSetting.setText(getResources().getStringArray(R.array.languages_items)[languageIndex]);
     }
 
     private void updateRadius(int value) {
