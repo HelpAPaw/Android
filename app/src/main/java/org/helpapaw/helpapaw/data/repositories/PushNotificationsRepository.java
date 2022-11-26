@@ -8,6 +8,7 @@ import org.helpapaw.helpapaw.data.models.Signal;
 import java.util.List;
 
 public interface PushNotificationsRepository {
+    void registerDeviceTokenIfNeeded();
     void registerDeviceToken();
     void unregisterDeviceToken();
     void updateDeviceInfoInCloud(final Location location, final Integer radius, final Integer timeout, final Integer signalTypes);
