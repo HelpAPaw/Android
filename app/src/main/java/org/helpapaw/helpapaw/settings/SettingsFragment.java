@@ -269,7 +269,7 @@ public class SettingsFragment extends BaseFragment implements SettingsContract.V
         if (Utils.allSelected(selectedSignalTypes)) {
             selectedTypesToString = getResources().getString(R.string.txt_all_signal_types);
         } else if (Utils.noneSelected(selectedSignalTypes)) {
-            selectedTypesToString = getResources().getString(R.string.txt_none_signal_types);;
+            selectedTypesToString = getResources().getString(R.string.txt_none_signal_types);
         } else {
             for (int i = 0; i < selectedSignalTypes.length; i++) {
                 if (selectedSignalTypes[i]) {
