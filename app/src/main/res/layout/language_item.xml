@@ -8,17 +8,9 @@
 
     <RadioButton
         android:id="@+id/language_radiobutton"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="2dp"/>
-
-    <TextView
-        android:id="@+id/language_item"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:paddingTop="5dp"
         android:textSize="18sp"
-        tools:text="Type" />
+        tools:text="Language" />
 </LinearLayout>
 
