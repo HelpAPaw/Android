@@ -6,9 +6,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.RadioButton;
-import android.widget.TextView;
 
 import org.helpapaw.helpapaw.R;
+import org.helpapaw.helpapaw.utils.Utils;
+
 
 public class LanguageCustomAdapter extends BaseAdapter {
 
@@ -17,10 +18,10 @@ public class LanguageCustomAdapter extends BaseAdapter {
 
     private int currentLanguageSelection;
 
-    public LanguageCustomAdapter(Context context, String[] languages, int languageSelection) {
+    public LanguageCustomAdapter(Context context, String[] languages, String languageSelectionCode) {
         this.context = context;
         this.languages = languages;
-        this.currentLanguageSelection = languageSelection ;
+        this.currentLanguageSelection = Utils.getLanguageIndexFromLanguageCode(languageSelectionCode);
     }
 
     @Override
@@ -72,8 +73,8 @@ public class LanguageCustomAdapter extends BaseAdapter {
         return convertView;
     }
 
-    public int getCurrentLanguageSelection() {
-        return this.currentLanguageSelection;
+    public String getCurrentLanguageSelection() {
+        return Utils.getLanguageCodeFromLanguageIndex(this.currentLanguageSelection);
     }
 
     private static class ViewHolder {

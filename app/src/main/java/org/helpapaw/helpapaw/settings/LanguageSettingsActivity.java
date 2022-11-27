@@ -13,12 +13,10 @@ import androidx.databinding.DataBindingUtil;
 
 import org.helpapaw.helpapaw.R;
 import org.helpapaw.helpapaw.databinding.ActivityLanguageSettingsBinding;
-import org.helpapaw.helpapaw.utils.Utils;
 
 
 public class LanguageSettingsActivity extends AppCompatActivity {
 
-    private int languageSelection;
     private LanguageCustomAdapter customAdapter;
 
     ActivityLanguageSettingsBinding binding;
@@ -44,9 +42,9 @@ public class LanguageSettingsActivity extends AppCompatActivity {
         String[] languageStrings = getResources().getStringArray(R.array.languages_items);
 
         String languageSelectionCode = intent.getStringExtra(EXTRA_SELECTED_LANGUAGE);
-        languageSelection = Utils.getLanguageIndexFromLanguageCode(languageSelectionCode);
 
-        customAdapter = new LanguageCustomAdapter(languageListView.getContext(), languageStrings, languageSelection);
+        customAdapter = new LanguageCustomAdapter(
+                languageListView.getContext(), languageStrings, languageSelectionCode);
         languageListView.setAdapter(customAdapter);
     }
 
@@ -64,10 +62,10 @@ public class LanguageSettingsActivity extends AppCompatActivity {
     }
 
     private void saveSelectedLanguage() {
-        languageSelection = customAdapter.getCurrentLanguageSelection();
+        String languageSelectionCode = customAdapter.getCurrentLanguageSelection();
 
         Intent resultIntent = new Intent();
-        resultIntent.putExtra(EXTRA_SELECTED_LANGUAGE, Utils.getLanguageCodeFromLanguageIndex(languageSelection));
+        resultIntent.putExtra(EXTRA_SELECTED_LANGUAGE, languageSelectionCode);
         setResult(RESULT_OK, resultIntent);
     }
 }
