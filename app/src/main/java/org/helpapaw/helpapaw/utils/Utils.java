@@ -27,40 +27,14 @@ import java.util.regex.Pattern;
  */
 public class Utils {
 
-    private static Utils instance;
-
-    private static List<String> languages = new ArrayList<>();
-
-    static {
-        languages.add("bg");
-        languages.add("en");
-    }
-
-    public synchronized static Utils getInstance() {
-        if (instance == null) {
-            instance = new Utils();
-        }
-        return instance;
-    }
-
-    public static int getLanguageIndexFromLanguageCode(String currentlySelectedLanguage) {
+    public static int getLanguageIndexFromLanguageCode(String languageCode, ArrayList<String> languageCodes) {
         int index = 0;
         try {
-            index = languages.indexOf(currentlySelectedLanguage);
+            index = languageCodes.indexOf(languageCode);
         } catch (Exception e) {
             // Do nothing - we will return 0
         }
         return index;
-    }
-
-    public static String getLanguageCodeFromLanguageIndex(int currentlySelectedLanguageIndex) {
-        String code = "en";
-        try {
-            code = languages.get(currentlySelectedLanguageIndex);
-        } catch (Exception e) {
-            // Do nothing - we will return en
-        }
-        return code;
     }
 
     //Validation

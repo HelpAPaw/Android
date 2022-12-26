@@ -10,18 +10,26 @@ import android.widget.RadioButton;
 import org.helpapaw.helpapaw.R;
 import org.helpapaw.helpapaw.utils.Utils;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 
 public class LanguageCustomAdapter extends BaseAdapter {
 
     private final Context context;
-    private final String[] languages;
+    private final String[] languageNames;
+    private final ArrayList<String> languageCodes;
 
-    private int currentLanguageSelection;
+    private int currentLanguageSelectionIndex;
 
-    public LanguageCustomAdapter(Context context, String[] languages, String languageSelectionCode) {
+    public LanguageCustomAdapter(Context context, String[] languageNames, String[] languageCodes, String selectedLanguageCode) {
         this.context = context;
-        this.languages = languages;
-        this.currentLanguageSelection = Utils.getLanguageIndexFromLanguageCode(languageSelectionCode);
+        this.languageNames = languageNames;
+        this.languageCodes = new ArrayList<>(Arrays.asList(languageCodes));
+        this.currentLanguageSelectionIndex = Utils.getLanguageIndexFromLanguageCode(
+                selectedLanguageCode,
+                this.languageCodes
+        );
     }
 
     @Override
@@ -36,12 +44,12 @@ public class LanguageCustomAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return languages.length;
+        return languageNames.length;
     }
 
     @Override
     public Object getItem(int position) {
-        return languages[position];
+        return languageNames[position];
     }
 
     @Override
@@ -62,22 +70,32 @@ public class LanguageCustomAdapter extends BaseAdapter {
             // the getTag returns the viewHolder object set as a tag to the view
             holder = (ViewHolder) convertView.getTag();
         }
-        holder.radioButton.setText(languages[position]);
-        holder.radioButton.setChecked(position == currentLanguageSelection);
+        holder.radioButton.setText(languageNames[position]);
+        holder.radioButton.setChecked(position == currentLanguageSelectionIndex);
         holder.radioButton.setTag(position);
 
         holder.radioButton.setOnClickListener(v -> {
-            currentLanguageSelection = (Integer) holder.radioButton.getTag();
+            currentLanguageSelectionIndex = (Integer) holder.radioButton.getTag();
             notifyDataSetChanged();
         });
         return convertView;
     }
 
-    public String getCurrentLanguageSelection() {
-        return Utils.getLanguageCodeFromLanguageIndex(this.currentLanguageSelection);
+    public String getCurrentLanguageSelectionCode() {
+        return getLanguageCodeFromLanguageIndex(this.currentLanguageSelectionIndex);
     }
 
     private static class ViewHolder {
         protected RadioButton radioButton;
+    }
+
+    private String getLanguageCodeFromLanguageIndex(int languageIndex) {
+        String code = "en";
+        try {
+            code = languageCodes.get(languageIndex);
+        } catch (Exception e) {
+            // Do nothing - we will return en
+        }
+        return code;
     }
 }

@@ -39,12 +39,17 @@ public class LanguageSettingsActivity extends AppCompatActivity {
         Intent intent = this.getIntent();
 
         ListView languageListView = findViewById(R.id.language_list_view);
-        String[] languageStrings = getResources().getStringArray(R.array.languages_items);
+        String[] languageNames = getResources().getStringArray(R.array.language_names);
+        String[] languageCodes = getResources().getStringArray(R.array.language_codes);
 
-        String languageSelectionCode = intent.getStringExtra(EXTRA_SELECTED_LANGUAGE);
+        String selectedLanguageCode = intent.getStringExtra(EXTRA_SELECTED_LANGUAGE);
 
         customAdapter = new LanguageCustomAdapter(
-                languageListView.getContext(), languageStrings, languageSelectionCode);
+                languageListView.getContext(),
+                languageNames,
+                languageCodes,
+                selectedLanguageCode
+        );
         languageListView.setAdapter(customAdapter);
     }
 
@@ -62,7 +67,7 @@ public class LanguageSettingsActivity extends AppCompatActivity {
     }
 
     private void saveSelectedLanguage() {
-        String languageSelectionCode = customAdapter.getCurrentLanguageSelection();
+        String languageSelectionCode = customAdapter.getCurrentLanguageSelectionCode();
 
         Intent resultIntent = new Intent();
         resultIntent.putExtra(EXTRA_SELECTED_LANGUAGE, languageSelectionCode);

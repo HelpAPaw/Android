@@ -20,6 +20,8 @@ import org.helpapaw.helpapaw.base.Presenter;
 import org.helpapaw.helpapaw.databinding.FragmentSettingsBinding;
 import org.helpapaw.helpapaw.utils.Utils;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Locale;
 
 import static android.app.Activity.RESULT_OK;
@@ -240,8 +242,12 @@ public class SettingsFragment extends BaseFragment implements SettingsContract.V
     @Override
     public void setLanguage(String languageCode) {
         currentlySelectedLanguage = languageCode;
-        int languageIndex = Utils.getLanguageIndexFromLanguageCode(currentlySelectedLanguage);
-        binding.languageSetting.setText(getResources().getStringArray(R.array.languages_items)[languageIndex]);
+
+        int languageIndex = Utils.getLanguageIndexFromLanguageCode(
+                currentlySelectedLanguage,
+                new ArrayList<>(Arrays.asList(getResources().getStringArray(R.array.language_names)))
+        );
+        binding.languageSetting.setText(getResources().getStringArray(R.array.language_names)[languageIndex]);
     }
 
     private void updateRadius(int value) {
