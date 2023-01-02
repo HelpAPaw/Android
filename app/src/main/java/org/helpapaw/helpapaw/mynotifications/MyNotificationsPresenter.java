@@ -61,7 +61,7 @@ public class MyNotificationsPresenter extends Presenter<MyNotificationsContract.
     }
 
     private void getNotificationsFromLocalDb() {
-        if (Utils.getInstance().hasNetworkConnection()) {
+        if (Utils.hasNetworkConnection()) {
             notificationList = notificationsDatabase.getAll();
 
             if (notificationList.size() != 0) {

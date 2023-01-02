@@ -145,7 +145,7 @@ public class SignalDetailsFragment extends BaseFragment
         binding.txtSignalTitle.setText(signal.getTitle());
         binding.txtSignalAuthor.setText(signal.getAuthorName());
 
-        String formattedDate = Utils.getInstance().getFormattedDate(signal.getDateSubmitted());
+        String formattedDate = Utils.getFormattedDate(signal.getDateSubmitted());
         binding.txtSubmittedDate.setText(formattedDate);
         binding.viewSignalStatus.updateStatus(signal.getStatus());
 
@@ -277,7 +277,7 @@ public class SignalDetailsFragment extends BaseFragment
 
             txtCommentText.setText(commentText);
 
-            String formattedDate = Utils.getInstance().getFormattedDate(comment.getDateCreated());
+            String formattedDate = Utils.getFormattedDate(comment.getDateCreated());
             txtCommentDate.setText(formattedDate);
 
             binding.grpComments.addView(inflatedCommentView);

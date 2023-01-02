@@ -18,7 +18,6 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 import java.util.regex.Pattern;
 
@@ -38,7 +37,7 @@ public class Utils {
     }
 
     //Validation
-    public boolean isEmailValid(String email) {
+    public static boolean isEmailValid(String email) {
         Pattern EMAIL_ADDRESS
                 = Pattern.compile(
                 "[a-zA-Z0-9\\+\\.\\_\\%\\-\\+]{1,256}" +
@@ -54,7 +53,7 @@ public class Utils {
     }
 
     //Network
-    public boolean hasNetworkConnection() {
+    public static boolean hasNetworkConnection() {
         ConnectivityManager connectivity = (ConnectivityManager) PawApplication.getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
         if (connectivity != null) {
             NetworkInfo[] info = connectivity.getAllNetworkInfo();
@@ -87,7 +86,7 @@ public class Utils {
     }
 
     //Location
-    public float getDistanceBetween(double latitudePointOne, double longitudePointOne,
+    public static float getDistanceBetween(double latitudePointOne, double longitudePointOne,
                                     double latitudePointTwo, double longitudePointTwo) {
         Location pointOne = new Location("");
         pointOne.setLatitude(latitudePointOne);
@@ -106,7 +105,7 @@ public class Utils {
     }
 
     //Dates
-    public String getFormattedDate(Date date) {
+    public static String getFormattedDate(Date date) {
         String formattedDate = "";
 
         try {

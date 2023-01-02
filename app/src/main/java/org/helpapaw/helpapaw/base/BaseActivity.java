@@ -152,7 +152,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     protected void logOut() {
-        if (Utils.getInstance().hasNetworkConnection()) {
+        if (Utils.hasNetworkConnection()) {
             userManager.logout(new UserManager.LogoutCallback() {
                 @Override
                 public void onLogoutSuccess() {

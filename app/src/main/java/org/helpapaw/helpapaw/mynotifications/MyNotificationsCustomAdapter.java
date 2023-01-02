@@ -74,7 +74,7 @@ public class MyNotificationsCustomAdapter extends BaseAdapter {
 
         holder.textViewTitle.setText(currentNotification.getText());
 
-        String formattedDate = Utils.getInstance().getFormattedDate(currentNotification.getDateReceived());
+        String formattedDate = Utils.getFormattedDate(currentNotification.getDateReceived());
         holder.textViewDate.setText(formattedDate);
 
         convertView.setOnClickListener(v -> {

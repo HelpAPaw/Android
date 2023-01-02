@@ -46,7 +46,7 @@ public class RegisterPresenter extends Presenter<RegisterContract.View>
     public void onRegisterButtonClicked(String email, String password, String passwordConfirmation, String name, String phoneNumber) {
         getView().clearErrorMessages();
 
-        if (isEmpty(email) || !Utils.getInstance().isEmailValid(email)) {
+        if (isEmpty(email) || !Utils.isEmailValid(email)) {
             getView().showEmailErrorMessage();
             return;
         }
@@ -80,7 +80,7 @@ public class RegisterPresenter extends Presenter<RegisterContract.View>
     }
 
     private void attemptToRegister(String email, String password, String name, String phoneNumber) {
-        if (Utils.getInstance().hasNetworkConnection()) {
+        if (Utils.hasNetworkConnection()) {
             userManager.register(email, password, name, phoneNumber, new UserManager.RegistrationCallback() {
                 @Override
                 public void onRegistrationSuccess() {
