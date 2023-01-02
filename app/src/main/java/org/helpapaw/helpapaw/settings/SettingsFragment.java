@@ -245,7 +245,7 @@ public class SettingsFragment extends BaseFragment implements SettingsContract.V
 
         int languageIndex = Utils.getLanguageIndexFromLanguageCode(
                 currentlySelectedLanguage,
-                new ArrayList<>(Arrays.asList(getResources().getStringArray(R.array.language_names)))
+                new ArrayList<>(Arrays.asList(getResources().getStringArray(R.array.language_codesgit )))
         );
         binding.languageSetting.setText(getResources().getStringArray(R.array.language_names)[languageIndex]);
     }
