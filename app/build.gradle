@@ -9,7 +9,7 @@ android {
         applicationId "org.helpapaw.helpapaw"
         minSdkVersion 19
         targetSdkVersion 33
-        versionCode 106
+        versionCode 107
         versionName "5.4.0"
         vectorDrawables.useSupportLibrary = true
         resConfigs "en", "bg"
@@ -42,7 +42,7 @@ android {
 }
 
 ext {
-    roomVersion = '2.4.3'
+    roomVersion = '2.5.0'
 }
 
 dependencies {
@@ -54,7 +54,7 @@ dependencies {
     implementation 'androidx.work:work-runtime:2.7.1'
     implementation 'androidx.concurrent:concurrent-futures:1.1.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    implementation "androidx.fragment:fragment:1.5.4"
+    implementation "androidx.fragment:fragment:1.5.5"
     implementation "androidx.appcompat:appcompat:1.6.0-rc01"
     // Required by Branch.io - Chrome Tab matching (enables 100% guaranteed matching based on cookies)
     implementation 'androidx.browser:browser:1.4.0'
@@ -73,7 +73,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-messaging'
     implementation platform('com.google.firebase:firebase-bom:27.1.0')
     implementation 'com.squareup.picasso:picasso:2.71828'
-    implementation 'com.backendless:backendless:6.3.4'
+    implementation 'com.backendless:backendless:6.3.6'
     implementation 'com.facebook.android:facebook-login:13.1.0'
     implementation 'com.github.chrisbanes:PhotoView:2.1.3'
     implementation 'io.branch.sdk.android:library:5.1.3'
