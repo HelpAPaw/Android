@@ -44,7 +44,7 @@ public class LoginPresenter extends Presenter<LoginContract.View>
     public void onLoginButtonClicked(String email, String password) {
         getView().clearErrorMessages();
 
-        if (isEmpty(email) || !Utils.getInstance().isEmailValid(email)) {
+        if (isEmpty(email) || !Utils.isEmailValid(email)) {
             getView().showEmailErrorMessage();
             return;
         }
@@ -60,7 +60,7 @@ public class LoginPresenter extends Presenter<LoginContract.View>
     }
 
     private void attemptToLogin(String email, String password) {
-        if (Utils.getInstance().hasNetworkConnection()) {
+        if (Utils.hasNetworkConnection()) {
             userManager.login(email, password, new UserManager.LoginCallback() {
                 @Override
                 public void onLoginSuccess(String userId) {
@@ -138,7 +138,7 @@ public class LoginPresenter extends Presenter<LoginContract.View>
 
     @Override
     public void onLoginFbSuccess(String accessToken) {
-        if (Utils.getInstance().hasNetworkConnection()) {
+        if (Utils.hasNetworkConnection()) {
             setProgressIndicator(true);
             userManager.loginWithFacebook(accessToken, new UserManager.LoginCallback() {
                 @Override
@@ -215,7 +215,7 @@ public class LoginPresenter extends Presenter<LoginContract.View>
     public void onPasswordResetRequested(String email) {
         getView().clearErrorMessages();
 
-        if (isEmpty(email) || !Utils.getInstance().isEmailValid(email)) {
+        if (isEmpty(email) || !Utils.isEmailValid(email)) {
             getView().showEmailErrorMessage();
             return;
         }
@@ -226,7 +226,7 @@ public class LoginPresenter extends Presenter<LoginContract.View>
     }
 
     private void sendResetPasswordRequest(String email) {
-        if (Utils.getInstance().hasNetworkConnection()) {
+        if (Utils.hasNetworkConnection()) {
             userManager.resetPassword(email, new UserManager.ResetPasswordCallback() {
                 @Override
                 public void onResetPasswordSuccess() {

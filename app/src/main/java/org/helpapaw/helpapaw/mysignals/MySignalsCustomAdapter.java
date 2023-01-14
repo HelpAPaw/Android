@@ -65,7 +65,7 @@ public class MySignalsCustomAdapter extends BaseAdapter {
 
         holder.textViewTitle.setText(currentSignal.getTitle());
 
-        String formattedDate = Utils.getInstance().getFormattedDate(currentSignal.getDateSubmitted());
+        String formattedDate = Utils.getFormattedDate(currentSignal.getDateSubmitted());
         holder.textViewDate.setText(formattedDate);
 
         convertView.setOnClickListener(v -> {

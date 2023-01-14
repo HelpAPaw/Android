@@ -74,7 +74,7 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View>
     }
 
     private void getSignal(String signalId) {
-        if (Utils.getInstance().hasNetworkConnection()) {
+        if (Utils.hasNetworkConnection()) {
             getView().setSignalsMenuButtonRefreshingStatus(true);
 
             signalRepository.getSignal(signalId,
@@ -103,7 +103,7 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View>
     }
 
     private void getFilteredSignals(double latitude, double longitude, int radius, int timeout) {
-        if (Utils.getInstance().hasNetworkConnection()) {
+        if (Utils.hasNetworkConnection()) {
             getView().setSignalsMenuButtonRefreshingStatus(true);
 
             signalRepository.getFilteredSignals(latitude, longitude, radius, timeout, selectedSignalTypes,
@@ -138,7 +138,7 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View>
         currentMapLatitude = latitude;
         currentMapLongitude = longitude;
 
-        if ((Utils.getInstance().getDistanceBetween(latitude, longitude, this.latitude, this.longitude) > 300)
+        if ((Utils.getDistanceBetween(latitude, longitude, this.latitude, this.longitude) > 300)
             || (this.radius != radius)) {
             getFilteredSignals(latitude, longitude, radius, timeout);
 
@@ -376,7 +376,7 @@ public class SignalsMapPresenter extends Presenter<SignalsMapContract.View>
     }
 
     private void logoutUser() {
-        if (Utils.getInstance().hasNetworkConnection()) {
+        if (Utils.hasNetworkConnection()) {
             userManager.logout(new UserManager.LogoutCallback() {
                 @Override
                 public void onLogoutSuccess() {

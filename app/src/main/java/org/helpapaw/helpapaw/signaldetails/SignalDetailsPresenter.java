@@ -109,7 +109,7 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
     }
 
     public void loadCommentsForSignal(String signalId) {
-        if(Utils.getInstance().hasNetworkConnection()) {
+        if(Utils.hasNetworkConnection()) {
             commentRepository.getAllCommentsBySignalId(signalId, new CommentRepository.LoadCommentsCallback() {
                 @Override
                 public void onCommentsLoaded(List<Comment> comments) {
@@ -144,7 +144,7 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
         getView().scrollToBottom();
         setCommentsProgressIndicator(true);
 
-        if (Utils.getInstance().hasNetworkConnection()) {
+        if (Utils.hasNetworkConnection()) {
             userManager.isLoggedIn(new UserManager.LoginCallback() {
                 @Override
                 public void onLoginSuccess(String userId) {
@@ -172,7 +172,7 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
 
     @Override
     public void onTryToAddComment() {
-        if (Utils.getInstance().hasNetworkConnection()) {
+        if (Utils.hasNetworkConnection()) {
             userManager.isLoggedIn(new UserManager.LoginCallback() {
                 @Override
                 public void onLoginSuccess(String userId) {}
@@ -190,7 +190,7 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
 
     @Override
     public void onAddCommentButtonClicked(final String comment) {
-        if (Utils.getInstance().hasNetworkConnection()) {
+        if (Utils.hasNetworkConnection()) {
             if (comment != null && comment.trim().length() > 0) {
                 getView().hideKeyboard();
                 getView().scrollToBottom();
@@ -206,7 +206,7 @@ public class SignalDetailsPresenter extends Presenter<SignalDetailsContract.View
 
     @Override
     public void onRequestStatusChange(final int status) {
-        if (Utils.getInstance().hasNetworkConnection()) {
+        if (Utils.hasNetworkConnection()) {
 
             userManager.isLoggedIn(new UserManager.LoginCallback() {
                 @Override

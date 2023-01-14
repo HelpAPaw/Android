@@ -183,6 +183,8 @@
 
     <string name="txt_signal_type">Signal type: %s</string>
     <string name="txt_type">Type: %s</string>
+    <string name="txt_all_signal_types">All</string>
+    <string name="txt_none_signal_types">None</string>
     <string name="content_description_add_signal">Add signal</string>
     <string name="content_show_clinics">Show veterinary clinics</string>
     <string name="content_hide_clinics">Hide veterinary clinics</string>
@@ -205,4 +207,14 @@
     <string name="txt_delete_button">Delete</string>
     <string name="txt_cancel_button">Cancel</string>
     <string name="txt_no_navigation_app">No navigation app found</string>
+
+    <string name="txt_language_settings">LANGUAGE</string>
+    <string-array name="language_names" translatable="false">
+        <item>English</item>
+        <item>Български</item>
+    </string-array>
+    <string-array name="language_codes" translatable="false">
+        <item>en</item>
+        <item>bg</item>
+    </string-array>
 </resources>

@@ -44,7 +44,7 @@ public class UserProfilePresenter extends Presenter<UserProfileContract.View>
     public void onUpdateUser(
             final String userName, final String userPhone,
             final String password, final String passwordConfirm) {
-        if (Utils.getInstance().hasNetworkConnection()) {
+        if (Utils.hasNetworkConnection()) {
             FirebaseCrashlytics.getInstance().log("Initiate change for user ");
 
             boolean passwordsDoesNotMatch = !password.equals(passwordConfirm);

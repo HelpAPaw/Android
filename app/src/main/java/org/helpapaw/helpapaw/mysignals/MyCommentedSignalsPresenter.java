@@ -43,7 +43,7 @@ public class MyCommentedSignalsPresenter extends Presenter<MySignalsContract.Vie
     }
 
     private void getCommentedSignals(String ownerId) {
-        if (Utils.getInstance().hasNetworkConnection()) {
+        if (Utils.hasNetworkConnection()) {
 
             getView().setProgressVisibility(View.VISIBLE);
 

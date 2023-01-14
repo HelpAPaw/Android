@@ -10,6 +10,7 @@ public class SettingsRepository implements ISettingsRepository {
     private final static String RADIUS_FIELD = "signalRadius";
     private final static String TIMEOUT_FIELD = "signalTimeout";
     private final static String SIGNAL_TYPES_FIELD = "signalTypes";
+    private final static String LANGUAGE_FIELD = "language";
     private final static String LAST_SHOWN_LATITUDE_FIELD = "lastShownLatitude";
     private final static String LAST_SHOWN_LONGITUDE_FIELD = "lastShownLongitude";
     private final static String LAST_SHOWN_ZOOM_FIELD = "lastShownZoom";
@@ -51,6 +52,13 @@ public class SettingsRepository implements ISettingsRepository {
     }
 
     @Override
+    public void saveLanguage(String languageCode) {
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString(LANGUAGE_FIELD, languageCode);
+        editor.apply();
+    }
+
+    @Override
     public int getRadius() {
         return preferences.getInt(RADIUS_FIELD, 10);
     }
@@ -63,6 +71,11 @@ public class SettingsRepository implements ISettingsRepository {
     @Override
     public int getSignalTypes() {
         return preferences.getInt(SIGNAL_TYPES_FIELD, 65535);
+    }
+
+    @Override
+    public String getLanguageCode() {
+        return preferences.getString(LANGUAGE_FIELD, "en");
     }
 
     @Override

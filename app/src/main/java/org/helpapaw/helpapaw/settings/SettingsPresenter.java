@@ -2,6 +2,9 @@ package org.helpapaw.helpapaw.settings;
 
 import static org.helpapaw.helpapaw.base.PawApplication.getContext;
 
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.os.LocaleListCompat;
+
 import org.helpapaw.helpapaw.R;
 import org.helpapaw.helpapaw.base.Presenter;
 import org.helpapaw.helpapaw.data.repositories.ISettingsRepository;
@@ -16,6 +19,7 @@ public class SettingsPresenter extends Presenter<SettingsContract.View> implemen
     private int radius;
     private int timeout;
     private int signalTypes;
+    private String language;
 
     SettingsPresenter(SettingsContract.View view) {
         super(view);
@@ -27,6 +31,7 @@ public class SettingsPresenter extends Presenter<SettingsContract.View> implemen
         radius = settingsRepository.getRadius();
         timeout = settingsRepository.getTimeout();
         signalTypes = settingsRepository.getSignalTypes();
+        language = settingsRepository.getLanguageCode();
 
         int radiusMin = getContext().getResources().getInteger(R.integer.radius_value_min);
         int radiusMax = getContext().getResources().getInteger(R.integer.radius_value_max);
@@ -36,6 +41,7 @@ public class SettingsPresenter extends Presenter<SettingsContract.View> implemen
         getView().setRadius(radius);
         getView().setTimeout(timeout);
         getView().setSignalTypes(signalTypes);
+        getView().setLanguage(language);
 
         settingsRepository.clearLocationData();
     }
@@ -59,6 +65,14 @@ public class SettingsPresenter extends Presenter<SettingsContract.View> implemen
     }
 
     @Override
+    public void onLanguageChange(String languageCode) {
+        this.language = languageCode;
+        settingsRepository.saveLanguage(languageCode);
+
+        AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(languageCode));
+    }
+
+    @Override
     public void onCloseSettingsScreen() {
         //No need to call it here because it is called when signalsMapFragment resumes and obtains location
         //Injection.getPushNotificationsRepositoryInstance().updateDeviceInfoInCloud(null, radius, timeout);
@@ -75,5 +89,4 @@ public class SettingsPresenter extends Presenter<SettingsContract.View> implemen
     int unscaleLogarithmic(int scaled) {
         return (int) ((Math.log(scaled/SCALE_COEFFICIENT_A))/SCALE_COEFFICIENT_B);
     }
-
 }

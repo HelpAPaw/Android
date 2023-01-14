@@ -45,6 +45,9 @@ import androidx.core.content.PackageManagerCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.drawable.RoundedBitmapDrawable;
@@ -716,70 +719,34 @@ public class SignalsMapFragment extends BaseFragment
 
     @Override
     public void onConnected(Bundle bundle) {
-        // Create the LocationRequest object
-        // 30 seconds, in milliseconds
-        LocationRequest locationRequest = LocationRequest.create()
-                .setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY)
-                .setInterval(30 * 1000)        // 30 seconds, in milliseconds
-                .setFastestInterval(10 * 1000); // 10 seconds, in milliseconds
-        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder().addLocationRequest(locationRequest);
-
-        PendingResult<LocationSettingsResult> result = LocationServices.SettingsApi.checkLocationSettings(googleApiClient, builder.build());
-
-        result.setResultCallback(new ResultCallback<LocationSettingsResult>() {
-            @Override
-            public void onResult(@NonNull LocationSettingsResult locationSettingsResult) {
-                final Status status = locationSettingsResult.getStatus();
-                switch (status.getStatusCode()) {
-                    case LocationSettingsStatusCodes.SUCCESS:
-                        // All location settings are satisfied. The client can
-                        // initialize location requests here.
-
-                        break;
-                    case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
-                        // Location settings are not satisfied, but this can be fixed
-                        // by showing the user a dialog.
-                        try {
-                            // Show the dialog by calling startResolutionForResult(),
-                            // and check the result in onActivityResult().
-                            status.startResolutionForResult(getActivity(), REQUEST_CHECK_SETTINGS);
-                        } catch (Exception e) {
-                            Injection.getCrashLogger().recordException(e);
-                            // Ignore the error.
-                        }
-                        break;
-                    case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
-                        // Location settings are not satisfied. However, we have no way
-                        // to fix the settings so we won't show the dialog.
-
-                        break;
-                }
-            }
-        });
-        Context cont = getContext();
+        FragmentActivity activity = getActivity();
         //Protection for the case when activity is destroyed (e.g. when rotating)
         //Probably there is a better fix in the actual workflow but we need a quick fix as users experience a lot of crashes
-        if (cont == null) {
+        if (activity == null) {
             Injection.getCrashLogger().recordException(new Throwable("Context is null, exiting..."));
             return;
         }
-        if (   (ContextCompat.checkSelfPermission(cont, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
-            || (ContextCompat.checkSelfPermission(cont, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED)   ) {
+        if (   (ContextCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
+            || (ContextCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED)   ) {
             setAddSignalViewVisibility(mVisibilityAddSignal);
             if (signalsGoogleMap != null) {
                 signalsGoogleMap.setMyLocationEnabled(true);
             }
-            setLastLocation();
+            setLastLocation(activity);
+
         }
     }
 
     @SuppressLint("MissingPermission")
-    private void setLastLocation() {
+    private void setLastLocation(FragmentActivity activity) {
         if (!mVisibilityAddSignal) {
-            Location location = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
-            if (location != null) {
-                handleNewLocation(location);
-            }
+            FusedLocationProviderClient fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(activity);
+            Task<Location> locationTask = fusedLocationProviderClient.getLastLocation();
+            locationTask.addOnSuccessListener(location -> {
+                if (location != null) {
+                    handleNewLocation(location);
+                }
+            }).addOnFailureListener(e -> Log.e(TAG, "onFailure: " + e.getLocalizedMessage() ));
         }
     }
 

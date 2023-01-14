@@ -7,11 +7,15 @@ public interface ISettingsRepository {
 
     void saveSignalTypes(int signalTypes);
 
+    void saveLanguage(String languageCode);
+
     int getRadius();
 
     int getTimeout();
 
     int getSignalTypes();
+
+    String getLanguageCode();
 
     double getLastShownLatitude();
 

@@ -32,7 +32,7 @@ public class MySubmittedSignalsPresenter extends Presenter<MySignalsContract.Vie
     }
 
     private void getSubmittedSignals(String ownerId) {
-        if (Utils.getInstance().hasNetworkConnection()) {
+        if (Utils.hasNetworkConnection()) {
 
             getView().setProgressVisibility(View.VISIBLE);
 

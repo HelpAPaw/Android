@@ -16,6 +16,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 import java.util.regex.Pattern;
@@ -25,17 +26,18 @@ import java.util.regex.Pattern;
  */
 public class Utils {
 
-    private static Utils instance;
-
-    public synchronized static Utils getInstance() {
-        if (instance == null) {
-            instance = new Utils();
+    public static int getLanguageIndexFromLanguageCode(String languageCode, ArrayList<String> languageCodes) {
+        int index = 0;
+        try {
+            index = languageCodes.indexOf(languageCode);
+        } catch (Exception e) {
+            // Do nothing - we will return 0
         }
-        return instance;
+        return index;
     }
 
     //Validation
-    public boolean isEmailValid(String email) {
+    public static boolean isEmailValid(String email) {
         Pattern EMAIL_ADDRESS
                 = Pattern.compile(
                 "[a-zA-Z0-9\\+\\.\\_\\%\\-\\+]{1,256}" +
@@ -51,7 +53,7 @@ public class Utils {
     }
 
     //Network
-    public boolean hasNetworkConnection() {
+    public static boolean hasNetworkConnection() {
         ConnectivityManager connectivity = (ConnectivityManager) PawApplication.getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
         if (connectivity != null) {
             NetworkInfo[] info = connectivity.getAllNetworkInfo();
@@ -84,7 +86,7 @@ public class Utils {
     }
 
     //Location
-    public float getDistanceBetween(double latitudePointOne, double longitudePointOne,
+    public static float getDistanceBetween(double latitudePointOne, double longitudePointOne,
                                     double latitudePointTwo, double longitudePointTwo) {
         Location pointOne = new Location("");
         pointOne.setLatitude(latitudePointOne);
@@ -103,7 +105,7 @@ public class Utils {
     }
 
     //Dates
-    public String getFormattedDate(Date date) {
+    public static String getFormattedDate(Date date) {
         String formattedDate = "";
 
         try {
@@ -138,25 +140,6 @@ public class Utils {
         }
 
         return booleanArr;
-    }
-
-    public static String selectedTypesToString(boolean[] selectedSignalTypes, String[] signalTypes) {
-        String selectedTypesToString = "";
-
-        if (allSelected(selectedSignalTypes)) {
-            selectedTypesToString = "All signal types";
-        } else if (noneSelected(selectedSignalTypes)) {
-            selectedTypesToString = "None";
-        } else {
-            for (int i = 0; i < selectedSignalTypes.length; i++) {
-                if (selectedSignalTypes[i]) {
-                    selectedTypesToString = selectedTypesToString + signalTypes[i] + ", ";
-                }
-            }
-            selectedTypesToString = selectedTypesToString.substring(0, selectedTypesToString.length() - 2);
-        }
-
-        return selectedTypesToString;
     }
 
     public static boolean allSelected(boolean[] selectedSignalTypes) {

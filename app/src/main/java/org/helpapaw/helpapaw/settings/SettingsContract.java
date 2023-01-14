@@ -7,6 +7,8 @@ public interface SettingsContract {
         void setTimeout(int timeout);
 
         void setSignalTypes(int signalTypes);
+
+        void setLanguage(String languageCode);
     }
 
     interface UserActionsListener {
@@ -17,6 +19,8 @@ public interface SettingsContract {
         void onTimeoutChange(int timeout);
 
         void onSignalTypesChange(int signalTypes);
+
+        void onLanguageChange(String languageCode);
 
         void onCloseSettingsScreen();
     }

@@ -179,8 +179,7 @@
                 android:paddingRight="22dp"
                 android:background="@drawable/ripple_background_white"
                 android:clickable="true"
-                android:focusable="true"
-                tools:text="All signal types"/>
+                android:focusable="true" />
 
             <TableRow
                 android:layout_width="match_parent"
@@ -194,6 +193,41 @@
                 android:paddingLeft="24dp"
                 android:paddingRight="24dp"
                 android:text="@string/txt_type_settings_description" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="4dp"
+                android:paddingLeft="24dp"
+                android:paddingRight="24dp"
+                android:text="@string/txt_language_settings"
+                android:textSize="18sp" />
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/horizontal_rule" />
+
+            <TextView
+                android:id="@+id/language_setting"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:paddingTop="16dp"
+                android:paddingBottom="16dp"
+                android:paddingLeft="22dp"
+                android:paddingRight="22dp"
+                android:background="@drawable/ripple_background_white"
+                android:clickable="true"
+                android:focusable="true" />
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/horizontal_rule" />
+
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

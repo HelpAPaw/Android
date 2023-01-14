@@ -20,6 +20,8 @@ import org.helpapaw.helpapaw.base.Presenter;
 import org.helpapaw.helpapaw.databinding.FragmentSettingsBinding;
 import org.helpapaw.helpapaw.utils.Utils;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Locale;
 
 import static android.app.Activity.RESULT_OK;
@@ -32,10 +34,14 @@ import static org.helpapaw.helpapaw.settings.SignalTypeSettingsActivity.REQUEST_
 
 public class SettingsFragment extends BaseFragment implements SettingsContract.View {
 
+    private static final int REQUEST_CHANGE_LANGUAGE = 2;
+    protected static final String EXTRA_SELECTED_LANGUAGE = "selected_language";
+
     private int radiusMin;
     private int radiusMax;
     private int timeoutMin;
     private int currentlySelectedTypesInt = Integer.MAX_VALUE;
+    private String currentlySelectedLanguage = "en";
     private String[] signalTypeStrings;
 
     FragmentSettingsBinding binding;
@@ -104,6 +110,7 @@ public class SettingsFragment extends BaseFragment implements SettingsContract.V
         binding.radiusValue.setOnSeekBarChangeListener(onRadiusSeekBarChangeListener());
         binding.timeoutValue.setOnSeekBarChangeListener(onTimeoutSeekBarChangeListener());
         binding.signalTypeSetting.setOnClickListener(onSelectedSignalTypesClickListener());
+        binding.languageSetting.setOnClickListener(onChangeLanguageClickListener());
     }
 
     @Override
@@ -173,6 +180,18 @@ public class SettingsFragment extends BaseFragment implements SettingsContract.V
         };
     }
 
+    public View.OnClickListener onChangeLanguageClickListener() {
+        return new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getContext(), LanguageSettingsActivity.class);
+                intent.putExtra(EXTRA_SELECTED_LANGUAGE, currentlySelectedLanguage);
+                
+                startActivityForResult(intent, REQUEST_CHANGE_LANGUAGE);
+            }
+        };
+    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_CHANGE_SIGNAL_TYPES) {
@@ -186,6 +205,14 @@ public class SettingsFragment extends BaseFragment implements SettingsContract.V
 
                     actionsListener.onSignalTypesChange(currentlySelectedTypesInt);
                 }
+            }
+        }
+        else if (requestCode == REQUEST_CHANGE_LANGUAGE) {
+            if (resultCode == RESULT_OK) {
+                currentlySelectedLanguage = data.getStringExtra(EXTRA_SELECTED_LANGUAGE);
+                setLanguage(currentlySelectedLanguage);
+
+                actionsListener.onLanguageChange(currentlySelectedLanguage);
             }
         }
     }
@@ -205,10 +232,22 @@ public class SettingsFragment extends BaseFragment implements SettingsContract.V
     @Override
     public void setSignalTypes(int signalTypesInt) {
         currentlySelectedTypesInt = signalTypesInt;
-        String signalTypesStr =
-                Utils.selectedTypesToString(Utils.convertIntegerToBooleanArray(signalTypesInt, signalTypeStrings.length), signalTypeStrings);
+        String signalTypesStr = selectedTypesToString(
+                Utils.convertIntegerToBooleanArray(signalTypesInt, signalTypeStrings.length),
+                signalTypeStrings);
 
         binding.signalTypeSetting.setText(signalTypesStr);
+    }
+
+    @Override
+    public void setLanguage(String languageCode) {
+        currentlySelectedLanguage = languageCode;
+
+        int languageIndex = Utils.getLanguageIndexFromLanguageCode(
+                currentlySelectedLanguage,
+                new ArrayList<>(Arrays.asList(getResources().getStringArray(R.array.language_codes)))
+        );
+        binding.languageSetting.setText(getResources().getStringArray(R.array.language_names)[languageIndex]);
     }
 
     private void updateRadius(int value) {
@@ -229,5 +268,24 @@ public class SettingsFragment extends BaseFragment implements SettingsContract.V
             result = String.format(Locale.getDefault(), getString(R.string.timeout_output), value);
         }
         binding.timeoutOutput.setText(result);
+    }
+
+    private String selectedTypesToString(boolean[] selectedSignalTypes, String[] signalTypes) {
+        String selectedTypesToString = "";
+
+        if (Utils.allSelected(selectedSignalTypes)) {
+            selectedTypesToString = getResources().getString(R.string.txt_all_signal_types);
+        } else if (Utils.noneSelected(selectedSignalTypes)) {
+            selectedTypesToString = getResources().getString(R.string.txt_none_signal_types);
+        } else {
+            for (int i = 0; i < selectedSignalTypes.length; i++) {
+                if (selectedSignalTypes[i]) {
+                    selectedTypesToString = selectedTypesToString + signalTypes[i] + ", ";
+                }
+            }
+            selectedTypesToString = selectedTypesToString.substring(0, selectedTypesToString.length() - 2);
+        }
+
+        return selectedTypesToString;
     }
 }
