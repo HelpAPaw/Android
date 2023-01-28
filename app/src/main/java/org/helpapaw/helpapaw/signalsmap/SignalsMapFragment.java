@@ -276,7 +276,11 @@ public class SignalsMapFragment extends BaseFragment
 
     @RequiresApi(api = Build.VERSION_CODES.Q)
     private void askForBackgroundLocationPermission() {
-        mBackgroundPermissionLauncher.launch(Manifest.permission.ACCESS_BACKGROUND_LOCATION);
+        try {
+            mBackgroundPermissionLauncher.launch(Manifest.permission.ACCESS_BACKGROUND_LOCATION);
+        } catch (Exception ex) {
+            //Do nothing
+        }
     }
 
     private void askForHibernationExemptionIfNeeded() {
