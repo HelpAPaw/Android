@@ -9,8 +9,8 @@ android {
         applicationId "org.helpapaw.helpapaw"
         minSdkVersion 19
         targetSdkVersion 33
-        versionCode 107
-        versionName "5.4.0"
+        versionCode 108
+        versionName "5.4.1"
         vectorDrawables.useSupportLibrary = true
         resConfigs "en", "bg"
 
@@ -66,7 +66,7 @@ dependencies {
     implementation "com.google.android.gms:play-services-maps:18.1.0"
     implementation "com.google.android.gms:play-services-location:21.0.1"
     implementation "com.google.android.gms:play-services-places:17.0.0"
-    implementation 'com.google.android.gms:play-services-auth:20.4.0'
+    implementation 'com.google.android.gms:play-services-auth:20.4.1'
     implementation 'com.google.firebase:firebase-crashlytics'
     implementation 'com.google.firebase:firebase-analytics'
     implementation 'com.google.firebase:firebase-core'
