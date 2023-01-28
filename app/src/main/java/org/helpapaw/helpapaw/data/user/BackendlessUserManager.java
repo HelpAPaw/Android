@@ -320,9 +320,13 @@ public class BackendlessUserManager implements UserManager {
 
     @Override
     public boolean isLoggedIn() {
+        BackendlessUser currentUser = Backendless.UserService.CurrentUser();
+
         String userToken = getUserToken();
 
-        return userToken != null && !userToken.equals("");
+        return currentUser != null
+                && userToken != null
+                && !userToken.equals("");
     }
 
     @Override
