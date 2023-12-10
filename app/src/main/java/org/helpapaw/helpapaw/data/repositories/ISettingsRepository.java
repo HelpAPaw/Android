@@ -1,5 +1,7 @@
 package org.helpapaw.helpapaw.data.repositories;
 
+import java.util.Date;
+
 public interface ISettingsRepository {
     void saveRadius(int radius);
 
@@ -36,6 +38,10 @@ public interface ISettingsRepository {
     void deleteTokenFromPreferences();
 
     String getTokenFromPreferences();
+
+    Date getLastDeviceTokenRefreshDate();
+
+    void setLastDeviceTokenRefreshDate(Date date);
 
     boolean getHasShownForegroundLocationRationale();
     void setHasShownForegroundLocationRationale(boolean newValue);

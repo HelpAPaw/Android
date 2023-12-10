@@ -5,6 +5,8 @@ import android.content.SharedPreferences;
 import org.helpapaw.helpapaw.R;
 import org.helpapaw.helpapaw.base.PawApplication;
 
+import java.util.Date;
+
 public class SettingsRepository implements ISettingsRepository {
 
     private final static String RADIUS_FIELD = "signalRadius";
@@ -20,6 +22,7 @@ public class SettingsRepository implements ISettingsRepository {
     private final static String HAS_DENIED_BACKGROUND_LOCATION_RATIONALE = "HAS_DENIED_BACKGROUND_LOCATION_RATIONALE";
     private final static String HAS_SHOWN_HIBERNATION_EXEMPTION_DIALOG = "HAS_SHOWN_HIBERNATION_EXEMPTION_DIALOG";
     private final static String DEVICE_BACKENDLESS_TOKEN = "deviceBackendlessToken";
+    private final static String LAST_DEVICE_TOKEN_REFRESH = "LAST_DEVICE_TOKEN_REFRESH";
 
     private final SharedPreferences preferences;
 
@@ -137,6 +140,19 @@ public class SettingsRepository implements ISettingsRepository {
     public void deleteTokenFromPreferences() {
         SharedPreferences.Editor editor = preferences.edit();
         editor.remove(DEVICE_BACKENDLESS_TOKEN);
+        editor.apply();
+    }
+
+    @Override
+    public Date getLastDeviceTokenRefreshDate() {
+        long lastRefreshDate = preferences.getLong(LAST_DEVICE_TOKEN_REFRESH, 0);
+        return new Date(lastRefreshDate);
+    }
+
+    @Override
+    public void setLastDeviceTokenRefreshDate(Date date) {
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putLong(LAST_DEVICE_TOKEN_REFRESH, date.getTime());
         editor.apply();
     }
 

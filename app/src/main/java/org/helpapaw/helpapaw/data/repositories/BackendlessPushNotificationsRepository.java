@@ -22,6 +22,7 @@ import org.helpapaw.helpapaw.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -60,10 +61,22 @@ public class BackendlessPushNotificationsRepository implements PushNotifications
      */
     @Override
     public void registerDeviceTokenIfNeeded() {
+        // Refresh device token only once every 24 hours
+        Date lastRegistrationDate = Injection.getSettingsRepositoryInstance().getLastDeviceTokenRefreshDate();
+        Date now = new Date();
+        if (lastRegistrationDate != null) {
+            long diff = now.getTime() - lastRegistrationDate.getTime();
+            long diffHours = diff / (60 * 60 * 1000);
+            if (diffHours < 24) {
+                return;
+            }
+        }
+
         Backendless.Messaging.getDeviceRegistration(new AsyncCallback<DeviceRegistration>() {
             @Override
             public void handleResponse(DeviceRegistration response) {
                 // Do nothing - device already registered
+                Injection.getSettingsRepositoryInstance().setLastDeviceTokenRefreshDate(now);
             }
 
             @Override
@@ -71,6 +84,7 @@ public class BackendlessPushNotificationsRepository implements PushNotifications
                 // 5000: Unable to retrieve device registration - unknown device ID.
                 if (fault.getCode().equals("5000")) {
                     registerDeviceToken();
+                    Injection.getSettingsRepositoryInstance().setLastDeviceTokenRefreshDate(now);
                 }
                 else {
                     Injection.getCrashLogger().recordException(new Throwable(fault.toString()));
