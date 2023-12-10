@@ -16,7 +16,6 @@ import com.backendless.Backendless;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
 import org.helpapaw.helpapaw.R;
-import org.helpapaw.helpapaw.data.user.UserManager;
 import org.helpapaw.helpapaw.utils.Injection;
 import org.helpapaw.helpapaw.utils.services.BackgroundCheckWorker;
 
@@ -86,54 +85,10 @@ public class PawApplication extends MultiDexApplication {
     }
 
     private void doUserSetupIfNeeded() {
-        // This is done in order to handle the situation where user token is saved on the device but is invalidated on the server
-        final UserManager userManager = Injection.getUserManagerInstance();
-        userManager.isLoggedIn(new UserManager.LoginCallback() {
-            @Override
-            public void onLoginSuccess(String userId) {
-                Injection.getCrashLogger().setUserId(userId);
-
-                // Check if user has accepted privacy policy. If not - log out to force acceptance
-                userManager.getHasAcceptedPrivacyPolicy(new UserManager.GetUserPropertyCallback() {
-                    @Override
-                    public void onSuccess(Object hasAcceptedPrivacyPolicy) {
-                        try {
-                            Boolean accepted = (Boolean) hasAcceptedPrivacyPolicy;
-                            if (!accepted) {
-                                userManager.logout(new UserManager.LogoutCallback() {
-                                    @Override
-                                    public void onLogoutSuccess() {
-                                        // Do nothing
-                                    }
-
-                                    @Override
-                                    public void onLogoutFailure(String message) {
-                                        // Do nothing
-                                    }
-                                });
-                            }
-                        }
-                        catch (Exception ignored) {}
-                    }
-
-                    @Override
-                    public void onFailure(String message) {
-                        // Do nothing
-                    }
-                });
-            }
-
-            @Override
-            public void onLoginFailure(String message) {
-                userManager.logout(new UserManager.LogoutCallback() {
-                    @Override
-                    public void onLogoutSuccess() {}
-
-                    @Override
-                    public void onLogoutFailure(String message) {}
-                });
-            }
-        });
+        String currentUserId = Injection.getUserManagerInstance().getLoggedUserId();
+        if (currentUserId != null && !currentUserId.isEmpty()) {
+            Injection.getCrashLogger().setUserId(currentUserId);
+        }
     }
 
     public static PawApplication getContext() {
